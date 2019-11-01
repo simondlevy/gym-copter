@@ -11,11 +11,11 @@ MIT License
 #from distutils.core import setup
 from setuptools import setup
 
-setup (name = 'gym-copter',
+setup (name = 'gym_copter',
     version = '0.1',
-    install_requires = ['tensorflow', 'gym'],
+    install_requires = ['gym'],
     description = 'Gym environment for multicopters',
-    packages = ['gym-copter'],
+    packages = ['gym_copter', 'gym_copter.envs'],
     author='Simon D. Levy',
     author_email='simon.d.levy@gmail.com',
     url='https://github.com/simondlevy/gym-copter',
