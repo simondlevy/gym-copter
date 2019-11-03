@@ -27,6 +27,8 @@ Multirotor Dynamics class
   MIT License
 '''
 
+import numpy as np
+
 class MultirotorDynamics:
 
     '''
@@ -46,43 +48,46 @@ class MultirotorDynamics:
     STATE_PSI       = 10
     STATE_PSI_DOT   = 11
 
+    class Parameters:
+        '''
+        Class for parameters from the table below Equation 3
+        '''
+
+        def __init__(self, b,  d,  m,  l,  Ix,  Iy,  Iz,  Jr, maxrpm):
+       
+            self.b = b
+            self.d = d
+            self.m = m
+            self.l = l
+            self.Ix = Ix
+            self.Iy = Iy
+            self.Iz = Iz
+            self.Jr = Jr
+
+            self.maxrpm = maxrpm
+
+        # bodyToInertial method optimized for body X=Y=0
+        def bodyZToInertial(bodyZ, rotation):
+	
+            phi   = rotation[0]
+            theta = rotation[1]
+            psi   = rotation[2]
+
+            cph = np.cos(phi)
+            sph = np.sin(phi)
+            cth = np.cos(theta)
+            sth = np.sin(theta)
+            cps = np.cos(psi)
+            sps = np.sin(psi)
+
+            # This is the rightmost column of the body-to-inertial rotation matrix
+            R = ( sph * sps + cph * cps * sth,
+                  cph * sps * sth - cps * sph,
+                  cph * cth )
+
+            return (bodyZ * R[i] for i in range(3))
+
 '''
-public:
-
-	/**
-	 * Class for parameters from the table below Equation 3
-	 */
-	class Parameters {
-
-		friend class MultirotorDynamics;
-
-	public:
-
-		double b;
-		double d;
-		double m;
-		double l;
-		double Ix;
-		double Iy;
-		double Iz;
-		double Jr;
-
-		uint16_t maxrpm;
-
-		Parameters(double b, double d, double m, double l, double Ix, double Iy, double Iz, double Jr, uint16_t maxrpm)
-		{
-			this->b = b;
-			this->d = d;
-			this->m = m;
-			this->l = l;
-			this->Ix = Ix;
-			this->Iy = Iy;
-			this->Iz = Iz;
-			this->Jr = Jr;
-
-			this->maxrpm = maxrpm;
-		}
-	};
 
 	/**
 	 * Exported state representations
@@ -130,29 +135,6 @@ private:
 		}
 	}
 
-	// bodyToInertial method optimized for body X=Y=0
-	static void bodyZToInertial(double bodyZ, const double rotation[3], double inertial[3])
-	{
-		double phi = rotation[0];
-		double theta = rotation[1];
-		double psi = rotation[2];
-
-		double cph = cos(phi);
-		double sph = sin(phi);
-		double cth = cos(theta);
-		double sth = sin(theta);
-		double cps = cos(psi);
-		double sps = sin(psi);
-
-		// This is the rightmost column of the body-to-inertial rotation matrix
-		double R[3] = { sph * sps + cph * cps * sth,
-			cph * sps * sth - cps * sph,
-			cph * cth };
-
-		for (uint8_t i = 0; i < 3; ++i) {
-			inertial[i] = bodyZ * R[i];
-		}
-	}
 
 	// Height above ground, set by kinematics
 	double _agl = 0;
