@@ -227,13 +227,13 @@ class MultirotorDynamics:
 
         self._agl = 0
 
-    def computeMotorSpeed(self, motorval):
+    def computeMotorSpeed(self, motorvals):
         '''
         Computes motor speed base on motor value
-        motorval motor value in [0,1]
+        motorval motor values in [0,1]
         return motor speed in rad/s
         '''
-        return motorval * self._p.maxrpm * np.pi / 30
+        return motorvals * self._p.maxrpm * np.pi / 30
 
     def init(self, rotation, airborne = False):
         '''
@@ -339,6 +339,27 @@ class MultirotorDynamics:
         ''' 
 	return self._x.copy()
 
+    def setMotors(self, motorvals, dt):
+        '''
+	Uses motor values to implement Equation 6.
+	motorvals in interval [0,1]
+	dt time constant in seconds
+        '''
+
+        # Convert the  motor values to radians per second
+        self._omegas = self.computeMotorSpeed(motorvals) #rad/s
+
+        # Compute overall torque from omegas before squaring
+        self._Omega = self.u4(self._omegas)
+
+        # Overall thrust is sum of squared omegas
+        self._omegas2 = self._omegas**2
+        self._U1 = np.sum(self._p.b * self._omegas2)
+
+        # Use the squared Omegas to implement the rest of Eqn. 6
+        self._U2 = self._p.l * self._p.b * self.u2(self._omegas2)
+        self._U3 = self._p.l * self._p.b * self.u3(self._omegas2)
+        self._U4 = self._p.d * self.u4(self._omegas2)
 '''
 private:
 
@@ -386,34 +407,6 @@ protected:
 public:
 
 
-	/**
-	 * Uses motor values to implement Equation 6.
-	 *
-	 * @param motorvals in interval [0,1]
-	 * @param dt time constant in seconds
-	 */
-	virtual void setMotors(double* motorvals, double dt)
-	{
-		# Convert the  motor values to radians per second
-		for (unsigned int i = 0 i < _motorCount ++i) {
-			_omegas[i] = computeMotorSpeed(motorvals[i]) #rad/s
-		}
-
-		# Compute overall torque from omegas before squaring
-		_Omega = u4(_omegas)
-
-		# Overall thrust is sum of squared omegas
-		_U1 = 0
-		for (unsigned int i = 0 i < _motorCount ++i) {
-			_omegas2[i] = _omegas[i] * _omegas[i]
-			_U1 += _p->b * _omegas2[i]
-		}
-
-		# Use the squared Omegas to implement the rest of Eqn. 6
-		_U2 = _p->l * _p->b * u2(_omegas2)
-		_U3 = _p->l * _p->b * u3(_omegas2)
-		_U4 = _p->d * u4(_omegas2)
-	}
 
 	/**
 	 *  Gets current pose
