@@ -97,8 +97,10 @@ class MultirotorDynamics:
 
             self.maxrpm = maxrpm
 
-    # bodyToInertial method optimized for body X=Y=0
     def bodyZToInertial(bodyZ, rotation):
+        '''
+        bodyToInertial method optimized for body X=Y=0
+        '''
     
         phi, theta, psi = rotation
 
@@ -190,11 +192,11 @@ class MultirotorDynamics:
         self._airborne = False
 
         # Values computed in Equation 6
-	self._U1 = 0     # total thrust
-	self._U2 = 0     # roll thrust right
-	self._U3 = 0     # pitch thrust forward
-	self._U4 = 0     # yaw thrust clockwise
-	self._Omega = 0  # torque clockwise
+        self._U1 = 0     # total thrust
+        self._U2 = 0     # roll thrust right
+        self._U3 = 0     # pitch thrust forward
+        self._U4 = 0     # yaw thrust clockwise
+        self._Omega = 0  # torque clockwise
 
         # Exported state
         self._state = MultirotorDynamics.State()
@@ -245,9 +247,9 @@ class MultirotorDynamics:
 
     def init(self, rotation, airborne = False):
         '''
-	Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
-	rotation initial rotation
-	airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
+        Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
+        rotation initial rotation
+        airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
         '''
 
         # Always start at location (0,0,0) with zero velocities
@@ -266,10 +268,10 @@ class MultirotorDynamics:
 
     def update(self, dt):
         '''
-	Updates state.
-	dt time in seconds since previous update
+        Updates state.
+        dt time in seconds since previous update
         '''
-	
+    
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
         euler = ( self._x[6], self._x[8], self._x[10] )
@@ -345,13 +347,13 @@ class MultirotorDynamics:
         ''' 
         Returns "raw" state vector.
         ''' 
-	return self._x.copy()
+        return self._x.copy()
 
     def setMotors(self, motorvals, dt):
         '''
-	Uses motor values to implement Equation 6.
-	motorvals in interval [0,1]
-	dt time constant in seconds
+        Uses motor values to implement Equation 6.
+        motorvals in interval [0,1]
+        dt time constant in seconds
         '''
 
         # Convert the  motor values to radians per second
@@ -378,7 +380,7 @@ class MultirotorDynamics:
 
     def setAgl(self, agl):
         '''
-	Sets height above ground level (AGL).
-	This method can be called by the kinematic visualization.
+        Sets height above ground level (AGL).
+        This method can be called by the kinematic visualization.
         '''
-	self._agl = agl
+        self._agl = agl
