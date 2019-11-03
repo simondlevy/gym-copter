@@ -100,7 +100,50 @@ class MultirotorDynamics:
         self._omegas  = np.zeros(motorCount)
         self._omegas2 = np.zeros(motorCount)
 
-        self._x = np.zeros(12)
+        self._x    = np.zeros(12)
+        self._dxdt = np.zeros(12)
+
+        # Values computed in Equation 6
+	self._U1 = 0;     # total thrust
+	self._U2 = 0;     # roll thrust right
+	self._U3 = 0;     # pitch thrust forward
+	self._U4 = 0;     # yaw thrust clockwise
+	self._Omega = 0;  # torque clockwise
+
+
+    def computeStateDerivative(self, accelNED, netz):
+        '''
+        Implements Equation 12 computing temporal first derivative of state.
+        Should fill _dxdx[0..11] with appropriate values.
+        accelNED acceleration in NED inertial frame
+        netz accelNED[2] with gravitational constant added in
+        phidot rotational acceleration in roll axis
+        thedot rotational acceleration in pitch axis
+        psidot rotational acceleration in yaw axis
+        '''
+        p = self._p
+        x = self._x
+        Omega = self._Omega
+        U2 = self._U2
+        U3 = self._U3
+        U4 = self._U4
+ 
+        phidot = x[MultirotorDynamics.STATE_PHI_DOT]
+        thedot = x[MultirotorDynamics.STATE_THETA_DOT]
+        psidot = x[MultirotorDynamics.STATE_PSI_DOT]
+
+        self._dxdt[0]  = x[MultirotorDynamics.STATE_X_DOT]                                                    # x'
+        self._dxdt[1]  = accelNED[0]                                                                          # x''
+        self._dxdt[2]  = x[MultirotorDynamics.STATE_Y_DOT]                                                    # y'
+        self._dxdt[3]  = accelNED[1]                                                                          # y''
+        self._dxdt[4]  = x[MultirotorDynamics.STATE_Z_DOT]                                                    # z'
+        self._dxdt[5]  = netz                                                                                 # z''
+        self._dxdt[6]  = phidot                                                                               # phi'
+        self._dxdt[7]  = psidot * thedot * (p.Iy - p.Iz) / p.Ix - p.Jr / p.Ix * thedot * Omega + U2 / p.Ix    # phi''
+        self._dxdt[8]  = thedot                                                                               # theta'
+        self._dxdt[9]  = -(psidot * phidot * (p.Iz - p.Ix) / p.Iy + p.Jr / p.Iy * phidot * Omega + U3 / p.Iy) # theta''
+        self._dxdt[10] = psidot                                                                               # psi'
+        self._dxdt[11] = thedot * phidot * (p.Ix - p.Iy) / p.Iz + U4 / p.Iz                                   # psi''
 
 '''
 
@@ -160,13 +203,6 @@ protected:
 	double _x[12] = {};
 	double _dxdt[12] = {};
 
-	// Values computed in Equation 6
-	double _U1 = 0;     // total thrust
-	double _U2 = 0;     // roll thrust right
-	double _U3 = 0;     // pitch thrust forward
-	double _U4 = 0;     // yaw thrust clockwise
-	double _Omega = 0;  // torque clockwise
-
 	// parameter block
 	Parameters* _p = NULL;
 
@@ -189,35 +225,6 @@ protected:
 
 
 	virtual void updateGimbalDynamics(double dt) {}
-
-	/**
-	 * Implements Equation 12 computing temporal first derivative of state.
-	 * Should fill _dxdx[0..11] with appropriate values.
-	 * @param accelNED acceleration in NED inertial frame
-	 * @param netz accelNED[2] with gravitational constant added in
-	 * @param phidot rotational acceleration in roll axis
-	 * @param thedot rotational acceleration in pitch axis
-	 * @param psidot rotational acceleration in yaw axis
-	 */
-	virtual void computeStateDerivative(double accelNED[3], double netz)
-	{
-		double phidot = _x[STATE_PHI_DOT];
-		double thedot = _x[STATE_THETA_DOT];
-		double psidot = _x[STATE_PSI_DOT];
-
-		_dxdt[0] = _x[STATE_X_DOT];                                                              // x'
-		_dxdt[1] = accelNED[0];                                                                  // x''
-		_dxdt[2] = _x[STATE_Y_DOT];                                                              // y'
-		_dxdt[3] = accelNED[1];                                                                  // y''
-		_dxdt[4] = _x[STATE_Z_DOT];                                                              // z'
-		_dxdt[5] = netz;                                                                         // z''
-		_dxdt[6] = phidot;                                                                       // phi'
-		_dxdt[7] = psidot * thedot * (_p->Iy - _p->Iz) / _p->Ix - _p->Jr / _p->Ix * thedot * _Omega + _U2 / _p->Ix;    // phi''
-		_dxdt[8] = thedot;                                                                       // theta'
-		_dxdt[9] = -(psidot * phidot * (_p->Iz - _p->Ix) / _p->Iy + _p->Jr / _p->Iy * phidot * _Omega + _U3 / _p->Iy); // theta''
-		_dxdt[10] = psidot;                                                                        // psi'
-		_dxdt[11] = thedot * phidot * (_p->Ix - _p->Iy) / _p->Iz + _U4 / _p->Iz;                               // psi''
-	}
 
 	/**
 	 * Computes motor speed base on motor value
