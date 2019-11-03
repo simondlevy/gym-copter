@@ -15,7 +15,7 @@ class CopterEnv(gym.Env):
 
     def __init__(self):
 
-        self.action_space = spaces.Box( np.array([-1,0,0]), np.array([+1,+1,+1]))  # steer, gas, brake
+        self.action_space = spaces.Box( np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
 
     def step(self, action):
 
