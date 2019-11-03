@@ -15,7 +15,7 @@ MIT License
 
 #include "MultirotorDynamics.hpp"
 
-import MultirotorDynamics
+from gym_copter.dynamics import MultirotorDynamics
 
 class QuadXAPDynamics(MultirotorDynamics):
 

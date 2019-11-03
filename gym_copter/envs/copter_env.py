@@ -9,6 +9,8 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
 
+from gym_copter.dynamics.quadxap import QuadXAPDynamics
+
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
