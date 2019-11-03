@@ -48,6 +48,9 @@ class MultirotorDynamics:
     STATE_PSI       = 10
     STATE_PSI_DOT   = 11
 
+    # universal constants
+    g = 9.80665 # might want to allow this to vary!
+
     class Parameters:
         '''
         Class for parameters from the table below Equation 3
@@ -86,6 +89,18 @@ class MultirotorDynamics:
                   cph * cth )
 
             return (bodyZ * R[i] for i in range(3))
+
+    def __init__(self, params, motorCount):
+        '''
+        Constructor
+        '''
+        self._p = params.copy()
+        self._motorCount = motorCount
+
+        self._omegas  = np.zeros(motorCount)
+        self._omegas2 = np.zeros(motorCount)
+
+        self._x = np.zeros(12)
 
 '''
 
@@ -141,9 +156,6 @@ private:
 
 protected:
 
-	// universal constants
-	static constexpr double g = 9.80665; // might want to allow this to vary!
-
 	// state vector (see Eqn. 11) and its first temporal derivative
 	double _x[12] = {};
 	double _dxdt[12] = {};
@@ -175,22 +187,6 @@ protected:
 	uint8_t _motorCount = 0;
 
 
-
-	/**
-	 *  Constructor
-	 */
-	MultirotorDynamics(Parameters* params, const uint8_t motorCount)
-	{
-		_p = params;
-		_motorCount = motorCount;
-
-		_omegas = new double[motorCount]();
-		_omegas2 = new double[motorCount]();
-
-		for (uint8_t i = 0; i < 12; ++i) {
-			_x[i] = 0;
-		}
-	}
 
 	virtual void updateGimbalDynamics(double dt) {}
 
