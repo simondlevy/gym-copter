@@ -15,11 +15,11 @@ Multirotor Dynamics class
       pages     = {4393--4398},
       year      = {2004},
       crossref  = {DBLP:conf/icra/2004},
-      url       = {https://doi.org/10.1109/ROBOT.2004.1302409},
+      url       = {https:#doi.org/10.1109/ROBOT.2004.1302409},
       doi       = {10.1109/ROBOT.2004.1302409},
       timestamp = {Sun, 04 Jun 2017 01:00:00 +0200},
-      biburl    = {https://dblp.org/rec/bib/conf/icra/BouabdallahMS04},
-      bibsource = {dblp computer science bibliography, https://dblp.org}
+      biburl    = {https:#dblp.org/rec/bib/conf/icra/BouabdallahMS04},
+      bibsource = {dblp computer science bibliography, https:#dblp.org}
     }
  
   Copyright (C) 2019 Simon D. Levy
@@ -103,12 +103,14 @@ class MultirotorDynamics:
         self._x    = np.zeros(12)
         self._dxdt = np.zeros(12)
 
+        self._airborne = False
+
         # Values computed in Equation 6
-	self._U1 = 0;     # total thrust
-	self._U2 = 0;     # roll thrust right
-	self._U3 = 0;     # pitch thrust forward
-	self._U4 = 0;     # yaw thrust clockwise
-	self._Omega = 0;  # torque clockwise
+	self._U1 = 0     # total thrust
+	self._U2 = 0     # roll thrust right
+	self._U3 = 0     # pitch thrust forward
+	self._U4 = 0     # yaw thrust clockwise
+	self._Omega = 0  # torque clockwise
 
 
     def computeStateDerivative(self, accelNED, netz):
@@ -153,82 +155,103 @@ class MultirotorDynamics:
         '''
         return motorval * self._p.maxrpm * np.pi / 30
 
+    def init(self, rotation, airborne = False):
+        '''
+	Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
+	rotation initial rotation
+	airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
+        '''
+
+        # Always start at location (0,0,0) with zero velocities
+        self._x = np.zeros(12)
+
+        # Support arbitrary initial rotation
+        self._x[MultirotorDynamics.STATE_PHI]   = rotation[0]
+        self._x[MultirotorDynamics.STATE_THETA] = rotation[1]
+        self._x[MultirotorDynamics.STATE_PSI]   = rotation[2]
+
+        # Initialize inertial frame acceleration in NED coordinates
+        self._inertialAccel = MultirotorDynamics.bodyZToInertial(-MultirotorDynamics.g, rotation)
+
+        # We usuall start on ground, but can start in air for testing
+        self._airborne = airborne
+
 '''
 
 	/**
 	 * Exported state representations
 	 */
 
-	 // Kinematics
+	 # Kinematics
 	typedef struct {
 
-		double location[3];
-		double rotation[3];
+		double location[3]
+		double rotation[3]
 
-	} pose_t;
+	} pose_t
 
-	// Dynamics
+	# Dynamics
 	typedef struct {
 
-		double angularVel[3];
-		double bodyAccel[3];
-		double inertialVel[3];
-		double quaternion[4];
+		double angularVel[3]
+		double bodyAccel[3]
+		double inertialVel[3]
+		double quaternion[4]
 
-		pose_t pose;
+		pose_t pose
 
-	} state_t;
+	} state_t
 
 private:
 
-	// Data structure for returning state
-	state_t _state = {};
+	# Data structure for returning state
+	state_t _state = {}
 
-	// Flag for whether we're airborne and can update dynamics
-	bool _airborne = false;
+	# Flag for whether we're airborne and can update dynamics
+	bool _airborne = false
 
-	// Inertial-frame acceleration
-	double _inertialAccel[3] = {};
+	# Inertial-frame acceleration
+	double _inertialAccel[3] = {}
 
-	// y = Ax + b helper for frame-of-reference conversion methods
+	# y = Ax + b helper for frame-of-reference conversion methods
 	static void dot(double A[3][3], double x[3], double y[3])
 	{
-		for (uint8_t j = 0; j < 3; ++j) {
-			y[j] = 0;
-			for (uint8_t k = 0; k < 3; ++k) {
-				y[j] += A[j][k] * x[k];
+		for (uint8_t j = 0 j < 3 ++j) {
+			y[j] = 0
+			for (uint8_t k = 0 k < 3 ++k) {
+				y[j] += A[j][k] * x[k]
 			}
 		}
 	}
 
 
-	// Height above ground, set by kinematics
-	double _agl = 0;
+	# Height above ground, set by kinematics
+	double _agl = 0
 
 protected:
 
-	// state vector (see Eqn. 11) and its first temporal derivative
-	double _x[12] = {};
-	double _dxdt[12] = {};
+	# state vector (see Eqn. 11) and its first temporal derivative
+	double _x[12] = {}
+	double _dxdt[12] = {}
 
-	// parameter block
-	Parameters* _p = NULL;
+	# parameter block
+	Parameters* _p = NULL
 
-	// roll right
-	virtual double u2(double* o) = 0;
+	# roll right
+	virtual double u2(double* o) = 0
 
-	// pitch forward
-	virtual double u3(double* o) = 0;
+	# pitch forward
+	virtual double u3(double* o) = 0
 
-	// yaw cw
-	virtual double u4(double* o) = 0;
+	# yaw cw
+	virtual double u4(double* o) = 0
 
-	// radians per second for each motor, and their squared values
-	double* _omegas = NULL;
-	double* _omegas2 = NULL;
+	# radians per second for each motor, and their squared values
+	double* _omegas = NULL
+	double* _omegas2 = NULL
 
-	// quad, hexa, octo, etc.
-	uint8_t _motorCount = 0;
+	# quad, hexa, octo, etc.
+	uint8_t _motorCount = 0
 
 
 
@@ -242,41 +265,8 @@ public:
 	 */
 	virtual ~MultirotorDynamics(void)
 	{
-		delete _omegas;
-		delete _omegas2;
-	}
-
-	/**
-	 * Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
-	 *
-	 * @param rotation initial rotation
-	 * @param airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
-	 */
-	void init(double rotation[3], bool airborne = false)
-	{
-		// Always start at location (0,0,0)
-		_x[STATE_X] = 0;
-		_x[STATE_Y] = 0;
-		_x[STATE_Z] = 0;
-
-		_x[STATE_PHI] = rotation[0];
-		_x[STATE_THETA] = rotation[1];
-		_x[STATE_PSI] = rotation[2];
-
-		// Initialize velocities and airborne flag
-		_airborne = airborne;
-		_x[STATE_X_DOT] = 0;
-		_x[STATE_Y_DOT] = 0;
-		_x[STATE_Z_DOT] = 0;
-		_x[STATE_PHI_DOT] = 0;
-		_x[STATE_THETA_DOT] = 0;
-		_x[STATE_PSI_DOT] = 0;
-
-		// Initialize inertial frame acceleration in NED coordinates
-		bodyZToInertial(-g, rotation, _inertialAccel);
-
-		// We usuall start on ground, but can start in air for testing
-		_airborne = airborne;
+		delete _omegas
+		delete _omegas2
 	}
 
 	/**
@@ -286,83 +276,83 @@ public:
 	 */
 	void update(double dt)
 	{
-		// Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
-		// Negate to use NED.
-		double euler[3] = { _x[6], _x[8], _x[10] };
-		double accelNED[3] = {};
-		bodyZToInertial(-_U1 / _p->m, euler, accelNED);
+		# Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
+		# Negate to use NED.
+		double euler[3] = { _x[6], _x[8], _x[10] }
+		double accelNED[3] = {}
+		bodyZToInertial(-_U1 / _p->m, euler, accelNED)
 
-		// We're airborne once net downward acceleration goes below zero
-		double netz = accelNED[2] + g;
+		# We're airborne once net downward acceleration goes below zero
+		double netz = accelNED[2] + g
 
-		double velz = _x[STATE_Z_DOT];
+		double velz = _x[STATE_Z_DOT]
 
-		//debugline("Airborne: %d   AGL: %3.2f   velz: %+3.2f   netz: %+3.2f", _airborne, _agl, velz, netz);
+		#debugline("Airborne: %d   AGL: %3.2f   velz: %+3.2f   netz: %+3.2f", _airborne, _agl, velz, netz)
 
-		// If we're airborne, check for low AGL on descent
+		# If we're airborne, check for low AGL on descent
 		if (_airborne) {
 
-			//if (_agl <= 0 && velz > 0) {
+			#if (_agl <= 0 && velz > 0) {
 			if (_agl <= 0 && netz >= 0) {
-				_airborne = false;
-				_x[STATE_PHI_DOT] = 0;
-				_x[STATE_THETA_DOT] = 0;
-				_x[STATE_PSI_DOT] = 0;
-				_x[STATE_X_DOT] = 0;
-				_x[STATE_Y_DOT] = 0;
-				_x[STATE_Z_DOT] = 0;
+				_airborne = false
+				_x[STATE_PHI_DOT] = 0
+				_x[STATE_THETA_DOT] = 0
+				_x[STATE_PSI_DOT] = 0
+				_x[STATE_X_DOT] = 0
+				_x[STATE_Y_DOT] = 0
+				_x[STATE_Z_DOT] = 0
 
-				_x[STATE_PHI] = 0;
-				_x[STATE_THETA] = 0;
-				_x[STATE_Z] += _agl;
+				_x[STATE_PHI] = 0
+				_x[STATE_THETA] = 0
+				_x[STATE_Z] += _agl
 			}
 		}
 
-		// If we're not airborne, we become airborne when downward acceleration has become negative
+		# If we're not airborne, we become airborne when downward acceleration has become negative
 		else {
-			_airborne = netz < 0;
+			_airborne = netz < 0
 		}
 
-		// Once airborne, we can update dynamics
+		# Once airborne, we can update dynamics
 		if (_airborne) {
 
-			// Compute the state derivatives using Equation 12
-			computeStateDerivative(accelNED, netz);
+			# Compute the state derivatives using Equation 12
+			computeStateDerivative(accelNED, netz)
 
-			// Compute state as first temporal integral of first temporal derivative
-			for (uint8_t i = 0; i < 12; ++i) {
-				_x[i] += dt * _dxdt[i];
+			# Compute state as first temporal integral of first temporal derivative
+			for (uint8_t i = 0 i < 12 ++i) {
+				_x[i] += dt * _dxdt[i]
 			}
 
-			// Once airborne, inertial-frame acceleration is same as NED acceleration
-			_inertialAccel[0] = accelNED[0];
-			_inertialAccel[1] = accelNED[1];
-			_inertialAccel[2] = accelNED[2];
+			# Once airborne, inertial-frame acceleration is same as NED acceleration
+			_inertialAccel[0] = accelNED[0]
+			_inertialAccel[1] = accelNED[1]
+			_inertialAccel[2] = accelNED[2]
 		}
 		else {
-			//"fly" to agl=0
-			double vz = 5 * _agl;
-			_x[STATE_Z] += vz * dt;
+			#"fly" to agl=0
+			double vz = 5 * _agl
+			_x[STATE_Z] += vz * dt
 		}
 
-		updateGimbalDynamics(dt);
+		updateGimbalDynamics(dt)
 
-		// Get most values directly from state vector
-		for (uint8_t i = 0; i < 3; ++i) {
-			uint8_t ii = 2 * i;
-			_state.angularVel[i] = _x[STATE_PHI_DOT + ii];
-			_state.inertialVel[i] = _x[STATE_X_DOT + ii];
-			_state.pose.rotation[i] = _x[STATE_PHI + ii];
-			_state.pose.location[i] = _x[STATE_X + ii];
+		# Get most values directly from state vector
+		for (uint8_t i = 0 i < 3 ++i) {
+			uint8_t ii = 2 * i
+			_state.angularVel[i] = _x[STATE_PHI_DOT + ii]
+			_state.inertialVel[i] = _x[STATE_X_DOT + ii]
+			_state.pose.rotation[i] = _x[STATE_PHI + ii]
+			_state.pose.location[i] = _x[STATE_X + ii]
 		}
 
-		// Convert inertial acceleration and velocity to body frame
-		inertialToBody(_inertialAccel, _state.pose.rotation, _state.bodyAccel);
+		# Convert inertial acceleration and velocity to body frame
+		inertialToBody(_inertialAccel, _state.pose.rotation, _state.bodyAccel)
 
-		// Convert Euler angles to quaternion
-		eulerToQuaternion(_state.pose.rotation, _state.quaternion);
+		# Convert Euler angles to quaternion
+		eulerToQuaternion(_state.pose.rotation, _state.quaternion)
 
-	} // update
+	} # update
 
 	/**
 	 * Returns state structure.
@@ -370,7 +360,7 @@ public:
 	 */
 	state_t getState(void)
 	{
-		return _state;
+		return _state
 	}
 
 	/**
@@ -379,7 +369,7 @@ public:
 	 */
 	double* getStateVector(void)
 	{
-		return _x;
+		return _x
 	}
 
 	/**
@@ -390,25 +380,25 @@ public:
 	 */
 	virtual void setMotors(double* motorvals, double dt)
 	{
-		// Convert the  motor values to radians per second
-		for (unsigned int i = 0; i < _motorCount; ++i) {
-			_omegas[i] = computeMotorSpeed(motorvals[i]); //rad/s
+		# Convert the  motor values to radians per second
+		for (unsigned int i = 0 i < _motorCount ++i) {
+			_omegas[i] = computeMotorSpeed(motorvals[i]) #rad/s
 		}
 
-		// Compute overall torque from omegas before squaring
-		_Omega = u4(_omegas);
+		# Compute overall torque from omegas before squaring
+		_Omega = u4(_omegas)
 
-		// Overall thrust is sum of squared omegas
-		_U1 = 0;
-		for (unsigned int i = 0; i < _motorCount; ++i) {
-			_omegas2[i] = _omegas[i] * _omegas[i];
-			_U1 += _p->b * _omegas2[i];
+		# Overall thrust is sum of squared omegas
+		_U1 = 0
+		for (unsigned int i = 0 i < _motorCount ++i) {
+			_omegas2[i] = _omegas[i] * _omegas[i]
+			_U1 += _p->b * _omegas2[i]
 		}
 
-		// Use the squared Omegas to implement the rest of Eqn. 6
-		_U2 = _p->l * _p->b * u2(_omegas2);
-		_U3 = _p->l * _p->b * u3(_omegas2);
-		_U4 = _p->d * u4(_omegas2);
+		# Use the squared Omegas to implement the rest of Eqn. 6
+		_U2 = _p->l * _p->b * u2(_omegas2)
+		_U3 = _p->l * _p->b * u3(_omegas2)
+		_U4 = _p->d * u4(_omegas2)
 	}
 
 	/**
@@ -418,15 +408,15 @@ public:
 	 */
 	pose_t getPose(void)
 	{
-		pose_t pose = {};
+		pose_t pose = {}
 
-		for (uint8_t i = 0; i < 3; ++i) {
-			uint8_t ii = 2 * i;
-			pose.rotation[i] = _x[STATE_PHI + ii];
-			pose.location[i] = _x[STATE_X + ii];
+		for (uint8_t i = 0 i < 3 ++i) {
+			uint8_t ii = 2 * i
+			pose.rotation[i] = _x[STATE_PHI + ii]
+			pose.location[i] = _x[STATE_X + ii]
 		}
 
-		return pose;
+		return pose
 	}
 
 	/**
@@ -435,56 +425,56 @@ public:
 	 */
 	void setAgl(double agl)
 	{
-		_agl = agl;
+		_agl = agl
 	}
 
-	// Motor direction for animation
-	virtual int8_t motorDirection(uint8_t i) { (void)i; return 0; }
+	# Motor direction for animation
+	virtual int8_t motorDirection(uint8_t i) { (void)i return 0 }
 
 	/**
 	 *  Frame-of-reference conversion routines.
 	 *
-	 *  See Section 5 of http://www.chrobotics.com/library/understanding-euler-angles
+	 *  See Section 5 of http:#www.chrobotics.com/library/understanding-euler-angles
 	 */
 
 	static void bodyToInertial(double body[3], const double rotation[3], double inertial[3])
 	{
-		double phi = rotation[0];
-		double theta = rotation[1];
-		double psi = rotation[2];
+		double phi = rotation[0]
+		double theta = rotation[1]
+		double psi = rotation[2]
 
-		double cph = cos(phi);
-		double sph = sin(phi);
-		double cth = cos(theta);
-		double sth = sin(theta);
-		double cps = cos(psi);
-		double sps = sin(psi);
+		double cph = cos(phi)
+		double sph = sin(phi)
+		double cth = cos(theta)
+		double sth = sin(theta)
+		double cps = cos(psi)
+		double sps = sin(psi)
 
 		double R[3][3] = { {cps * cth,  cps * sph * sth - cph * sps,  sph * sps + cph * cps * sth},
 			{cth * sps,  cph * cps + sph * sps * sth,  cph * sps * sth - cps * sph},
-			{-sth,     cth * sph,                cph * cth} };
+			{-sth,     cth * sph,                cph * cth} }
 
-		dot(R, body, inertial);
+		dot(R, body, inertial)
 	}
 
 	static void inertialToBody(double inertial[3], const double rotation[3], double body[3])
 	{
-		double phi = rotation[0];
-		double theta = rotation[1];
-		double psi = rotation[2];
+		double phi = rotation[0]
+		double theta = rotation[1]
+		double psi = rotation[2]
 
-		double cph = cos(phi);
-		double sph = sin(phi);
-		double cth = cos(theta);
-		double sth = sin(theta);
-		double cps = cos(psi);
-		double sps = sin(psi);
+		double cph = cos(phi)
+		double sph = sin(phi)
+		double cth = cos(theta)
+		double sth = sin(theta)
+		double cps = cos(psi)
+		double sps = sin(psi)
 
 		double R[3][3] = { {cps * cth,                cth * sps,                   -sth},
 			{cps * sph * sth - cph * sps,  cph * cps + sph * sps * sth,  cth * sph},
-			{sph * sps + cph * cps * sth,  cph * sps * sth - cps * sph,  cph * cth} };
+			{sph * sps + cph * cps * sth,  cph * sps * sth - cps * sph,  cph * cth} }
 
-		dot(R, inertial, body);
+		dot(R, inertial, body)
 	}
 
 	/**
@@ -496,24 +486,24 @@ public:
 
 	static void eulerToQuaternion(const double eulerAngles[3], double quaternion[4])
 	{
-		// Convenient renaming
-		double phi = eulerAngles[0] / 2;
-		double the = eulerAngles[1] / 2;
-		double psi = eulerAngles[2] / 2;
+		# Convenient renaming
+		double phi = eulerAngles[0] / 2
+		double the = eulerAngles[1] / 2
+		double psi = eulerAngles[2] / 2
 
-		// Pre-computation
-		double cph = cos(phi);
-		double cth = cos(the);
-		double cps = cos(psi);
-		double sph = sin(phi);
-		double sth = sin(the);
-		double sps = sin(psi);
+		# Pre-computation
+		double cph = cos(phi)
+		double cth = cos(the)
+		double cps = cos(psi)
+		double sph = sin(phi)
+		double sth = sin(the)
+		double sps = sin(psi)
 
-		// Conversion
-		quaternion[0] = cph * cth * cps + sph * sth * sps;
-		quaternion[1] = cph * sth * sps - sph * cth * cps;
-		quaternion[2] = -cph * sth * cps - sph * cth * sps;
-		quaternion[3] = cph * cth * sps - sph * sth * cps;
+		# Conversion
+		quaternion[0] = cph * cth * cps + sph * sth * sps
+		quaternion[1] = cph * sth * sps - sph * cth * cps
+		quaternion[2] = -cph * sth * cps - sph * cth * sps
+		quaternion[3] = cph * cth * sps - sph * sth * cps
 	}
 
 	/**
@@ -522,8 +512,8 @@ public:
 	 */
 	uint8_t motorCount(void)
 	{
-		return _motorCount;
+		return _motorCount
 	}
 
-}; // class MultirotorDynamics
+} # class MultirotorDynamics
 '''
