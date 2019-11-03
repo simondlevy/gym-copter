@@ -27,28 +27,27 @@ Multirotor Dynamics class
   MIT License
 '''
 
+class MultirotorDynamics:
+
+    '''
+    Position map for state vector
+    '''
+   	
+    STATE_X         = 0
+    STATE_X_DOT     = 1
+    STATE_Y         = 2
+    STATE_Y_DOT     = 3
+    STATE_Z         = 4
+    STATE_Z_DOT     = 5
+    STATE_PHI       = 6
+    STATE_PHI_DOT   = 7
+    STATE_THETA     = 8
+    STATE_THETA_DOT = 9
+    STATE_PSI       = 10
+    STATE_PSI_DOT   = 11
+
 '''
-class MultirotorDynamics {
-
 public:
-
-	/**
-	 * Position map for state vector
-	 */
-	enum {
-		STATE_X,
-		STATE_X_DOT,
-		STATE_Y,
-		STATE_Y_DOT,
-		STATE_Z,
-		STATE_Z_DOT,
-		STATE_PHI,
-		STATE_PHI_DOT,
-		STATE_THETA,
-		STATE_THETA_DOT,
-		STATE_PSI,
-		STATE_PSI_DOT
-	};
 
 	/**
 	 * Class for parameters from the table below Equation 3
