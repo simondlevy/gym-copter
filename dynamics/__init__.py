@@ -360,6 +360,13 @@ class MultirotorDynamics:
         self._U2 = self._p.l * self._p.b * self.u2(self._omegas2)
         self._U3 = self._p.l * self._p.b * self.u3(self._omegas2)
         self._U4 = self._p.d * self.u4(self._omegas2)
+
+    def getPose(self):
+        '''
+        Returns current pose as a pair of three-tuples (location, rotation)
+        '''
+        return tuple(self._x[MultirotorDynamics.STATE_X:MultirotorDynamics.STATE_X+5:2]), \
+               tuple(self._x[MultirotorDynamics.STATE_PHI:MultirotorDynamics.STATE_PHI+5:2])
 '''
 private:
 
@@ -407,24 +414,6 @@ protected:
 public:
 
 
-
-	/**
-	 *  Gets current pose
-	 *
-	 *  @return data structure containing pose
-	 */
-	pose_t getPose(void)
-	{
-		pose_t pose = {}
-
-		for (uint8_t i = 0 i < 3 ++i) {
-			uint8_t ii = 2 * i
-			pose.rotation[i] = _x[STATE_PHI + ii]
-			pose.location[i] = _x[STATE_X + ii]
-		}
-
-		return pose
-	}
 
 	/**
 	 * Sets height above ground level (AGL).
