@@ -145,6 +145,14 @@ class MultirotorDynamics:
         self._dxdt[10] = psidot                                                                               # psi'
         self._dxdt[11] = thedot * phidot * (p.Ix - p.Iy) / p.Iz + U4 / p.Iz                                   # psi''
 
+    def computeMotorSpeed(self, motorval):
+        '''
+        Computes motor speed base on motor value
+        motorval motor value in [0,1]
+        return motor speed in rad/s
+        '''
+        return motorval * self._p.maxrpm * np.pi / 30
+
 '''
 
 	/**
@@ -226,15 +234,6 @@ protected:
 
 	virtual void updateGimbalDynamics(double dt) {}
 
-	/**
-	 * Computes motor speed base on motor value
-	 * @param motorval motor value in [0,1]
-	 * @return motor speed in rad/s
-	 */
-	virtual double computeMotorSpeed(double motorval)
-	{
-		return motorval * _p->maxrpm * 3.14159 / 30;
-	}
 
 public:
 
