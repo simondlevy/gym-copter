@@ -1,12 +1,9 @@
 '''
-
 Multirotor Dynamics class
 
-  Header-only code for platform-independent multirotor dynamics
+Should work for any simulator, vehicle, or operating system
  
-  Should work for any simulator, vehicle, or operating system
- 
-  Based on:
+Based on:
  
     @inproceedings{DBLP:conf/icra/BouabdallahMS04,
       author    = {Samir Bouabdallah and Pierpaolo Murrieri and Roland Siegwart},
@@ -23,9 +20,9 @@ Multirotor Dynamics class
       bibsource = {dblp computer science bibliography, https:#dblp.org}
     }
  
-  Copyright (C) 2019 Simon D. Levy
+Copyright (C) 2019 Simon D. Levy
  
-  MIT License
+MIT License
 '''
 
 import numpy as np
