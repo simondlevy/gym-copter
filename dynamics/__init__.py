@@ -31,11 +31,22 @@ Multirotor Dynamics class
 import numpy as np
 
 class MultirotorDynamics:
+    '''
+    Abstract class for multirotor dynamics.  You implementing class should define the following methods:
+
+        # roll right
+        u2(omega^2)
+
+        # pitch forward
+        u3(omega^2)
+
+        # yaw cw
+        u4(omega^2)
+    '''
 
     '''
     Position map for state vector
     '''
-   	
     STATE_X         = 0
     STATE_X_DOT     = 1
     STATE_Y         = 2
@@ -374,72 +385,3 @@ class MultirotorDynamics:
 	This method can be called by the kinematic visualization.
         '''
 	self._agl = agl
-
-'''
-private:
-
-	# Data structure for returning state
-	state_t _state = {}
-
-	# Flag for whether we're airborne and can update dynamics
-	bool _airborne = false
-
-	# Inertial-frame acceleration
-	double _inertialAccel[3] = {}
-
-	# y = Ax + b helper for frame-of-reference conversion methods
-
-	# Height above ground, set by kinematics
-	double _agl = 0
-
-protected:
-
-	# state vector (see Eqn. 11) and its first temporal derivative
-	double _x[12] = {}
-	double _dxdt[12] = {}
-
-	# parameter block
-	Parameters* _p = NULL
-
-	# roll right
-	virtual double u2(double* o) = 0
-
-	# pitch forward
-	virtual double u3(double* o) = 0
-
-	# yaw cw
-	virtual double u4(double* o) = 0
-
-	# radians per second for each motor, and their squared values
-	double* _omegas = NULL
-	double* _omegas2 = NULL
-
-	# quad, hexa, octo, etc.
-	uint8_t _motorCount = 0
-
-
-
-public:
-
-
-
-
-	# Motor direction for animation
-	virtual int8_t motorDirection(uint8_t i) { (void)i return 0 }
-
-	/**
-	 * Converts Euler angles to quaterion.
-	 *
-	 * @param eulerAngles input
-	 * @param quaternion output
-	 */
-
-	/**
-	 * Gets motor count set by constructor.
-	 * @return motor count
-	 */
-	uint8_t motorCount(void)
-	{
-		return _motorCount
-	}
-'''
