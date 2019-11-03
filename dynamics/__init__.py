@@ -367,6 +367,14 @@ class MultirotorDynamics:
         '''
         return tuple(self._x[MultirotorDynamics.STATE_X:MultirotorDynamics.STATE_X+5:2]), \
                tuple(self._x[MultirotorDynamics.STATE_PHI:MultirotorDynamics.STATE_PHI+5:2])
+
+    def setAgl(self, agl):
+        '''
+	Sets height above ground level (AGL).
+	This method can be called by the kinematic visualization.
+        '''
+	self._agl = agl
+
 '''
 private:
 
@@ -415,14 +423,6 @@ public:
 
 
 
-	/**
-	 * Sets height above ground level (AGL).
-	 * This method can be called by the kinematic visualization.
-	 */
-	void setAgl(double agl)
-	{
-		_agl = agl
-	}
 
 	# Motor direction for animation
 	virtual int8_t motorDirection(uint8_t i) { (void)i return 0 }
@@ -442,6 +442,4 @@ public:
 	{
 		return _motorCount
 	}
-
-} # class MultirotorDynamics
 '''
