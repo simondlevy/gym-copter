@@ -326,9 +326,12 @@ class MultirotorDynamics:
         # Convert Euler angles to quaternion
         self._state.quaternion = MultirotorDynamics.eulerToQuaternion(self._state.pose.rotation)
 
+
+    def getState(self):
+
+        return self._state.copy()
+
 '''
-
-
 private:
 
 	# Data structure for returning state
@@ -372,19 +375,8 @@ protected:
 
 
 
-	virtual void updateGimbalDynamics(double dt) {}
-
-
 public:
 
-	/**
-	 * Returns state structure.
-	 * @return state structure
-	 */
-	state_t getState(void)
-	{
-		return _state
-	}
 
 	/**
 	 * Returns "raw" state vector.
