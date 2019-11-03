@@ -328,8 +328,16 @@ class MultirotorDynamics:
 
 
     def getState(self):
-
+        '''
+        Returns State class instance.
+        '''
         return self._state.copy()
+
+    def getStateVector(self):
+        ''' 
+        Returns "raw" state vector.
+        ''' 
+	return self._x.copy()
 
 '''
 private:
@@ -377,15 +385,6 @@ protected:
 
 public:
 
-
-	/**
-	 * Returns "raw" state vector.
-	 * @return state vector
-	 */
-	double* getStateVector(void)
-	{
-		return _x
-	}
 
 	/**
 	 * Uses motor values to implement Equation 6.
