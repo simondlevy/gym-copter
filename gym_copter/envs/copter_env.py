@@ -7,13 +7,15 @@ MIT License
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
+import numpy as np
 
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
-        pass
+
+        self.action_space = spaces.Box( np.array([-1,0,0]), np.array([+1,+1,+1]))  # steer, gas, brake
 
     def step(self, action):
 

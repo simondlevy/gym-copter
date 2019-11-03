@@ -10,7 +10,3 @@ register(
     id='copter-v0',
     entry_point='gym_copter.envs:CopterEnv',
 )
-register(
-    id='copter-extrahard-v0',
-    entry_point='gym_copter.envs:CopterExtraHardEnv',
-)

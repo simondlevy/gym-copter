@@ -5,4 +5,3 @@ MIT License
 '''
 
 from gym_copter.envs.copter_env import CopterEnv
-from gym_copter.envs.copter_extrahard_env import CopterExtraHardEnv

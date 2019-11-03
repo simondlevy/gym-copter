@@ -9,7 +9,7 @@ MIT License
 
 import gym
 
-env = gym.make('MountainCar-v0')
+env = gym.make('gym_copter:copter-v0')
 
 env.reset()
 
