@@ -97,9 +97,9 @@ class MultirotorDynamics:
             self.inertialVel = np.zeros(3)
             self.quaternion  = np.zeros(4)
 
-    def bodyZToInertial(bodyZ, rotation):
+    def _bodyZToInertiall(bodyZ, rotation):
         '''
-        bodyToInertial method optimized for body X=Y=0
+        _bodyToInertial method optimized for body X=Y=0
         '''
     
         phi, theta, psi = rotation
@@ -118,7 +118,7 @@ class MultirotorDynamics:
 
         return (bodyZ * R[i] for i in range(3))
 
-    def inertialToBody(inertial, rotation, body):
+    def _inertialToBody(inertial, rotation, body):
     
         phi, theta, psi = rotation
 
@@ -135,7 +135,7 @@ class MultirotorDynamics:
 
         return np.dot(R, inertial)
 
-    def bodyToInertial(body, rotation, inertial):
+    def _bodyToInertial(body, rotation, inertial):
         '''
          Frame-of-reference conversion routines.
          
@@ -157,7 +157,7 @@ class MultirotorDynamics:
 
         return np.dot(R, body)
 
-    def eulerToQuaternion(eulerAngles):
+    def _eulerToQuaternion(eulerAngles):
 
         # Convenient renaming
         phi, the, psi = eulerAngles / 2
@@ -201,7 +201,7 @@ class MultirotorDynamics:
         # Exported state
         self._state = MultirotorDynamics.State()
 
-    def computeStateDerivative(self, accelNED, netz):
+    def _computeStateDerivative(self, accelNED, netz):
         '''
         Implements Equation 12 computing temporal first derivative of state.
         Should fill _dxdx[0..11] with appropriate values.
@@ -237,7 +237,7 @@ class MultirotorDynamics:
 
         self._agl = 0
 
-    def computeMotorSpeed(self, motorvals):
+    def _computeMotorSpeed(self, motorvals):
         '''
         Computes motor speed base on motor value
         motorval motor values in [0,1]
@@ -245,7 +245,7 @@ class MultirotorDynamics:
         '''
         return motorvals * self._p.maxrpm * np.pi / 30
 
-    def init(self, rotation, airborne = False):
+    def start(self, rotation, airborne = False):
         '''
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
         rotation initial rotation
@@ -261,7 +261,7 @@ class MultirotorDynamics:
         self._x[MultirotorDynamics._STATE_PSI]   = rotation[2]
 
         # Initialize inertial frame acceleration in NED coordinates
-        self._inertialAccel = MultirotorDynamics.bodyZToInertial(-MultirotorDynamics.g, rotation)
+        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, rotation)
 
         # We usuall start on ground, but can start in air for testing
         self._airborne = airborne
@@ -275,7 +275,7 @@ class MultirotorDynamics:
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
         euler = ( self._x[6], self._x[8], self._x[10] )
-        accelNED = MultirotorDynamics.bodyZToInertial(-self._U1 / self._p.m, euler)
+        accelNED = MultirotorDynamics._bodyZToInertiall(-self._U1 / self._p.m, euler)
 
         # We're airborne once net downward acceleration goes below zero
         netz = accelNED[2] + MultirotorDynamics.g
@@ -308,7 +308,7 @@ class MultirotorDynamics:
         if self._airborne:
 
             # Compute the state derivatives using Equation 12
-            self.computeStateDerivative(accelNED, netz)
+            self._computeStateDerivative(accelNED, netz)
 
             # Compute state as first temporal integral of first temporal derivative
             self._x += dt * self._dxdt
@@ -331,10 +331,10 @@ class MultirotorDynamics:
             self._state.pose.location[i] = self._x[MultirotorDynamics._STATE_X + ii]
 
         # Convert inertial acceleration and velocity to body frame
-        self._state.bodyAccel = MultirotorDynamics.inertialToBody(self._inertialAccel, self._state.pose.rotation)
+        self._state.bodyAccel = MultirotorDynamics._inertialToBody(self._inertialAccel, self._state.pose.rotation)
 
         # Convert Euler angles to quaternion
-        self._state.quaternion = MultirotorDynamics.eulerToQuaternion(self._state.pose.rotation)
+        self._state.quaternion = MultirotorDynamics._eulerToQuaternion(self._state.pose.rotation)
 
 
     def getState(self):
@@ -357,7 +357,7 @@ class MultirotorDynamics:
         '''
 
         # Convert the  motor values to radians per second
-        self._omegas = self.computeMotorSpeed(motorvals) #rad/s
+        self._omegas = self._computeMotorSpeed(motorvals) #rad/s
 
         # Compute overall torque from omegas before squaring
         self._Omega = self.u4(self._omegas)
