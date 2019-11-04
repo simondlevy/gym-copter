@@ -14,7 +14,7 @@ env = gym.make('gym_copter:copter-v0')
 
 env.reset()
 
-for _ in range(1000):
+while True:
     env.render()
     env.step([.6]*4)
     sleep(.001)
