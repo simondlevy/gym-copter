@@ -62,18 +62,18 @@ class MultirotorDynamics:
     '''
     Position map for state vector
     '''
-    STATE_X         = 0
-    STATE_X_DOT     = 1
-    STATE_Y         = 2
-    STATE_Y_DOT     = 3
-    STATE_Z         = 4
-    STATE_Z_DOT     = 5
-    STATE_PHI       = 6
-    STATE_PHI_DOT   = 7
-    STATE_THETA     = 8
-    STATE_THETA_DOT = 9
-    STATE_PSI       = 10
-    STATE_PSI_DOT   = 11
+    _STATE_X         = 0
+    _STATE_X_DOT     = 1
+    _STATE_Y         = 2
+    _STATE_Y_DOT     = 3
+    _STATE_Z         = 4
+    _STATE_Z_DOT     = 5
+    _STATE_PHI       = 6
+    _STATE_PHI_DOT   = 7
+    _STATE_THETA     = 8
+    _STATE_THETA_DOT = 9
+    _STATE_PSI       = 10
+    _STATE_PSI_DOT   = 11
 
     # universal constants
     g = 9.80665 # might want to allow this to vary!
@@ -218,15 +218,15 @@ class MultirotorDynamics:
         U3 = self._U3
         U4 = self._U4
  
-        phidot = x[MultirotorDynamics.STATE_PHI_DOT]
-        thedot = x[MultirotorDynamics.STATE_THETA_DOT]
-        psidot = x[MultirotorDynamics.STATE_PSI_DOT]
+        phidot = x[MultirotorDynamics._STATE_PHI_DOT]
+        thedot = x[MultirotorDynamics._STATE_THETA_DOT]
+        psidot = x[MultirotorDynamics._STATE_PSI_DOT]
 
-        self._dxdt[0]  = x[MultirotorDynamics.STATE_X_DOT]                                                    # x'
+        self._dxdt[0]  = x[MultirotorDynamics._STATE_X_DOT]                                                    # x'
         self._dxdt[1]  = accelNED[0]                                                                          # x''
-        self._dxdt[2]  = x[MultirotorDynamics.STATE_Y_DOT]                                                    # y'
+        self._dxdt[2]  = x[MultirotorDynamics._STATE_Y_DOT]                                                    # y'
         self._dxdt[3]  = accelNED[1]                                                                          # y''
-        self._dxdt[4]  = x[MultirotorDynamics.STATE_Z_DOT]                                                    # z'
+        self._dxdt[4]  = x[MultirotorDynamics._STATE_Z_DOT]                                                    # z'
         self._dxdt[5]  = netz                                                                                 # z''
         self._dxdt[6]  = phidot                                                                               # phi'
         self._dxdt[7]  = psidot * thedot * (p.Iy - p.Iz) / p.Ix - p.Jr / p.Ix * thedot * Omega + U2 / p.Ix    # phi''
@@ -256,9 +256,9 @@ class MultirotorDynamics:
         self._x = np.zeros(12)
 
         # Support arbitrary initial rotation
-        self._x[MultirotorDynamics.STATE_PHI]   = rotation[0]
-        self._x[MultirotorDynamics.STATE_THETA] = rotation[1]
-        self._x[MultirotorDynamics.STATE_PSI]   = rotation[2]
+        self._x[MultirotorDynamics._STATE_PHI]   = rotation[0]
+        self._x[MultirotorDynamics._STATE_THETA] = rotation[1]
+        self._x[MultirotorDynamics._STATE_PSI]   = rotation[2]
 
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics.bodyZToInertial(-MultirotorDynamics.g, rotation)
@@ -280,7 +280,7 @@ class MultirotorDynamics:
         # We're airborne once net downward acceleration goes below zero
         netz = accelNED[2] + MultirotorDynamics.g
 
-        #velz = self._x[MultirotorDynamics.STATE_Z_DOT]
+        #velz = self._x[MultirotorDynamics._STATE_Z_DOT]
         #debugline("Airborne: %d   AGL: %3.2f   velz: %+3.2f   netz: %+3.2f", _airborne, _agl, velz, netz)
 
         # If we're airborne, check for low AGL on descent
@@ -289,16 +289,16 @@ class MultirotorDynamics:
             if self._agl <= 0 and netz >= 0:
 
                 self._airborne = False
-                self._x[MultirotorDynamics.STATE_PHI_DOT] = 0
-                self._x[MultirotorDynamics.STATE_THETA_DOT] = 0
-                self._x[MultirotorDynamics.STATE_PSI_DOT] = 0
-                self._x[MultirotorDynamics.STATE_X_DOT] = 0
-                self._x[MultirotorDynamics.STATE_Y_DOT] = 0
-                self._x[MultirotorDynamics.STATE_Z_DOT] = 0
+                self._x[MultirotorDynamics._STATE_PHI_DOT] = 0
+                self._x[MultirotorDynamics._STATE_THETA_DOT] = 0
+                self._x[MultirotorDynamics._STATE_PSI_DOT] = 0
+                self._x[MultirotorDynamics._STATE_X_DOT] = 0
+                self._x[MultirotorDynamics._STATE_Y_DOT] = 0
+                self._x[MultirotorDynamics._STATE_Z_DOT] = 0
 
-                self._x[MultirotorDynamics.STATE_PHI] = 0
-                self._x[MultirotorDynamics.STATE_THETA] = 0
-                self._x[MultirotorDynamics.STATE_Z] += self._agl
+                self._x[MultirotorDynamics._STATE_PHI] = 0
+                self._x[MultirotorDynamics._STATE_THETA] = 0
+                self._x[MultirotorDynamics._STATE_Z] += self._agl
 
         # If we're not airborne, we become airborne when downward acceleration has become negative
         else:
@@ -320,15 +320,15 @@ class MultirotorDynamics:
 
             #"fly" to agl=0
             vz = 5 * self._agl
-            self._x[MultirotorDynamics.STATE_Z] += vz * dt
+            self._x[MultirotorDynamics._STATE_Z] += vz * dt
 
         # Get most values directly from state vector
         for i in range(3):
             ii = 2 * i
-            self._state.angularVel[i]    = self._x[MultirotorDynamics.STATE_PHI_DOT + ii]
-            self._state.inertialVel[i]   = self._x[MultirotorDynamics.STATE_X_DOT + ii]
-            self._state.pose.rotation[i] = self._x[MultirotorDynamics.STATE_PHI + ii]
-            self._state.pose.location[i] = self._x[MultirotorDynamics.STATE_X + ii]
+            self._state.angularVel[i]    = self._x[MultirotorDynamics._STATE_PHI_DOT + ii]
+            self._state.inertialVel[i]   = self._x[MultirotorDynamics._STATE_X_DOT + ii]
+            self._state.pose.rotation[i] = self._x[MultirotorDynamics._STATE_PHI + ii]
+            self._state.pose.location[i] = self._x[MultirotorDynamics._STATE_X + ii]
 
         # Convert inertial acceleration and velocity to body frame
         self._state.bodyAccel = MultirotorDynamics.inertialToBody(self._inertialAccel, self._state.pose.rotation)
@@ -375,8 +375,8 @@ class MultirotorDynamics:
         '''
         Returns current pose as a pair of three-tuples (location, rotation)
         '''
-        return tuple(self._x[MultirotorDynamics.STATE_X:MultirotorDynamics.STATE_X+5:2]), \
-               tuple(self._x[MultirotorDynamics.STATE_PHI:MultirotorDynamics.STATE_PHI+5:2])
+        return tuple(self._x[MultirotorDynamics._STATE_X:MultirotorDynamics._STATE_X+5:2]), \
+               tuple(self._x[MultirotorDynamics._STATE_PHI:MultirotorDynamics._STATE_PHI+5:2])
 
     def setAgl(self, agl):
         '''
