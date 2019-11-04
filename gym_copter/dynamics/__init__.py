@@ -176,9 +176,11 @@ class MultirotorDynamics:
                 [-cph * sth * cps - sph * cth * sps],
                 [cph * cth * sps - sph * sth * cps]]
 
-    def __init__(self, params, motorCount):
+    def __init__(self, params, motorCount, airborne=False):
         '''
         Constructor
+        Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
+        airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
         '''
         self._p = params
         self._motorCount = motorCount
@@ -186,6 +188,7 @@ class MultirotorDynamics:
         self._omegas  = np.zeros(motorCount)
         self._omegas2 = np.zeros(motorCount)
 
+        # Always start at location (0,0,0) with zero velocities
         self._x    = np.zeros(12)
         self._dxdt = np.zeros(12)
 
@@ -200,6 +203,12 @@ class MultirotorDynamics:
 
         # Exported state
         self._state = MultirotorDynamics.State()
+
+        # Initialize inertial frame acceleration in NED coordinates
+        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, (0,0,0))
+
+        # We usuall start on ground, but can start in air for testing
+        self._airborne = airborne
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
@@ -244,27 +253,6 @@ class MultirotorDynamics:
         return motor speed in rad/s
         '''
         return motorvals * self._p.maxrpm * np.pi / 30
-
-    def start(self, rotation, airborne = False):
-        '''
-        Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
-        rotation initial rotation
-        airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
-        '''
-
-        # Always start at location (0,0,0) with zero velocities
-        self._x = np.zeros(12)
-
-        # Support arbitrary initial rotation
-        self._x[MultirotorDynamics._STATE_PHI]   = rotation[0]
-        self._x[MultirotorDynamics._STATE_THETA] = rotation[1]
-        self._x[MultirotorDynamics._STATE_PSI]   = rotation[2]
-
-        # Initialize inertial frame acceleration in NED coordinates
-        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, rotation)
-
-        # We usuall start on ground, but can start in air for testing
-        self._airborne = airborne
 
     def update(self, dt):
         '''
