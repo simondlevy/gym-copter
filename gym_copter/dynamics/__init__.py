@@ -27,6 +27,24 @@ MIT License
 
 import numpy as np
 
+class Parameters:
+    '''
+    Class for parameters from the table below Equation 3
+    '''
+
+    def __init__(self, b,  d,  m,  l,  Ix,  Iy,  Iz,  Jr, maxrpm):
+   
+        self.b = b
+        self.d = d
+        self.m = m
+        self.l = l
+        self.Ix = Ix
+        self.Iy = Iy
+        self.Iz = Iz
+        self.Jr = Jr
+
+        self.maxrpm = maxrpm
+
 class MultirotorDynamics:
     '''
     Abstract class for multirotor dynamics.  You implementing class should define the following methods:
@@ -78,24 +96,6 @@ class MultirotorDynamics:
             self.bodyAccel   = np.zeros(3)
             self.inertialVel = np.zeros(3)
             self.quaternion  = np.zeros(4)
-
-    class Parameters:
-        '''
-        Class for parameters from the table below Equation 3
-        '''
-
-        def __init__(self, b,  d,  m,  l,  Ix,  Iy,  Iz,  Jr, maxrpm):
-       
-            self.b = b
-            self.d = d
-            self.m = m
-            self.l = l
-            self.Ix = Ix
-            self.Iy = Iy
-            self.Iz = Iz
-            self.Jr = Jr
-
-            self.maxrpm = maxrpm
 
     def bodyZToInertial(bodyZ, rotation):
         '''
@@ -180,7 +180,7 @@ class MultirotorDynamics:
         '''
         Constructor
         '''
-        self._p = params.copy()
+        self._p = params
         self._motorCount = motorCount
 
         self._omegas  = np.zeros(motorCount)

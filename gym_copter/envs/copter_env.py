@@ -10,6 +10,7 @@ from gym.utils import seeding
 import numpy as np
 
 from gym_copter.dynamics.quadxap import QuadXAPDynamics
+from gym_copter.dynamics import Parameters
 
 class CopterEnv(gym.Env):
 
@@ -17,7 +18,26 @@ class CopterEnv(gym.Env):
 
     def __init__(self):
 
+        params = Parameters(
+
+        # Estimated
+        5.E-06, # b
+        2.E-06, # d
+
+        # https:#www.dji.com/phantom-4/info
+        1.380,  # m (kg)
+        0.350,  # l (meters)
+
+        # Estimated
+        2,      # Ix
+        2,      # Iy
+        3,      # Iz
+        38E-04, # Jr
+        15000)  # maxrpm
+
         self.action_space = spaces.Box( np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
+
+        self.copter = QuadXAPDynamics(params)
 
     def step(self, action):
 
