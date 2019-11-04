@@ -41,6 +41,8 @@ class CopterEnv(gym.Env):
 
     def step(self, action):
 
+        print(action)
+
         obj          = None # an environment-specific object representing your observation of the environment
         reward       = 0.0 # floating-point reward value from previous action
         episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)

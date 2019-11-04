@@ -8,6 +8,7 @@ MIT License
 '''
 
 import gym
+from time import sleep
 
 env = gym.make('gym_copter:copter-v0')
 
@@ -15,6 +16,6 @@ env.reset()
 
 for _ in range(1000):
     env.render()
-    env.step(env.action_space.sample()) # take a random action
-
+    env.step([.6]*4)
+    sleep(.001)
 env.close()
