@@ -99,7 +99,7 @@ if __name__ == '__main__':
         # to PID controller.
         z = copter.getState().pose.location[2]
 
-        print('%+3.3f\n' % z)
+        print('%+3.3f' % z)
 
         # Use temporal first difference to compute vertical velocity
         dzdt = (z-zprev) / DT
@@ -112,6 +112,9 @@ if __name__ == '__main__':
 
         # Set motor values in sim
         copter.setMotors(u*np.ones(4))
+
+        # Update the dynamics
+        copter.update(DT)
 
         # Update for first difference
         zprev = z
