@@ -7,7 +7,7 @@ Dynamics class for quad-X frames using ArduPilot motor layout:
        / \
     2ccw  4cw
 
-Copyright (C) 2019 Simon D. Levy, Daniel Katzav
+Copyright (C) 2019 Simon D. Levy
 
 MIT License
 '''

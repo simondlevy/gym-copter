@@ -8,10 +8,9 @@ import gym
 from gym import spaces
 import numpy as np
 
-from gym_copter.dynamics.quadxap import QuadXAPDynamics
-from gym_copter.dynamics import Parameters
-
 import pyglet
+
+from gym_copter.dynamics.inspire import DJIInspireDynamics
 
 from sys import stdout
 
@@ -28,46 +27,28 @@ class CopterEnv(gym.Env):
 
     def __init__(self, dt=.001):
 
-        # Parameters for DJI Inspire
-        params = Parameters(
-
-            # Estimated
-            5.E-06, # b
-            2.E-06, # d
-
-            # https:#www.dji.com/phantom-4/info
-            1.380,  # m (kg)
-            0.350,  # l (meters)
-
-            # Estimated
-            2,      # Ix
-            2,      # Iy
-            3,      # Iz
-            38E-04, # Jr
-            15000)  # maxrpm
-
-        self.action_space = spaces.Box( np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
+        self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
 
         self.dt = dt
 
-        self.copter = QuadXAPDynamics(params)
+        self.dynamics = DJIInspireDynamics()
 
         self.viewer = None
 
     def step(self, action):
 
-        self.copter.setMotors(action)
+        self.dynamics.setMotors(action)
 
-        self.copter.update(self.dt)
+        self.dynamics.update(self.dt)
 
         # an environment-specific object representing your observation of the environment
-        obs = self.copter.getState()
+        obs = self.dynamics.getState()
 
         reward       = 0.0   # floating-point reward value from previous action
         episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)
         info         = {}    # diagnostic info for debugging
 
-        self.copter.update(self.dt)
+        self.dynamics.update(self.dt)
 
         return obs, reward, episode_over, info
 
@@ -101,13 +82,16 @@ class CopterEnv(gym.Env):
         # Detect window close
         if not self.viewer.isopen: return None
 
-        state = self.copter.getState()
+        state = self.dynamics.getState()
         pose = state.pose
         location = pose.location
         rotation = pose.rotation
 
         # We're using NED frame, so negate altitude before displaying
         self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+
+        print(rotation)
+        stdout.flush()
 
         self.altitude_label.draw()
 
