@@ -14,7 +14,8 @@ env = gym.make('gym_copter:copter-v0')
 env.reset()
 
 while True:
+
     env.render()
     state, _, _, _ = env.step([.6]*4)
     print(state.pose.location[2])
-env.close()
+

@@ -17,22 +17,23 @@ class CopterEnv(gym.Env):
 
     def __init__(self, dt=.001):
 
+        # Parameters for DJI Inspire
         params = Parameters(
 
-        # Estimated
-        5.E-06, # b
-        2.E-06, # d
+            # Estimated
+            5.E-06, # b
+            2.E-06, # d
 
-        # https:#www.dji.com/phantom-4/info
-        1.380,  # m (kg)
-        0.350,  # l (meters)
+            # https:#www.dji.com/phantom-4/info
+            1.380,  # m (kg)
+            0.350,  # l (meters)
 
-        # Estimated
-        2,      # Ix
-        2,      # Iy
-        3,      # Iz
-        38E-04, # Jr
-        15000)  # maxrpm
+            # Estimated
+            2,      # Ix
+            2,      # Iy
+            3,      # Iz
+            38E-04, # Jr
+            15000)  # maxrpm
 
         self.action_space = spaces.Box( np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
 
@@ -64,22 +65,24 @@ class CopterEnv(gym.Env):
 
     def render(self, mode='human'):
 
-        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/cartpole.py
+        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/groundpole.py
 
-        screen_width = 600
-        screen_height = 400
-        cartwidth = 50.0
-        cartheight = 30.0
+        screen_width = 800
+        screen_height = 500
 
         if self.viewer is None:
             from gym.envs.classic_control import rendering
             self.viewer = rendering.Viewer(screen_width, screen_height)
-            l,r,t,b = -cartwidth/2, cartwidth/2, cartheight/2, -cartheight/2
-            axleoffset =cartheight/4.0
-            cart = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
-            self.carttrans = rendering.Transform()
-            cart.add_attr(self.carttrans)
-            self.viewer.add_geom(cart)
+            l,r,t,b = 0, screen_width, 0, screen_height
+            sky = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+            sky.set_color(0.5,0.8,1.0)
+            b /= 2
+            ground = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+            ground.set_color(0.5, 0.7 , 0.3)
+            self.groundtrans = rendering.Transform()
+            ground.add_attr(self.groundtrans)
+            self.viewer.add_geom(sky)
+            self.viewer.add_geom(ground)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
