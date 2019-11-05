@@ -16,6 +16,8 @@ class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
 
+    DT = .001
+
     def __init__(self):
 
         params = Parameters(
@@ -41,12 +43,12 @@ class CopterEnv(gym.Env):
 
     def step(self, action):
 
-        print(action)
-
         obj          = None # an environment-specific object representing your observation of the environment
         reward       = 0.0 # floating-point reward value from previous action
         episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)
         info         = {}    # diagnostic info for debugging
+
+        self.copter.setMotors(action, CopterEnv.DT)
 
         return obj, reward, episode_over, info
 
@@ -54,7 +56,10 @@ class CopterEnv(gym.Env):
         pass
 
     def render(self, mode='human'):
-        pass
+
+        self.copter.update(CopterEnv.DT)
+
+        print(self.copter.getState().pose.location)
 
     def close(self):
         pass

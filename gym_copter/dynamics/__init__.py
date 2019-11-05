@@ -112,13 +112,11 @@ class MultirotorDynamics:
         sps = np.sin(psi)
 
         # This is the rightmost column of the body-to-inertial rotation matrix
-        R = ( sph * sps + cph * cps * sth,
-              cph * sps * sth - cps * sph,
-              cph * cth )
+        R = np.array([sph * sps + cph * cps * sth, cph * sps * sth - cps * sph, cph * cth])
 
-        return (bodyZ * R[i] for i in range(3))
+        return bodyZ * R
 
-    def _inertialToBody(inertial, rotation, body):
+    def _inertialToBody(inertial, rotation):
     
         phi, theta, psi = rotation
 
@@ -244,15 +242,13 @@ class MultirotorDynamics:
         self._dxdt[10] = psidot                                                                               # psi'
         self._dxdt[11] = thedot * phidot * (p.Ix - p.Iy) / p.Iz + U4 / p.Iz                                   # psi''
 
-        self._agl = 0
-
     def _computeMotorSpeed(self, motorvals):
         '''
         Computes motor speed base on motor value
         motorval motor values in [0,1]
         return motor speed in rad/s
         '''
-        return motorvals * self._p.maxrpm * np.pi / 30
+        return np.array(motorvals) * self._p.maxrpm * np.pi / 30
 
     def update(self, dt):
         '''
@@ -268,28 +264,8 @@ class MultirotorDynamics:
         # We're airborne once net downward acceleration goes below zero
         netz = accelNED[2] + MultirotorDynamics.g
 
-        #velz = self._x[MultirotorDynamics._STATE_Z_DOT]
-        #debugline("Airborne: %d   AGL: %3.2f   velz: %+3.2f   netz: %+3.2f", _airborne, _agl, velz, netz)
-
-        # If we're airborne, check for low AGL on descent
-        if self._airborne:
-
-            if self._agl <= 0 and netz >= 0:
-
-                self._airborne = False
-                self._x[MultirotorDynamics._STATE_PHI_DOT] = 0
-                self._x[MultirotorDynamics._STATE_THETA_DOT] = 0
-                self._x[MultirotorDynamics._STATE_PSI_DOT] = 0
-                self._x[MultirotorDynamics._STATE_X_DOT] = 0
-                self._x[MultirotorDynamics._STATE_Y_DOT] = 0
-                self._x[MultirotorDynamics._STATE_Z_DOT] = 0
-
-                self._x[MultirotorDynamics._STATE_PHI] = 0
-                self._x[MultirotorDynamics._STATE_THETA] = 0
-                self._x[MultirotorDynamics._STATE_Z] += self._agl
-
         # If we're not airborne, we become airborne when downward acceleration has become negative
-        else:
+        if not self._airborne:
             self._airborne = netz < 0
 
         # Once airborne, we can update dynamics
@@ -303,12 +279,6 @@ class MultirotorDynamics:
 
             # Once airborne, inertial-frame acceleration is same as NED acceleration
             self._inertialAccel = accelNED.copy()
-
-        else:
-
-            #"fly" to agl=0
-            vz = 5 * self._agl
-            self._x[MultirotorDynamics._STATE_Z] += vz * dt
 
         # Get most values directly from state vector
         for i in range(3):
@@ -329,13 +299,13 @@ class MultirotorDynamics:
         '''
         Returns State class instance.
         '''
-        return self._state.copy()
+        return self._state
 
     def getStateVector(self):
         ''' 
         Returns "raw" state vector.
         ''' 
-        return self._x.copy()
+        return self._x
 
     def setMotors(self, motorvals, dt):
         '''
@@ -365,10 +335,3 @@ class MultirotorDynamics:
         '''
         return tuple(self._x[MultirotorDynamics._STATE_X:MultirotorDynamics._STATE_X+5:2]), \
                tuple(self._x[MultirotorDynamics._STATE_PHI:MultirotorDynamics._STATE_PHI+5:2])
-
-    def setAgl(self, agl):
-        '''
-        Sets height above ground level (AGL).
-        This method can be called by the kinematic visualization.
-        '''
-        self._agl = agl

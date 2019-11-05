@@ -17,5 +17,4 @@ env.reset()
 while True:
     env.render()
     env.step([.6]*4)
-    sleep(.001)
 env.close()
