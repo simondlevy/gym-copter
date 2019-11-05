@@ -78,6 +78,9 @@ if __name__ == '__main__':
     # Loop until user hits the stop button
     while True:
 
+        # Draw the current environment
+        env.render()
+
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 

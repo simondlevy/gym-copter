@@ -40,6 +40,8 @@ class CopterEnv(gym.Env):
 
         self.copter = QuadXAPDynamics(params)
 
+        self.viewer = None
+
     def step(self, action):
 
         self.copter.setMotors(action)
@@ -61,7 +63,26 @@ class CopterEnv(gym.Env):
         pass
 
     def render(self, mode='human'):
-        pass
+
+        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/cartpole.py
+
+        screen_width = 600
+        screen_height = 400
+        cartwidth = 50.0
+        cartheight = 30.0
+
+        if self.viewer is None:
+            from gym.envs.classic_control import rendering
+            self.viewer = rendering.Viewer(screen_width, screen_height)
+            l,r,t,b = -cartwidth/2, cartwidth/2, cartheight/2, -cartheight/2
+            axleoffset =cartheight/4.0
+            cart = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+            self.carttrans = rendering.Transform()
+            cart.add_attr(self.carttrans)
+            self.viewer.add_geom(cart)
+
+        return self.viewer.render(return_rgb_array = mode=='rgb_array')
+
 
     def close(self):
         pass
