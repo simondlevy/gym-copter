@@ -78,27 +78,35 @@ if __name__ == '__main__':
     # Loop until user hits the stop button
     while True:
 
-        # Draw the current environment
-        env.render()
+        try:
 
-        # Update the environment with the current motor commands
-        state, _, _, _ = env.step(u*np.ones(4))
+            # Draw the current environment
+            if env.render() is None: break
 
-         # Extract altitude from state.  Altitude is in NED coordinates, so we negate it to use as input
-        # to PID controller.
-        z = -state.pose.location[2]
+            # Update the environment with the current motor commands
+            state, _, _, _ = env.step(u*np.ones(4))
 
-        # Use temporal first difference to compute vertical velocity
-        dzdt = (z-zprev) / DT
+             # Extract altitude from state.  Altitude is in NED coordinates, so we negate it to use as input
+            # to PID controller.
+            z = -state.pose.location[2]
 
-        # Get correction from PID controller
-        u = pid.u(z, dzdt, DT)
+            # Use temporal first difference to compute vertical velocity
+            dzdt = (z-zprev) / DT
 
-        # Constrain correction to [0,1] to represent motor value
-        u = max(0, min(1, u))
+            # Get correction from PID controller
+            u = pid.u(z, dzdt, DT)
 
-        # Update for first difference
-        zprev = z
+            # Constrain correction to [0,1] to represent motor value
+            u = max(0, min(1, u))
 
-        # Delay for realism
-        sleep(env.dt)
+            # Update for first difference
+            zprev = z
+
+            # Delay for realism
+            sleep(env.dt)
+
+        except:
+
+            break
+
+    del env

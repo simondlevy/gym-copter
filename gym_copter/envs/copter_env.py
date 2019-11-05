@@ -13,6 +13,8 @@ from gym_copter.dynamics import Parameters
 
 import pyglet
 
+from sys import stdout
+
 # https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
 class _DrawText:
     def __init__(self, label:pyglet.text.Label):
@@ -96,11 +98,20 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
-        self.altitude_label.text = "Alt: %5.2fm" % -self.copter.getState().pose.location[2]
+        # Detect window close
+        if not self.viewer.isopen: return None
+
+        state = self.copter.getState()
+        pose = state.pose
+        location = pose.location
+        rotation = pose.rotation
+
+        # We're using NED frame, so negate altitude before displaying
+        self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+
         self.altitude_label.draw()
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
-
     def close(self):
-        pass
+        gym.Env.close(self)
