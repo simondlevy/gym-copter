@@ -16,9 +16,7 @@ class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
 
-    DT = .001
-
-    def __init__(self):
+    def __init__(self, dt=.001):
 
         params = Parameters(
 
@@ -39,6 +37,8 @@ class CopterEnv(gym.Env):
 
         self.action_space = spaces.Box( np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
 
+        self.dt = dt
+
         self.copter = QuadXAPDynamics(params)
 
     def step(self, action):
@@ -50,14 +50,14 @@ class CopterEnv(gym.Env):
 
         self.copter.setMotors(action)
 
+        self.copter.update(self.dt)
+
         return obj, reward, episode_over, info
 
     def reset(self):
         pass
 
     def render(self, mode='human'):
-
-        self.copter.update(CopterEnv.DT)
 
         print(self.copter.getState().pose.location)
 
