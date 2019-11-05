@@ -11,6 +11,15 @@ import numpy as np
 from gym_copter.dynamics.quadxap import QuadXAPDynamics
 from gym_copter.dynamics import Parameters
 
+import pyglet
+
+# https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
+class _DrawText:
+    def __init__(self, label:pyglet.text.Label):
+        self.label=label
+    def render(self):
+        self.label.draw()
+
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
@@ -83,6 +92,13 @@ class CopterEnv(gym.Env):
             ground.add_attr(self.groundtrans)
             self.viewer.add_geom(sky)
             self.viewer.add_geom(ground)
+            self.altitude_label = pyglet.text.Label('0000', font_size=36,
+                x=20, y=20, anchor_x='left', anchor_y='center',
+                color=(0,0,0,255))
+            self.viewer.add_geom(_DrawText(self.altitude_label))
+
+        self.altitude_label.text = "%f" % self.copter.getState().pose.location[2]
+        self.altitude_label.draw()
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
