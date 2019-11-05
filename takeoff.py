@@ -9,6 +9,7 @@ MIT License
 
 import gym
 import numpy as np
+from time import sleep
 
 # Target 
 ALTITUDE_TARGET = 10
@@ -97,3 +98,6 @@ if __name__ == '__main__':
 
         # Update for first difference
         zprev = z
+
+        # Delay for realism
+        sleep(env.dt)
