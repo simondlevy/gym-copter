@@ -114,4 +114,4 @@ class CopterEnv(gym.Env):
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def close(self):
-        gym.Env.close(self)
+        pass
