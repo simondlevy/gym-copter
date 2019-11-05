@@ -61,8 +61,7 @@ class CopterEnv(gym.Env):
         pass
 
     def render(self, mode='human'):
-
-        print(self.copter.getState().pose.location)
+        pass
 
     def close(self):
         pass

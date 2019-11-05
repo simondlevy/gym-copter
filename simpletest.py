@@ -15,5 +15,6 @@ env.reset()
 
 while True:
     env.render()
-    env.step([.6]*4)
+    state, _, _, _ = env.step([.6]*4)
+    print(state.pose.location[2])
 env.close()
