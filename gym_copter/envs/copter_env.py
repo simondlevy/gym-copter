@@ -5,8 +5,7 @@ MIT License
 '''
 
 import gym
-from gym import error, spaces, utils
-from gym.utils import seeding
+from gym import spaces
 import numpy as np
 
 from gym_copter.dynamics.quadxap import QuadXAPDynamics
@@ -43,16 +42,20 @@ class CopterEnv(gym.Env):
 
     def step(self, action):
 
-        obj          = None # an environment-specific object representing your observation of the environment
-        reward       = 0.0 # floating-point reward value from previous action
-        episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)
-        info         = {}    # diagnostic info for debugging
-
         self.copter.setMotors(action)
 
         self.copter.update(self.dt)
 
-        return obj, reward, episode_over, info
+        # an environment-specific object representing your observation of the environment
+        obs = self.copter.getState()
+
+        reward       = 0.0   # floating-point reward value from previous action
+        episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)
+        info         = {}    # diagnostic info for debugging
+
+        self.copter.update(self.dt)
+
+        return obs, reward, episode_over, info
 
     def reset(self):
         pass
