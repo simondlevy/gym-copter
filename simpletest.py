@@ -11,7 +11,6 @@ import gym
 from time import sleep
 
 env = gym.make('gym_copter:copter-v0')
-
 env.reset()
 
 while True:

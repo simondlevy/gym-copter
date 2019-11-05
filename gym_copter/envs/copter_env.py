@@ -48,7 +48,7 @@ class CopterEnv(gym.Env):
         episode_over = False # whether it's time to reset the environment again (e.g., pole tipped over)
         info         = {}    # diagnostic info for debugging
 
-        self.copter.setMotors(action, CopterEnv.DT)
+        self.copter.setMotors(action)
 
         return obj, reward, episode_over, info
 
