@@ -92,12 +92,11 @@ class CopterEnv(gym.Env):
             ground.add_attr(self.groundtrans)
             self.viewer.add_geom(sky)
             self.viewer.add_geom(ground)
-            self.altitude_label = pyglet.text.Label('0000', font_size=36,
-                x=20, y=20, anchor_x='left', anchor_y='center',
-                color=(0,0,0,255))
+            self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, 
+                    anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
-        self.altitude_label.text = "%f" % self.copter.getState().pose.location[2]
+        self.altitude_label.text = "Alt: %5.2fm" % -self.copter.getState().pose.location[2]
         self.altitude_label.draw()
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
