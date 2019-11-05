@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
         # Extract altitude from state.  Altitude is in NED coordinates, so we negate it to use as input
         # to PID controller.
-        z = copter.getState().pose.location[2]
+        z = -copter.getState().pose.location[2]
 
         print('%+3.3f' % z)
 
