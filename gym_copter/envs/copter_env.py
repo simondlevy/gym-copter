@@ -28,17 +28,13 @@ class CopterEnv(gym.Env):
     def __init__(self, dt=.001):
 
         self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
-
         self.dt = dt
-
         self.dynamics = DJIInspireDynamics()
-
         self.viewer = None
 
     def step(self, action):
 
         self.dynamics.setMotors(action)
-
         self.dynamics.update(self.dt)
 
         # an environment-specific object representing your observation of the environment
@@ -79,6 +75,9 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
+            self.groundtop = b
+            self.foo = 0
+
         # Detect window close
         if not self.viewer.isopen: return None
 
@@ -90,8 +89,12 @@ class CopterEnv(gym.Env):
         # We're using NED frame, so negate altitude before displaying
         self.altitude_label.text = "Alt: %5.2fm" % -location[2]
 
-        print(rotation)
+        self.foo += .01
+        offset = int(50 * np.sin(self.foo))
+        print(self.groundtop + offset)
         stdout.flush()
+
+        self.groundtrans.set_translation(0, offset)
 
         self.altitude_label.draw()
 

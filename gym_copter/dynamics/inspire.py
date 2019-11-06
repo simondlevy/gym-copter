@@ -9,6 +9,8 @@ MIT License
 from gym_copter.dynamics import Parameters
 from gym_copter.dynamics.quadxap import QuadXAPDynamics
 
+import numpy as np
+
 class DJIInspireDynamics(QuadXAPDynamics):
 
     def __init__(self):
@@ -31,4 +33,17 @@ class DJIInspireDynamics(QuadXAPDynamics):
             15000   # maxrpm
             ))
 
+    '''
+        self.foo = 0
+
+    def getState(self):
+
+        state = QuadXAPDynamics.getState(self)
+
+        state.pose.rotation[1] = np.pi*np.sin(self.foo)
+
+        self.foo += .001
+
+        return state
+    '''
 
