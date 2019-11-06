@@ -12,8 +12,6 @@ import pyglet
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
-from sys import stdout
-
 # https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
 class _DrawText:
     def __init__(self, label:pyglet.text.Label):
@@ -55,21 +53,27 @@ class CopterEnv(gym.Env):
 
         # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/groundpole.py
 
-        screen_width = 800
-        screen_height = 500
+        SCREEN_WIDTH = 800
+        SCREEN_HEIGHT = 500
 
         if self.viewer is None:
+
             from gym.envs.classic_control import rendering
-            self.viewer = rendering.Viewer(screen_width, screen_height)
-            l,r,t,b = 0, screen_width, 0, screen_height
-            sky = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+
+            def rect(w, h):
+                return rendering.FilledPolygon([(0,h), (0,0), (w,0), (w,h)])
+
+
+            self.viewer = rendering.Viewer(SCREEN_WIDTH, SCREEN_HEIGHT)
+            sky = rect(SCREEN_WIDTH, SCREEN_HEIGHT)
             sky.set_color(0.5,0.8,1.0)
-            t -= screen_height / 2
-            b -= screen_height / 2
-            ground = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
+
+            self.ground_size = int(np.sqrt(2) * SCREEN_WIDTH)
+            ground = rect(self.ground_size, self.ground_size)
             ground.set_color(0.5, 0.7 , 0.3)
-            self.groundtrans = rendering.Transform()
-            ground.add_attr(self.groundtrans)
+            groundtrans = rendering.Transform()
+            ground.add_attr(groundtrans)
+
             self.viewer.add_geom(sky)
             self.viewer.add_geom(ground)
             self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, 
@@ -91,9 +95,9 @@ class CopterEnv(gym.Env):
 
         self.foo += .01
         offset = int(50 * np.sin(self.foo))
-        stdout.flush()
 
-        self.groundtrans.set_translation(0, offset)
+        #groundtrans.set_translation(0, offset)
+        #groundtrans.set_rotation(np.pi/8)
 
         self.altitude_label.draw()
 
