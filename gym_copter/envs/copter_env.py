@@ -10,7 +10,7 @@ import numpy as np
 
 import pyglet
 
-from gym_copter.dynamics.inspire import DJIInspireDynamics
+from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
 from sys import stdout
 
@@ -29,7 +29,7 @@ class CopterEnv(gym.Env):
 
         self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
         self.dt = dt
-        self.dynamics = DJIInspireDynamics()
+        self.dynamics = DJIPhantomDynamics()
         self.viewer = None
 
     def step(self, action):

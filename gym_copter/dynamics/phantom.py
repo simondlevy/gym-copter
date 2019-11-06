@@ -11,7 +11,7 @@ from gym_copter.dynamics.quadxap import QuadXAPDynamics
 
 import numpy as np
 
-class DJIInspireDynamics(QuadXAPDynamics):
+class DJIPhantomDynamics(QuadXAPDynamics):
 
     def __init__(self):
 
