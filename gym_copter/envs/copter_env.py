@@ -64,7 +64,8 @@ class CopterEnv(gym.Env):
             l,r,t,b = 0, screen_width, 0, screen_height
             sky = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
             sky.set_color(0.5,0.8,1.0)
-            b /= 2
+            t -= screen_height / 2
+            b -= screen_height / 2
             ground = rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
             ground.set_color(0.5, 0.7 , 0.3)
             self.groundtrans = rendering.Transform()
@@ -75,7 +76,6 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
-            self.groundtop = b
             self.foo = 0
 
         # Detect window close
@@ -91,7 +91,6 @@ class CopterEnv(gym.Env):
 
         self.foo += .01
         offset = int(50 * np.sin(self.foo))
-        print(self.groundtop + offset)
         stdout.flush()
 
         self.groundtrans.set_translation(0, offset)
