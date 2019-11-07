@@ -94,14 +94,21 @@ class CopterEnv(gym.Env):
         if not self.ground is None:
             del self.ground
 
+        phi = np.pi / 8
+
         llx = 0
         lly = 0
         lrx = SCREEN_WIDTH
         lry = 0
         urx = SCREEN_WIDTH
-        ury = SCREEN_HEIGHT / 2
         ulx = 0
-        uly = SCREEN_HEIGHT / 2
+
+        y = SCREEN_HEIGHT / 2
+
+        dy = SCREEN_WIDTH/2 * np.sin(phi)
+
+        ury = y + dy
+        uly = y - dy
 
         self.ground = self.viewer.draw_polygon([(llx,lly), (lrx,lry), (urx,ury), (ulx,uly),], color=(0.5, 0.7, 0.3) )
 
