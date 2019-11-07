@@ -51,7 +51,7 @@ class CopterEnv(gym.Env):
 
     def render(self, mode='human'):
 
-        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/groundpole.py
+        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/cartpole.py
 
         SCREEN_WIDTH = 800
         SCREEN_HEIGHT = 500
@@ -60,22 +60,21 @@ class CopterEnv(gym.Env):
 
             from gym.envs.classic_control import rendering
 
-            def rect(w, h):
-                return rendering.FilledPolygon([(0,h), (0,0), (w,0), (w,h)])
-
+            def rect(r, b, l=0, t=0):
+                return rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
 
             self.viewer = rendering.Viewer(SCREEN_WIDTH, SCREEN_HEIGHT)
             sky = rect(SCREEN_WIDTH, SCREEN_HEIGHT)
             sky.set_color(0.5,0.8,1.0)
 
             self.ground_size = int(np.sqrt(2) * SCREEN_WIDTH)
-            ground = rect(self.ground_size, self.ground_size)
-            ground.set_color(0.5, 0.7 , 0.3)
-            groundtrans = rendering.Transform()
-            ground.add_attr(groundtrans)
+            #ground = rect(self.ground_size, self.ground_size)
+            #ground.set_color(0.5, 0.7 , 0.3)
+            #groundtrans = rendering.Transform()
+            #ground.add_attr(groundtrans)
 
             self.viewer.add_geom(sky)
-            self.viewer.add_geom(ground)
+            #self.viewer.add_geom(ground)
             self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, 
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
