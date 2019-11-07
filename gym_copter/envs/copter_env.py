@@ -67,19 +67,13 @@ class CopterEnv(gym.Env):
             sky = rect(SCREEN_WIDTH, SCREEN_HEIGHT)
             sky.set_color(0.5,0.8,1.0)
 
-            self.ground_size = int(np.sqrt(2) * SCREEN_WIDTH)
-            #ground = rect(self.ground_size, self.ground_size)
-            #ground.set_color(0.5, 0.7 , 0.3)
-            #groundtrans = rendering.Transform()
-            #ground.add_attr(groundtrans)
-
             self.viewer.add_geom(sky)
-            #self.viewer.add_geom(ground)
             self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, 
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
             self.foo = 0
+            self.ground = None
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -92,13 +86,20 @@ class CopterEnv(gym.Env):
         # We're using NED frame, so negate altitude before displaying
         self.altitude_label.text = "Alt: %5.2fm" % -location[2]
 
-        self.foo += .01
+        self.foo += 1
         offset = int(50 * np.sin(self.foo))
 
-        #groundtrans.set_translation(0, offset)
-        #groundtrans.set_rotation(np.pi/8)
-
         self.altitude_label.draw()
+
+        if not self.ground is None:
+            del self.ground
+
+        self.ground = self.viewer.draw_polygon( [
+            (self.foo,                  0),
+            (self.foo+600/30.0, 0),
+            (self.foo+600/30.0, 400/30.0),
+            (self.foo,                  400/30.0),
+            ], color=(0.5, 0.7, 0.3) )
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
