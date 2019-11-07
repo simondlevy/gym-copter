@@ -95,11 +95,7 @@ class CopterEnv(gym.Env):
             del self.ground
 
         self.ground = self.viewer.draw_polygon( [
-            (self.foo,                  0),
-            (self.foo+600/30.0, 0),
-            (self.foo+600/30.0, 400/30.0),
-            (self.foo,                  400/30.0),
-            ], color=(0.5, 0.7, 0.3) )
+            (self.foo, 0), (self.foo+20, 0), (self.foo+20, 10), (self.foo, 10),], color=(0.5, 0.7, 0.3) )
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
