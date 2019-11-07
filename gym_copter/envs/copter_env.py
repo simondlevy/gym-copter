@@ -53,15 +53,15 @@ class CopterEnv(gym.Env):
 
         # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/cartpole.py
 
-        SCREEN_WIDTH = 800
-        SCREEN_HEIGHT = 500
+        W = 800
+        H = 500
 
         if self.viewer is None:
 
             from gym.envs.classic_control import rendering
 
-            self.viewer = rendering.Viewer(SCREEN_WIDTH, SCREEN_HEIGHT)
-            sky = rendering.FilledPolygon([(0,SCREEN_HEIGHT), (0,0), (SCREEN_WIDTH,0), (SCREEN_WIDTH,SCREEN_HEIGHT)])
+            self.viewer = rendering.Viewer(W, H)
+            sky = rendering.FilledPolygon([(0,H), (0,0), (W,0), (W,H)])
             sky.set_color(0.5,0.8,1.0)
 
             self.viewer.add_geom(sky)
@@ -89,24 +89,17 @@ class CopterEnv(gym.Env):
         if not self.ground is None:
             del self.ground
 
-        # Corners of ground quadrilateral are constant
-        llx = 0
-        lly = 0
-        lrx = SCREEN_WIDTH
-        lry = 0
-        urx = SCREEN_WIDTH
-        ulx = 0
 
         # Center top of ground quadrilateral depends on pitch
-        y = SCREEN_HEIGHT/2 * (1 + np.sin(rotation[1]))
+        y = H/2 * (1 + np.sin(rotation[1]))
 
         # Left and right top of ground quadrilateral depend on roll
-        dy = SCREEN_WIDTH/2 * np.sin(rotation[0])
+        dy = W/2 * np.sin(rotation[0])
         ury = y + dy
         uly = y - dy
 
-        # Draw new ground quadrilateral
-        self.ground = self.viewer.draw_polygon([(llx,lly), (lrx,lry), (urx,ury), (ulx,uly),], color=(0.5, 0.7, 0.3) )
+        # Draw new ground quadrilateral:         LL     LR     UR     UL
+        self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
