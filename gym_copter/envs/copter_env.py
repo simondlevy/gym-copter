@@ -94,9 +94,16 @@ class CopterEnv(gym.Env):
         if not self.ground is None:
             del self.ground
 
-        self.ground = self.viewer.draw_polygon( [
-            (0, 0), (SCREEN_WIDTH, 0), (SCREEN_WIDTH, SCREEN_HEIGHT/2), (0, SCREEN_HEIGHT/2),], color=(0.5, 0.7, 0.3) )
-            # LL    LR                 UR                               UL
+        llx = 0
+        lly = 0
+        lrx = SCREEN_WIDTH
+        lry = 0
+        urx = SCREEN_WIDTH
+        ury = SCREEN_HEIGHT / 2
+        ulx = 0
+        uly = SCREEN_HEIGHT / 2
+
+        self.ground = self.viewer.draw_polygon([(llx,lly), (lrx,lry), (urx,ury), (ulx,uly),], color=(0.5, 0.7, 0.3) )
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
