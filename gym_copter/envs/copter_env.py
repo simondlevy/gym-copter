@@ -72,12 +72,12 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
-            self.foo = 0
             self.ground = None
 
         # Detect window close
         if not self.viewer.isopen: return None
 
+        # Get vehicle state
         state = self.dynamics.getState()
         pose = state.pose
         location = pose.location
@@ -86,16 +86,13 @@ class CopterEnv(gym.Env):
         # We're using NED frame, so negate altitude before displaying
         self.altitude_label.text = "Alt: %5.2fm" % -location[2]
 
-        self.foo += 1
-        offset = int(50 * np.sin(self.foo))
-
         self.altitude_label.draw()
 
+        # Remove previoud ground quadrilateral
         if not self.ground is None:
             del self.ground
 
-        phi = np.pi / 8
-
+        # Corners of ground quadrilateral are constant
         llx = 0
         lly = 0
         lrx = SCREEN_WIDTH
@@ -103,13 +100,15 @@ class CopterEnv(gym.Env):
         urx = SCREEN_WIDTH
         ulx = 0
 
-        y = SCREEN_HEIGHT / 2
+        # Center top of ground quadrilateral depends on pitch
+        y = SCREEN_HEIGHT/2 * (1 + np.sin(rotation[1]))
 
-        dy = SCREEN_WIDTH/2 * np.sin(phi)
-
+        # Left and right top of ground quadrilateral depend on roll
+        dy = SCREEN_WIDTH/2 * np.sin(rotation[0])
         ury = y + dy
         uly = y - dy
 
+        # Draw new ground quadrilateral
         self.ground = self.viewer.draw_polygon([(llx,lly), (lrx,lry), (urx,ury), (ulx,uly),], color=(0.5, 0.7, 0.3) )
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
