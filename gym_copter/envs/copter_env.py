@@ -60,11 +60,8 @@ class CopterEnv(gym.Env):
 
             from gym.envs.classic_control import rendering
 
-            def rect(r, b, l=0, t=0):
-                return rendering.FilledPolygon([(l,b), (l,t), (r,t), (r,b)])
-
             self.viewer = rendering.Viewer(SCREEN_WIDTH, SCREEN_HEIGHT)
-            sky = rect(SCREEN_WIDTH, SCREEN_HEIGHT)
+            sky = rendering.FilledPolygon([(0,SCREEN_HEIGHT), (0,0), (SCREEN_WIDTH,0), (SCREEN_WIDTH,SCREEN_HEIGHT)])
             sky.set_color(0.5,0.8,1.0)
 
             self.viewer.add_geom(sky)
