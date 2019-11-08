@@ -103,13 +103,12 @@ class CopterEnv(gym.Env):
         self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         res = 30
-        radius = 100
+        radius = 200
         points = []
-        for i in range(res):
-            ang = 2*np.pi*i / res
-            points.append((np.cos(ang)*radius, np.sin(ang)*radius))
-
-        self.viewer.draw_polyline(points)
+        for i in range(res+1):
+            ang = np.radians(60 + 60*i / res)
+            points.append((W/2+np.cos(ang)*radius, H-300+np.sin(ang)*radius))
+        self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
