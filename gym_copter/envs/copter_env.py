@@ -133,7 +133,9 @@ class CopterEnv(gym.Env):
         # Round heading to nearest 15 degrees
         heading = (self.heading // 15) * 15
 
-        print(heading)
+        tickvals = range(heading-60, heading+75, 15)
+
+        print(heading, list(tickvals))
         stdout.flush()
 
         self.heading = (self.heading+1) % 360
