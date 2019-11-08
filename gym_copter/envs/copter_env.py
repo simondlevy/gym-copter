@@ -140,8 +140,9 @@ class CopterEnv(gym.Env):
 
         self.heading = (self.heading+1) % 360
 
-        tick_labels = [pyglet.text.Label('%3d'%tickvals[i], x=i*self.w/15, y=self.h-20, font_size=20, 
-                anchor_x='left', anchor_y='center', color=(255,255,255,255)) for i in range(len(tickvals))]
+        n = len(tickvals)
+        tick_labels = [pyglet.text.Label('%3d'%tickvals[i], x=i/n*self.w+20, y=self.h-20, font_size=20, 
+                anchor_x='left', anchor_y='center', color=(255,255,255,255)) for i in range(n)]
         for tick_label in tick_labels:
             self.viewer.add_geom(_DrawText(tick_label))
         self.heading_widgets = tick_labels
