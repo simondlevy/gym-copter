@@ -132,22 +132,28 @@ class CopterEnv(gym.Env):
             self.viewer.geoms.pop()
 
         # Round heading to nearest 15 degrees
-        heading = (self.heading // 15) * 15
+        heading = int((self.heading // 15) * 15)
 
         tickvals = range(heading-60, heading+75, 15)
 
-        #print(heading, list(tickvals))
-
-        self.heading = (self.heading+1) % 360
+        print('%d %3.2f %d' % (heading, self.heading, (tickvals[-1]-tickvals[0])))
+        stdout.flush()
 
         n = len(tickvals)
-        tick_labels = [pyglet.text.Label('%3d'%(tickvals[i]%360), x=i/n*self.w+20, y=self.h-20, font_size=20, 
-                anchor_x='left', anchor_y='center', color=(255,255,255,255)) for i in range(n)]
+        tick_labels = [pyglet.text.Label(
+            '%3d'%(tickvals[i]%360), 
+            x=i/n*self.w+20 + (heading-self.heading)/120*self.w, 
+            y=self.h-20, 
+            font_size=20, 
+            anchor_x='left', 
+            anchor_y='center', 
+            color=(255,255,255,255)) 
+            for i in range(n)]
         for tick_label in tick_labels:
             self.viewer.add_geom(_DrawText(tick_label))
         self.heading_widgets = tick_labels
 
-        stdout.flush()
+        self.heading = (self.heading+.1) % 360
 
         #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
         #self.viewer.add_geom(line)
