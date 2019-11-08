@@ -115,8 +115,5 @@ class CopterEnv(gym.Env):
     def _show_heading(self, w, h):
         res = 30
         radius = 200
-        points = []
-        for i in range(res+1):
-            ang = np.radians(60 + 60*i / res)
-            points.append((w/2+np.cos(ang)*radius, h-300+np.sin(ang)*radius))
+        points = [(w/2+np.cos(np.radians(ang))*radius, h-300+np.sin(np.radians(ang))*radius) for ang in range(45,135)]
         self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
