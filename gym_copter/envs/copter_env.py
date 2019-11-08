@@ -70,6 +70,10 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
+            dy = 35
+            self.viewer.add_geom(self.viewer.draw_line((0,H-dy), (W,H-dy), color=(1.0,1.0,1.0)))
+            self.viewer.add_geom(self.viewer.draw_line((W/2,H-dy), (W/2,H-dy/2), color=(1.0,1.0,1.0)))
+
             # Ground will be replaced on each call to render()
             self.ground = None
 
@@ -113,11 +117,9 @@ class CopterEnv(gym.Env):
 
  
     def _show_heading(self, w, h):
+        return
         #r = 200
         #a0 = 45
         #dy = 250 
         #points = [(w/2+np.cos(np.radians(a))*r, h-dy+np.sin(np.radians(a))*r) for a in range(a0,180-a0+1)]
         #self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
-        dy = 35
-        self.viewer.draw_line((0,h-dy), (w,h-dy), color=(1.0,1.0,1.0))
-        self.viewer.draw_line((w/2,h-dy), (w/2,h-dy/2), color=(1.0,1.0,1.0))
