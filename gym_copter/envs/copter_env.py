@@ -12,6 +12,8 @@ import pyglet
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
+from sys import stdout
+
 # https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
 class _DrawText:
     def __init__(self, label:pyglet.text.Label):
@@ -29,6 +31,10 @@ class CopterEnv(gym.Env):
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.viewer = None
+        self.heading_widgets = []
+
+        # XXX Mock up heading for now
+        self.heading = 0
 
     def step(self, action):
 
@@ -58,6 +64,9 @@ class CopterEnv(gym.Env):
         W = 800
         H = 500
 
+        self.w = W
+        self.h = H
+
         if self.viewer is None:
 
             self.viewer = rendering.Viewer(W, H)
@@ -70,18 +79,12 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
+            # Add a horizontal line at the top for the yaw display
             dy = 35
             self.viewer.add_geom(self.viewer.draw_line((0,H-dy), (W,H-dy), color=(1.0,1.0,1.0)))
-            line = self.viewer.draw_line((W/2,H-dy), (W/2,H-dy/2), color=(1.0,1.0,1.0))
-            self.viewer.add_geom(line)
-
-            self.linetrans = rendering.Transform()
-            line.add_attr(self.linetrans)
 
             # Ground will be replaced on each call to render()
             self.ground = None
-
-            self.foo = 0
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -113,10 +116,7 @@ class CopterEnv(gym.Env):
         self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         # Display heading
-        self._show_heading(W, H)
-
-        self.linetrans.set_translation(self.foo,0)
-        self.foo += 1
+        self._show_heading(rotation[2])
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
@@ -125,8 +125,22 @@ class CopterEnv(gym.Env):
         pass
 
  
-    def _show_heading(self, w, h):
-        return
+    def _show_heading(self, heading):
+
+        for item in self.heading_widgets:
+            del item
+
+        # Round heading to nearest 15 degrees
+        heading = (self.heading // 15) * 15
+
+        print(heading)
+        stdout.flush()
+
+        self.heading = (self.heading+1) % 360
+
+        #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
+        #self.viewer.add_geom(line)
+
         #r = 200
         #a0 = 45
         #dy = 250 
