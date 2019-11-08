@@ -102,15 +102,21 @@ class CopterEnv(gym.Env):
         # Draw new ground quadrilateral:         LL     LR     UR     UL
         self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
+        # Display heading
+        self._show_heading(W, H)
+
+        return self.viewer.render(return_rgb_array = mode=='rgb_array')
+
+    def close(self):
+
+        pass
+
+ 
+    def _show_heading(self, w, h):
         res = 30
         radius = 200
         points = []
         for i in range(res+1):
             ang = np.radians(60 + 60*i / res)
-            points.append((W/2+np.cos(ang)*radius, H-300+np.sin(ang)*radius))
+            points.append((w/2+np.cos(ang)*radius, h-300+np.sin(ang)*radius))
         self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
-
-        return self.viewer.render(return_rgb_array = mode=='rgb_array')
-
-    def close(self):
-        pass
