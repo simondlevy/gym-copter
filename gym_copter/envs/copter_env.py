@@ -127,18 +127,26 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self, heading):
 
+        # Remove previous widgets
         for item in self.heading_widgets:
-            del item
+            self.viewer.geoms.pop()
 
         # Round heading to nearest 15 degrees
         heading = (self.heading // 15) * 15
 
         tickvals = range(heading-60, heading+75, 15)
 
-        print(heading, list(tickvals))
-        stdout.flush()
+        #print(heading, list(tickvals))
 
         self.heading = (self.heading+1) % 360
+
+        tick_labels = [pyglet.text.Label('%3d'%tickvals[i], x=i*self.w/15, y=self.h-40, font_size=14, 
+                anchor_x='left', anchor_y='center', color=(0,0,0,255)) for i in range(len(tickvals))]
+        for tick_label in tick_labels:
+            self.viewer.add_geom(_DrawText(tick_label))
+        self.heading_widgets = tick_labels
+
+        stdout.flush()
 
         #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
         #self.viewer.add_geom(line)
