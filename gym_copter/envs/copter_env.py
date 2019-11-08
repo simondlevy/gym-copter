@@ -120,3 +120,4 @@ class CopterEnv(gym.Env):
         #self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
         dy = 35
         self.viewer.draw_line((0,h-dy), (w,h-dy), color=(1.0,1.0,1.0))
+        self.viewer.draw_line((w/2,h-dy), (w/2,h-dy/2), color=(1.0,1.0,1.0))
