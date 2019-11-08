@@ -72,10 +72,16 @@ class CopterEnv(gym.Env):
 
             dy = 35
             self.viewer.add_geom(self.viewer.draw_line((0,H-dy), (W,H-dy), color=(1.0,1.0,1.0)))
-            self.viewer.add_geom(self.viewer.draw_line((W/2,H-dy), (W/2,H-dy/2), color=(1.0,1.0,1.0)))
+            line = self.viewer.draw_line((W/2,H-dy), (W/2,H-dy/2), color=(1.0,1.0,1.0))
+            self.viewer.add_geom(line)
+
+            self.linetrans = rendering.Transform()
+            line.add_attr(self.linetrans)
 
             # Ground will be replaced on each call to render()
             self.ground = None
+
+            self.foo = 0
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -108,6 +114,9 @@ class CopterEnv(gym.Env):
 
         # Display heading
         self._show_heading(W, H)
+
+        self.linetrans.set_translation(self.foo,0)
+        self.foo += 1
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
