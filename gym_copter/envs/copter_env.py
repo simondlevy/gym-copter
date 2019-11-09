@@ -86,6 +86,11 @@ class CopterEnv(gym.Env):
             # Ground will be replaced on each call to render()
             self.ground = None
 
+            # Add heading labels that will slide on each call to render()
+            self.heading_label = pyglet.text.Label('0', font_size=20, x=W/2, y=H-17, color=(255,255,255,255),
+                    anchor_x='center', anchor_y='center')
+            self.viewer.add_geom(_DrawText(self.heading_label))
+
         # Detect window close
         if not self.viewer.isopen: return None
 
@@ -127,32 +132,8 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self, heading):
 
-        # Remove previous widgets
-        for item in self.heading_widgets:
-            self.viewer.geoms.pop()
-
-        # Round heading to nearest 15 degrees
-        heading = int((self.heading // 15) * 15)
-
-        tickvals = range(heading-60, heading+75, 15)
-
-        print('%d %3.2f %d' % (heading, self.heading, (tickvals[-1]-tickvals[0])))
+        self.heading_label.x += 1
         stdout.flush()
-
-        n = len(tickvals)
-        tick_labels = [pyglet.text.Label(
-            '%3d'%(tickvals[i]%360), 
-            x=i/n*self.w+20 + (heading-self.heading)/120*self.w, 
-            y=self.h-20, 
-            font_size=20, 
-            anchor_x='left', 
-            anchor_y='center', 
-            color=(255,255,255,255)) 
-            for i in range(n)]
-        for tick_label in tick_labels:
-            self.viewer.add_geom(_DrawText(tick_label))
-        self.heading_widgets = tick_labels
-
         self.heading = (self.heading+.1) % 360
 
         #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
