@@ -61,11 +61,17 @@ class CopterEnv(gym.Env):
 
         from gym.envs.classic_control import rendering
 
+        # Screen size, pixels
         W = 800
         H = 500
 
+        # Heading span, degrees
+        HEADING_SPAN = 120
+
         self.w = W
         self.h = H
+
+        self.heading_span = HEADING_SPAN
 
         if self.viewer is None:
 
@@ -87,7 +93,7 @@ class CopterEnv(gym.Env):
             self.ground = None
 
             # Add heading labels that will slide on each call to render()
-            self.heading_label = pyglet.text.Label('0', font_size=20, x=W/2, y=H-17, color=(255,255,255,255),
+            self.heading_label = pyglet.text.Label('0', font_size=20, y=H-17, color=(255,255,255,255),
                     anchor_x='center', anchor_y='center')
             self.viewer.add_geom(_DrawText(self.heading_label))
 
@@ -132,15 +138,11 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self, heading):
 
-        self.heading_label.x += 1
+        self.heading_label.x = self.w/2 - self.w * self.heading/self.heading_span
+        print('%3.2f %3.2f' % (self.heading, self.heading_label.x))
         stdout.flush()
-        self.heading = (self.heading+.1) % 360
+
+        self.heading = (self.heading+.01) % 360
 
         #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
         #self.viewer.add_geom(line)
-
-        #r = 200
-        #a0 = 45
-        #dy = 250 
-        #points = [(w/2+np.cos(np.radians(a))*r, h-dy+np.sin(np.radians(a))*r) for a in range(a0,180-a0+1)]
-        #self.viewer.draw_polyline(points, color=(1.0,1.0,1.0), linewidth=2)
