@@ -93,9 +93,10 @@ class CopterEnv(gym.Env):
             self.ground = None
 
             # Add heading labels that will slide on each call to render()
-            self.heading_label = pyglet.text.Label('0', font_size=20, y=H-17, color=(255,255,255,255),
-                    anchor_x='center', anchor_y='center')
-            self.viewer.add_geom(_DrawText(self.heading_label))
+            self.heading_labels = [pyglet.text.Label('%3d'%a, font_size=20, y=H-17, color=(255,255,255,255),
+                    anchor_x='center', anchor_y='center') for a in range(0,360,15)]
+            for heading_label in self.heading_labels:
+                self.viewer.add_geom(_DrawText(heading_label))
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -138,8 +139,8 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self, heading):
 
-        self.heading_label.x = self.w/2 - self.w * (self.heading-float(self.heading_label.text))/self.heading_span
-        print('%3.2f %3.2f' % (self.heading, self.heading_label.x))
+        self.heading_labels[0].x = self.w/2 - self.w * (self.heading-float(self.heading_labels[0].text))/self.heading_span
+        print('%3.2f %3.2f' % (self.heading, self.heading_labels[0].x))
         stdout.flush()
 
         self.heading = (self.heading+.01) % 360
