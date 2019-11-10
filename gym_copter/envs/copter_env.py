@@ -157,9 +157,9 @@ class CopterEnv(gym.Env):
             x = self.w/2 - (self.heading - heading) * pixels_per_degree
             if x < 0:
                 heading += 360
-            if heading > 330 and x > 2*self.w:
+            if heading >= 330 and x > self.w:
+                print(self.heading, heading, int(x))
                 heading -= 360
-                print(self.heading, x)
             x = self.w/2 - (self.heading - heading) * pixels_per_degree
             heading_label.x = x
 
