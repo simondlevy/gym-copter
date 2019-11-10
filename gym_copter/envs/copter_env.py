@@ -98,6 +98,9 @@ class CopterEnv(gym.Env):
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
 
+            line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
+            self.viewer.add_geom(line)
+
         # Detect window close
         if not self.viewer.isopen: return None
 
@@ -108,7 +111,8 @@ class CopterEnv(gym.Env):
         rotation = pose.rotation
 
         # We're using NED frame, so negate altitude before displaying
-        self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+        #self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+        self.altitude_label.text = "Hdg: %3.0f" % self.heading
 
         self.altitude_label.draw()
 
@@ -124,27 +128,29 @@ class CopterEnv(gym.Env):
         ury = y + dy
         uly = y - dy
 
-        # Draw new ground quadrilateral:         LL     LR     UR     UL
+        # Draw new ground quadrilateral:         LL     LR     UR       UL
         self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         # Display heading
-        self._show_heading(rotation[2])
+        self._show_heading()
+
+        if self.heading < 180:
+            self.heading = (self.heading+0.2)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def close(self):
 
         pass
-
  
-    def _show_heading(self, heading):
+    def _show_heading(self):
 
+        pixels_per_degree = 9.95
+ 
         for heading_label in self.heading_labels:
-            heading_label.x = self.w/2 - self.w * (self.heading-float(heading_label.text))/self.heading_span
-        print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
+            heading = float(heading_label.text)
+            heading_label.x = self.w/2 - (self.heading - heading) * pixels_per_degree
+
+        #print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
+
         stdout.flush()
-
-        self.heading = (self.heading+.01) % 360
-
-        #line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
-        #self.viewer.add_geom(line)
