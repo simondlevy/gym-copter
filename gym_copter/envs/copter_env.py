@@ -138,7 +138,7 @@ class CopterEnv(gym.Env):
         if self.heading < 360:
             if not self.foo:
                 self.heading = (self.heading + 1) % 360
-            if self.heading == 15: 
+            if self.heading == 0: 
                 self.foo = True
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
@@ -157,11 +157,9 @@ class CopterEnv(gym.Env):
             x = self.w/2 - (self.heading - heading) * pixels_per_degree
             if x < 0:
                 heading += 360
+            if heading_label.text == '345' and x > 800:
+                print(self.heading, x)
             x = self.w/2 - (self.heading - heading) * pixels_per_degree
             heading_label.x = x
-
-            if heading_label.text == '330':
-                print(int(x))
-            #print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
 
         stdout.flush()
