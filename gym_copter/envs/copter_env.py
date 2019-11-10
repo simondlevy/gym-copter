@@ -141,7 +141,7 @@ class CopterEnv(gym.Env):
 
         for heading_label in self.heading_labels:
             heading_label.x = self.w/2 - self.w * (self.heading-float(heading_label.text))/self.heading_span
-        print('%3.2f %3.2f' % (self.heading, self.heading_labels[0].x))
+        print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
         stdout.flush()
 
         self.heading = (self.heading+.01) % 360
