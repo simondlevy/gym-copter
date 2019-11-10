@@ -139,7 +139,8 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self, heading):
 
-        self.heading_labels[0].x = self.w/2 - self.w * (self.heading-float(self.heading_labels[0].text))/self.heading_span
+        for heading_label in self.heading_labels:
+            heading_label.x = self.w/2 - self.w * (self.heading-float(heading_label.text))/self.heading_span
         print('%3.2f %3.2f' % (self.heading, self.heading_labels[0].x))
         stdout.flush()
 
