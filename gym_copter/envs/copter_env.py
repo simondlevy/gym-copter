@@ -34,7 +34,8 @@ class CopterEnv(gym.Env):
         self.heading_widgets = []
 
         # XXX Mock up heading for now
-        self.heading = 0 
+        self.heading = 300 
+        self.foo = False
 
     def step(self, action):
 
@@ -134,7 +135,11 @@ class CopterEnv(gym.Env):
         # Display heading
         self._show_heading()
 
-        self.heading = (self.heading + 1) % 360
+        if self.heading < 360:
+            if not self.foo:
+                self.heading = (self.heading + 1) % 360
+            if self.heading == 15: 
+                self.foo = True
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
@@ -152,9 +157,11 @@ class CopterEnv(gym.Env):
             x = self.w/2 - (self.heading - heading) * pixels_per_degree
             if x < 0:
                 heading += 360
-                x = self.w/2 - (self.heading - heading) * pixels_per_degree
+            x = self.w/2 - (self.heading - heading) * pixels_per_degree
             heading_label.x = x
 
-        print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
+            if heading_label.text == '330':
+                print(int(x))
+            #print('%3.2f %3.2f %s' % (self.heading, self.heading_labels[0].x, self.heading_labels[0].text))
 
         stdout.flush()
