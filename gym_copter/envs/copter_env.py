@@ -123,14 +123,11 @@ class CopterEnv(gym.Env):
             [(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
             color=(1.0, 0.0, 0.0)))
 
-        # Add heading labels that will slide on each call to render()
-        for heading_label in self.heading_labels:
-            self.viewer.add_onetime(_DrawText(heading_label))
-
         # Display heading
-        for i in range(24):
+        for i,heading_label in enumerate(self.heading_labels):
             x = (self.w/2 - np.degrees(rotation[2])*5.333333 + self.heading_spacing*i) % 1920
-            self.heading_labels[i].x = x
+            self.viewer.add_onetime(_DrawText(heading_label))
+            heading_label.x = x
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
