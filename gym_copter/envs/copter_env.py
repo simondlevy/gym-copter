@@ -131,9 +131,12 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
+            print(location[2])
             y = self.h/2 
             self.viewer.add_onetime(_DrawText(altitude_label))
             altitude_label.y = y
+
+        stdout.flush()
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
