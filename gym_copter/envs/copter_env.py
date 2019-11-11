@@ -149,6 +149,6 @@ class CopterEnv(gym.Env):
         pixels_per_degree = 9.9875
  
         for heading_label in self.heading_labels:
-            heading_label.x = (heading_label.x - 1) % (2*self.w-self.heading_spacing/2)
+            heading_label.x = (heading_label.x + 1) % (2*self.w-self.heading_spacing/2)
 
         stdout.flush()
