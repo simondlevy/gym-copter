@@ -34,7 +34,7 @@ class CopterEnv(gym.Env):
         self.heading_widgets = []
 
         # XXX Mock up heading for now
-        self.heading = 0
+        self.heading = 225 
 
     def step(self, action):
 
@@ -95,8 +95,8 @@ class CopterEnv(gym.Env):
             self.ground = None
 
             # Add heading labels that will slide on each call to render()
-            self.heading_labels = [pyglet.text.Label('%3d'%(c*15), font_size=20, x=self.heading_spacing*c, y=H-17, 
-                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(0,24)]
+            self.heading_labels = [pyglet.text.Label('%3d'%(c*15), font_size=20, y=H-17, 
+                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
 
@@ -136,7 +136,7 @@ class CopterEnv(gym.Env):
         # Display heading
         self._show_heading()
 
-        self.heading = (self.heading + 1) % 360
+        #self.heading = (self.heading + 1) % 360
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
@@ -146,10 +146,7 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self):
 
-        # XXX should be able to derive this
-        pixels_per_degree = 9.9875
- 
-        for heading_label in self.heading_labels:
-            heading_label.x = (heading_label.x + 1) % 1920
+        for i,heading_label in enumerate(self.heading_labels):
+            heading_label.x = (self.w/2 - self.heading*5.333333 + self.heading_spacing*i) % 1920
 
         stdout.flush()
