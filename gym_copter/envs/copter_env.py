@@ -34,7 +34,7 @@ class CopterEnv(gym.Env):
         self.heading_widgets = []
 
         # XXX Mock up heading for now
-        self.heading = 225 
+        self.heading = 90
 
     def step(self, action):
 
@@ -88,8 +88,11 @@ class CopterEnv(gym.Env):
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
             # Add a horizontal line at the top for the yaw display
-            dy = 35
-            self.viewer.add_geom(self.viewer.draw_line((0,H-dy), (W,H-dy), color=(1.0,1.0,1.0)))
+            self.dy = 35
+            self.viewer.add_geom(self.viewer.draw_line((0,H-self.dy), (W,H-self.dy), color=(1.0,1.0,1.0)))
+            self.viewer.add_geom(self.viewer.draw_polygon([(self.w/2-10,self.h-40), (self.w/2+10,self.h-40), (400,self.h-20)], 
+                color=(1.0, 0.0, 0.0)))
+
 
             # Ground will be replaced on each call to render()
             self.ground = None
@@ -99,9 +102,6 @@ class CopterEnv(gym.Env):
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
-
-            line = self.viewer.draw_line((self.w/2,self.h-dy), (self.w/2,self.h-dy/2), color=(1.0,1.0,1.0))
-            self.viewer.add_geom(line)
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -135,7 +135,7 @@ class CopterEnv(gym.Env):
         # Display heading
         self._show_heading()
 
-        #self.heading = (self.heading + 1) % 360
+        self.heading = (self.heading + .01) % 360
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
@@ -145,7 +145,8 @@ class CopterEnv(gym.Env):
  
     def _show_heading(self):
 
-        for i,heading_label in enumerate(self.heading_labels):
-            heading_label.x = (self.w/2 - self.heading*5.333333 + self.heading_spacing*i) % 1920
+        for i in range(24):
+            x = (self.w/2 - self.heading*5.333333 + self.heading_spacing*i) % 1920
+            self.heading_labels[i].x = x
 
         stdout.flush()
