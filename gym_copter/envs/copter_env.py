@@ -76,14 +76,18 @@ class CopterEnv(gym.Env):
 
             self.viewer = rendering.Viewer(W, H)
 
+            # Add sky as backround
             sky = rendering.FilledPolygon([(0,H), (0,0), (W,0), (W,H)])
             sky.set_color(0.5,0.8,1.0)
             self.viewer.add_geom(sky)
 
+            # Create labels for heading
             self.heading_labels = [pyglet.text.Label(('%d'%(c*15)).center(3), font_size=20, y=H-17, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
 
-            self.foo = 0
+            # Create labels for altitude
+            self.altitude_labels = [pyglet.text.Label(('%d'%(c*5)).center(3), font_size=20, x=W-70, 
+                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(200)]
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -95,8 +99,7 @@ class CopterEnv(gym.Env):
         rotation = pose.rotation
 
         # Center top of ground quadrilateral depends on pitch
-        y = H/2 * (1 + np.sin(self.foo)) #rotation[1]))
-        self.foo += .01
+        y = H/2 * (1 + np.sin(rotation[1]))
 
         # Left and right top of ground quadrilateral depend on roll
         dy = W/2 * np.sin(rotation[0])
@@ -114,9 +117,6 @@ class CopterEnv(gym.Env):
         b = h2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
 
-        self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, anchor_x='left', anchor_y='center', color=(0,0,0,255))
-        self.viewer.add_onetime(_DrawText(self.altitude_label))
-
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.add_onetime(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
         self.viewer.add_onetime(self.viewer.draw_polygon(
@@ -128,6 +128,12 @@ class CopterEnv(gym.Env):
             x = (self.w/2 - np.degrees(rotation[2])*5.333333 + self.heading_spacing*i) % 1920
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
+
+        # Display altitude
+        for i,altitude_label in enumerate(self.altitude_labels):
+            y = self.h/2 
+            self.viewer.add_onetime(_DrawText(altitude_label))
+            altitude_label.y = y
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
