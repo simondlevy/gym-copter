@@ -34,8 +34,7 @@ class CopterEnv(gym.Env):
         self.heading_widgets = []
 
         # XXX Mock up heading for now
-        self.heading = 300 
-        self.foo = False
+        self.heading = 315
 
     def step(self, action):
 
@@ -72,6 +71,8 @@ class CopterEnv(gym.Env):
         self.w = W
         self.h = H
 
+        self.heading_spacing = 60
+
         self.heading_span = HEADING_SPAN
 
         if self.viewer is None:
@@ -94,8 +95,8 @@ class CopterEnv(gym.Env):
             self.ground = None
 
             # Add heading labels that will slide on each call to render()
-            self.heading_labels = [pyglet.text.Label('%3d'%a, font_size=20, y=H-17, color=(255,255,255,255),
-                    anchor_x='center', anchor_y='center') for a in range(0,360,15)]
+            self.heading_labels = [pyglet.text.Label('%c'%chr(c+65), font_size=20, x=self.heading_spacing*c, y=H-17, 
+                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(0,26)]
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
 
@@ -113,7 +114,6 @@ class CopterEnv(gym.Env):
 
         # We're using NED frame, so negate altitude before displaying
         #self.altitude_label.text = "Alt: %5.2fm" % -location[2]
-        self.altitude_label.text = "Hdg: %3.0f" % self.heading
 
         self.altitude_label.draw()
 
@@ -135,11 +135,7 @@ class CopterEnv(gym.Env):
         # Display heading
         self._show_heading()
 
-        if self.heading < 360:
-            if not self.foo:
-                self.heading = (self.heading + 1) % 360
-            if self.heading == 0: 
-                self.foo = True
+        self.heading = (self.heading + 1) % 360
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
@@ -153,14 +149,6 @@ class CopterEnv(gym.Env):
         pixels_per_degree = 9.9875
  
         for heading_label in self.heading_labels:
-            heading = float(heading_label.text)
-            x = self.w/2 - (self.heading - heading) * pixels_per_degree
-            if x < 0:
-                heading += 360
-            if heading >= 330 and x > self.w:
-                print(self.heading, heading, int(x))
-                heading -= 360
-            x = self.w/2 - (self.heading - heading) * pixels_per_degree
-            heading_label.x = x
+            heading_label.x = (heading_label.x - 1) % (2*self.w-self.heading_spacing/2)
 
         stdout.flush()
