@@ -90,7 +90,7 @@ class CopterEnv(gym.Env):
             # Add a horizontal line at the top for the yaw display
             self.dy = 35
             self.viewer.add_geom(self.viewer.draw_line((0,H-self.dy), (W,H-self.dy), color=(1.0,1.0,1.0)))
-            self.viewer.add_geom(self.viewer.draw_polygon([(self.w/2-10,self.h-40), (self.w/2+10,self.h-40), (400,self.h-20)], 
+            self.viewer.add_geom(self.viewer.draw_polygon([(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
                 color=(1.0, 0.0, 0.0)))
 
 
