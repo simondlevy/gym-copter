@@ -80,24 +80,10 @@ class CopterEnv(gym.Env):
             sky.set_color(0.5,0.8,1.0)
             self.viewer.add_geom(sky)
 
-            self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, 
-                    anchor_x='left', anchor_y='center', color=(0,0,0,255))
-            self.viewer.add_geom(_DrawText(self.altitude_label))
-
-            # Add a horizontal line and pointer at the top for the heading display
-            self.viewer.add_geom(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
-            self.viewer.add_geom(self.viewer.draw_polygon(
-                [(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
-                color=(1.0, 0.0, 0.0)))
-
-            # Add heading labels that will slide on each call to render()
             self.heading_labels = [pyglet.text.Label(('%d'%(c*15)).center(3), font_size=20, y=H-17, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
-            for heading_label in self.heading_labels:
-                self.viewer.add_geom(_DrawText(heading_label))
 
-            # Ground will be replaced on each call to render()
-            self.ground = None
+            self.foo = 0
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -108,17 +94,9 @@ class CopterEnv(gym.Env):
         location = pose.location
         rotation = pose.rotation
 
-        # We're using NED frame, so negate altitude before displaying
-        self.altitude_label.text = "%5.2fm" % -location[2]
-
-        self.altitude_label.draw()
-
-        # Remove previoud ground quadrilateral
-        if not self.ground is None:
-            del self.ground
-
         # Center top of ground quadrilateral depends on pitch
-        y = H/2 * (1 + np.sin(rotation[1]))
+        y = H/2 * (1 + np.sin(self.foo)) #rotation[1]))
+        self.foo += .01
 
         # Left and right top of ground quadrilateral depend on roll
         dy = W/2 * np.sin(rotation[0])
@@ -126,7 +104,7 @@ class CopterEnv(gym.Env):
         uly = y - dy
 
         # Draw new ground quadrilateral:         LL     LR     UR       UL
-        self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
+        self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         # Add a box on the right side for the altitude gauge
         h2 = 150
@@ -136,11 +114,23 @@ class CopterEnv(gym.Env):
         b = h2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
 
+        self.altitude_label = pyglet.text.Label('0000', font_size=24, x=600, y=300, anchor_x='left', anchor_y='center', color=(0,0,0,255))
+        self.viewer.add_onetime(_DrawText(self.altitude_label))
+
+        # Add a horizontal line and pointer at the top for the heading display
+        self.viewer.add_onetime(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
+        self.viewer.add_onetime(self.viewer.draw_polygon(
+            [(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
+            color=(1.0, 0.0, 0.0)))
+
+        # Add heading labels that will slide on each call to render()
+        for heading_label in self.heading_labels:
+            self.viewer.add_onetime(_DrawText(heading_label))
+
         # Display heading
         for i in range(24):
             x = (self.w/2 - np.degrees(rotation[2])*5.333333 + self.heading_spacing*i) % 1920
             self.heading_labels[i].x = x
-
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
