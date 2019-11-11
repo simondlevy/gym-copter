@@ -95,7 +95,7 @@ class CopterEnv(gym.Env):
             self.ground = None
 
             # Add heading labels that will slide on each call to render()
-            self.heading_labels = [pyglet.text.Label('%c'%chr(c+65), font_size=20, x=self.heading_spacing*c, y=H-17, 
+            self.heading_labels = [pyglet.text.Label('%3d'%(c*15), font_size=20, x=self.heading_spacing*c, y=H-17, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(0,24)]
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
