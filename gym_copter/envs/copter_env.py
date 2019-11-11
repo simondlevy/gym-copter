@@ -33,9 +33,6 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
-        # XXX Mock up heading for now
-        self.heading = 90
-
     def step(self, action):
 
         self.dynamics.setMotors(action)
@@ -87,21 +84,20 @@ class CopterEnv(gym.Env):
                     anchor_x='left', anchor_y='center', color=(0,0,0,255))
             self.viewer.add_geom(_DrawText(self.altitude_label))
 
-            # Add a horizontal line at the top for the yaw display
-            self.dy = 35
-            self.viewer.add_geom(self.viewer.draw_line((0,H-self.dy), (W,H-self.dy), color=(1.0,1.0,1.0)))
-            self.viewer.add_geom(self.viewer.draw_polygon([(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
+            # Add a horizontal line and pointer at the top for the heading display
+            self.viewer.add_geom(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
+            self.viewer.add_geom(self.viewer.draw_polygon(
+                [(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
                 color=(1.0, 0.0, 0.0)))
 
-
-            # Ground will be replaced on each call to render()
-            self.ground = None
-
             # Add heading labels that will slide on each call to render()
-            self.heading_labels = [pyglet.text.Label('%3d'%(c*15), font_size=20, y=H-17, 
+            self.heading_labels = [pyglet.text.Label(('%d'%(c*15)).center(3), font_size=20, y=H-17, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
             for heading_label in self.heading_labels:
                 self.viewer.add_geom(_DrawText(heading_label))
+
+            # Ground will be replaced on each call to render()
+            self.ground = None
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -113,7 +109,7 @@ class CopterEnv(gym.Env):
         rotation = pose.rotation
 
         # We're using NED frame, so negate altitude before displaying
-        self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+        self.altitude_label.text = "%5.2fm" % -location[2]
 
         self.altitude_label.draw()
 
@@ -132,21 +128,22 @@ class CopterEnv(gym.Env):
         # Draw new ground quadrilateral:         LL     LR     UR       UL
         self.ground = self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
-        # Display heading
-        self._show_heading()
+        # Add a box on the right side for the altitude gauge
+        h2 = 150
+        l = self.w - 100
+        r = self.w - 10
+        t = self.h - h2
+        b = h2
+        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
 
-        self.heading = (self.heading + .01) % 360
+        # Display heading
+        for i in range(24):
+            x = (self.w/2 - np.degrees(rotation[2])*5.333333 + self.heading_spacing*i) % 1920
+            self.heading_labels[i].x = x
+
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def close(self):
 
         pass
- 
-    def _show_heading(self):
-
-        for i in range(24):
-            x = (self.w/2 - self.heading*5.333333 + self.heading_spacing*i) % 1920
-            self.heading_labels[i].x = x
-
-        stdout.flush()
