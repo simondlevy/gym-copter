@@ -71,7 +71,7 @@ class CopterEnv(gym.Env):
         self.w = W
         self.h = H
 
-        self.heading_spacing = 65
+        self.heading_spacing = 80
 
         self.heading_span = HEADING_SPAN
 
