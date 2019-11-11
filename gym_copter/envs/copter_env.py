@@ -34,7 +34,7 @@ class CopterEnv(gym.Env):
         self.heading_widgets = []
 
         # XXX Mock up heading for now
-        self.heading = 315
+        self.heading = 0
 
     def step(self, action):
 
@@ -114,6 +114,7 @@ class CopterEnv(gym.Env):
 
         # We're using NED frame, so negate altitude before displaying
         #self.altitude_label.text = "Alt: %5.2fm" % -location[2]
+        self.altitude_label.text = "Hdg: %3.0f" % self.heading
 
         self.altitude_label.draw()
 
