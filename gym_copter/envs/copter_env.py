@@ -140,7 +140,7 @@ class CopterEnv(gym.Env):
 
         print(self.altitude)
         stdout.flush()
-        #self.altitude += .01
+        self.altitude += .01
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
