@@ -90,7 +90,7 @@ class CopterEnv(gym.Env):
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
 
             # Create labels for altitude
-            self.altitude_labels = [pyglet.text.Label(('%d'%a).center(3), font_size=20, x=W-70, 
+            self.altitude_labels = [pyglet.text.Label(('%d'%a).center(3), font_size=20, x=W-60, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for a in range(-200,200,5)]
 
         # Detect window close
@@ -135,9 +135,8 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
-            y = self.h/2 - self.altitude*5.333333 + self.altitude_spacing*i
             self.viewer.add_onetime(_DrawText(altitude_label))
-            altitude_label.y = y
+            altitude_label.y = self.h/2 - self.altitude*5.333333 + self.altitude_spacing*i
 
         #self.altitude += .5
        
