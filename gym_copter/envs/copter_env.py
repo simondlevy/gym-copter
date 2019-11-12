@@ -33,6 +33,8 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
+        self.altitude = 0
+
     def step(self, action):
 
         self.dynamics.setMotors(action)
@@ -69,6 +71,8 @@ class CopterEnv(gym.Env):
         self.h = H
 
         self.heading_spacing = 80
+
+        self.altitude_spacing = 80
 
         self.heading_span = HEADING_SPAN
 
@@ -131,12 +135,12 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
-            print(location[2])
-            y = self.h/2 
+            y = self.h/2 - self.altitude*5.333333 + self.altitude_spacing*i
             self.viewer.add_onetime(_DrawText(altitude_label))
             altitude_label.y = y
 
-        stdout.flush()
+        self.altitude += 1
+       
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
