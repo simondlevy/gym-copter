@@ -64,17 +64,15 @@ class CopterEnv(gym.Env):
         W = 800
         H = 500
 
-        # Heading span, degrees
-        HEADING_SPAN = 120
+        # Altitude
+        ALTITUDE_SPAN_METERS    = 100
+        ALTITUDE_STEP_METERS    = 5
+        ALTITUDE_SPACING_PIXELS = 40
 
         self.w = W
         self.h = H
 
         self.heading_spacing = 80
-
-        self.altitude_spacing = 80
-
-        self.heading_span = HEADING_SPAN
 
         if self.viewer is None:
 
@@ -91,7 +89,8 @@ class CopterEnv(gym.Env):
 
             # Create labels for altitude
             self.altitude_labels = [pyglet.text.Label(('%d'%a).center(3), font_size=20, x=W-60, 
-                color=(255,255,255,255), anchor_x='center', anchor_y='center') for a in range(-200,200,5)]
+                color=(255,255,255,255), anchor_x='center', anchor_y='center') 
+                for a in range(-ALTITUDE_SPAN_METERS,ALTITUDE_SPAN_METERS,ALTITUDE_STEP_METERS)]
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -136,10 +135,9 @@ class CopterEnv(gym.Env):
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
             self.viewer.add_onetime(_DrawText(altitude_label))
-            altitude_label.y = self.h/2 - self.altitude*5.333333 + self.altitude_spacing*i
+            altitude_label.y = self.h/2 + ALTITUDE_SPACING_PIXELS * (i-len(self.altitude_labels)/2)
 
         #self.altitude += .5
-       
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
