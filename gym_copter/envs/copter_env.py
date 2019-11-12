@@ -33,7 +33,7 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
-        self.altitude = 0
+        self.altitude = -50
 
     def step(self, action):
 
@@ -65,7 +65,7 @@ class CopterEnv(gym.Env):
         H = 500
 
         # Altitude
-        ALTITUDE_SPAN_METERS    = 100
+        ALTITUDE_SPAN_METERS    = 200
         ALTITUDE_STEP_METERS    = 5
         ALTITUDE_SPACING_PIXELS = 40
 
@@ -134,11 +134,13 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
-            altitude_label.y = self.h/2 + ALTITUDE_SPACING_PIXELS * (i-len(self.altitude_labels)/2)
-            if b < altitude_label.y < t:
-                self.viewer.add_onetime(_DrawText(altitude_label))
+            dy = self.altitude/ALTITUDE_STEP_METERS * ALTITUDE_SPACING_PIXELS
+            altitude_label.y = self.h/2 + ALTITUDE_SPACING_PIXELS * (i-len(self.altitude_labels)/2) - dy
+            self.viewer.add_onetime(_DrawText(altitude_label))
 
-        #self.altitude += .5
+        print(self.altitude)
+        stdout.flush()
+        #self.altitude += .01
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
