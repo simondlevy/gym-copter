@@ -129,6 +129,7 @@ class CopterEnv(gym.Env):
         b = self.h/2 - h2
         t = self.h/2 + h2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
+        self.viewer.draw_polygon([(l,self.h/2-8), (l,self.h/2+8), (l+8,self.h/2)], color=(1.0,0.0,0.0))
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
