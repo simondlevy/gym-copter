@@ -134,8 +134,9 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
-            self.viewer.add_onetime(_DrawText(altitude_label))
             altitude_label.y = self.h/2 + ALTITUDE_SPACING_PIXELS * (i-len(self.altitude_labels)/2)
+            if b < altitude_label.y < t:
+                self.viewer.add_onetime(_DrawText(altitude_label))
 
         #self.altitude += .5
 
