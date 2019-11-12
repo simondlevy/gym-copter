@@ -113,14 +113,6 @@ class CopterEnv(gym.Env):
         # Draw new ground quadrilateral:         LL     LR     UR       UL
         self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
-        # Add a box on the right side for the altitude gauge
-        h2 = 150
-        l = self.w - 100
-        r = self.w - 10
-        t = self.h - h2
-        b = h2
-        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
-
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.add_onetime(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
         self.viewer.add_onetime(self.viewer.draw_polygon(
@@ -129,9 +121,17 @@ class CopterEnv(gym.Env):
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
-            x = (self.w/2 - np.degrees(rotation[2])*5.333333 + self.heading_spacing*i) % 1920
+            x = (self.w/2 - np.degrees(rotation[2]) * 5.333333 + self.heading_spacing*i) % 1920
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
+
+        # Add a box on the right side for the altitude gauge
+        h2 = 100
+        l = self.w - 100
+        r = self.w - 10
+        b = self.h/2 - h2
+        t = self.h/2 + h2
+        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
 
         # Display altitude
         for i,altitude_label in enumerate(self.altitude_labels):
@@ -139,7 +139,7 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(altitude_label))
             altitude_label.y = y
 
-        self.altitude += 1
+        #self.altitude += .5
        
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
