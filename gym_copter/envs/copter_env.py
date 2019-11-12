@@ -113,10 +113,8 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         # Add a horizontal line and pointer at the top for the heading display
-        self.viewer.add_onetime(self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0)))
-        self.viewer.add_onetime(self.viewer.draw_polygon(
-            [(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], 
-            color=(1.0, 0.0, 0.0)))
+        self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
+        self.viewer.draw_polygon([(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], color=(1.0,0.0,0.0))
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
@@ -124,7 +122,7 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
-        # Add a box on the right side for the altitude gauge
+        # Add a box on and pointer on the right side for the altitude gauge
         h2 = 100
         l = self.w - 100
         r = self.w - 10
