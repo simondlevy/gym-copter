@@ -33,8 +33,6 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
-        self.altitude = 0
-
     def step(self, action):
 
         self.dynamics.setMotors(action)
@@ -95,10 +93,8 @@ class CopterEnv(gym.Env):
         pose = state.pose
         location = pose.location
         rotation = pose.rotation
-        altitude = self.altitude #-location[2]
+        altitude = -location[2]
         heading  = np.degrees(rotation[2])
-
-        self.altitude += .1
 
         # Center top of ground quadrilateral depends on pitch
         y = H/2 * (1 + np.sin(rotation[1]))
@@ -110,6 +106,10 @@ class CopterEnv(gym.Env):
 
         # Draw new ground quadrilateral:         LL     LR     UR       UL
         self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
+
+        # Add a reticule for pitch
+        w = 40
+        self.viewer.draw_line((self.w/2-w,self.h/2), (self.w/2+w,self.h/2), color=(1.0,1.0,1.0), width=20)
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
