@@ -139,6 +139,8 @@ class CopterEnv(gym.Env):
 
             # Avoid putting tick label below bottom of box
             if dy > -100:
+
+                # Use a non-linear fade-in/out for numbers at top, bottom
                 alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
                 altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
                         font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
