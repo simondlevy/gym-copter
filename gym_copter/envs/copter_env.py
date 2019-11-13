@@ -129,17 +129,12 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         closest = self.altitude // 5 * 5
-        for k in range(-2,3):
+        for k in range(-1,3):
             tickval = closest+k*5
-            #dy = k * 40
             dy = 8*(tickval-self.altitude)
-            #print('%+3.2f %+3.2f %d' % (tickval-self.altitude, 8*(tickval-self.altitude), dy))
-            #stdout.flush()
             altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
                     font_size=20, color=(255,255,255,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(altitude_label))
-
-        #exit(0)
 
         self.altitude += .05
         self.heading = (self.heading + 1) % 360
