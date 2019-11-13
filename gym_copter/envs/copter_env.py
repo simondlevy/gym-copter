@@ -121,7 +121,7 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
-        # Add a box on and pointer on the right side for the altitude gauge
+        # Add a box and a pointer on the right side for the altitude gauge
         h2 = 100
         l = self.w - 100
         r = self.w - 10
@@ -130,19 +130,22 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
         self.viewer.draw_polygon([(l,self.h/2-8), (l,self.h/2+8), (l+8,self.h/2)], color=(1.0,0.0,0.0))
 
-        # Display altitude
+        # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
         for k in range(-2,3):
             tickval = closest+k*ALTITUDE_STEP_METERS
             diff = tickval - altitude
             dy = 8*diff
-            #print(tickval, altitude, abs(diff))
+            print(tickval, altitude, abs(diff))
             alpha = 255 #int(abs(diff) / ALTITUDE_STEP_METERS * 255)
 
+            # Avoid putting tick label below bottom of box
             if dy > -100:
                 altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
                         font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
                 self.viewer.add_onetime(_DrawText(altitude_label))
+
+         exit(0)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
