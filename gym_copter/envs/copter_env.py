@@ -33,6 +33,8 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
+        self.altitude = 0
+
     def step(self, action):
 
         self.dynamics.setMotors(action)
@@ -93,8 +95,10 @@ class CopterEnv(gym.Env):
         pose = state.pose
         location = pose.location
         rotation = pose.rotation
-        altitude = -location[2]
+        altitude = self.altitude #-location[2]
         heading  = np.degrees(rotation[2])
+
+        #self.altitude -= .1
 
         # Center top of ground quadrilateral depends on pitch
         y = H/2 * (1 + np.sin(rotation[1]))
@@ -128,13 +132,17 @@ class CopterEnv(gym.Env):
 
         # Display altitude
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
-        for k in range(-1,3):
+        for k in range(-2,3):
             tickval = closest+k*ALTITUDE_STEP_METERS
-            dy = 8*(tickval-altitude)
-            alpha = 127
-            altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
-                    font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
-            self.viewer.add_onetime(_DrawText(altitude_label))
+            diff = tickval - altitude
+            dy = 8*diff
+            #print(tickval, altitude, abs(diff))
+            alpha = 255 #int(abs(diff) / ALTITUDE_STEP_METERS * 255)
+
+            if dy > -100:
+                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
+                        font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
+                self.viewer.add_onetime(_DrawText(altitude_label))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
