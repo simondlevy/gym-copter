@@ -12,7 +12,7 @@ import numpy as np
 from time import sleep
 
 # Target 
-ALTITUDE_TARGET = 10
+ALTITUDE_TARGET = 100
 
 # PID params
 ALT_P = 1.0
