@@ -33,7 +33,8 @@ class CopterEnv(gym.Env):
         self.viewer = None
         self.heading_widgets = []
 
-        self.altitude = -50
+        self.heading = 0
+        self.altitude = 0
 
     def step(self, action):
 
@@ -87,11 +88,6 @@ class CopterEnv(gym.Env):
             self.heading_labels = [pyglet.text.Label(('%d'%(c*15)).center(3), font_size=20, y=H-17, 
                 color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
 
-            # Create labels for altitude
-            self.altitude_labels = [pyglet.text.Label(('%d'%a).center(3), font_size=20, x=W-60, 
-                color=(255,255,255,255), anchor_x='center', anchor_y='center') 
-                for a in range(-ALTITUDE_SPAN_METERS,ALTITUDE_SPAN_METERS,ALTITUDE_STEP_METERS)]
-
         # Detect window close
         if not self.viewer.isopen: return None
 
@@ -118,7 +114,7 @@ class CopterEnv(gym.Env):
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
-            x = (self.w/2 - np.degrees(rotation[2]) * 5.333333 + self.heading_spacing*i) % 1920
+            x = (self.w/2 - self.heading * 5.333333 + self.heading_spacing*i) % 1920
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
@@ -132,15 +128,16 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(l,self.h/2-8), (l,self.h/2+8), (l+8,self.h/2)], color=(1.0,0.0,0.0))
 
         # Display altitude
-        for i,altitude_label in enumerate(self.altitude_labels):
-            dy = self.altitude/ALTITUDE_STEP_METERS * ALTITUDE_SPACING_PIXELS
-            altitude_label.y = self.h/2 + ALTITUDE_SPACING_PIXELS * (i-len(self.altitude_labels)/2) - dy
-            if b < altitude_label.y < t:
-                self.viewer.add_onetime(_DrawText(altitude_label))
+        closest = self.altitude // 5 * 5
+        for k in range(-2,3):
+            altitude_label_ctr = pyglet.text.Label(('%3d'%(closest+k*5)).center(3), font_size=20, x=W-60, y=self.h/2+k*40,
+                    color=(255,255,255,255), anchor_x='center', anchor_y='center') 
+            self.viewer.add_onetime(_DrawText(altitude_label_ctr))
 
-        print(self.altitude)
+        print('%3.0f %d' % (self.altitude, closest))
         stdout.flush()
-        self.altitude += .01
+        self.altitude += .05
+        self.heading = (self.heading + 1) % 360
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
