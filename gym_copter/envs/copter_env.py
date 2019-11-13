@@ -131,8 +131,9 @@ class CopterEnv(gym.Env):
         for k in range(-1,3):
             tickval = closest+k*ALTITUDE_STEP_METERS
             dy = 8*(tickval-altitude)
+            alpha = 127
             altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
-                    font_size=20, color=(255,255,255,255), anchor_x='center', anchor_y='center') 
+                    font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(altitude_label))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
