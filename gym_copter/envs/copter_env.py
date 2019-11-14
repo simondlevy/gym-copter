@@ -117,15 +117,24 @@ class CopterEnv(gym.Env):
 
         # Add a reticule for pitch, rotated by roll to match horizon
         #for k in range(-4,5):
-        for k in range(0,1):
-            dx = np.cos(phi)*100
-            dy = np.sin(phi)*100
-            cx = W / 2
-            x1 = cx - dx
-            y1 = cy - dy
-            x2 = cx + dx
-            y2 = cy + dy
-            self.viewer.draw_line((x1,y1), (x2,y2), color=(1.0,1.0,1.0))
+        for k in range(0,2):
+
+            x1 = 0
+            y1 = k * 20
+
+            x2 = x1 + 30
+            y2 = y1
+
+            x1r,y1r = CopterEnv._rotate(x1, y1, phi)
+            x2r,y2r = CopterEnv._rotate(x2, y2, phi)
+
+            print((x1r,y1r), (x2r,y2r))
+            stdout.flush()
+
+            cx = W/2
+            cy = H/2
+
+            self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
@@ -167,3 +176,8 @@ class CopterEnv(gym.Env):
     def close(self):
 
         pass
+            
+
+    def _rotate(x, y, phi):
+        return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
+            
