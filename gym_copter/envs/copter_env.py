@@ -116,13 +116,12 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=(0.5, 0.7, 0.3) )
 
         # Add a reticule for pitch, rotated by roll to match horizon
-        #for k in range(-4,5):
-        for k in range(0,2):
+        for k in range(-3,4):
 
             x1 = 0
             y1 = k * 20
 
-            x2 = x1 + 30
+            x2 = x1 + 30 + (1-(k%2))*10 # alternate line length
             y2 = y1
 
             x1r,y1r = CopterEnv._rotate(x1, y1, phi)
