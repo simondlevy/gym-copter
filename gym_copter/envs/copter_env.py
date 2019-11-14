@@ -97,25 +97,35 @@ class CopterEnv(gym.Env):
         heading  = np.degrees(rotation[2])
 
         # Center top of ground quadrilateral depends on pitch
-        y = H/2 * (1 + np.sin(rotation[1]))
+        cy = H/2 * (1 + np.sin(rotation[1]))
+
+        # XXX Fix roll at 45 deg for testing
+        #phi = rotation[0]
+        phi = np.pi / 4
 
         # Left and right top of ground quadrilateral depend on roll
-        rotation[0] = np.pi/4
-        dy = W/2 * np.sin(rotation[0])
-        ury = y + dy
-        uly = y - dy
+        dx = np.cos(phi)*W
+        dy = np.sin(phi)*W
+        cx = W / 2
+        x1 = cx + dx
+        y1 = cy + dy
+        x2 = cx - dx
+        y2 = cy - dy
 
-        # Draw new ground quadrilateral:         LL     LR     UR       UL
-        self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
+        # Draw new ground quadrilateral         
+        #                          LL     LR     UR       UL
+        self.viewer.draw_polygon([(0,0), (W,0), (x1,y1), (x2,y2),], color=(0.5, 0.7, 0.3) )
 
-        # Add a reticule for pitch
-        for k in range(-4,5):
+        # Add a reticule for pitch, rotated by roll to match horizon
+        #for k in range(-4,5):
+        for k in range(0,1):
             w = 20 if k%2 else 40
-            y = self.h/2 + k*30
-            dy = w/2 * np.sin(rotation[0])
-            y1 = y - dy
-            y2 = y + dy
-            self.viewer.draw_polyline([(self.w/2-w,y1), (self.w/2+w,y2)], color=(1.0,1.0,1.0), linewidth=2)
+            cx = self.w / 2
+            cy = self.h/2 + k*30
+            dx = np.cos(phi)*w
+            dy = np.sin(phi)*w
+            self.viewer.draw_polyline([(cx,cy), (cx+dx,cy+dy)], color=(1.0,1.0,1.0), linewidth=2)
+            self.viewer.draw_polyline([(cx,cy), (cx-dx,cy-dy)], color=(1.0,1.0,1.0), linewidth=2)
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
