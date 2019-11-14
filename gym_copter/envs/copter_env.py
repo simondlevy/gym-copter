@@ -118,8 +118,8 @@ class CopterEnv(gym.Env):
         # Add a reticule for pitch, rotated by roll to match horizon
         #for k in range(-4,5):
         for k in range(0,1):
-            dx = np.cos(phi)*W
-            dy = np.sin(phi)*W
+            dx = np.cos(phi)*100
+            dy = np.sin(phi)*100
             cx = W / 2
             x1 = cx - dx
             y1 = cy - dy
