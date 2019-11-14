@@ -100,7 +100,7 @@ class CopterEnv(gym.Env):
         y = H/2 * (1 + np.sin(rotation[1]))
 
         # Left and right top of ground quadrilateral depend on roll
-        dy = W/2 * np.sin(rotation[0])
+        dy = W/2 * np.sin(np.pi/6) #rotation[0])
         ury = y + dy
         uly = y - dy
 
