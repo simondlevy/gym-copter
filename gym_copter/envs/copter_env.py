@@ -104,8 +104,7 @@ class CopterEnv(gym.Env):
         phi = np.pi / 8 
 
         # Left and right top of ground quadrilateral depend on roll
-        dx = np.cos(phi)*W
-        dy = np.sin(phi)*W
+        dx,dy = CopterEnv._rotate(W, 0, phi)
         cx = W / 2
         x1 = cx - dx
         y1 = cy - dy
