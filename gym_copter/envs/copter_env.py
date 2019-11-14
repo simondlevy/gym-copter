@@ -128,9 +128,6 @@ class CopterEnv(gym.Env):
             x1r,y1r = CopterEnv._rotate(x1, y1, phi)
             x2r,y2r = CopterEnv._rotate(x2, y2, phi)
 
-            print((x1r,y1r), (x2r,y2r))
-            stdout.flush()
-
             cx = W/2
             cy = H/2
 
