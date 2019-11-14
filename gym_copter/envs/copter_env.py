@@ -100,7 +100,8 @@ class CopterEnv(gym.Env):
         y = H/2 * (1 + np.sin(rotation[1]))
 
         # Left and right top of ground quadrilateral depend on roll
-        dy = W/2 * np.sin(np.pi/6) #rotation[0])
+        rotation[0] = np.pi/4
+        dy = W/2 * np.sin(rotation[0])
         ury = y + dy
         uly = y - dy
 
@@ -111,7 +112,10 @@ class CopterEnv(gym.Env):
         for k in range(-4,5):
             w = 20 if k%2 else 40
             y = self.h/2 + k*30
-            self.viewer.draw_polyline([(self.w/2-w,y), (self.w/2+w,y)], color=(1.0,1.0,1.0), linewidth=2)
+            dy = w/2 * np.sin(rotation[0])
+            y1 = y - dy
+            y2 = y + dy
+            self.viewer.draw_polyline([(self.w/2-w,y1), (self.w/2+w,y2)], color=(1.0,1.0,1.0), linewidth=2)
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
