@@ -114,7 +114,6 @@ class CopterEnv(gym.Env):
 
         # Draw new ground quadrilateral         
         self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=(0.5, 0.7, 0.3) )
-        self.viewer.draw_line((x1,y1), (x2,y2), color=(1.0,1.0,1.0))
 
         # Add a reticule for pitch, rotated by roll to match horizon
         #for k in range(-4,5):
@@ -122,10 +121,11 @@ class CopterEnv(gym.Env):
             dx = np.cos(phi)*W
             dy = np.sin(phi)*W
             cx = W / 2
-            x1 = cx + dx
-            y1 = cy + dy
-            x2 = cx - dx
-            y2 = cy - dy
+            x1 = cx - dx
+            y1 = cy - dy
+            x2 = cx + dx
+            y2 = cy + dy
+            self.viewer.draw_line((x1,y1), (x2,y2), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
