@@ -108,8 +108,10 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(0,0), (W,0), (W,ury), (0,uly),], color=(0.5, 0.7, 0.3) )
 
         # Add a reticule for pitch
-        w = 40
-        self.viewer.draw_polyline([(self.w/2-w,self.h/2), (self.w/2+w,self.h/2)], color=(1.0,1.0,1.0), linewidth=2)
+        for k in range(-4,5):
+            w = 20 if k%2 else 40
+            y = self.h/2 + k*30
+            self.viewer.draw_polyline([(self.w/2-w,y), (self.w/2+w,y)], color=(1.0,1.0,1.0), linewidth=2)
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
