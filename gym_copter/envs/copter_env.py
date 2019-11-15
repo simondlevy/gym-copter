@@ -68,9 +68,6 @@ class CopterEnv(gym.Env):
         # Altitude
         ALTITUDE_STEP_METERS = 5
 
-        self.w = W
-        self.h = H
-
         self.heading_spacing = 80
 
         if self.viewer is None:
@@ -136,22 +133,22 @@ class CopterEnv(gym.Env):
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
-        self.viewer.draw_polygon([(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], color=(1.0,0.0,0.0))
+        self.viewer.draw_polygon([(W/2-5,H-40), (W/2+5,H-40), (400,H-30)], color=(1.0,0.0,0.0))
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
-            x = (self.w/2 - heading * 5.333333 + self.heading_spacing*i) % 1920
+            x = (W/2 - heading * 5.333333 + self.heading_spacing*i) % 1920
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
         # Add a box and a pointer on the right side for the altitude gauge
         h2 = 100
-        l = self.w - 100
-        r = self.w - 10
-        b = self.h/2 - h2
-        t = self.h/2 + h2
+        l = W - 100
+        r = W - 10
+        b = H/2 - h2
+        t = H/2 + h2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=(1.0, 1.0, 1.0), linewidth=2, filled=False)
-        self.viewer.draw_polygon([(l,self.h/2-8), (l,self.h/2+8), (l+8,self.h/2)], color=(1.0,0.0,0.0))
+        self.viewer.draw_polygon([(l,H/2-8), (l,H/2+8), (l+8,H/2)], color=(1.0,0.0,0.0))
 
         # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
@@ -165,7 +162,7 @@ class CopterEnv(gym.Env):
 
                 # Use a non-linear fade-in/out for numbers at top, bottom
                 alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
-                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=self.h/2+dy,
+                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=H/2+dy,
                         font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
