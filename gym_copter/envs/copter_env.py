@@ -130,6 +130,7 @@ class CopterEnv(gym.Env):
             cy = H/2
 
             self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
+            self.viewer.draw_line((cx-x1r,cy-y1r), (cx-x2r,cy-y2r), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
