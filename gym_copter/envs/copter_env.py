@@ -63,11 +63,12 @@ class CopterEnv(gym.Env):
         PITCH_LINE_SPACING    = 40
         PITCH_LINE_WIDTH      = 30
         POINTER_COLOR         = 1.0, 0.0, 0.0
-        POINTER_SIZE          = 5
+        HEADING_POINTER_SIZE  = 5
         ALTITUDE_BOX_HEIGHT   = 200
         ALTITUDE_BOX_WIDTH    = 90
         ALTITUDE_BOX_X_MARGIN = 10
         ALTITUDE_LABEL_OFFSET = 60
+        ALTITUDE_POINTER_SIZE = 8
 
         from gym.envs.classic_control import rendering
 
@@ -150,9 +151,9 @@ class CopterEnv(gym.Env):
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
         self.viewer.draw_polygon([
-            (W/2-POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
-            (W/2+POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
-            (W/2,H-HEADING_LINE_Y_OFFSET+POINTER_SIZE)],
+            (W/2-HEADING_POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-HEADING_POINTER_SIZE), 
+            (W/2+HEADING_POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-HEADING_POINTER_SIZE), 
+            (W/2,H-HEADING_LINE_Y_OFFSET+HEADING_POINTER_SIZE)],
             color=POINTER_COLOR)
 
         # Display heading
@@ -168,7 +169,9 @@ class CopterEnv(gym.Env):
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
         t = H/2 + ALTITUDE_BOX_HEIGHT/2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-        self.viewer.draw_polygon([(l,H/2-8), (l,H/2+8), (l+8,H/2)], color=(1.0,0.0,0.0))
+        self.viewer.draw_polygon([
+            (l,H/2-ALTITUDE_POINTER_SIZE), (l,H/2+ALTITUDE_POINTER_SIZE), (l+ALTITUDE_POINTER_SIZE,H/2)], 
+            color=POINTER_COLOR)
 
         # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
