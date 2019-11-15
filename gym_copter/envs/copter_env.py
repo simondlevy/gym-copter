@@ -14,13 +14,6 @@ from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
 from sys import stdout
 
-# https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
-class _DrawText:
-    def __init__(self, label:pyglet.text.Label):
-        self.label=label
-    def render(self):
-        self.label.draw()
-
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
@@ -58,14 +51,22 @@ class CopterEnv(gym.Env):
 
         from gym.envs.classic_control import rendering
 
+        # https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
+        class _DrawText:
+            def __init__(self, label:pyglet.text.Label):
+                self.label=label
+            def render(self):
+                self.label.draw()
+
+        def _rotate(x, y, phi):
+            return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
+
         # Screen size, pixels
         W = 800
         H = 500
 
         # Altitude
-        ALTITUDE_SPAN_METERS    = 200
-        ALTITUDE_STEP_METERS    = 5
-        ALTITUDE_SPACING_PIXELS = 40
+        ALTITUDE_STEP_METERS = 5
 
         self.w = W
         self.h = H
@@ -107,7 +108,7 @@ class CopterEnv(gym.Env):
         phi = np.pi / 8 
 
         # Left and right top of ground quadrilateral depend on roll
-        dx,dy = CopterEnv._rotate(W, 0, phi)
+        dx,dy = _rotate(W, 0, phi)
         x1 = cx - dx
         y1 = gcy - dy
         x2 = cx + dx
@@ -125,13 +126,13 @@ class CopterEnv(gym.Env):
             x2 = x1 + 30 + (1-(k%2))*10 # alternate line length
             y2 = y1
 
-            x1r,y1r = CopterEnv._rotate(x1, y1, phi)
-            x2r,y2r = CopterEnv._rotate(x2, y2, phi)
+            x1r,y1r = _rotate(x1, y1, phi)
+            x2r,y2r = _rotate(x2, y2, phi)
 
             self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
             self.viewer.draw_line((cx-x1r,cy-y1r), (cx-x2r,cy-y2r), color=(1.0,1.0,1.0))
 
-        # Add a horizontal line and pointer at the top for the heading display
+        # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
         self.viewer.draw_polygon([(self.w/2-5,self.h-40), (self.w/2+5,self.h-40), (400,self.h-30)], color=(1.0,0.0,0.0))
 
@@ -169,10 +170,6 @@ class CopterEnv(gym.Env):
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def close(self):
-
         pass
             
-
-    def _rotate(x, y, phi):
-        return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
-            
+           
