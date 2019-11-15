@@ -96,11 +96,11 @@ class CopterEnv(gym.Env):
         altitude = -location[2]
         heading  = np.degrees(rotation[2])
 
-        # Center horizontal is always the same
-        cx = W/2
+        # Get center coordinates
+        cx,cy = W/2, H/2
 
-        # Center vertical depends on pitch
-        cy = H/2 * (1 + np.sin(rotation[1]))
+        # Center vertical of ground depends on pitch
+        gcy = H/2 * (1 + np.sin(rotation[1]))
 
         # XXX Fix roll at 45 deg for testing
         #phi = rotation[0]
@@ -109,9 +109,9 @@ class CopterEnv(gym.Env):
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = CopterEnv._rotate(W, 0, phi)
         x1 = cx - dx
-        y1 = cy - dy
+        y1 = gcy - dy
         x2 = cx + dx
-        y2 = cy + dy
+        y2 = gcy + dy
 
         # Draw new ground quadrilateral         
         self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=(0.5, 0.7, 0.3) )
