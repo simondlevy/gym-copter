@@ -118,21 +118,21 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=(0.5, 0.7, 0.3) )
 
         # Add a reticule for pitch, rotated by roll to match horizon
-        for k in range(-3,4):
+        for i in range(-3,4):
 
             x1 = 0
-            y1 = k * 20
+            y1 = i * 20
 
-            x2 = x1 + 30 + (1-(k%2))*10 # alternate line length
+            x2 = x1 + 30 + (1-(i%2))*10 # alternate line length
             y2 = y1
 
             x1r,y1r = _rotate(x1, y1, phi)
             x2r,y2r = _rotate(x2, y2, phi)
 
             # Draw two sets of lines for thickness
-            for j in range(2):
-                self.viewer.draw_line((cx+x1r,cy+y1r+j), (cx+x2r,cy+y2r+j), color=(1.0,1.0,1.0))
-                self.viewer.draw_line((cx-x1r,cy-y1r+j), (cx-x2r,cy-y2r+j), color=(1.0,1.0,1.0))
+            for j in (0,1):
+                for k in (-1,+1):
+                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
