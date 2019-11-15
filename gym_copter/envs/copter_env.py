@@ -47,7 +47,11 @@ class CopterEnv(gym.Env):
 
     def render(self, mode='human'):
 
-        # Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/classic_control/cartcircle.py
+        # Arbitrary constants
+        W                    = 800 # window width
+        H                    = 500 # window height
+        ALTITUDE_STEP_METERS = 5
+        HEADING_SPACING      = 80
 
         from gym.envs.classic_control import rendering
 
@@ -60,15 +64,6 @@ class CopterEnv(gym.Env):
 
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
-
-        # Screen size, pixels
-        W = 800
-        H = 500
-
-        # Altitude
-        ALTITUDE_STEP_METERS = 5
-
-        self.heading_spacing = 80
 
         if self.viewer is None:
 
@@ -101,8 +96,8 @@ class CopterEnv(gym.Env):
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
         # XXX Fix roll at 45 deg for testing
-        #phi = rotation[0]
-        phi = np.pi / 8 
+        phi = rotation[0]
+        #phi = np.pi / 8 
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
@@ -130,6 +125,12 @@ class CopterEnv(gym.Env):
             for j in (0,1):
                 for k in (-1,+1):
                     self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=(1.0,1.0,1.0))
+ 
+            pitch_label = pyglet.text.Label(('%+3d'%(i*5)).center(3), x=cx-x1r, y=cy-y1r,
+                        font_size=20, color=(255,255,255,255), anchor_x='center', anchor_y='center') 
+            self.viewer.add_onetime(_DrawText(pitch_label))
+
+            
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
@@ -137,7 +138,7 @@ class CopterEnv(gym.Env):
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
-            x = (W/2 - heading * 5.333333 + self.heading_spacing*i) % 1920
+            x = (W/2 - heading * 5.333333 + HEADING_SPACING*i) % 1920
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
@@ -170,5 +171,3 @@ class CopterEnv(gym.Env):
 
     def close(self):
         pass
-            
-           
