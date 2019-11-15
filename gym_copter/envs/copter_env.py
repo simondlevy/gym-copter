@@ -126,7 +126,7 @@ class CopterEnv(gym.Env):
             x1 = 0
             y1 = i * PITCH_LINE_SPACING
 
-            x2 = x1 + PITCH_LINE_WIDTH + (1-(i%2))*10 # alternate line length
+            x2 = x1 + PITCH_LINE_WIDTH + (1-(i%2))*PITCH_LINE_WIDTH/2 # alternate line length
             y2 = y1
 
             x1r,y1r = _rotate(x1, y1, phi)
