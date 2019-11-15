@@ -52,11 +52,15 @@ class CopterEnv(gym.Env):
         H                     = 500 # window height
         ALTITUDE_STEP_METERS  = 5
         SKY_COLOR             = 0.5, 0.8, 1.0
+        GROUND_COLOR          = 0.5, 0.7, 0.3
+        LINE_COLOR            = 1.0, 1.0, 1.0
         HEADING_SPACING       = 80
         HEADING_TICK_COUNT    = 24
         HEADING_TICK_Y_OFFSET = 17
         FONT_SIZE             = 20
         FONT_COLOR            = 255,255,255
+        PITCH_LINE_SPACING    = 20
+        PITCH_LINE_WIDTH      = 30
 
         from gym.envs.classic_control import rendering
 
@@ -113,15 +117,16 @@ class CopterEnv(gym.Env):
         y2 = gcy + dy
 
         # Draw new ground quadrilateral         
-        self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=(0.5, 0.7, 0.3) )
+        self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], 
+                color=(GROUND_COLOR[0], GROUND_COLOR[1], GROUND_COLOR[2]))
 
         # Add a reticule for pitch, rotated by roll to match horizon
         for i in range(-3,4):
 
             x1 = 0
-            y1 = i * 20
+            y1 = i * PITCH_LINE_SPACING
 
-            x2 = x1 + 30 + (1-(i%2))*10 # alternate line length
+            x2 = x1 + PITCH_LINE_WIDTH + (1-(i%2))*10 # alternate line length
             y2 = y1
 
             x1r,y1r = _rotate(x1, y1, phi)
@@ -130,7 +135,8 @@ class CopterEnv(gym.Env):
             # Draw two sets of lines for thickness
             for j in (0,1):
                 for k in (-1,+1):
-                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=(1.0,1.0,1.0))
+                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), 
+                            color=(LINE_COLOR[0], LINE_COLOR[1], LINE_COLOR[2]))
  
             pitch_label = pyglet.text.Label(('%+3d'%(i*5)).center(3), x=cx-x1r, y=cy-y1r,
                         font_size=20, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
@@ -139,7 +145,7 @@ class CopterEnv(gym.Env):
             
 
         # Add a horizontal line and triangular pointer at the top for the heading display
-        self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
+        self.viewer.draw_line((0,H-35), (W,H-35), color=(LINE_COLOR[0], LINE_COLOR[1], LINE_COLOR[2]))
         self.viewer.draw_polygon([(W/2-5,H-40), (W/2+5,H-40), (400,H-30)], color=(1.0,0.0,0.0))
 
         # Display heading
