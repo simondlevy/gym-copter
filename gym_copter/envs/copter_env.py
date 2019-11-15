@@ -123,8 +123,7 @@ class CopterEnv(gym.Env):
         y2 = gcy + dy
 
         # Draw new ground quadrilateral         
-        self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], 
-                color=(GROUND_COLOR[0], GROUND_COLOR[1], GROUND_COLOR[2]))
+        self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=GROUND_COLOR)
 
         # Add a reticule for pitch, rotated by roll to match horizon
         for i in range(-3,4):
@@ -141,21 +140,19 @@ class CopterEnv(gym.Env):
             # Draw two sets of lines for thickness
             for j in (0,1):
                 for k in (-1,+1):
-                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), 
-                            color=(LINE_COLOR[0], LINE_COLOR[1], LINE_COLOR[2]))
+                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=LINE_COLOR)
  
             pitch_label = pyglet.text.Label(('%+3d'%(i*5)).center(3), x=cx-x1r, y=cy-y1r,
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(pitch_label))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
-        self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), 
-                color=(LINE_COLOR[0], LINE_COLOR[1], LINE_COLOR[2]))
+        self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
         self.viewer.draw_polygon([
             (W/2-POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
             (W/2+POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
             (W/2,H-HEADING_LINE_Y_OFFSET+POINTER_SIZE)],
-            color=(POINTER_COLOR[0], POINTER_COLOR[1], POINTER_COLOR[2]))
+            color=POINTER_COLOR)
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
@@ -169,7 +166,7 @@ class CopterEnv(gym.Env):
         r = W - ALTITUDE_BOX_X_MARGIN
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
         t = H/2 + ALTITUDE_BOX_HEIGHT/2
-        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR), linewidth=2, filled=False)
+        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
         self.viewer.draw_polygon([(l,H/2-8), (l,H/2+8), (l+8,H/2)], color=(1.0,0.0,0.0))
 
         # Display altitude in the box
