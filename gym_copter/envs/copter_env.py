@@ -63,6 +63,7 @@ class CopterEnv(gym.Env):
         PITCH_LINE_SPACING    = 20
         PITCH_LINE_WIDTH      = 30
         POINTER_COLOR         = 1.0, 0.0, 0.0
+        POINTER_SIZE          = 5
 
         from gym.envs.classic_control import rendering
 
@@ -144,13 +145,14 @@ class CopterEnv(gym.Env):
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(pitch_label))
 
-            
-
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), 
                 color=(LINE_COLOR[0], LINE_COLOR[1], LINE_COLOR[2]))
-        self.viewer.draw_polygon([(W/2-5,H-40), (W/2+5,H-40), (400,H-30)], 
-                color=(POINTER_COLOR[0], POINTER_COLOR[1], POINTER_COLOR[2]))
+        self.viewer.draw_polygon([
+            (W/2-POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
+            (W/2+POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-POINTER_SIZE), 
+            (W/2,H-HEADING_LINE_Y_OFFSET+POINTER_SIZE)],
+            color=(POINTER_COLOR[0], POINTER_COLOR[1], POINTER_COLOR[2]))
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
