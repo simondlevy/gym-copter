@@ -96,7 +96,10 @@ class CopterEnv(gym.Env):
         altitude = -location[2]
         heading  = np.degrees(rotation[2])
 
-        # Center top of ground quadrilateral depends on pitch
+        # Center horizontal is always the same
+        cx = W/2
+
+        # Center vertical depends on pitch
         cy = H/2 * (1 + np.sin(rotation[1]))
 
         # XXX Fix roll at 45 deg for testing
@@ -105,7 +108,6 @@ class CopterEnv(gym.Env):
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = CopterEnv._rotate(W, 0, phi)
-        cx = W / 2
         x1 = cx - dx
         y1 = cy - dy
         x2 = cx + dx
@@ -126,11 +128,8 @@ class CopterEnv(gym.Env):
             x1r,y1r = CopterEnv._rotate(x1, y1, phi)
             x2r,y2r = CopterEnv._rotate(x2, y2, phi)
 
-            cx = W/2
-            cy = H/2
-
-            #self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
-            self.viewer.draw_line((cx-x1r,cy-y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
+            self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
+            self.viewer.draw_line((cx-x1r,cy-y1r), (cx-x2r,cy-y2r), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
