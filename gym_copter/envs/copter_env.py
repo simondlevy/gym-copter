@@ -48,12 +48,15 @@ class CopterEnv(gym.Env):
     def render(self, mode='human'):
 
         # Arbitrary constants
-        W                    = 800 # window width
-        H                    = 500 # window height
-        ALTITUDE_STEP_METERS = 5
-        SKY_COLOR            = 0.5, 0.8, 1.0
-        HEADING_SPACING      = 80
-        HEADING_TICK_COUNT   = 24
+        W                     = 800 # window width
+        H                     = 500 # window height
+        ALTITUDE_STEP_METERS  = 5
+        SKY_COLOR             = 0.5, 0.8, 1.0
+        HEADING_SPACING       = 80
+        HEADING_TICK_COUNT    = 24
+        HEADING_TICK_Y_OFFSET = 17
+        FONT_SIZE             = 20
+        FONT_COLOR            = 255,255,255
 
         from gym.envs.classic_control import rendering
 
@@ -77,8 +80,9 @@ class CopterEnv(gym.Env):
             self.viewer.add_geom(sky)
 
             # Create labels for heading
-            self.heading_labels = [pyglet.text.Label(('%d'%(c*360//HEADING_TICK_COUNT)).center(3), font_size=20, y=H-17, 
-                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(HEADING_TICK_COUNT)]
+            self.heading_labels = [pyglet.text.Label(('%d'%(c*360//HEADING_TICK_COUNT)).center(3), font_size=FONT_SIZE, 
+                y=H-HEADING_TICK_Y_OFFSET, color=(*FONT_COLOR,255), 
+                anchor_x='center', anchor_y='center') for c in range(HEADING_TICK_COUNT)]
 
         # Detect window close
         if not self.viewer.isopen: return None
@@ -129,7 +133,7 @@ class CopterEnv(gym.Env):
                     self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=(1.0,1.0,1.0))
  
             pitch_label = pyglet.text.Label(('%+3d'%(i*5)).center(3), x=cx-x1r, y=cy-y1r,
-                        font_size=20, color=(255,255,255,255), anchor_x='center', anchor_y='center') 
+                        font_size=20, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(pitch_label))
 
             
@@ -166,7 +170,7 @@ class CopterEnv(gym.Env):
                 # Use a non-linear fade-in/out for numbers at top, bottom
                 alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
                 altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=H/2+dy,
-                        font_size=20, color=(255,255,255,alpha), anchor_x='center', anchor_y='center') 
+                        font_size=20, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
