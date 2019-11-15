@@ -58,7 +58,6 @@ class CopterEnv(gym.Env):
         HEADING_TICK_COUNT    = 24
         HEADING_TICK_Y_OFFSET = 17
         HEADING_LINE_Y_OFFSET = 35
-        HEADING_TICK_FACTOR   = 5.333333
         FONT_SIZE             = 20
         FONT_COLOR            = 255,255,255
         PITCH_LINE_SPACING    = 20
@@ -157,7 +156,8 @@ class CopterEnv(gym.Env):
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
-            x = (W/2 - heading * HEADING_TICK_FACTOR + HEADING_TICK_SPACING*i) % (HEADING_TICK_SPACING*HEADING_TICK_COUNT)
+            d = HEADING_TICK_SPACING * HEADING_TICK_COUNT
+            x = (W/2 - heading*d/360 + HEADING_TICK_SPACING*i) % d
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
