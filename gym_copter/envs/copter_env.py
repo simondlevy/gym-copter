@@ -60,13 +60,14 @@ class CopterEnv(gym.Env):
         HEADING_LINE_Y_OFFSET = 35
         FONT_SIZE             = 20
         FONT_COLOR            = 255,255,255
-        PITCH_LINE_SPACING    = 20
+        PITCH_LINE_SPACING    = 40
         PITCH_LINE_WIDTH      = 30
         POINTER_COLOR         = 1.0, 0.0, 0.0
         POINTER_SIZE          = 5
         ALTITUDE_BOX_HEIGHT   = 200
         ALTITUDE_BOX_WIDTH    = 90
         ALTITUDE_BOX_X_MARGIN = 10
+        ALTITUDE_LABEL_OFFSET = 60
 
         from gym.envs.classic_control import rendering
 
@@ -181,7 +182,7 @@ class CopterEnv(gym.Env):
 
                 # Use a non-linear fade-in/out for numbers at top, bottom
                 alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
-                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-60, y=H/2+dy,
+                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-ALTITUDE_LABEL_OFFSET, y=H/2+dy,
                         font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
