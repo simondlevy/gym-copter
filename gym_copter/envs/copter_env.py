@@ -51,7 +51,9 @@ class CopterEnv(gym.Env):
         W                    = 800 # window width
         H                    = 500 # window height
         ALTITUDE_STEP_METERS = 5
+        SKY_COLOR            = 0.5, 0.8, 1.0
         HEADING_SPACING      = 80
+        HEADING_TICK_COUNT   = 24
 
         from gym.envs.classic_control import rendering
 
@@ -71,12 +73,12 @@ class CopterEnv(gym.Env):
 
             # Add sky as backround
             sky = rendering.FilledPolygon([(0,H), (0,0), (W,0), (W,H)])
-            sky.set_color(0.5,0.8,1.0)
+            sky.set_color(*SKY_COLOR)
             self.viewer.add_geom(sky)
 
             # Create labels for heading
-            self.heading_labels = [pyglet.text.Label(('%d'%(c*15)).center(3), font_size=20, y=H-17, 
-                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(24)]
+            self.heading_labels = [pyglet.text.Label(('%d'%(c*360//HEADING_TICK_COUNT)).center(3), font_size=20, y=H-17, 
+                color=(255,255,255,255), anchor_x='center', anchor_y='center') for c in range(HEADING_TICK_COUNT)]
 
         # Detect window close
         if not self.viewer.isopen: return None
