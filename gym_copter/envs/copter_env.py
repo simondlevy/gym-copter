@@ -129,8 +129,10 @@ class CopterEnv(gym.Env):
             x1r,y1r = _rotate(x1, y1, phi)
             x2r,y2r = _rotate(x2, y2, phi)
 
-            self.viewer.draw_line((cx+x1r,cy+y1r), (cx+x2r,cy+y2r), color=(1.0,1.0,1.0))
-            self.viewer.draw_line((cx-x1r,cy-y1r), (cx-x2r,cy-y2r), color=(1.0,1.0,1.0))
+            # Draw two sets of lines for thickness
+            for j in range(2):
+                self.viewer.draw_line((cx+x1r,cy+y1r+j), (cx+x2r,cy+y2r+j), color=(1.0,1.0,1.0))
+                self.viewer.draw_line((cx-x1r,cy-y1r+j), (cx-x2r,cy-y2r+j), color=(1.0,1.0,1.0))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-35), (W,H-35), color=(1.0,1.0,1.0))
