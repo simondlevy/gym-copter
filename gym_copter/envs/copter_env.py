@@ -62,7 +62,7 @@ class CopterEnv(gym.Env):
         PITCH_LINE_SPACING    = 40
         PITCH_LINE_WIDTH      = 30
         PITCH_LABEL_X_OFFSET  = 40
-        PITCH_LABEL_Y_OFFSET  = 5
+        PITCH_LABEL_Y_OFFSET  = 0
         POINTER_COLOR         = 1.0, 0.0, 0.0
         HEADING_POINTER_SIZE  = 5
         ALTITUDE_BOX_HEIGHT   = 200
@@ -116,9 +116,7 @@ class CopterEnv(gym.Env):
         # Center vertical of ground depends on pitch
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
-        # XXX Fix roll at for testing
-        #phi = rotation[0]
-        phi = np.pi / 8 
+        phi = rotation[0]
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
