@@ -145,7 +145,7 @@ class CopterEnv(gym.Env):
                 for k in (-1,+1):
                     self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=LINE_COLOR)
  
-            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), x=cx-PITCH_LINE_WIDTH*2, y=cy-y1r,
+            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), x=cx-PITCH_LINE_WIDTH*2.5, y=cy-y1r,
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(pitch_label))
 
