@@ -74,13 +74,28 @@ class CopterEnv(gym.Env):
         ALTITUDE_STEP_PIXELS  = 8
 
         from gym.envs.classic_control import rendering
+        from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
 
         # https://stackoverflow.com/questions/56744840/pyglet-label-not-showing-on-screen-on-draw-with-openai-gym-render
+
         class _DrawText:
             def __init__(self, label:pyglet.text.Label):
                 self.label=label
             def render(self):
                 self.label.draw()
+
+        class _DrawTextRotated:
+            def __init__(self, label:pyglet.text.Label, x, y, phi):
+                self.label=label
+                self.x = x
+                self.y = y
+                self.phi = phi
+            def render(self):
+                glTranslatef(+50, -50, 0)
+                glRotatef(self.phi,  0.0, 0.0, 1.0)
+                self.label.draw()
+                glRotatef(-self.phi, 0.0, 0.0, 1.0)
+                glTranslatef(-50, +50, 0)
 
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
@@ -148,11 +163,11 @@ class CopterEnv(gym.Env):
 
             # Add a label on the left of every other tick
             if i%2 == 0:
-                pitch_label = pyglet.text.Label(('%+3d'%(-i*10)).center(3), 
-                        x = cx-x2r-PITCH_LABEL_X_OFFSET, 
-                        y = cy-y2r-PITCH_LABEL_Y_OFFSET,
+                label_x = cx-x2r-PITCH_LABEL_X_OFFSET 
+                label_y = cy-y2r-PITCH_LABEL_Y_OFFSET
+                pitch_label = pyglet.text.Label(('%+3d'%(-i*10)).center(3), x = label_x, y = label_y, 
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
-                self.viewer.add_onetime(_DrawText(pitch_label))
+                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, 45))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
