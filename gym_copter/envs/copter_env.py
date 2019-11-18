@@ -114,9 +114,9 @@ class CopterEnv(gym.Env):
         # Center vertical of ground depends on pitch
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
-        # XXX Fix roll at 45 deg for testing
-        phi = rotation[0]
-        #phi = np.pi / 8 
+        # XXX Fix roll at for testing
+        #phi = rotation[0]
+        phi = np.pi / 8 
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
@@ -141,13 +141,19 @@ class CopterEnv(gym.Env):
             x2r,y2r = _rotate(x2, y2, phi)
 
             # Draw two sets of lines for thickness
-            for j in (0,1):
-                for k in (-1,+1):
-                    self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=LINE_COLOR)
- 
-            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), x=cx-PITCH_LINE_WIDTH*2.5, y=cy-y1r,
-                        font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+            self.viewer.draw_line((cx+x1r,cy+y1r),   (cx+x2r,cy+y2r), color=LINE_COLOR)
+            self.viewer.draw_line((cx+x1r,cy+y1r+1), (cx+x2r,cy+y2r+1), color=LINE_COLOR)
+            self.viewer.draw_line((cx-x1r,cy-y1r),   (cx-x2r,cy-y2r), color=LINE_COLOR)
+            self.viewer.draw_line((cx-x1r,cy-y1r+1), (cx-x2r,cy-y2r+1), color=LINE_COLOR)
+
+            '''
+            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), 
+                    x = cx-x2r, 
+                    y = cy+y1r,
+                    font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+
             self.viewer.add_onetime(_DrawText(pitch_label))
+            '''
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
