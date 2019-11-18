@@ -50,7 +50,6 @@ class CopterEnv(gym.Env):
         # Arbitrary constants
         W                     = 800 # window width
         H                     = 500 # window height
-        ALTITUDE_STEP_METERS  = 5
         SKY_COLOR             = 0.5, 0.8, 1.0
         GROUND_COLOR          = 0.5, 0.7, 0.3
         LINE_COLOR            = 1.0, 1.0, 1.0
@@ -69,6 +68,8 @@ class CopterEnv(gym.Env):
         ALTITUDE_BOX_X_MARGIN = 10
         ALTITUDE_LABEL_OFFSET = 60
         ALTITUDE_POINTER_SIZE = 8
+        ALTITUDE_STEP_METERS  = 5
+        ALTITUDE_STEP_PIXELS  = 8
 
         from gym.envs.classic_control import rendering
 
@@ -144,7 +145,7 @@ class CopterEnv(gym.Env):
                 for k in (-1,+1):
                     self.viewer.draw_line((cx+k*x1r,cy+k*y1r+j), (cx+k*x2r,cy+k*y2r+j), color=LINE_COLOR)
  
-            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), x=cx-x1r, y=cy-y1r,
+            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), x=cx-PITCH_LINE_WIDTH*2, y=cy-y1r,
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(pitch_label))
 
@@ -178,7 +179,7 @@ class CopterEnv(gym.Env):
         for k in range(-2,3):
             tickval = closest+k*ALTITUDE_STEP_METERS
             diff = tickval - altitude
-            dy = 8*diff
+            dy = diff*ALTITUDE_STEP_PIXELS
 
             # Avoid putting tick label below bottom of box
             if dy > -ALTITUDE_BOX_HEIGHT/2:
