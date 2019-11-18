@@ -146,12 +146,13 @@ class CopterEnv(gym.Env):
             self.viewer.draw_line((cx-x1r,cy-y1r),   (cx-x2r,cy-y2r), color=LINE_COLOR)
             self.viewer.draw_line((cx-x1r,cy-y1r+1), (cx-x2r,cy-y2r+1), color=LINE_COLOR)
 
-            # Add a label on the left
-            pitch_label = pyglet.text.Label(('%+3d'%(-i*5)).center(3), 
-                    x = cx-x2r-PITCH_LABEL_X_OFFSET, 
-                    y = cy-y2r-PITCH_LABEL_Y_OFFSET,
-                    font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
-            self.viewer.add_onetime(_DrawText(pitch_label))
+            # Add a label on the left of every other tick
+            if i%2 == 0:
+                pitch_label = pyglet.text.Label(('%+3d'%(-i*10)).center(3), 
+                        x = cx-x2r-PITCH_LABEL_X_OFFSET, 
+                        y = cy-y2r-PITCH_LABEL_Y_OFFSET,
+                        font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+                self.viewer.add_onetime(_DrawText(pitch_label))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
