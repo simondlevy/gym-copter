@@ -224,7 +224,8 @@ class CopterEnv(gym.Env):
             k = int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
             x1,y1 = points[k]
             x2,y2 = x1,y1+ROLL_RETICLE_TICKLEN
-            xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, np.radians(-ROLL_RETICLE_TICKVALS[-1]/ROLL_RETICLE_LIM*tickval))
+            rangle = -ROLL_RETICLE_TICKVALS[-1]/ROLL_RETICLE_LIM*tickval)
+            xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, np.radians(rangle))
             self.viewer.draw_line((x1,y1),  (x2+xr, y2+yr), color=LINE_COLOR)
             self.viewer.draw_line((x1+1,y1),  (x2+xr+1, y2+yr), color=LINE_COLOR)
             roll_label = pyglet.text.Label(('%3d'%abs(tickval)).center(3), x=x2, y=y2+20,
