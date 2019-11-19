@@ -46,36 +46,37 @@ class CopterEnv(gym.Env):
     def render(self, mode='human'):
 
         # Arbitrary constants
-        W                     = 800 # window width
-        H                     = 500 # window height
-        SKY_COLOR             = 0.5, 0.8, 1.0
-        GROUND_COLOR          = 0.5, 0.7, 0.3
-        LINE_COLOR            = 1.0, 1.0, 1.0
-        HEADING_TICK_SPACING  = 80
-        HEADING_TICK_COUNT    = 24
-        HEADING_LABEL_Y_OFFSET = 17
-        HEADING_LINE_Y_OFFSET = 35
-        FONT_SIZE             = 18
-        FONT_COLOR            = 255,255,255
-        PITCH_LINE_SPACING    = 40
-        PITCH_LINE_WIDTH      = 30
-        PITCH_LABEL_X_OFFSET  = 40
-        PITCH_LABEL_Y_OFFSET  = 0
-        POINTER_COLOR         = 1.0, 0.0, 0.0
-        HEADING_POINTER_SIZE  = 5
-        ALTITUDE_BOX_HEIGHT   = 200
-        ALTITUDE_BOX_WIDTH    = 90
-        ALTITUDE_BOX_X_MARGIN = 10
-        ALTITUDE_LABEL_OFFSET = 60
-        ALTITUDE_POINTER_SIZE = 8
-        ALTITUDE_STEP_METERS  = 5
-        ALTITUDE_STEP_PIXELS  = 8
-        ROLL_RETICLE_RADIUS   = 225
-        ROLL_RETICLE_LIM      = 45
-        ROLL_RETICLE_PTS      = 100
-        ROLL_RETICLE_YOFF     = 200
-        ROLL_RETICLE_STRIDE   = 10
-        ROLL_RETICLE_TICKLEN  = 10
+        W                       = 800 # window width
+        H                       = 500 # window height
+        SKY_COLOR               = 0.5, 0.8, 1.0
+        GROUND_COLOR            = 0.5, 0.7, 0.3
+        LINE_COLOR              = 1.0, 1.0, 1.0
+        HEADING_TICK_SPACING    = 80
+        HEADING_TICK_COUNT      = 24
+        HEADING_LABEL_Y_OFFSET  = 17
+        HEADING_LINE_Y_OFFSET   = 35
+        FONT_SIZE               = 18
+        FONT_COLOR              = 255,255,255
+        PITCH_LINE_SPACING      = 40
+        PITCH_LINE_WIDTH        = 30
+        PITCH_LABEL_X_OFFSET    = 40
+        PITCH_LABEL_Y_OFFSET    = 0
+        POINTER_COLOR           = 1.0, 0.0, 0.0
+        HEADING_POINTER_SIZE    = 5
+        ALTITUDE_BOX_HEIGHT     = 200
+        ALTITUDE_BOX_WIDTH      = 90
+        ALTITUDE_BOX_X_MARGIN   = 10
+        ALTITUDE_LABEL_OFFSET   = 60
+        ALTITUDE_POINTER_SIZE   = 8
+        ALTITUDE_STEP_METERS    = 5
+        ALTITUDE_STEP_PIXELS    = 8
+        ROLL_RETICLE_RADIUS     = 225
+        ROLL_RETICLE_LIM        = 45
+        ROLL_RETICLE_PTS        = 100
+        ROLL_RETICLE_YOFF       = 200
+        ROLL_RETICLE_STRIDE     = 10
+        ROLL_RETICLE_TICKLEN    = 10
+        ROLL_RETICLE_MAX_ANGLE  = 60
  
         from gym.envs.classic_control import rendering
         from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
@@ -222,8 +223,13 @@ class CopterEnv(gym.Env):
         zipped = list(zip(angles, points))
         for a,p in zipped[::ROLL_RETICLE_STRIDE] + [zipped[-1]]:
             xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, a)
-            x,y = p
-            self.viewer.draw_line((x,y),  (x+xr, y+yr), color=LINE_COLOR)
+            x1,y1 = p
+            x2,y2 = x1+xr,y1+yr
+            self.viewer.draw_line((x1,y1),  (x2, y2), color=LINE_COLOR)
+            roll_label = pyglet.text.Label(('%3d'%0).center(3), x=x2, y=y2+10,
+                    font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+            self.viewer.add_onetime(_DrawText(roll_label))
+
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
