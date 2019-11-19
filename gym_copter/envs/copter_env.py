@@ -92,7 +92,7 @@ class CopterEnv(gym.Env):
                 self.phi = phi
             def render(self):
                 glTranslatef(self.x, self.y, 0)
-                glRotatef(45.0, 0.0, 0.0, 1.0)
+                glRotatef(np.degrees(self.phi), 0.0, 0.0, 1.0)
                 self.label.draw()
                 glLoadIdentity() # Restores ordinary drawing
 
@@ -161,15 +161,13 @@ class CopterEnv(gym.Env):
             self.viewer.draw_line((cx-x1r,cy-y1r+1), (cx-x2r,cy-y2r+1), color=LINE_COLOR)
 
             # Add a label on the left of every other tick
-            if i == 0: #%2 == 0:
+            if i%2 == 0:
                 pitch_label = pyglet.text.Label(('%+3d'%(-i*10)).center(3), 
-                        #x=0, y=0,
                         font_size=FONT_SIZE, color=(*FONT_COLOR,255), 
-                        anchor_x='center', anchor_y='center'
-                        ) 
+                        anchor_x='center', anchor_y='center') 
                 label_x = cx-x2r-PITCH_LABEL_X_OFFSET 
                 label_y = cy-y2r-PITCH_LABEL_Y_OFFSET
-                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, 45))
+                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, np.pi/4))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
