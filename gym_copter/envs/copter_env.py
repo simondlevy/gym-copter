@@ -12,8 +12,6 @@ import pyglet
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
-from sys import stdout
-
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
@@ -210,7 +208,13 @@ class CopterEnv(gym.Env):
                         font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
+        # Add a reticle at the top for roll
+        r = 40
+        points = [(np.cos(a)*r, np.sin(a)*r) for a in np.linspace(-np.pi, +np.pi, 100)]
+        self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
+
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def close(self):
         pass
+
