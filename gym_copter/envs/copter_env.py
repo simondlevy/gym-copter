@@ -209,8 +209,11 @@ class CopterEnv(gym.Env):
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
         # Add a reticle at the top for roll
-        r = 40
-        points = [(np.cos(a)*r+W/2, np.sin(a)*r) for a in np.linspace(-np.pi, +np.pi, 100)]
+        r = 225
+        lim = 45
+        pts = 100
+        yoff = 200
+        points = [(np.cos(a)*r+W/2, np.sin(a)*r+yoff) for a in np.linspace(np.radians(lim), np.radians(180-lim), pts)]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
