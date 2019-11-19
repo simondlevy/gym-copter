@@ -77,6 +77,7 @@ class CopterEnv(gym.Env):
         ROLL_RETICLE_STRIDE     = 10
         ROLL_RETICLE_TICKLEN    = 10
         ROLL_RETICLE_MAX_ANGLE  = 60
+        ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
  
         from gym.envs.classic_control import rendering
         from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
@@ -226,9 +227,9 @@ class CopterEnv(gym.Env):
             x1,y1 = p
             x2,y2 = x1+xr,y1+yr
             self.viewer.draw_line((x1,y1),  (x2, y2), color=LINE_COLOR)
-            roll_label = pyglet.text.Label(('%3d'%0).center(3), x=x2, y=y2+10,
-                    font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
-            self.viewer.add_onetime(_DrawText(roll_label))
+            #roll_label = pyglet.text.Label(('%3d'%0).center(3), x=x2, y=y2+10,
+            #        font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+            #self.viewer.add_onetime(_DrawText(roll_label))
 
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
