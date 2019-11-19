@@ -220,17 +220,15 @@ class CopterEnv(gym.Env):
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
         points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) for a in angles]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
-        angles -= angles[len(angles)//2]
-        zipped = list(zip(angles, points))
-        for a,p in zipped[::ROLL_RETICLE_STRIDE] + [zipped[-1]]:
-            xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, a)
-            x1,y1 = p
-            x2,y2 = x1+xr,y1+yr
+        tickvals = np.append(-np.array(ROLL_RETICLE_TICKVALS[::-1]), [0] + ROLL_RETICLE_TICKVALS)
+        for tickval in tickvals: 
+            x1,y1 = points[int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))]
+            x2,y2 = x1,y1+ROLL_RETICLE_TICKLEN
+            #xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, a)
             self.viewer.draw_line((x1,y1),  (x2, y2), color=LINE_COLOR)
             #roll_label = pyglet.text.Label(('%3d'%0).center(3), x=x2, y=y2+10,
             #        font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             #self.viewer.add_onetime(_DrawText(roll_label))
-
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
