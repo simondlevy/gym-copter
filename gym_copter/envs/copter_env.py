@@ -214,8 +214,12 @@ class CopterEnv(gym.Env):
 
         # Add a reticle at the top for roll
         points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) 
-                for a in np.linspace(np.radians(ROLL_RETICLE_LIM), np.radians(180-ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)]
+                for a in np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
+        for point in points[::10]:
+            self.viewer.draw_line(point,  (point[0], point[1]+20), color=LINE_COLOR)
+        self.viewer.draw_line(points[-1],  (points[-1][0], points[-1][1]+20), color=LINE_COLOR)
+
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
