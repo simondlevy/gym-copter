@@ -47,7 +47,7 @@ class CopterEnv(gym.Env):
 
         # Arbitrary constants
         W                       = 800 # window width
-        H                       = 500 # window height
+        H                       = 600 # window height
         SKY_COLOR               = 0.5, 0.8, 1.0
         GROUND_COLOR            = 0.5, 0.7, 0.3
         LINE_COLOR              = 1.0, 1.0, 1.0
@@ -70,12 +70,12 @@ class CopterEnv(gym.Env):
         ALTITUDE_POINTER_SIZE   = 8
         ALTITUDE_STEP_METERS    = 5
         ALTITUDE_STEP_PIXELS    = 8
-        ROLL_RETICLE_RADIUS     = 225
+        ROLL_RETICLE_RADIUS     = 300
         ROLL_RETICLE_LIM        = 45
         ROLL_RETICLE_PTS        = 100
         ROLL_RETICLE_YOFF       = 200
         ROLL_RETICLE_STRIDE     = 10
-        ROLL_RETICLE_TICKLEN    = 10
+        ROLL_RETICLE_TICKLEN    = 5
         ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
  
         from gym.envs.classic_control import rendering
@@ -226,9 +226,10 @@ class CopterEnv(gym.Env):
             x2,y2 = x1,y1+ROLL_RETICLE_TICKLEN
             xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, np.radians(-ROLL_RETICLE_TICKVALS[-1]/ROLL_RETICLE_LIM*tickval))
             self.viewer.draw_line((x1,y1),  (x2+xr, y2+yr), color=LINE_COLOR)
-            #roll_label = pyglet.text.Label(('%3d'%0).center(3), x=x2, y=y2+10,
-            #        font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
-            #self.viewer.add_onetime(_DrawText(roll_label))
+            self.viewer.draw_line((x1+1,y1),  (x2+xr+1, y2+yr), color=LINE_COLOR)
+            roll_label = pyglet.text.Label(('%3d'%abs(tickval)).center(3), x=x2, y=y2+20,
+                    font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+            self.viewer.add_onetime(_DrawText(roll_label))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
