@@ -232,7 +232,7 @@ class CopterEnv(gym.Env):
                     font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
             label_y = y2 + 20
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2))
+            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, np.radians(tickval)))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
