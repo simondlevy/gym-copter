@@ -53,7 +53,7 @@ class CopterEnv(gym.Env):
         LINE_COLOR            = 1.0, 1.0, 1.0
         HEADING_TICK_SPACING  = 80
         HEADING_TICK_COUNT    = 24
-        HEADING_TICK_Y_OFFSET = 17
+        HEADING_LABEL_Y_OFFSET = 17
         HEADING_LINE_Y_OFFSET = 35
         FONT_SIZE             = 18
         FONT_COLOR            = 255,255,255
@@ -112,7 +112,7 @@ class CopterEnv(gym.Env):
 
             # Create labels for heading
             self.heading_labels = [pyglet.text.Label(('%d'%(c*360//HEADING_TICK_COUNT)).center(3), font_size=FONT_SIZE, 
-                y=H-HEADING_TICK_Y_OFFSET, color=(*FONT_COLOR,255), 
+                y=H-HEADING_LABEL_Y_OFFSET, color=(*FONT_COLOR,255), 
                 anchor_x='center', anchor_y='center') for c in range(HEADING_TICK_COUNT)]
 
         # Detect window close
@@ -213,11 +213,14 @@ class CopterEnv(gym.Env):
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
         # Add a reticle at the top for roll
-        points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) 
-                for a in np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)]
+        angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
+        points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) for a in angles]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
-        for point in points[::10] + [points[-1]]:
-            self.viewer.draw_line(point,  (point[0], point[1]+20), color=LINE_COLOR)
+        zipped = list(zip(angles, points))
+        for a,p in zipped[::10] + [zipped[-1]]:
+            xr,yr = _rotate(0, 10, np.pi/4)
+            x,y = p
+            self.viewer.draw_line((x,y),  (x+xr, y+yr), color=LINE_COLOR)
 
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
