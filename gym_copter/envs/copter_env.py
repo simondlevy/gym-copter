@@ -70,7 +70,11 @@ class CopterEnv(gym.Env):
         ALTITUDE_POINTER_SIZE = 8
         ALTITUDE_STEP_METERS  = 5
         ALTITUDE_STEP_PIXELS  = 8
-
+        ROLL_RETICLE_RADIUS   = 225
+        ROLL_RETICLE_LIM      = 45
+        ROLL_RETICLE_PTS      = 100
+        ROLL_RETICLE_YOFF     = 200
+ 
         from gym.envs.classic_control import rendering
         from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
 
@@ -209,11 +213,8 @@ class CopterEnv(gym.Env):
                 self.viewer.add_onetime(_DrawText(altitude_label))
 
         # Add a reticle at the top for roll
-        r = 225
-        lim = 45
-        pts = 100
-        yoff = 200
-        points = [(np.cos(a)*r+W/2, np.sin(a)*r+yoff) for a in np.linspace(np.radians(lim), np.radians(180-lim), pts)]
+        points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) 
+                for a in np.linspace(np.radians(ROLL_RETICLE_LIM), np.radians(180-ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
