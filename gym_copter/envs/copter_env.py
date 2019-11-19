@@ -218,12 +218,12 @@ class CopterEnv(gym.Env):
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
         points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) for a in angles]
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
+        angles -= angles[len(angles)//2]
         zipped = list(zip(angles, points))
         for a,p in zipped[::ROLL_RETICLE_STRIDE] + [zipped[-1]]:
-            xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, np.pi/4)
+            xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, a)
             x,y = p
             self.viewer.draw_line((x,y),  (x+xr, y+yr), color=LINE_COLOR)
-
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
