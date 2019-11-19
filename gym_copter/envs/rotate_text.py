@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 # https://www.mail-archive.com/pyglet-users@googlegroups.com/msg02182.html
+
 import pyglet
 from pyglet.gl import *
 
@@ -25,7 +28,9 @@ def on_draw():
 
 
 label1 = pyglet.text.Label('Not rotated',x=10, y=10)
-label2 = pyglet.text.Label('Rotated 90 degrees',anchor_x='center', anchor_y='center')
-label3 = pyglet.text.Label('Rotated 45 degrees',anchor_x='center', anchor_y='center')
+label2 = pyglet.text.Label('Rotated 90 degrees',anchor_x='center',
+anchor_y='center')
+label3 = pyglet.text.Label('Rotated 45 degrees',anchor_x='center',
+anchor_y='center')
 
 pyglet.app.run()

@@ -91,11 +91,7 @@ class CopterEnv(gym.Env):
                 self.y = y
                 self.phi = phi
             def render(self):
-                glTranslatef(+50, -50, 0)
-                glRotatef(self.phi,  0.0, 0.0, 1.0)
                 self.label.draw()
-                glRotatef(-self.phi, 0.0, 0.0, 1.0)
-                glTranslatef(-50, +50, 0)
 
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
@@ -143,7 +139,7 @@ class CopterEnv(gym.Env):
         # Draw new ground quadrilateral         
         self.viewer.draw_polygon([(x1,y1), (x2,y2), (x2,y2-2*H), (x1,y1-2*H)], color=GROUND_COLOR)
 
-        # Add a reticule for pitch, rotated by roll to match horizon
+        # Add a reticle for pitch, rotated by roll to match horizon
         for i in range(-3,4):
 
             x1 = 0
@@ -162,7 +158,7 @@ class CopterEnv(gym.Env):
             self.viewer.draw_line((cx-x1r,cy-y1r+1), (cx-x2r,cy-y2r+1), color=LINE_COLOR)
 
             # Add a label on the left of every other tick
-            if i%2 == 0:
+            if i == 0: #%2 == 0:
                 label_x = cx-x2r-PITCH_LABEL_X_OFFSET 
                 label_y = cy-y2r-PITCH_LABEL_Y_OFFSET
                 pitch_label = pyglet.text.Label(('%+3d'%(-i*10)).center(3), x = label_x, y = label_y, 
