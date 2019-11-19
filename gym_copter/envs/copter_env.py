@@ -91,7 +91,9 @@ class CopterEnv(gym.Env):
                 self.y = y
                 self.phi = phi
             def render(self):
+                glRotatef(45.0, 0.0, 0.0, 1.0)
                 self.label.draw()
+                glLoadIdentity()
 
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y

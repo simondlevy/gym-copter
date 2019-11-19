@@ -9,9 +9,12 @@ window = pyglet.window.Window()
 
 @window.event
 def on_draw():
+
     window.clear()
+
     glLoadIdentity()
     label1.draw()
+
     # The rotation occurs around the origin (lower left corner)
     # so first we 'move' the origin to the center of the window
     # and since the label is anchored in the center of the label,
@@ -28,9 +31,7 @@ def on_draw():
 
 
 label1 = pyglet.text.Label('Not rotated',x=10, y=10)
-label2 = pyglet.text.Label('Rotated 90 degrees',anchor_x='center',
-anchor_y='center')
-label3 = pyglet.text.Label('Rotated 45 degrees',anchor_x='center',
-anchor_y='center')
+label2 = pyglet.text.Label('Rotated 90 degrees',anchor_x='center', anchor_y='center')
+label3 = pyglet.text.Label('Rotated 45 degrees',anchor_x='center', anchor_y='center')
 
 pyglet.app.run()
