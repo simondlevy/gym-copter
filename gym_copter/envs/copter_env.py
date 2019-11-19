@@ -167,7 +167,7 @@ class CopterEnv(gym.Env):
                         anchor_x='center', anchor_y='center') 
                 label_x = cx-x2r-PITCH_LABEL_X_OFFSET 
                 label_y = cy-y2r-PITCH_LABEL_Y_OFFSET
-                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, np.pi/4))
+                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, phi))
 
         # Add a horizontal line and triangular pointer at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
