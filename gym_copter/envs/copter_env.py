@@ -94,7 +94,7 @@ class CopterEnv(gym.Env):
                 glTranslatef(self.x, self.y, 0)
                 glRotatef(45.0, 0.0, 0.0, 1.0)
                 self.label.draw()
-                glLoadIdentity()
+                glLoadIdentity() # Restores ordinary drawing
 
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
