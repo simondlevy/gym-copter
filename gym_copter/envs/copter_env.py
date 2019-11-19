@@ -55,7 +55,7 @@ class CopterEnv(gym.Env):
         HEADING_TICK_COUNT    = 24
         HEADING_TICK_Y_OFFSET = 17
         HEADING_LINE_Y_OFFSET = 35
-        FONT_SIZE             = 20
+        FONT_SIZE             = 18
         FONT_COLOR            = 255,255,255
         PITCH_LINE_SPACING    = 40
         PITCH_LINE_WIDTH      = 30
