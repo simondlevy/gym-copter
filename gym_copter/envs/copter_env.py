@@ -138,7 +138,8 @@ class CopterEnv(gym.Env):
         # Center vertical of ground depends on pitch
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
-        phi = rotation[0]
+        #phi = rotation[0]
+        phi = np.pi/8
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
