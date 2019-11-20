@@ -173,7 +173,11 @@ class CopterEnv(gym.Env):
         location = pose.location
         rotation = pose.rotation
         altitude = -location[2]
+        velocity = state.inertialVel
         heading  = np.degrees(rotation[2])
+
+        # Compute ground speed as length of X,Y velocity vector
+        groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
         # Get center coordinates
         cx,cy = W/2, H/2
@@ -235,11 +239,11 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
-        # Display altitude
+        # Display altitude at right
         _vertical_display(self.viewer, W-VERTICAL_BOX_WIDTH, W-VERTICAL_BOX_WIDTH+1, altitude)
 
-        # Display ground speed
-        _vertical_display(self.viewer, 0, -VERTICAL_POINTER_HEIGHT, altitude)
+        # Display ground speed at left
+        _vertical_display(self.viewer, 0, -VERTICAL_POINTER_HEIGHT, groundspeed)
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
