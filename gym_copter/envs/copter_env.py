@@ -203,7 +203,7 @@ class CopterEnv(gym.Env):
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
         t = H/2 + ALTITUDE_BOX_HEIGHT/2
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-        self.viewer.draw_polygon([(l,H/2+20),(r,H/2+20),(r,H/2-20),(l,H/2-20)], color=BOX_COLOR)
+        self.viewer.draw_polygon([(l+1,H/2), (l+20,H/2+20),(r-1,H/2+20),(r-1,H/2-20),(l+20,H/2-20)], color=BOX_COLOR)
 
         # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
