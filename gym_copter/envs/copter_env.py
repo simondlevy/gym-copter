@@ -68,7 +68,7 @@ class CopterEnv(gym.Env):
         ALTITUDE_BOX_WIDTH      = 90
         ALTITUDE_BOX_X_MARGIN   = 10
         ALTITUDE_LABEL_OFFSET   = 60
-        ALTITUDE_POINTER_SIZE   = 8
+        ALTITUDE_POINTER_HEIGHT = 20
         ALTITUDE_STEP_METERS    = 5
         ALTITUDE_STEP_PIXELS    = 8
         ROLL_RETICLE_RADIUS     = 300
@@ -202,8 +202,9 @@ class CopterEnv(gym.Env):
         r = W - ALTITUDE_BOX_X_MARGIN
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
         t = H/2 + ALTITUDE_BOX_HEIGHT/2
+        dy = ALTITUDE_POINTER_HEIGHT
         self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-        self.viewer.draw_polygon([(l+1,H/2), (l+20,H/2+20),(r-1,H/2+20),(r-1,H/2-20),(l+20,H/2-20)], color=BOX_COLOR)
+        self.viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=BOX_COLOR)
 
         # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
