@@ -53,7 +53,7 @@ class CopterEnv(gym.Env):
         SKY_COLOR               = 0.5, 0.8, 1.0
         GROUND_COLOR            = 0.5, 0.7, 0.3
         LINE_COLOR              = 1.0, 1.0, 1.0
-        BOX_COLOR               = 0.5, 0.5, 0.5
+        HIGHLIGHT_COLOR         = 0.5, 0.5, 0.5
         POINTER_COLOR           = 1.0, 0.0, 0.0
         HEADING_TICK_SPACING    = 80
         HEADING_TICK_COUNT      = 24
@@ -68,7 +68,7 @@ class CopterEnv(gym.Env):
         PITCH_LABEL_Y_OFFSET    = 0
         VERTICAL_BOX_HEIGHT     = 300
         VERTICAL_BOX_WIDTH      = 90
-        VERTICAL_LABEL_OFFSET   = 60
+        VERTICAL_LABEL_OFFSET   = 30
         VERTICAL_POINTER_HEIGHT = 15
         VERTICAL_STEP_METERS    = 5
         VERTICAL_STEP_PIXELS    = 8
@@ -115,16 +115,18 @@ class CopterEnv(gym.Env):
 
         def _vertical_display(viewer, leftx, value):
 
-            # Add a box on the right side for the gauge
+            # Add a box for the gauge
             l = leftx
             r = l + VERTICAL_BOX_WIDTH
             b = H/2 - VERTICAL_BOX_HEIGHT/2
             t = H/2 + VERTICAL_BOX_HEIGHT/2
             dy = VERTICAL_POINTER_HEIGHT
             viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-            viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=BOX_COLOR)
 
-            # Display the value in the box
+            # Add a background color for highlighting current value in the middle
+            viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=HIGHLIGHT_COLOR)
+
+            # Display the current values in the box
             closest = value // VERTICAL_STEP_METERS * VERTICAL_STEP_METERS
             for k in range(-3,4):
                 tickval = closest+k*VERTICAL_STEP_METERS
@@ -136,7 +138,7 @@ class CopterEnv(gym.Env):
                 
                 # Avoid putting tick label below bottom of box
                 if dy > -VERTICAL_BOX_HEIGHT/2+20:
-                    label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-VERTICAL_LABEL_OFFSET, y=H/2+dy,
+                    label = pyglet.text.Label(('%3d'%tickval).center(3), x=l+VERTICAL_LABEL_OFFSET, y=H/2+dy,
                             font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
                     viewer.add_onetime(_DrawText(label))
 
@@ -216,7 +218,7 @@ class CopterEnv(gym.Env):
         self.viewer.draw_line((0,y), (W,y), color=LINE_COLOR)
         self.viewer.draw_polygon([
             (W/2-HEADING_BOX_WIDTH,y),(W/2+HEADING_BOX_WIDTH,y),(W/2+HEADING_BOX_WIDTH,H),(W/2-HEADING_BOX_WIDTH,H)], 
-            color=BOX_COLOR)
+            color=HIGHLIGHT_COLOR)
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
