@@ -64,7 +64,7 @@ class CopterEnv(gym.Env):
         PITCH_LINE_WIDTH        = 30
         PITCH_LABEL_X_OFFSET    = 40
         PITCH_LABEL_Y_OFFSET    = 0
-        ALTITUDE_BOX_HEIGHT     = 200
+        ALTITUDE_BOX_HEIGHT     = 300
         ALTITUDE_BOX_WIDTH      = 90
         ALTITUDE_BOX_X_MARGIN   = 10
         ALTITUDE_LABEL_OFFSET   = 60
