@@ -68,7 +68,6 @@ class CopterEnv(gym.Env):
         PITCH_LABEL_Y_OFFSET    = 0
         ALTITUDE_BOX_HEIGHT     = 300
         ALTITUDE_BOX_WIDTH      = 90
-        ALTITUDE_BOX_X_MARGIN   = 10
         ALTITUDE_LABEL_OFFSET   = 60
         ALTITUDE_POINTER_HEIGHT = 15
         ALTITUDE_STEP_METERS    = 5
@@ -200,8 +199,8 @@ class CopterEnv(gym.Env):
             heading_label.x = x
 
         # Add a box on the right side for the altitude gauge
-        l = W - ALTITUDE_BOX_WIDTH - ALTITUDE_BOX_X_MARGIN
-        r = W - ALTITUDE_BOX_X_MARGIN
+        l = W - ALTITUDE_BOX_WIDTH
+        r = W
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
         t = H/2 + ALTITUDE_BOX_HEIGHT/2
         dy = ALTITUDE_POINTER_HEIGHT
