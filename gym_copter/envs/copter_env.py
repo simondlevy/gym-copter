@@ -62,7 +62,6 @@ class CopterEnv(gym.Env):
         PITCH_LABEL_X_OFFSET    = 40
         PITCH_LABEL_Y_OFFSET    = 0
         POINTER_COLOR           = 1.0, 0.0, 0.0
-        HEADING_POINTER_SIZE    = 5
         ALTITUDE_BOX_HEIGHT     = 200
         ALTITUDE_BOX_WIDTH      = 90
         ALTITUDE_BOX_X_MARGIN   = 10
@@ -78,6 +77,7 @@ class CopterEnv(gym.Env):
         ROLL_RETICLE_TICKLEN    = 5
         ROLL_RETICLE_TICK_YOFF  = 25
         ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
+        ROLL_POINTER_SIZE       = 5
  
         from gym.envs.classic_control import rendering
         from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
@@ -177,13 +177,8 @@ class CopterEnv(gym.Env):
                 label_y = cy-y2r-PITCH_LABEL_Y_OFFSET
                 self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, phi))
 
-        # Add a horizontal line and triangular pointer at the top for the heading display
+        # Add a horizontal line at the top for the heading display
         self.viewer.draw_line((0,H-HEADING_LINE_Y_OFFSET), (W,H-HEADING_LINE_Y_OFFSET), color=LINE_COLOR)
-        self.viewer.draw_polygon([
-            (W/2-HEADING_POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-HEADING_POINTER_SIZE), 
-            (W/2+HEADING_POINTER_SIZE,H-HEADING_LINE_Y_OFFSET-HEADING_POINTER_SIZE), 
-            (W/2,H-HEADING_LINE_Y_OFFSET+HEADING_POINTER_SIZE)],
-            color=POINTER_COLOR)
 
         # Display heading
         for i,heading_label in enumerate(self.heading_labels):
@@ -236,6 +231,15 @@ class CopterEnv(gym.Env):
             label_x = x2
             label_y = y2 + ROLL_RETICLE_TICK_YOFF
             self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle*15)))
+
+        # Add a pointer below the roll reticle
+        x,y = points[len(points)//2]
+        x -= ROLL_POINTER_SIZE - 0.5
+        self.viewer.draw_polygon([
+            (x-ROLL_POINTER_SIZE,y-2*ROLL_POINTER_SIZE), 
+            (x+ROLL_POINTER_SIZE,y-2*ROLL_POINTER_SIZE), 
+            (x,y)],
+            color=POINTER_COLOR)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
