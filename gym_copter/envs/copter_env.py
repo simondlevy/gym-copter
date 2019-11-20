@@ -143,8 +143,8 @@ class CopterEnv(gym.Env):
         # Center vertical of ground depends on pitch
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
-        #phi = rotation[0]
-        phi = -np.pi/8
+        # Use standard symbol for roll
+        phi = rotation[0]
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
@@ -197,7 +197,7 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
-        # Add a box and a pointer on the right side for the altitude gauge
+        # Add a box on the right side for the altitude gauge
         l = W - ALTITUDE_BOX_WIDTH - ALTITUDE_BOX_X_MARGIN
         r = W - ALTITUDE_BOX_X_MARGIN
         b = H/2 - ALTITUDE_BOX_HEIGHT/2
@@ -212,14 +212,11 @@ class CopterEnv(gym.Env):
             diff = tickval - altitude
             dy = diff*ALTITUDE_STEP_PIXELS
 
-            # Avoid putting tick label below bottom of box
-            if dy > -ALTITUDE_BOX_HEIGHT/2:
-
-                # Use a non-linear fade-in/out for numbers at top, bottom
-                alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
-                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-ALTITUDE_LABEL_OFFSET, y=H/2+dy,
-                        font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
-                self.viewer.add_onetime(_DrawText(altitude_label))
+            # Use a non-linear fade-in/out for numbers at top, bottom
+            alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
+            altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-ALTITUDE_LABEL_OFFSET, y=H/2+dy,
+                    font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
+            self.viewer.add_onetime(_DrawText(altitude_label))
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
