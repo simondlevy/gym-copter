@@ -70,7 +70,7 @@ class CopterEnv(gym.Env):
         ALTITUDE_BOX_WIDTH      = 90
         ALTITUDE_BOX_X_MARGIN   = 10
         ALTITUDE_LABEL_OFFSET   = 60
-        ALTITUDE_POINTER_HEIGHT = 20
+        ALTITUDE_POINTER_HEIGHT = 15
         ALTITUDE_STEP_METERS    = 5
         ALTITUDE_STEP_PIXELS    = 8
         ROLL_RETICLE_RADIUS     = 300
