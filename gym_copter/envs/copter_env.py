@@ -12,6 +12,8 @@ import pyglet
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
+from sys import stdout
+
 class CopterEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
@@ -208,16 +210,20 @@ class CopterEnv(gym.Env):
 
         # Display altitude in the box
         closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
-        for k in range(-2,3):
+        for k in range(-3,4):
             tickval = closest+k*ALTITUDE_STEP_METERS
             diff = tickval - altitude
             dy = diff*ALTITUDE_STEP_PIXELS
 
             # Use a non-linear fade-in/out for numbers at top, bottom
             alpha = int(255  * np.sqrt(max(0, (1-abs(diff)/10.))))
+            print('%+3d %3d' % (tickval, alpha))
             altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-ALTITUDE_LABEL_OFFSET, y=H/2+dy,
                     font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(altitude_label))
+
+        print('')
+        stdout.flush()
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
