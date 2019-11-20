@@ -228,6 +228,9 @@ class CopterEnv(gym.Env):
         # Display altitude
         _vertical_display(self.viewer, W-VERTICAL_BOX_WIDTH, altitude)
 
+        # Display ground speed
+        _vertical_display(self.viewer, 0, altitude)
+
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
         points = [(np.cos(a)*ROLL_RETICLE_RADIUS+W/2, np.sin(a)*ROLL_RETICLE_RADIUS+ROLL_RETICLE_YOFF) for a in angles]
