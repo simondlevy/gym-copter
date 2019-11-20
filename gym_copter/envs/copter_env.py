@@ -109,6 +109,9 @@ class CopterEnv(gym.Env):
         def _rotate(x, y, phi):
             return np.cos(phi)*x - np.sin(phi)*y, np.sin(phi)*x + np.cos(phi)*y
 
+        def _tickval2index(tickval):
+            return int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
+
         if self.viewer is None:
 
             self.viewer = rendering.Viewer(W, H)
@@ -226,7 +229,7 @@ class CopterEnv(gym.Env):
         self.viewer.draw_polyline(points, color=LINE_COLOR, linewidth=2)
         tickvals = np.append(-np.array(ROLL_RETICLE_TICKVALS[::-1]), [0] + ROLL_RETICLE_TICKVALS)
         for tickval in tickvals: 
-            k = int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
+            k = _tickval2index(tickval)
             x1,y1 = points[k]
             x2,y2 = x1,y1+ROLL_RETICLE_TICKLEN
             rangle = np.radians(-ROLL_RETICLE_TICKVALS[-1]/ROLL_RETICLE_LIM*tickval)
@@ -240,7 +243,7 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle*15)))
 
         # Add a pointer below the roll reticle
-        x,y = points[len(points)//2]
+        x,y = points[_tickval2index(np.degrees(phi))]
         x -= ROLL_POINTER_SIZE - 0.5
         self.viewer.draw_polygon([
             (x-ROLL_POINTER_SIZE,y-2*ROLL_POINTER_SIZE), 
