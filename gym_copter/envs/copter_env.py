@@ -113,11 +113,11 @@ class CopterEnv(gym.Env):
         def _tickval2index(tickval):
             return int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
 
-        def _vertical_display(viewer, value):
+        def _vertical_display(viewer, leftx, value):
 
             # Add a box on the right side for the gauge
-            l = W - VERTICAL_BOX_WIDTH
-            r = W
+            l = leftx
+            r = l + VERTICAL_BOX_WIDTH
             b = H/2 - VERTICAL_BOX_HEIGHT/2
             t = H/2 + VERTICAL_BOX_HEIGHT/2
             dy = VERTICAL_POINTER_HEIGHT
@@ -226,7 +226,7 @@ class CopterEnv(gym.Env):
             heading_label.x = x
 
         # Display altitude
-        _vertical_display(self.viewer, altitude)
+        _vertical_display(self.viewer, W-VERTICAL_BOX_WIDTH, altitude)
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
