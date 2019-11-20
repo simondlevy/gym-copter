@@ -79,7 +79,7 @@ class CopterEnv(gym.Env):
         ROLL_RETICLE_TICKLEN    = 5
         ROLL_RETICLE_TICK_YOFF  = 25
         ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
-        ROLL_POINTER_SIZE       = 5
+        ROLL_POINTER_SIZE       = 10
  
         from gym.envs.classic_control import rendering
         from pyglet.gl import glTranslatef, glLoadIdentity, glRotatef
@@ -144,7 +144,7 @@ class CopterEnv(gym.Env):
         gcy = H/2 * (1 + np.sin(rotation[1]))
 
         #phi = rotation[0]
-        phi = np.pi/8
+        phi = -np.pi/8
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = _rotate(W, 0, phi)
@@ -242,14 +242,13 @@ class CopterEnv(gym.Env):
             label_y = y2 + ROLL_RETICLE_TICK_YOFF
             self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle*15)))
 
-        # Add a pointer below the roll reticle
+        # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[_tickval2index(np.degrees(phi))]
-        x -= ROLL_POINTER_SIZE - 0.5
-        self.viewer.draw_polygon([
-            (x-ROLL_POINTER_SIZE,y-2*ROLL_POINTER_SIZE), 
-            (x+ROLL_POINTER_SIZE,y-2*ROLL_POINTER_SIZE), 
-            (x,y)],
-            color=POINTER_COLOR)
+        x1,y1 = _rotate(-ROLL_POINTER_SIZE, 0, -phi)
+        x2,y2 = _rotate(ROLL_POINTER_SIZE, 0, -phi)
+        x3,y3 = _rotate(0, ROLL_POINTER_SIZE, -phi)
+        y -= ROLL_POINTER_SIZE
+        self.viewer.draw_polygon([(x+x1, y+y1), (x+x2,y+y2), (x+x3,y+y3)], color=POINTER_COLOR)
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
