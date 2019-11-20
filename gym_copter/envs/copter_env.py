@@ -66,12 +66,12 @@ class CopterEnv(gym.Env):
         PITCH_LINE_WIDTH        = 30
         PITCH_LABEL_X_OFFSET    = 40
         PITCH_LABEL_Y_OFFSET    = 0
-        ALTITUDE_BOX_HEIGHT     = 300
-        ALTITUDE_BOX_WIDTH      = 90
-        ALTITUDE_LABEL_OFFSET   = 60
-        ALTITUDE_POINTER_HEIGHT = 15
-        ALTITUDE_STEP_METERS    = 5
-        ALTITUDE_STEP_PIXELS    = 8
+        VERTICAL_BOX_HEIGHT     = 300
+        VERTICAL_BOX_WIDTH      = 90
+        VERTICAL_LABEL_OFFSET   = 60
+        VERTICAL_POINTER_HEIGHT = 15
+        VERTICAL_STEP_METERS    = 5
+        VERTICAL_STEP_PIXELS    = 8
         ROLL_RETICLE_RADIUS     = 300
         ROLL_RETICLE_LIM        = 45
         ROLL_RETICLE_PTS        = 100
@@ -112,6 +112,33 @@ class CopterEnv(gym.Env):
 
         def _tickval2index(tickval):
             return int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
+
+        def _vertical_display(viewer, value):
+
+            # Add a box on the right side for the gauge
+            l = W - VERTICAL_BOX_WIDTH
+            r = W
+            b = H/2 - VERTICAL_BOX_HEIGHT/2
+            t = H/2 + VERTICAL_BOX_HEIGHT/2
+            dy = VERTICAL_POINTER_HEIGHT
+            viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
+            viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=BOX_COLOR)
+
+            # Display the value in the box
+            closest = value // VERTICAL_STEP_METERS * VERTICAL_STEP_METERS
+            for k in range(-3,4):
+                tickval = closest+k*VERTICAL_STEP_METERS
+                diff = tickval - value
+                dy = diff*VERTICAL_STEP_PIXELS
+
+                # Use a linear fade-in/out for numbers at top, bottom
+                alpha = int(255 * (4  - abs(k)) / 4.)
+                
+                # Avoid putting tick label below bottom of box
+                if dy > -VERTICAL_BOX_HEIGHT/2+20:
+                    label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-VERTICAL_LABEL_OFFSET, y=H/2+dy,
+                            font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
+                    viewer.add_onetime(_DrawText(label))
 
         if self.viewer is None:
 
@@ -198,30 +225,8 @@ class CopterEnv(gym.Env):
             self.viewer.add_onetime(_DrawText(heading_label))
             heading_label.x = x
 
-        # Add a box on the right side for the altitude gauge
-        l = W - ALTITUDE_BOX_WIDTH
-        r = W
-        b = H/2 - ALTITUDE_BOX_HEIGHT/2
-        t = H/2 + ALTITUDE_BOX_HEIGHT/2
-        dy = ALTITUDE_POINTER_HEIGHT
-        self.viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-        self.viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=BOX_COLOR)
-
-        # Display altitude in the box
-        closest = altitude // ALTITUDE_STEP_METERS * ALTITUDE_STEP_METERS
-        for k in range(-3,4):
-            tickval = closest+k*ALTITUDE_STEP_METERS
-            diff = tickval - altitude
-            dy = diff*ALTITUDE_STEP_PIXELS
-
-            # Use a linear fade-in/out for numbers at top, bottom
-            alpha = int(255 * (4  - abs(k)) / 4.)
-            
-            # Avoid putting tick label below bottom of box
-            if dy > -ALTITUDE_BOX_HEIGHT/2+20:
-                altitude_label = pyglet.text.Label(('%3d'%tickval).center(3), x=W-ALTITUDE_LABEL_OFFSET, y=H/2+dy,
-                        font_size=FONT_SIZE, color=(*FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
-                self.viewer.add_onetime(_DrawText(altitude_label))
+        # Display altitude
+        _vertical_display(self.viewer, altitude)
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
