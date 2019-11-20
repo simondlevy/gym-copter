@@ -76,6 +76,7 @@ class CopterEnv(gym.Env):
         ROLL_RETICLE_YOFF       = 200
         ROLL_RETICLE_STRIDE     = 10
         ROLL_RETICLE_TICKLEN    = 5
+        ROLL_RETICLE_TICK_YOFF  = 25
         ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
  
         from gym.envs.classic_control import rendering
@@ -90,14 +91,16 @@ class CopterEnv(gym.Env):
                 self.label.draw()
 
         class _DrawTextRotated:
-            def __init__(self, label:pyglet.text.Label, x, y, phi):
+            def __init__(self, label:pyglet.text.Label, x, y, phi, xoff=0):
                 self.label=label
                 self.x = x
                 self.y = y
                 self.phi = phi
+                self.xoff = xoff
             def render(self):
                 glTranslatef(self.x, self.y, 0)
                 glRotatef(np.degrees(self.phi), 0.0, 0.0, 1.0)
+                glTranslatef(self.xoff, 0, 0)
                 self.label.draw()
                 glLoadIdentity() # Restores ordinary drawing
 
@@ -228,11 +231,11 @@ class CopterEnv(gym.Env):
             xr,yr = _rotate(0, ROLL_RETICLE_TICKLEN, rangle)
             self.viewer.draw_line((x1,y1),  (x2+xr, y2+yr), color=LINE_COLOR)
             self.viewer.draw_line((x1+1,y1),  (x2+xr+1, y2+yr), color=LINE_COLOR) # add another tick line for thickness
-            roll_label = pyglet.text.Label(('%3d'%abs(tickval)).center(3), 
+            roll_label = pyglet.text.Label(('%2d'%abs(tickval)).center(3), 
                     font_size=FONT_SIZE, color=(*FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
-            label_y = y2 + 20
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, np.radians(tickval)))
+            label_y = y2 + ROLL_RETICLE_TICK_YOFF
+            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle*15)))
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
