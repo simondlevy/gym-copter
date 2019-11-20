@@ -113,18 +113,26 @@ class CopterEnv(gym.Env):
         def _tickval2index(tickval):
             return int((ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
 
-        def _vertical_display(viewer, leftx, value):
+        def _vertical_display(viewer, leftx, stripx, value):
 
-            # Add a box for the gauge
+            dy = VERTICAL_POINTER_HEIGHT
+
+            # Display a tapered strip in the middle for highlighting current value
+            stripw = VERTICAL_BOX_WIDTH + dy
+            x1,y1 = stripx,0+H/2
+            x2,y2 = stripx+dy,dy+H/2
+            x3,y3 = stripx+stripw-dy, dy+H/2
+            x4,y4 = stripx+stripw, 0+H/2
+            x5,y5 = stripx+stripw-dy, -dy+H/2
+            x6,y6 = stripx+dy,-dy+H/2
+            viewer.draw_polygon([(x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)], color=HIGHLIGHT_COLOR)
+
+            # Display a box for the gauge
             l = leftx
             r = l + VERTICAL_BOX_WIDTH
             b = H/2 - VERTICAL_BOX_HEIGHT/2
             t = H/2 + VERTICAL_BOX_HEIGHT/2
-            dy = VERTICAL_POINTER_HEIGHT
             viewer.draw_polygon([(l,t),(r,t),(r,b),(l,b)], color=LINE_COLOR, linewidth=2, filled=False)
-
-            # Add a background color for highlighting current value in the middle
-            viewer.draw_polygon([ (l+1,H/2), (l+dy,H/2+dy), (r-1,H/2+dy), (r-1,H/2-dy), (l+dy,H/2-dy)], color=HIGHLIGHT_COLOR)
 
             # Display the current values in the box
             closest = value // VERTICAL_STEP_METERS * VERTICAL_STEP_METERS
@@ -228,10 +236,10 @@ class CopterEnv(gym.Env):
             heading_label.x = x
 
         # Display altitude
-        _vertical_display(self.viewer, W-VERTICAL_BOX_WIDTH, altitude)
+        _vertical_display(self.viewer, W-VERTICAL_BOX_WIDTH, W-VERTICAL_BOX_WIDTH+1, altitude)
 
         # Display ground speed
-        _vertical_display(self.viewer, 0, altitude)
+        _vertical_display(self.viewer, 0, -VERTICAL_POINTER_HEIGHT, altitude)
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-ROLL_RETICLE_LIM), np.radians(ROLL_RETICLE_LIM), ROLL_RETICLE_PTS)
