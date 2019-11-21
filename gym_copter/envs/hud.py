@@ -28,7 +28,7 @@ class _DrawTextRotated:
         self.xoff = xoff
     def render(self):
         glTranslatef(self.x, self.y, 0)
-        glRotatef(np.degrees(self.angle), 0.0, 0.0, 1.0)
+        glRotatef(self.angle, 0.0, 0.0, 1.0)
         glTranslatef(self.xoff, 0, 0)
         self.label.draw()
         glLoadIdentity() # Restores ordinary drawing
@@ -173,7 +173,7 @@ class HUD:
                         anchor_x='center', anchor_y='center') 
                 label_x = cx-x2r-HUD.PITCH_LABEL_X_OFFSET 
                 label_y = cy-y2r-HUD.PITCH_LABEL_Y_OFFSET
-                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, roll))
+                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, np.degrees(roll)))
 
         # Add a horizontal line and center box at the top for the heading display
         y = HUD.H-HUD.HEADING_LINE_Y_OFFSET
@@ -215,7 +215,7 @@ class HUD:
                     font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
             label_y = y2 + HUD.ROLL_RETICLE_TICK_YOFF
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle*15)))
+            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, np.degrees(rangle/2), -(6 if rangle==0 else rangle*15)))
 
         # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[HUD._tickval2index(np.degrees(roll), tickvals)]
