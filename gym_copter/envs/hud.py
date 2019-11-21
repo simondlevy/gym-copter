@@ -129,6 +129,9 @@ class HUD:
 
     def display(self, mode, roll, pitch, heading, altitude, groundspeed):
 
+        roll = np.radians(roll)
+        pitch = np.radians(pitch)
+
         # Get center coordinates
         cx,cy = HUD.W/2, HUD.H/2
 

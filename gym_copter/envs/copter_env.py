@@ -54,7 +54,7 @@ class CopterEnv(Env):
         state = self.dynamics.getState()
         pose = state.pose
         location = pose.location
-        rotation = pose.rotation
+        rotation = np.degrees(pose.rotation) # HUD expects degrees
         altitude = -location[2]
         velocity = state.inertialVel
         heading  = np.degrees(rotation[2])
@@ -62,7 +62,7 @@ class CopterEnv(Env):
         # Compute ground speed as length of X,Y velocity vector
         groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
-        return self.hud.display(mode, rotation[0], rotation[1], heading, altitude, groundspeed) 
+        return self.hud.display(mode, 22.5, rotation[1], heading, altitude, groundspeed) 
 
     def close(self):
         pass
