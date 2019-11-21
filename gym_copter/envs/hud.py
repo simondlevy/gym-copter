@@ -206,15 +206,15 @@ class HUD:
             k = HUD._tickval2index(tickval, tickvals)
             x1,y1 = points[k]
             x2,y2 = x1,y1+HUD.ROLL_RETICLE_TICKLEN
-            rangle = np.radians(-HUD.ROLL_RETICLE_TICKVALS[-1]/HUD.ROLL_RETICLE_LIM*tickval)
-            xr,yr = HUD._rotate(0, HUD.ROLL_RETICLE_TICKLEN, rangle)
+            rangle = -HUD.ROLL_RETICLE_TICKVALS[-1]/HUD.ROLL_RETICLE_LIM*tickval
+            xr,yr = HUD._rotate(0, HUD.ROLL_RETICLE_TICKLEN, np.radians(rangle))
             self.viewer.draw_line((x1,y1),  (x2+xr, y2+yr), color=HUD.LINE_COLOR)
             self.viewer.draw_line((x1+1,y1),  (x2+xr+1, y2+yr), color=HUD.LINE_COLOR) # add another tick line for thickness
             roll_label = Label(('%2d'%abs(tickval)).center(3), 
                     font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
             label_y = y2 + HUD.ROLL_RETICLE_TICK_YOFF
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, np.degrees(rangle/2), -(6 if rangle==0 else rangle*15)))
+            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else np.radians(rangle*15))))
 
         # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[HUD._tickval2index(roll, tickvals)]
