@@ -71,6 +71,7 @@ class HUD:
     ROLL_POINTER_SIZE       = 10
 
     def _rotate(x, y, angle):
+        angle = np.radians(angle)
         return np.cos(angle)*x - np.sin(angle)*y, np.sin(angle)*x + np.cos(angle)*y
 
     def _tickval2index(tickval, tickvals):
@@ -138,7 +139,7 @@ class HUD:
         gcy = HUD.H/2 * (1 + np.sin(pitch))
 
         # Left and right top of ground quadrilateral depend on roll
-        dx,dy = HUD._rotate(HUD.W, 0, np.radians(roll))
+        dx,dy = HUD._rotate(HUD.W, 0, roll)
         x1 = cx - dx
         y1 = gcy - dy
         x2 = cx + dx
@@ -156,8 +157,8 @@ class HUD:
             x2 = x1 + HUD.PITCH_LINE_WIDTH + (1-(i%2))*HUD.PITCH_LINE_WIDTH/2 # alternate line length
             y2 = y1
 
-            x1r,y1r = HUD._rotate(x1, y1, np.radians(roll))
-            x2r,y2r = HUD._rotate(x2, y2, np.radians(roll))
+            x1r,y1r = HUD._rotate(x1, y1, roll)
+            x2r,y2r = HUD._rotate(x2, y2, roll)
 
             # Draw two sets of lines for thickness
             self.viewer.draw_line((cx+x1r,cy+y1r),   (cx+x2r,cy+y2r), color=HUD.LINE_COLOR)
@@ -207,7 +208,7 @@ class HUD:
             x1,y1 = points[k]
             x2,y2 = x1,y1+HUD.ROLL_RETICLE_TICKLEN
             rangle = -HUD.ROLL_RETICLE_TICKVALS[-1]/HUD.ROLL_RETICLE_LIM*tickval
-            xr,yr = HUD._rotate(0, HUD.ROLL_RETICLE_TICKLEN, np.radians(rangle))
+            xr,yr = HUD._rotate(0, HUD.ROLL_RETICLE_TICKLEN, rangle)
             self.viewer.draw_line((x1,y1),  (x2+xr, y2+yr), color=HUD.LINE_COLOR)
             self.viewer.draw_line((x1+1,y1),  (x2+xr+1, y2+yr), color=HUD.LINE_COLOR) # add another tick line for thickness
             roll_label = Label(('%2d'%abs(tickval)).center(3), 
@@ -218,9 +219,9 @@ class HUD:
 
         # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[HUD._tickval2index(roll, tickvals)]
-        x1,y1 = HUD._rotate(-HUD.ROLL_POINTER_SIZE, 0, np.radians(-roll))
-        x2,y2 = HUD._rotate(HUD.ROLL_POINTER_SIZE, 0, np.radians(-roll))
-        x3,y3 = HUD._rotate(0, HUD.ROLL_POINTER_SIZE, np.radians(-roll))
+        x1,y1 = HUD._rotate(-HUD.ROLL_POINTER_SIZE, 0, -roll)
+        x2,y2 = HUD._rotate(HUD.ROLL_POINTER_SIZE, 0, -roll)
+        x3,y3 = HUD._rotate(0, HUD.ROLL_POINTER_SIZE, -roll)
         y -= HUD.ROLL_POINTER_SIZE
         self.viewer.draw_polygon([(x+x1, y+y1), (x+x2,y+y2), (x+x3,y+y3)], color=HUD.POINTER_COLOR)
 
