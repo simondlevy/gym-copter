@@ -20,15 +20,15 @@ class _DrawText:
         self.label.draw()
 
 class _DrawTextRotated:
-    def __init__(self, label, x, y, roll, xoff=0):
+    def __init__(self, label, x, y, angle, xoff=0):
         self.label=label
         self.x = x
         self.y = y
-        self.roll = roll
+        self.angle = angle
         self.xoff = xoff
     def render(self):
         glTranslatef(self.x, self.y, 0)
-        glRotatef(np.degrees(self.roll), 0.0, 0.0, 1.0)
+        glRotatef(np.degrees(self.angle), 0.0, 0.0, 1.0)
         glTranslatef(self.xoff, 0, 0)
         self.label.draw()
         glLoadIdentity() # Restores ordinary drawing
