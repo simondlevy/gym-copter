@@ -70,8 +70,8 @@ class HUD:
     ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
     ROLL_POINTER_SIZE       = 10
 
-    def _rotate(x, y, roll):
-        return np.cos(roll)*x - np.sin(roll)*y, np.sin(roll)*x + np.cos(roll)*y
+    def _rotate(x, y, angle):
+        return np.cos(angle)*x - np.sin(angle)*y, np.sin(angle)*x + np.cos(angle)*y
 
     def _tickval2index(tickval, tickvals):
         return int((HUD.ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
