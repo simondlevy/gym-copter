@@ -50,8 +50,9 @@ class HUD:
     HEADING_BOX_WIDTH       = 20
     FONT_SIZE               = 18
     FONT_COLOR              = 255,255,255
-    PITCH_LINE_SPACING      = 40
-    PITCH_LINE_WIDTH        = 30
+    PITCH_RETICLE_SPACING   = 40
+    PITCH_RETICLE_INCREMENT = 10
+    PITCH_RETICLE_WIDTH     = 30
     PITCH_LABEL_X_OFFSET    = 40
     PITCH_LABEL_Y_OFFSET    = 0
     VERTICAL_BOX_HEIGHT     = 300
@@ -137,7 +138,7 @@ class HUD:
         cx,cy = HUD.W/2, HUD.H/2
 
         # Center vertical of ground depends on pitch
-        gcy = HUD.H/2 * (1 + np.sin(pitch))
+        gcy = HUD.H/2 + pitch * HUD.PITCH_RETICLE_SPACING / HUD.PITCH_RETICLE_INCREMENT
 
         # Left and right top of ground quadrilateral depend on roll
         dx,dy = HUD._rotate(HUD.W, 0, roll)
@@ -153,9 +154,9 @@ class HUD:
         for i in range(-3,4):
 
             x1 = 0
-            y1 = i * HUD.PITCH_LINE_SPACING
+            y1 = i * HUD.PITCH_RETICLE_SPACING
 
-            x2 = x1 + HUD.PITCH_LINE_WIDTH + (1-(i%2))*HUD.PITCH_LINE_WIDTH/2 # alternate line length
+            x2 = x1 + HUD.PITCH_RETICLE_WIDTH + (1-(i%2))*HUD.PITCH_RETICLE_WIDTH/2 # alternate line length
             y2 = y1
 
             x1r,y1r = HUD._rotate(x1, y1, roll)
@@ -169,7 +170,7 @@ class HUD:
 
             # Add a label on the left of every other tick
             if i%2 == 0:
-                pitch_label = Label(('%+3d'%(-i*10)).center(3), 
+                pitch_label = Label(('%+3d'%(-i*HUD.PITCH_RETICLE_INCREMENT)).center(3), 
                         font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), 
                         anchor_x='center', anchor_y='center') 
                 label_x = cx-x2r-HUD.PITCH_LABEL_X_OFFSET 
