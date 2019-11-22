@@ -128,9 +128,10 @@ class HUD:
                 y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET, color=(*HUD.FONT_COLOR,255), 
                 anchor_x='center', anchor_y='center') for c in range(HUD.HEADING_TICK_COUNT)]
 
-    def display(self, mode, roll, pitch, heading, altitude, groundspeed):
+    def display(self, mode, angles, altitude, groundspeed):
 
-        pitch = np.radians(pitch)
+        # Extract pitch, roll, heading
+        pitch, roll, heading = angles
 
         # Get center coordinates
         cx,cy = HUD.W/2, HUD.H/2

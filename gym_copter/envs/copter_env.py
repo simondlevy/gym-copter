@@ -19,6 +19,9 @@ class CopterEnv(Env):
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
+        self.angles = 0,0,0
+        self.altitude = 0
+        self.groundspeed = 0
 
     def step(self, action):
 
@@ -32,7 +35,18 @@ class CopterEnv(Env):
         episode_over = False # whether it's time to reset the environment again (e.g., circle tipped over)
         info         = {}    # diagnostic info for debugging
 
+        # Update vehicle dynamics
         self.dynamics.update(self.dt)
+
+        # Get vehicle kinematics
+        state = self.dynamics.getState()
+        pose = state.pose
+        self.angles = np.degrees(pose.rotation) # HUD expects degrees
+        self.altitude = -pose.location[2]       # Location is NED, so negate Z to get altitude
+
+        # Compute ground speed as length of X,Y velocity vector
+        velocity = state.inertialVel
+        groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
         return obs, reward, episode_over, info
 
@@ -50,18 +64,7 @@ class CopterEnv(Env):
         # Detect window close
         if not self.hud.isOpen(): return None
 
-        # Get vehicle state
-        state = self.dynamics.getState()
-        pose = state.pose
-        location = pose.location
-        rotation = np.degrees(pose.rotation) # HUD expects degrees
-        altitude = -location[2]
-        velocity = state.inertialVel
-
-        # Compute ground speed as length of X,Y velocity vector
-        groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
-
-        return self.hud.display(mode,  rotation[0], rotation[1], rotation[2], altitude, groundspeed) 
+        return self.hud.display(mode,  self.angles, self.altitude, self.groundspeed) 
 
     def close(self):
         pass
