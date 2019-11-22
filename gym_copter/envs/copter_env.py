@@ -31,10 +31,6 @@ class CopterEnv(Env):
         # an environment-specific object representing your observation of the environment
         obs = self.dynamics.getState()
 
-        reward       = 0.0   # floating-point reward value from previous action
-        episode_over = False # whether it's time to reset the environment again (e.g., circle tipped over)
-        info         = {}    # diagnostic info for debugging
-
         # Update vehicle dynamics
         self.dynamics.update(self.dt)
 
@@ -46,7 +42,12 @@ class CopterEnv(Env):
 
         # Compute ground speed as length of X,Y velocity vector
         velocity = state.inertialVel
-        groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
+        self.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
+
+        # Get return values 
+        reward       = self._getReward()  # floating-point reward value from previous action
+        episode_over = False              # whether it's time to reset the environment again (e.g., circle tipped over)
+        info         = {}                 # diagnostic info for debugging
 
         return obs, reward, episode_over, info
 
@@ -69,3 +70,8 @@ class CopterEnv(Env):
     def close(self):
         pass
 
+class CopterEnvAltitude(CopterEnv):
+
+    def _getReward(self):
+
+        return self.altitude
