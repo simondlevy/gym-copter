@@ -3,4 +3,6 @@ Gym environment for reinforcement learning with multicopters.  Pure Python, cros
 
 ## Similar projects
 
-https://github.com/wil3/gymfc
+[GymFC](https://github.com/wil3/gymfc)
+
+[How to Train Your Quadcopter](https://towardsdatascience.com/how-to-train-your-quadcopter-adventures-in-machine-learning-algorithms-e6ee5033fd61)
