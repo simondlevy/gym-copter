@@ -216,8 +216,7 @@ class HUD:
                     font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
             label_y = y2 + HUD.ROLL_RETICLE_TICK_YOFF
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else np.radians(rangle*15))))
-            #self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle/2.6)))
+            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle/3.82)))
 
         # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[HUD._tickval2index(roll, tickvals)]
