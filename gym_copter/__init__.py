@@ -7,6 +7,6 @@ MIT License
 from gym.envs.registration import register
 
 register(
-    id='copter-v0',
+    id='Copter-v0',
     entry_point='gym_copter.envs:CopterEnvAltitude',
 )
