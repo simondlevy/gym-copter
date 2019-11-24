@@ -9,7 +9,7 @@ import numpy as np
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
-class CopterEnv(Env):
+class _CopterEnv(Env):
 
     metadata = {'render.modes': ['human']}
 
@@ -70,7 +70,7 @@ class CopterEnv(Env):
     def close(self):
         pass
 
-class CopterEnvAltitude(CopterEnv):
+class CopterEnvAltitude(_CopterEnv):
 
     def _getReward(self):
 
