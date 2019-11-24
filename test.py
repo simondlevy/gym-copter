@@ -20,7 +20,7 @@ for i_episode in range(20):
 
         env.render()
 
-        print(observation)
+        #print(observation)
 
         action = env.action_space.sample()
 

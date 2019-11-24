@@ -44,6 +44,8 @@ class _CopterEnv(Env):
         # Get vehicle kinematics
         pose = kinematics.pose
         self.state.angles = np.degrees(pose.rotation) # HUD expects degrees
+        if self.state.angles[2] < 0:
+            self.state.angles[2] += 360               # Keep heading positive
         self.state.altitude = -pose.location[2]       # Location is NED, so negate Z to get altitude
 
         # Compute ground speed as length of X,Y velocity vector

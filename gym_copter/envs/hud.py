@@ -134,6 +134,8 @@ class HUD:
         # Extract pitch, roll, heading
         pitch, roll, heading = angles
 
+        print(heading)
+
         # Get center coordinates
         cx,cy = HUD.W/2, HUD.H/2
 
