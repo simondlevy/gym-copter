@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Test simple altitude-hold PID controller
+Run simple altitude-hold PID controller to test dynamics
 
 Copyright (C) 2019 Simon D. Levy
 
