@@ -124,17 +124,10 @@ class HUD:
             sky.set_color(*HUD.SKY_COLOR)
             self.viewer.add_geom(sky)
 
-            # Create labels for heading
-            self.heading_labels = [Label(('%d'%(c*360//HUD.HEADING_TICK_COUNT)).center(3), font_size=HUD.FONT_SIZE, 
-                y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET, color=(*HUD.FONT_COLOR,255), 
-                anchor_x='center', anchor_y='center') for c in range(HUD.HEADING_TICK_COUNT)]
-
     def display(self, mode, angles, altitude, groundspeed):
 
         # Extract pitch, roll, heading
         pitch, roll, heading = angles
-
-        print(heading)
 
         # Get center coordinates
         cx,cy = HUD.W/2, HUD.H/2
@@ -190,11 +183,13 @@ class HUD:
             color=HUD.HIGHLIGHT_COLOR)
 
         # Display heading
-        for i,heading_label in enumerate(self.heading_labels):
-            d = HUD.HEADING_TICK_SPACING * HUD.HEADING_TICK_COUNT
-            x = (HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d
+        d = HUD.HEADING_TICK_SPACING * HUD.HEADING_TICK_COUNT
+        for i in range(HUD.HEADING_TICK_COUNT):
+            heading_label = Label(('%d'%(i*360//HUD.HEADING_TICK_COUNT)).center(3), font_size=HUD.FONT_SIZE, 
+                x = (HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d,
+                y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET, color=(*HUD.FONT_COLOR,255), 
+                anchor_x='center', anchor_y='center') 
             self.viewer.add_onetime(_DrawText(heading_label))
-            heading_label.x = x
 
         # Display altitude at right
         HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, altitude)
