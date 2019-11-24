@@ -10,7 +10,7 @@ MIT License
 import gym
 import gym_copter
 
-env = gym.make('CartPole-v0')
+env = gym.make('Copter-v0')
 
 for i_episode in range(20):
 

@@ -9,6 +9,19 @@ import numpy as np
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
+class _CopterState:
+
+    def __init__(self, angles=(0,0,0), altitude=0, groundspeed=0):
+
+        self.angles = angles
+        self.altitude = altitude
+        self.groundspeed = groundspeed
+
+    def __str__(self):
+
+        return 'Pitch: %+3.1f  Roll: %+3.1f Heading: %+3.1f Altitude: %+3.1f  Groundspeed: %+3.1f' %  \
+                (self.angles[0], self.angles[1], self.angles[2], self.altitude, self.groundspeed)
+
 class _CopterEnv(Env):
 
     metadata = {'render.modes': ['human']}
@@ -19,40 +32,34 @@ class _CopterEnv(Env):
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
-        self.angles = 0,0,0
-        self.altitude = 0
-        self.groundspeed = 0
+        self.state = _CopterState()
 
     def step(self, action):
 
+        # Update dynamics and get kinematics
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt)
-
-        # an environment-specific object representing your observation of the environment
-        obs = self.dynamics.getState()
-
-        # Update vehicle dynamics
-        self.dynamics.update(self.dt)
+        kinematics = self.dynamics.getState()
 
         # Get vehicle kinematics
-        state = self.dynamics.getState()
-        pose = state.pose
-        self.angles = np.degrees(pose.rotation) # HUD expects degrees
-        self.altitude = -pose.location[2]       # Location is NED, so negate Z to get altitude
+        pose = kinematics.pose
+        self.state.angles = np.degrees(pose.rotation) # HUD expects degrees
+        self.state.altitude = -pose.location[2]       # Location is NED, so negate Z to get altitude
 
         # Compute ground speed as length of X,Y velocity vector
-        velocity = state.inertialVel
-        self.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
+        velocity = kinematics.inertialVel
+        self.state.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
         # Get return values 
         reward       = self._getReward()  # floating-point reward value from previous action
         episode_over = False              # whether it's time to reset the environment again (e.g., circle tipped over)
         info         = {}                 # diagnostic info for debugging
 
-        return obs, reward, episode_over, info
+        return self.state, reward, episode_over, info
 
     def reset(self):
-        pass
+        self.state = _CopterState()
+        return self.state
 
     def render(self, mode='human'):
 
@@ -65,7 +72,7 @@ class _CopterEnv(Env):
         # Detect window close
         if not self.hud.isOpen(): return None
 
-        return self.hud.display(mode,  self.angles, self.altitude, self.groundspeed) 
+        return self.hud.display(mode,  self.state.angles, self.state.altitude, self.state.groundspeed) 
 
     def close(self):
         pass
@@ -74,4 +81,4 @@ class CopterEnvAltitude(_CopterEnv):
 
     def _getReward(self):
 
-        return self.altitude
+        return self.state.altitude
