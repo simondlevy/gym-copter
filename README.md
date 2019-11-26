@@ -1,4 +1,4 @@
-<img src="hud.png">
+<img src="hud.png" width=400>
 
 # gym-copter
 Gym environment for reinforcement learning with multicopters.  Pure Python, cross-platform.
