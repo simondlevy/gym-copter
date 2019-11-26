@@ -10,7 +10,7 @@ Features:
 * Cross-platform
 
 * Uses realistic multirotor dynamics
-([Bouabdallah et al. 2004](https://pdfs.semanticscholar.org/79ed/0df796997622e4de9b909e1c04d9febba3c7.pdf)) that can be
+([Bouabdallah et al. 2004](https://infoscience.epfl.ch/record/97532/files/325.pdf)) that can be
 subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 ## Similar projects
