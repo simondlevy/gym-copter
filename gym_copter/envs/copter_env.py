@@ -28,7 +28,9 @@ class _CopterEnv(Env):
 
     def __init__(self, dt=.001):
 
+        self.num_envs = 1
         self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
+        self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100]))  # motors
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
