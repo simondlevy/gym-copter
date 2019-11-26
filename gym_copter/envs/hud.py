@@ -78,7 +78,7 @@ class HUD:
     def _tickval2index(tickval, tickvals):
         return int((HUD.ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
 
-    def _vertical_display(viewer, leftx, stripx, value):
+    def _vertical_display(viewer, leftx, stripx, value, title):
 
         dy = HUD.VERTICAL_POINTER_HEIGHT
 
@@ -192,10 +192,10 @@ class HUD:
             self.viewer.add_onetime(_DrawText(heading_label))
 
         # Display altitude at right
-        HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, altitude)
+        HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, altitude, 'Alt (m)')
 
         # Display ground speed at left
-        HUD._vertical_display(self.viewer, 0, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed)
+        HUD._vertical_display(self.viewer, 0, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed, 'GS (m/s)')
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-HUD.ROLL_RETICLE_LIM), np.radians(HUD.ROLL_RETICLE_LIM), HUD.ROLL_RETICLE_PTS)
