@@ -49,6 +49,7 @@ class HUD:
     HEADING_LINE_Y_OFFSET   = 35
     HEADING_BOX_WIDTH       = 20
     FONT_SIZE               = 18
+    SMALL_FONT_SIZE         = 14
     FONT_COLOR              = 255,255,255
     PITCH_RETICLE_SPACING   = 40
     PITCH_RETICLE_INCREMENT = 10
@@ -115,14 +116,19 @@ class HUD:
                         font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,alpha), anchor_x='center', anchor_y='center') 
                 viewer.add_onetime(_DrawText(label))
 
+        # Add a title at the bottom
+        title_label = Label(title, x=l+45, y=HUD.H/2-HUD.VERTICAL_BOX_HEIGHT/2-20,
+                font_size=HUD.SMALL_FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
+        viewer.add_onetime(_DrawText(title_label))
+
     def __init__(self):
 
-            self.viewer = rendering.Viewer(HUD.W, HUD.H)
+        self.viewer = rendering.Viewer(HUD.W, HUD.H)
 
-            # Add sky as backround
-            sky = rendering.FilledPolygon([(0,HUD.H), (0,0), (HUD.W,0), (HUD.W,HUD.H)])
-            sky.set_color(*HUD.SKY_COLOR)
-            self.viewer.add_geom(sky)
+        # Add sky as backround
+        sky = rendering.FilledPolygon([(0,HUD.H), (0,0), (HUD.W,0), (HUD.W,HUD.H)])
+        sky.set_color(*HUD.SKY_COLOR)
+        self.viewer.add_geom(sky)
 
     def display(self, mode, angles, altitude, groundspeed):
 
