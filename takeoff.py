@@ -84,9 +84,8 @@ if __name__ == '__main__':
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 
-         # Extract altitude from state.  Altitude is in NED coordinates, so we negate it to use as input
-        # to PID controller.
-        z = -state.pose.location[2]
+         # Extract altitude from state
+        z = state.altitude
 
         # Use temporal first difference to compute vertical velocity
         dzdt = (z-zprev) / DT
