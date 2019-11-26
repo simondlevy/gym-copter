@@ -1,3 +1,5 @@
+<img src="hud.png">
+
 # gym-copter
 Gym environment for reinforcement learning with multicopters.  Pure Python, cross-platform.
 
