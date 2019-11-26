@@ -62,6 +62,8 @@ class HUD:
     VERTICAL_POINTER_HEIGHT = 15
     VERTICAL_STEP_METERS    = 5
     VERTICAL_STEP_PIXELS    = 8
+    VERTICAL_TITLE_X_OFFSET = 45
+    VERTICAL_TITLE_Y_OFFSET = 20
     ROLL_RETICLE_RADIUS     = 300
     ROLL_RETICLE_LIM        = 45
     ROLL_RETICLE_PTS        = 100
@@ -78,6 +80,12 @@ class HUD:
 
     def _tickval2index(tickval, tickvals):
         return int((HUD.ROLL_RETICLE_PTS-1) * (tickval-tickvals[0]) / (tickvals[-1]-tickvals[0]))
+
+    def _add_label(viewer, label):
+        viewer.add_onetime(_DrawText(label))        
+
+    def _add_label_rotated(viewer, label, x, y, angle, xoff=0):
+        viewer.add_onetime(_DrawTextRotated(label, x, y, angle, xoff))        
 
     def _vertical_display(viewer, leftx, stripx, value, title):
 
@@ -117,9 +125,8 @@ class HUD:
                 viewer.add_onetime(_DrawText(label))
 
         # Add a title at the bottom
-        title_label = Label(title, x=l+45, y=HUD.H/2-HUD.VERTICAL_BOX_HEIGHT/2-20,
-                font_size=HUD.SMALL_FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
-        viewer.add_onetime(_DrawText(title_label))
+        HUD._add_label(viewer, Label(title, x=l+HUD.VERTICAL_TITLE_X_OFFSET, y=HUD.H/2-HUD.VERTICAL_BOX_HEIGHT/2-HUD.VERTICAL_TITLE_Y_OFFSET,
+                font_size=HUD.SMALL_FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center')) 
 
     def __init__(self):
 
@@ -176,7 +183,7 @@ class HUD:
                         anchor_x='center', anchor_y='center') 
                 label_x = cx-x2r-HUD.PITCH_LABEL_X_OFFSET 
                 label_y = cy-y2r-HUD.PITCH_LABEL_Y_OFFSET
-                self.viewer.add_onetime(_DrawTextRotated(pitch_label, label_x, label_y, roll))
+                HUD._add_label_rotated(self.viewer, pitch_label, label_x, label_y, roll)
 
         # Add a horizontal line and center box at the top for the heading display
         y = HUD.H-HUD.HEADING_LINE_Y_OFFSET
@@ -191,11 +198,10 @@ class HUD:
         # Display heading
         d = HUD.HEADING_TICK_SPACING * HUD.HEADING_TICK_COUNT
         for i in range(HUD.HEADING_TICK_COUNT):
-            heading_label = Label(('%d'%(i*360//HUD.HEADING_TICK_COUNT)).center(3), font_size=HUD.FONT_SIZE, 
+            HUD._add_label(self.viewer, Label(('%d'%(i*360//HUD.HEADING_TICK_COUNT)).center(3), font_size=HUD.FONT_SIZE, 
                 x = (HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d,
                 y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET, color=(*HUD.FONT_COLOR,255), 
-                anchor_x='center', anchor_y='center') 
-            self.viewer.add_onetime(_DrawText(heading_label))
+                anchor_x='center', anchor_y='center'))
 
         # Display altitude at right
         HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, altitude, 'Alt (m)')
@@ -220,7 +226,7 @@ class HUD:
                     font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center') 
             label_x = x2
             label_y = y2 + HUD.ROLL_RETICLE_TICK_YOFF
-            self.viewer.add_onetime(_DrawTextRotated(roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle/3.82)))
+            HUD._add_label_rotated(self.viewer, roll_label, label_x, label_y, rangle/2, -(6 if rangle==0 else rangle/3.82))
 
         # Add a rotated pointer below the current angle in the roll reticle
         x,y = points[HUD._tickval2index(roll, tickvals)]
