@@ -1,4 +1,4 @@
-<img src="hud.png" width=500>
+<img src="hud2.png" width=500>
 
 # gym-copter
 Gym environment for reinforcement learning with multicopters.  
