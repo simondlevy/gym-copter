@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 '''
-Run simple test from http://gym.openai.com/docs/
+Run simple test with random sampling
+
+Adapted from from http://gym.openai.com/docs/
 
 Copyright (C) 2019 Simon D. Levy
 
