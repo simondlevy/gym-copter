@@ -3,7 +3,7 @@
 # gym-copter
 Gym environment for reinforcement learning with multicopters.  
 
-Features:
+## Features:
 
 * Pure Python / Cross-platform
 
