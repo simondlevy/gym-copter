@@ -1,4 +1,6 @@
 '''
+gym-copter Environment classes
+
 Copyright (C) 2019 Simon D. Levy
 
 MIT License
@@ -82,7 +84,19 @@ class _CopterEnv(Env):
         pass
 
 class CopterEnvAltitude(_CopterEnv):
+    '''
+    A class that rewards increased altitude
+    '''
 
-    def _getReward(self):
+    def step(self):
+
+        state, reward, _, info = CopterEnv.step(self, action)
+
+        # Episode is over when copter reaches 100m altitude or returns to earth
+        episode_over = False 
+
+        return state, reward, episode_over, info
+
+    def _getReward(self, action):
 
         return self.state.altitude
