@@ -88,6 +88,10 @@ class CopterEnvAltitude(_CopterEnv):
     A class that rewards increased altitude
     '''
 
+    def __init__(self, dt=.001):
+
+        _CopterEnv.__init__(self)
+
     def step(self, action):
 
         state, reward, _, info = _CopterEnv.step(self, action)
