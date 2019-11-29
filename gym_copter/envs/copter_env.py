@@ -88,15 +88,15 @@ class CopterEnvAltitude(_CopterEnv):
     A class that rewards increased altitude
     '''
 
-    def step(self):
+    def step(self, action):
 
-        state, reward, _, info = CopterEnv.step(self, action)
+        state, reward, _, info = _CopterEnv.step(self, action)
 
         # Episode is over when copter reaches 100m altitude or returns to earth
         episode_over = False 
 
         return state, reward, episode_over, info
 
-    def _getReward(self, action):
+    def _getReward(self):
 
         return self.state.altitude
