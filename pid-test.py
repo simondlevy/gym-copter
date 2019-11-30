@@ -64,7 +64,7 @@ class AltitudePidController(object):
 if __name__ == '__main__':
 
     # Create and initialize copter environment
-    env = gym.make('gym_copter:Copter-v0')
+    env = gym.make('gym_copter:Copter-v2')
     env.reset()
 
     # initial conditions

@@ -27,17 +27,19 @@ class _CopterState:
 
 class _CopterEnv(Env):
 
+    # Altitude threshold for being airborne
+    ALTITUDE_MIN = 0.1
+
     metadata = {'render.modes': ['human']}
 
     def __init__(self, dt=.001):
 
         self.num_envs = 1
-        self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))  # motors
-        self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100]))  # motors
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
         self.state = _CopterState()
+        self.airborne = False
 
     def step(self, action):
 
@@ -57,10 +59,18 @@ class _CopterEnv(Env):
         velocity = kinematics.inertialVel
         self.state.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
+        # Ascending above minimum altitude: set airborne flag
+        if self.state.altitude > CopterEnvAltitude.ALTITUDE_MIN and not self.airborne:
+            self.airborne = True
+
+        # Descending below minimum altitude: set episode-over flag
+        if self.state.altitude < CopterEnvAltitude.ALTITUDE_MIN and self.airborne:
+            episode_over = True
+
         # Get return values 
-        reward       = self._getReward()  # floating-point reward value from previous action
-        episode_over = False              # whether it's time to reset the environment again (e.g., circle tipped over)
-        info         = {}                 # diagnostic info for debugging
+        reward       = 0      # floating-point reward value from previous action
+        episode_over = False  # whether it's time to reset the environment again (e.g., circle tipped over)
+        info         = {}     # diagnostic info for debugging
 
         return self.state, reward, episode_over, info
 
@@ -89,27 +99,12 @@ class CopterEnvAltitude(_CopterEnv):
     A class that rewards increased altitude
     '''
 
-    ALTITUDE_MIN = 0.1
     ALTITUDE_MAX = 10
-
-    def __init__(self, dt=.001):
-
-        _CopterEnv.__init__(self)
-
-        self.airborne = False
 
     def step(self, action):
 
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = _CopterEnv.step(self, action)
-
-        # Ascending above minimum altitude: set airborne flag
-        if state.altitude > CopterEnvAltitude.ALTITUDE_MIN and not self.airborne:
-            self.airborne = True
-
-        # Descending below minimum altitude: set episode-over flag
-        if state.altitude < CopterEnvAltitude.ALTITUDE_MIN and self.airborne:
-            episode_over = True
 
         # Maximum altitude attained: set episode-over flag
         if state.altitude > CopterEnvAltitude.ALTITUDE_MAX:
@@ -125,3 +120,21 @@ class CopterEnvAltitude(_CopterEnv):
     def _getReward(self):
 
         return self.state.altitude
+
+class CopterEnvRealistic(_CopterEnv):
+    '''
+    A class with continous state and action space.
+    '''
+
+    def __init__(self, dt=.001):
+
+        _CopterEnv.__init__(self)
+
+        # Action space = motors
+        self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))
+
+        # Observation space = roll,pitch,heading,altitude,groundspeed
+        self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100])) 
+
+
+
