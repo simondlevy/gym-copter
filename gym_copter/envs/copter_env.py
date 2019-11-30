@@ -115,9 +115,6 @@ class CopterEnvAltitude(_CopterEnv):
         if state.altitude > CopterEnvAltitude.ALTITUDE_MAX:
             episode_over = True 
 
-        print('Airborne: %d  Done: %d' % (self.airborne, episode_over))
-        stdout.flush()
-
         return state, reward, episode_over, info
 
     def _getReward(self):
