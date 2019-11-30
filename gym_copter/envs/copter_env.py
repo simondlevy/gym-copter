@@ -117,6 +117,11 @@ class CopterEnvAltitude(_CopterEnv):
 
         return state, reward, episode_over, info
 
+    def reset(self):
+        _CopterEnv.reset(self)
+        self.airborne = False
+        return self.state
+
     def _getReward(self):
 
         return self.state.altitude
