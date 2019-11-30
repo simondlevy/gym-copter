@@ -4,4 +4,4 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.copter_env import CopterEnvAltitude, CopterEnvRealistic
+from gym_copter.envs.copter_env import CopterEnvDiscreteAltitude, CopterEnvRealistic

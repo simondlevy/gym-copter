@@ -60,11 +60,11 @@ class _CopterEnv(Env):
         self.state.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
 
         # Ascending above minimum altitude: set airborne flag
-        if self.state.altitude > CopterEnvAltitude.ALTITUDE_MIN and not self.airborne:
+        if self.state.altitude > _CopterEnv.ALTITUDE_MIN and not self.airborne:
             self.airborne = True
 
         # Descending below minimum altitude: set episode-over flag
-        if self.state.altitude < CopterEnvAltitude.ALTITUDE_MIN and self.airborne:
+        if self.state.altitude < _CopterEnv.ALTITUDE_MIN and self.airborne:
             episode_over = True
 
         # Get return values 
@@ -94,12 +94,17 @@ class _CopterEnv(Env):
     def close(self):
         pass
 
-class CopterEnvAltitude(_CopterEnv):
+class CopterEnvDiscreteAltitude(_CopterEnv):
     '''
-    A class that rewards increased altitude
+    A class that rewards increased altitude.  
+    Observation space (altitude) and action space (motor values) are both discretized.
     '''
 
     ALTITUDE_MAX = 10
+
+    def __init__(self):
+
+        _CopterEnv.__init__(self)
 
     def step(self, action):
 
@@ -110,16 +115,14 @@ class CopterEnvAltitude(_CopterEnv):
         if state.altitude > CopterEnvAltitude.ALTITUDE_MAX:
             episode_over = True 
 
+        reward = state.altitude
+
         return state, reward, episode_over, info
 
     def reset(self):
         _CopterEnv.reset(self)
         self.airborne = False
         return self.state
-
-    def _getReward(self):
-
-        return self.state.altitude
 
 class CopterEnvRealistic(_CopterEnv):
     '''
@@ -135,6 +138,3 @@ class CopterEnvRealistic(_CopterEnv):
 
         # Observation space = roll,pitch,heading,altitude,groundspeed
         self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100])) 
-
-
-
