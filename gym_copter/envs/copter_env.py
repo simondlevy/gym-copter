@@ -101,12 +101,18 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
     '''
 
     ALTITUDE_MAX = 10
+    MOTOR_STEPS  = 5
 
     def __init__(self):
 
         _CopterEnv.__init__(self)
 
+        # Action space = motors, discretize to intervals
+        self.action_space = spaces.Discrete(4 * (CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1))
+
     def step(self, action):
+
+        motors = (0)*4
 
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = _CopterEnv.step(self, action)
