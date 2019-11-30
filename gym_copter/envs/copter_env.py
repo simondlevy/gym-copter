@@ -8,6 +8,7 @@ MIT License
 
 from gym import Env, spaces
 import numpy as np
+from sys import stdout
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
@@ -88,16 +89,34 @@ class CopterEnvAltitude(_CopterEnv):
     A class that rewards increased altitude
     '''
 
+    ALTITUDE_MIN = 0.1
+    ALTITUDE_MAX = 10
+
     def __init__(self, dt=.001):
 
         _CopterEnv.__init__(self)
 
+        self.airborne = False
+
     def step(self, action):
 
-        state, reward, _, info = _CopterEnv.step(self, action)
+        # Call parent-class step() to do basic update
+        state, reward, episode_over, info = _CopterEnv.step(self, action)
 
-        # Episode is over when copter reaches 100m altitude or returns to earth
-        episode_over = False 
+        # Ascending above minimum altitude: set airborne flag
+        if state.altitude > CopterEnvAltitude.ALTITUDE_MIN and not self.airborne:
+            self.airborne = True
+
+        # Descending below minimum altitude: set episode-over flag
+        if state.altitude < CopterEnvAltitude.ALTITUDE_MIN and self.airborne:
+            episode_over = True
+
+        # Maximum altitude attained: set episode-over flag
+        if state.altitude > CopterEnvAltitude.ALTITUDE_MAX:
+            episode_over = True 
+
+        print('Airborne: %d  Done: %d' % (self.airborne, episode_over))
+        stdout.flush()
 
         return state, reward, episode_over, info
 
