@@ -110,6 +110,9 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
         # Action space = motors, discretize to intervals
         self.action_space = spaces.Discrete(4 * (CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1))
 
+        # Observation space = altitude
+        self.observation_space = spaces.Box(np.array([0]), np.array([np.inf]))
+
     def step(self, action):
 
         motors = (0)*4

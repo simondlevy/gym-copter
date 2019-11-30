@@ -8,14 +8,14 @@ MIT License
 '''
 
 from a3c import A3CAgent
-
+import gym_copter
 
 import gym
 import argparse
 import os
 import matplotlib.pyplot as plt
 
-parser = argparse.ArgumentParser(description='Run A3C algorithm on a gym game.')
+parser = argparse.ArgumentParser(description='Run A3C algorithm on CopterGym.')
 
 parser.add_argument('--train', dest='train', action='store_true', help='Train our model.')
 parser.add_argument('--lr', default=0.001, help='Learning rate for the shared optimizer.')
@@ -26,10 +26,11 @@ parser.add_argument('--save-dir', default='/tmp/', type=str, help='Directory in 
 
 args = parser.parse_args()
 
-env = gym.make(args.game)
+env = gym.make('Copter-v0')
 
 agent = A3CAgent(env, args.save_dir, args.lr)
-    
+
+'''
 if args.train:
 
     moving_average_rewards = agent.train(args.max_eps, args.update_freq, args.gamma)
@@ -46,3 +47,4 @@ if args.train:
 else:
 
     agent.play()
+'''
