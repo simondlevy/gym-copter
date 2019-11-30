@@ -94,10 +94,10 @@ class _CopterEnv(Env):
     def close(self):
         pass
 
-class CopterEnvDiscreteAltitude(_CopterEnv):
+class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
     '''
     A class that rewards increased altitude.  
-    Observation space (altitude) and action space (motor values) are both discretized.
+    Action space (motor values) is discretized.
     '''
 
     ALTITUDE_MAX = 10
