@@ -137,10 +137,10 @@ class HUD:
         sky.set_color(*HUD.SKY_COLOR)
         self.viewer.add_geom(sky)
 
-    def display(self, mode, angles, altitude, groundspeed):
+    def display(self, mode, state):
 
-        # Extract pitch, roll, heading
-        pitch, roll, heading = angles
+        # Extract pitch, roll, heading, converting them from radians to degrees
+        pitch, roll, heading = np.degrees(state[6:12:2])
 
         # Get center coordinates
         cx,cy = HUD.W/2, HUD.H/2
@@ -203,10 +203,11 @@ class HUD:
                 y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET, color=(*HUD.FONT_COLOR,255), 
                 anchor_x='center', anchor_y='center'))
 
-        # Display altitude at right
-        HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, altitude, 'Alt (m)')
+        # Display altitude at right (negate to accommodate NED)
+        HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, -state[4], 'Alt (m)')
 
         # Display ground speed at left
+        groundspeed = 0
         HUD._vertical_display(self.viewer, 0, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed, 'GS (m/s)')
 
         # Add a reticle at the top for roll

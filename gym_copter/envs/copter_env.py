@@ -12,19 +12,6 @@ from sys import stdout
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
-class _CopterState:
-
-    def __init__(self, angles=(0,0,0), altitude=0, groundspeed=0):
-
-        self.angles = angles
-        self.altitude = altitude
-        self.groundspeed = groundspeed
-
-    def __str__(self):
-
-        return 'Pitch: %+3.1f  Roll: %+3.1f Heading: %+3.1f Altitude: %+3.1f  Groundspeed: %+3.1f' %  \
-                (self.angles[0], self.angles[1], self.angles[2], self.altitude, self.groundspeed)
-
 class _CopterEnv(Env):
 
     # Altitude threshold for being airborne
@@ -38,34 +25,25 @@ class _CopterEnv(Env):
         self.dt = dt
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
-        self.state = _CopterState()
+        self.state = np.zeros(12)
         self.airborne = False
 
     def step(self, action):
 
-        # Update dynamics and get kinematics
+        # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt)
-        kinematics = self.dynamics.getState()
-
-        # Get vehicle kinematics
-        pose = kinematics.pose
-        self.state.angles = np.degrees(pose.rotation) # HUD expects degrees
-        if self.state.angles[2] < 0:
-            self.state.angles[2] += 360               # Keep heading positive
-        self.state.altitude = -pose.location[2]       # Location is NED, so negate Z to get altitude
-
-        # Compute ground speed as length of X,Y velocity vector
-        velocity = kinematics.inertialVel
-        self.state.groundspeed = np.sqrt(velocity[0]**2 + velocity[1]**2)
+        self.state = self.dynamics.getState()
 
         # Ascending above minimum altitude: set airborne flag
+        '''
         if self.state.altitude > _CopterEnv.ALTITUDE_MIN and not self.airborne:
             self.airborne = True
 
         # Descending below minimum altitude: set episode-over flag
         if self.state.altitude < _CopterEnv.ALTITUDE_MIN and self.airborne:
             episode_over = True
+        '''
 
         # Get return values 
         reward       = 0      # floating-point reward value from previous action
@@ -75,7 +53,7 @@ class _CopterEnv(Env):
         return self.state, reward, episode_over, info
 
     def reset(self):
-        self.state = _CopterState()
+        self.state = np.zeros(12)
         return self.state
 
     def render(self, mode='human'):
@@ -89,7 +67,7 @@ class _CopterEnv(Env):
         # Detect window close
         if not self.hud.isOpen(): return None
 
-        return self.hud.display(mode,  self.state.angles, self.state.altitude, self.state.groundspeed) 
+        return self.hud.display(mode,  self.state)
 
     def close(self):
         pass

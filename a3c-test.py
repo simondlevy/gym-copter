@@ -30,7 +30,6 @@ env = gym.make('Copter-v0')
 
 agent = A3CAgent(env, args.save_dir, args.lr)
 
-'''
 if args.train:
 
     moving_average_rewards = agent.train(args.max_eps, args.update_freq, args.gamma)
@@ -47,4 +46,3 @@ if args.train:
 else:
 
     agent.play()
-'''

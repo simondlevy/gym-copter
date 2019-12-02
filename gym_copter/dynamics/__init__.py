@@ -78,25 +78,6 @@ class MultirotorDynamics:
     # universal constants
     g = 9.80665 # might want to allow this to vary!
 
-    class Pose:
-        '''
-        Exported pose representation
-        '''
-        def __init__(self):
-            self.location = np.zeros(3)
-            self.rotation = np.zeros(3)
-
-    class State:
-        '''
-        Exported state representation
-        '''
-        def __init__(self):
-            self.pose = MultirotorDynamics.Pose()
-            self.angularVel  = np.zeros(3)
-            self.bodyAccel   = np.zeros(3)
-            self.inertialVel = np.zeros(3)
-            self.quaternion  = np.zeros(4)
-
     def __init__(self, params, motorCount, airborne=False):
         '''
         Constructor
@@ -121,9 +102,6 @@ class MultirotorDynamics:
         self._U3 = 0     # pitch thrust forward
         self._U4 = 0     # yaw thrust clockwise
         self._Omega = 0  # torque clockwise
-
-        # Exported state
-        self._state = MultirotorDynamics.State()
 
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, (0,0,0))
@@ -182,25 +160,11 @@ class MultirotorDynamics:
             # Once airborne, inertial-frame acceleration is same as NED acceleration
             self._inertialAccel = accelNED.copy()
 
-        # Get most values directly from state vector
-        for i in range(3):
-            ii = 2 * i
-            self._state.angularVel[i]    = self._x[MultirotorDynamics._STATE_PHI_DOT + ii]
-            self._state.inertialVel[i]   = self._x[MultirotorDynamics._STATE_X_DOT + ii]
-            self._state.pose.rotation[i] = self._x[MultirotorDynamics._STATE_PHI + ii]
-            self._state.pose.location[i] = self._x[MultirotorDynamics._STATE_X + ii]
-
-        # Convert inertial acceleration and velocity to body frame
-        self._state.bodyAccel = MultirotorDynamics._inertialToBody(self._inertialAccel, self._state.pose.rotation)
-
-        # Convert Euler angles to quaternion
-        self._state.quaternion = MultirotorDynamics._eulerToQuaternion(self._state.pose.rotation)
-
     def getState(self):
         '''
-        Returns State class instance.
+        Returns a copy of the state vector as a tuple
         '''
-        return self._state
+        return tuple(self._x)
 
     def _computeStateDerivative(self, accelNED, netz):
         '''

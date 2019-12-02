@@ -84,8 +84,8 @@ if __name__ == '__main__':
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 
-         # Extract altitude from state
-        z = state.altitude
+         # Extract altitude from state (negate to accommodate NED)
+        z = -state[4]
 
         # Use temporal first difference to compute vertical velocity
         dzdt = (z-zprev) / DT
