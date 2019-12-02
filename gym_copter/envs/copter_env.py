@@ -26,6 +26,7 @@ class _CopterEnv(Env):
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
         self.state = np.zeros(12)
+        self.altitude = 0
         self.airborne = False
 
     def step(self, action):
@@ -35,15 +36,16 @@ class _CopterEnv(Env):
         self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
 
+        # Special handling for altitude: negate to accommodate NED; then save it
+        self.altitude = -self.state[4]
+
         # Ascending above minimum altitude: set airborne flag
-        '''
-        if self.state.altitude > _CopterEnv.ALTITUDE_MIN and not self.airborne:
+        if self.altitude > _CopterEnv.ALTITUDE_MIN and not self.airborne:
             self.airborne = True
 
         # Descending below minimum altitude: set episode-over flag
-        if self.state.altitude < _CopterEnv.ALTITUDE_MIN and self.airborne:
+        if self.altitude < _CopterEnv.ALTITUDE_MIN and self.airborne:
             episode_over = True
-        '''
 
         # Get return values 
         reward       = 0      # floating-point reward value from previous action
@@ -99,17 +101,16 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
         state, reward, episode_over, info = _CopterEnv.step(self, action)
 
         # Maximum altitude attained: set episode-over flag
-        if state.altitude > CopterEnvAltitude.ALTITUDE_MAX:
+        if self.altitude > CopterEnvAltitude.ALTITUDE_MAX:
             episode_over = True 
 
-        reward = state.altitude
-
-        return state, reward, episode_over, info
+        # Altitude is both the state and the reward
+        return [self.altitude], self.altitude, episode_over, info
 
     def reset(self):
         _CopterEnv.reset(self)
         self.airborne = False
-        return self.state
+        return [self.altitude]
 
 class CopterEnvRealistic(_CopterEnv):
     '''
