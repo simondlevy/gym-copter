@@ -88,14 +88,17 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
         _CopterEnv.__init__(self)
 
         # Action space = motors, discretize to intervals
-        self.action_space = spaces.Discrete(4 * (CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1))
+        self.action_space = spaces.Discrete((CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1)**4)
+
+        print(self.action_space)
 
         # Observation space = altitude
         self.observation_space = spaces.Box(np.array([0]), np.array([np.inf]))
 
     def step(self, action):
 
-        motors = (0)*4
+        print(action)
+        exit(0)
 
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = _CopterEnv.step(self, action)
@@ -105,12 +108,12 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
             episode_over = True 
 
         # Altitude is both the state and the reward
-        return [self.altitude], self.altitude, episode_over, info
+        return np.array([self.altitude]), self.altitude, episode_over, info
 
     def reset(self):
         _CopterEnv.reset(self)
         self.airborne = False
-        return [self.altitude]
+        return np.array([self.altitude])
 
 class CopterEnvRealistic(_CopterEnv):
     '''
