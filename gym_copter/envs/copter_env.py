@@ -91,18 +91,18 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
         self.action_space = spaces.Discrete((CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1)**4)
 
         # Observation space = altitude
-        self.observation_space = spaces.Box(np.array([0]), np.array([np.inf]))
+        self.observation_space = spaces.Box(np.array([0]), np.array([100]))
 
     def step(self, action):
 
-        print(action, [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)])
-        exit(0)
+        # Convert discrete action index to array of floating-point number values
+        motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
 
         # Call parent-class step() to do basic update
-        state, reward, episode_over, info = _CopterEnv.step(self, action)
+        state, reward, episode_over, info = _CopterEnv.step(self, motors)
 
         # Maximum altitude attained: set episode-over flag
-        if self.altitude > CopterEnvAltitude.ALTITUDE_MAX:
+        if self.altitude > self.ALTITUDE_MAX:
             episode_over = True 
 
         # Altitude is both the state and the reward
