@@ -96,7 +96,7 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
     def step(self, action):
 
         n = self.MOTOR_STEPS
-        print(action, (((action//1)%(n+1))/float(n), ((action//6)%(n+1))/float(n), ((action//36)%(n+1))/float(n), ((action//216)%(n+1))/float(n)))
+        print(action, (((action//(n+1)**0)%(n+1))/float(n), ((action//(n+1)**1)%(n+1))/float(n), ((action//(n+1)**2)%(n+1))/float(n), ((action//(n+1)**3)%(n+1))/float(n)))
         exit(0)
 
         # Call parent-class step() to do basic update
