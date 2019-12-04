@@ -35,8 +35,6 @@ if args.train:
 
     moving_average_rewards = agent.train(args.neps, args.alpha, args.gamma, args.epsilon)
 
-    print(len(moving_average_rewards))
-
     plt.plot(moving_average_rewards)
     plt.ylabel('Moving average ep reward')
     plt.xlabel('Step')
