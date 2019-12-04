@@ -7,7 +7,7 @@ Copyright (C) Simon D. Levy 2019
 MIT License
 '''
 
-from ql import QLAgentContinuous
+from ql import QLAgent
 import gym_copter
 
 import gym
@@ -27,9 +27,7 @@ args = parser.parse_args()
 
 env = gym.make('Copter-v0')
 
-agent = QLAgentContinuous(env)
-
-'''
+agent = QLAgent(env)
 
 if args.train:
 
@@ -47,4 +45,3 @@ if args.train:
 else:
 
     agent.play()
-'''

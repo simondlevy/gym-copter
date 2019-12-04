@@ -33,20 +33,30 @@ class CopterSimple(CopterEnv):
 
         # Convert discrete action index to array of floating-point number values
         #motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
-        motors = [action / float(self.MOTOTR_STEPS) for _ in range(4)]
+        motors = [action / float(self.MOTOR_STEPS) for _ in range(4)]
 
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = CopterEnv.step(self, motors)
 
+        # Dynamics uses NED coordinates, so negate to get altitude
+        altitude = -state[5]
+
+        print('action: ', action)
+        print('motors: ', motors)
+        print('state: ', state)
+        print('altitude: ', altitude)
+        exit(0)
+
+        altitude = 0
+
         # Maximum altitude attained: set episode-over flag
-        if self.altitude > self.ALTITUDE_MAX:
+        if altitude > (self.ALTITUDE_MAX-1):
             episode_over = True 
 
         # Altitude is both the state and the reward
-        return np.array([self.altitude]), self.altitude, episode_over, info
+        return np.array([altitude]), altitude, episode_over, info
 
     def reset(self):
         CopterEnv.reset(self)
-        self.airborne = False
-        return np.array([self.altitude])
+        return np.array([0])
 
