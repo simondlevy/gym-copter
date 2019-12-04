@@ -10,13 +10,11 @@ MIT License
 from ql import QLAgent
 import gym_copter
 import gym
-import matplotlib.pyplot as plt
 
 EPISODES = 5000
 ALPHA    = .001
 GAMMA    = 0.99
 EPSILON  = 0.99
+GAME     = 'Copter-v0'
 
-env = gym.make('Copter-v0')
-
-agent = QLAgent(env)
+env = gym.make(GAME)

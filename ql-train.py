@@ -17,9 +17,9 @@ EPISODES = 5000
 ALPHA    = .001
 GAMMA    = 0.99
 EPSILON  = 0.99
-FILENAME = 'Copter-v0'
+GAME     = 'Copter-v0'
 
-env = gym.make('Copter-v0')
+env = gym.make(GAME)
 
 agent = QLAgent(env)
 
@@ -28,10 +28,10 @@ moving_average_rewards = agent.train(EPISODES, ALPHA, GAMMA, EPSILON)
 plt.plot(moving_average_rewards)
 plt.ylabel('Moving average ep reward')
 plt.xlabel('Step')
-plt.title('Copter-v0')
+plt.title(GAME)
 plt.show()
 
-filename = FILENAME + '.pkl'
+filename = GAME + '.pkl'
 
 print('Saving ' + filename)
 
