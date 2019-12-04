@@ -1,3 +1,4 @@
+*.pkl
 *.swp
 __pycache__/
 build/

@@ -11,11 +11,13 @@ from ql import QLAgent
 import gym_copter
 import gym
 import matplotlib.pyplot as plt
+import pickle
 
 EPISODES = 5000
 ALPHA    = .001
 GAMMA    = 0.99
 EPSILON  = 0.99
+FILENAME = 'Copter-v0'
 
 env = gym.make('Copter-v0')
 
@@ -28,3 +30,10 @@ plt.ylabel('Moving average ep reward')
 plt.xlabel('Step')
 plt.title('Copter-v0')
 plt.show()
+
+filename = FILENAME + '.pkl'
+
+print('Saving ' + filename)
+
+with open(filename, 'wb') as f:
+    pickle.dump(agent, f)
