@@ -10,11 +10,17 @@ MIT License
 from ql import QLAgent
 import gym_copter
 import gym
+import pickle
 
-EPISODES = 5000
-ALPHA    = .001
-GAMMA    = 0.99
-EPSILON  = 0.99
-GAME     = 'Copter-v0'
+from sys import stdout
+import numpy as np
 
-env = gym.make(GAME)
+GAME = 'Copter-v0'
+
+filename = GAME + '.pkl'
+
+with open(filename, 'rb') as f:
+
+    agent = pickle.load(f)
+
+    agent.play()

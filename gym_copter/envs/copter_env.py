@@ -63,4 +63,4 @@ class CopterEnv(Env):
         return self.hud.display(mode,  self.state)
 
     def close(self):
-        pass
+        Env.close(self)
