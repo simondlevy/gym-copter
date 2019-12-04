@@ -8,7 +8,7 @@ from gym.envs.registration import register
 
 register(
     id='Copter-v0',
-    entry_point='gym_copter.envs:CopterEnvAltitudeRewardDiscreteMotors',
+    entry_point='gym_copter.envs:CopterSimple',
 )
 
 register(
