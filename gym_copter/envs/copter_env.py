@@ -95,7 +95,7 @@ class CopterEnvAltitudeRewardDiscreteMotors(_CopterEnv):
 
     def step(self, action):
 
-        print(action, (((action//216)%6)/5., ((action//36)%6)/5., ((action//6)%6)/5., ((action//1)%6)/5.))
+        print(action, (((action//1)%6)/5., ((action//6)%6)/5., ((action//36)%6)/5., ((action//216)%6)/5.))
         exit(0)
 
         # Call parent-class step() to do basic update
