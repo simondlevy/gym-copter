@@ -26,6 +26,7 @@ class CopterEnv(Env):
         self.dynamics = DJIPhantomDynamics()
         self.hud = None
         self.state = np.zeros(12)
+        self.ticks = 0
 
     def step(self, action):
 
@@ -33,6 +34,9 @@ class CopterEnv(Env):
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
+
+        # Increment time count
+        self.ticks += 1
 
         # Get return values 
         reward       = 0      # floating-point reward value from previous action

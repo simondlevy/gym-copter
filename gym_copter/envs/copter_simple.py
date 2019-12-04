@@ -17,6 +17,7 @@ class CopterSimple(CopterEnv):
     '''
 
     ALTITUDE_MAX = 10
+    TICKS_MAX    = 20
     MOTOR_STEPS  = 5
 
     def __init__(self):
@@ -27,7 +28,7 @@ class CopterSimple(CopterEnv):
         self.action_space = spaces.Discrete(self.MOTOR_STEPS+1)
 
         # Observation space = altitude, discretized to meters
-        self.observation_space = spaces.Discrete(self.ALTITUDE_MAX)
+        self.observation_space = spaces.Discrete(self.ALTITUDE_MAX+1)
 
     def step(self, action):
 
@@ -38,20 +39,16 @@ class CopterSimple(CopterEnv):
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = CopterEnv.step(self, motors)
 
-        # Dynamics uses NED coordinates, so negate to get altitude
-        altitude = -state[5]
-
-        print('action: ', action)
-        print('motors: ', motors)
-        print('state: ', state)
-        print('altitude: ', altitude)
-        exit(0)
-
-        altitude = 0
+        # Dynamics uses NED coordinates, so negate to get altitude; then cap at max
+        altitude = min(int(-state[5]), self.ALTITUDE_MAX)
 
         # Maximum altitude attained: set episode-over flag
         if altitude > (self.ALTITUDE_MAX-1):
             episode_over = True 
+
+        # Too many ticks elapsed: set episode-over flag
+        if self.ticks > self.TICKS_MAX:
+            episode_over = True
 
         # Altitude is both the state and the reward
         return np.array([altitude]), altitude, episode_over, info
