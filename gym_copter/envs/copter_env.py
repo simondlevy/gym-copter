@@ -12,7 +12,7 @@ from sys import stdout
 
 from gym_copter.dynamics.phantom import DJIPhantomDynamics
 
-class _CopterEnv(Env):
+class CopterEnv(Env):
 
     # Altitude threshold for being airborne
     ALTITUDE_MIN = 0.1
@@ -40,11 +40,11 @@ class _CopterEnv(Env):
         self.altitude = -self.state[4]
 
         # Ascending above minimum altitude: set airborne flag
-        if self.altitude > _CopterEnv.ALTITUDE_MIN and not self.airborne:
+        if self.altitude > CopterEnv.ALTITUDE_MIN and not self.airborne:
             self.airborne = True
 
         # Descending below minimum altitude: set episode-over flag
-        if self.altitude < _CopterEnv.ALTITUDE_MIN and self.airborne:
+        if self.altitude < CopterEnv.ALTITUDE_MIN and self.airborne:
             episode_over = True
 
         # Get return values 
@@ -73,57 +73,3 @@ class _CopterEnv(Env):
 
     def close(self):
         pass
-
-class CopterEnvSimple(_CopterEnv):
-    '''
-    A simplified copter class for Q-Learning.
-    Action space (motor values) and observation space (altitude) are discretized.
-    '''
-
-    ALTITUDE_MAX = 10
-    MOTOR_STEPS  = 5
-
-    def __init__(self):
-
-        _CopterEnv.__init__(self)
-
-        # Action space = motors, discretize to intervals
-        self.action_space = spaces.Discrete((CopterEnvAltitudeRewardDiscreteMotors.MOTOR_STEPS+1)**4)
-
-        # Observation space = altitude
-        self.observation_space = spaces.Box(np.array([0]), np.array([100]))
-
-    def step(self, action):
-
-        # Convert discrete action index to array of floating-point number values
-        motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
-
-        # Call parent-class step() to do basic update
-        state, reward, episode_over, info = _CopterEnv.step(self, motors)
-
-        # Maximum altitude attained: set episode-over flag
-        if self.altitude > self.ALTITUDE_MAX:
-            episode_over = True 
-
-        # Altitude is both the state and the reward
-        return np.array([self.altitude]), self.altitude, episode_over, info
-
-    def reset(self):
-        _CopterEnv.reset(self)
-        self.airborne = False
-        return np.array([self.altitude])
-
-class CopterEnvRealistic(_CopterEnv):
-    '''
-    A class with continous state and action space.
-    '''
-
-    def __init__(self, dt=.001):
-
-        _CopterEnv.__init__(self)
-
-        # Action space = motors
-        self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))
-
-        # Observation space = roll,pitch,heading,altitude,groundspeed
-        self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100])) 
