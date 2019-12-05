@@ -23,10 +23,9 @@ class CopterEnv(Env):
 
         self.num_envs = 1
         self.dt = dt
-        self.dynamics = DJIPhantomDynamics()
         self.hud = None
-        self.state = np.zeros(12)
-        self.ticks = 0
+
+        self._init()
 
     def step(self, action):
 
@@ -46,7 +45,7 @@ class CopterEnv(Env):
         return self.state, reward, episode_over, info
 
     def reset(self):
-        self.state = np.zeros(12)
+        self._init()
         return self.state
 
     def render(self, mode='human'):
@@ -63,4 +62,10 @@ class CopterEnv(Env):
         return self.hud.display(mode,  self.state)
 
     def close(self):
-        Env.close(self)
+        Env.close(self)        
+
+    def _init(self):
+        
+        self.dynamics = DJIPhantomDynamics()
+        self.state = np.zeros(12)
+        self.ticks = 0
