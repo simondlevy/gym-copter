@@ -15,8 +15,8 @@ from time import time
 ALTITUDE_TARGET = 100
 
 # PID params
-ALT_P = 1.0
-VEL_P = 1.0
+ALT_P = 0.5
+VEL_P = 0.5
 VEL_I = 0
 VEL_D = 0
 
