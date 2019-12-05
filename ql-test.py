@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Tests a quadcopter trained by Q-Learning
+Tests a copter for maximum altitude using
 
 Copyright (C) Simon D. Levy 2019
 
@@ -12,15 +12,11 @@ import gym_copter
 import gym
 import pickle
 
-from sys import stdout
-import numpy as np
-
 GAME = 'Copter-v0'
 
 filename = GAME + '.pkl'
 
+print('Loading ' + filename)
+
 with open(filename, 'rb') as f:
-
     agent = pickle.load(f)
-
-    agent.play()
