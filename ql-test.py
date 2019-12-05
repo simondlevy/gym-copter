@@ -19,4 +19,7 @@ filename = GAME + '.pkl'
 print('Loading ' + filename)
 
 with open(filename, 'rb') as f:
+
     agent = pickle.load(f)
+
+    agent.play()

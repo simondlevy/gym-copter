@@ -36,8 +36,15 @@ class CopterSimple(CopterEnv):
         #motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
         motors = [action / float(self.MOTOR_STEPS) for _ in range(4)]
 
+        motors = [0,0,0,0]
+        print(self.state)
+
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = CopterEnv.step(self, motors)
+
+        print(state)
+
+        exit(0)
 
         # Dynamics uses NED coordinates, so negate to get altitude; then cap at max
         altitude = min(int(-state[5]), self.ALTITUDE_MAX)
