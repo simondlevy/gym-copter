@@ -144,8 +144,6 @@ class MultirotorDynamics:
         # We're airborne once net downward acceleration goes below zero
         netz = accelNED[2] + MultirotorDynamics.g
 
-        print(netz)
-
         # If we're not airborne, we become airborne when downward acceleration has become negative
         if not self._airborne:
             self._airborne = netz < 0

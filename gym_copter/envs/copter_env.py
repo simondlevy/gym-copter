@@ -31,7 +31,7 @@ class CopterEnv(Env):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
-        self.dynamics.update(self.dt)
+        self.dynamics.update(.001) #self.dt)
         self.state = self.dynamics.getState()
 
         # Increment time count
