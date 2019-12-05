@@ -19,19 +19,18 @@ class CopterEnv(Env):
 
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, dt=.001):
+    def __init__(self):
 
         self.num_envs = 1
-        self.dt = dt
         self.hud = None
 
         self._init()
 
-    def step(self, action):
+    def step(self, action, dt):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
-        self.dynamics.update(.001) #self.dt)
+        self.dynamics.update(dt)
         self.state = self.dynamics.getState()
 
         # Increment time count

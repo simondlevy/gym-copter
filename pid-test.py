@@ -9,7 +9,7 @@ MIT License
 
 import gym
 import numpy as np
-from time import sleep
+from time import time
 
 # Target 
 ALTITUDE_TARGET = 100
@@ -75,32 +75,36 @@ if __name__ == '__main__':
     # Create PID controller
     pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
 
+    # Start timing
+    prev = time()
+
     # Loop until user hits the stop button
     while True:
 
         # Draw the current environment
         if env.render() is None: break
 
-        # Update the environment with the current motor commands
-        #state, _, _, _ = env.step(u*np.ones(4))
-        state, _, _, _ = env.step(np.ones(4))
+        # Update timer
+        curr = time()
+        dt = curr - prev
+        prev = curr
 
-         # Extract altitude from state (negate to accommodate NED)
+        # Update the environment with the current motor commands
+        state, _, _, _ = env.step(u*np.ones(4), dt)
+
+        # Extract altitude from state (negate to accommodate NED)
         z = -state[4]
 
         # Use temporal first difference to compute vertical velocity
-        dzdt = (z-zprev) / DT
+        dzdt = (z-zprev) / dt
 
         # Get correction from PID controller
-        u = pid.u(z, dzdt, DT)
+        u = pid.u(z, dzdt, dt)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
 
         # Update for first difference
         zprev = z
-
-        # Delay for realism
-        sleep(env.dt)
 
     del env

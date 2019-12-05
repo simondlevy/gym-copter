@@ -30,14 +30,14 @@ class CopterSimple(CopterEnv):
         # Observation space = altitude, discretized to meters
         self.observation_space = spaces.Discrete(self.ALTITUDE_MAX+1)
 
-    def step(self, action):
+    def step(self, action, dt):
 
         # Convert discrete action index to array of floating-point number values
         #motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
         motors = [action / float(self.MOTOR_STEPS) for _ in range(4)]
 
         # Call parent-class step() to do basic update
-        state, reward, episode_over, info = CopterEnv.step(self, motors)
+        state, reward, episode_over, info = CopterEnv.step(self, motors, dt)
 
         # Dynamics uses NED coordinates, so negate to get altitude; then cap at max
         altitude = min(int(-state[5]), self.ALTITUDE_MAX)
