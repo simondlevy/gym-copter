@@ -10,7 +10,7 @@ from gym import Env, spaces
 import numpy as np
 from sys import stdout
 
-from gym_copter.dynamics.phantom import DJIPhantomDynamics
+from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterEnv(Env):
 

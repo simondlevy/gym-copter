@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 Dynamics class for DJI Inspire
 
@@ -33,17 +34,14 @@ class DJIPhantomDynamics(QuadXAPDynamics):
             15000   # maxrpm
             ))
 
-    '''
-        self.foo = 0
+if __name__ == '__main__':
 
-    def getState(self):
+    dyn = DJIPhantomDynamics()
 
-        state = QuadXAPDynamics.getState(self)
+    dyn.setMotors((1,1,1,1))
 
-        state.pose.rotation[1] = np.pi*np.sin(self.foo)
+    while True:
+        dyn.update(.001)
+        print('Alt = %3.2fm' % (-dyn.getState()[5]))
 
-        self.foo += .001
-
-        return state
-    '''
 
