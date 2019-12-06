@@ -13,7 +13,7 @@ import gym
 import matplotlib.pyplot as plt
 import pickle
 
-EPISODES = 1000
+EPISODES = 100
 ALPHA    = .1
 GAMMA    = 0.5
 EPSILON  = 0.5

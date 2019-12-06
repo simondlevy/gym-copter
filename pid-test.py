@@ -90,7 +90,7 @@ if __name__ == '__main__':
         prev = curr
 
         # Update the environment with the current motor commands
-        state, _, _, _ = env.step(u*np.ones(4), dt)
+        state, _, _, _ = env.step(u*np.ones(4))
 
         # Extract altitude from state (negate to accommodate NED)
         z = -state[4]

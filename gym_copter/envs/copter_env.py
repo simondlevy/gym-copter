@@ -8,7 +8,7 @@ MIT License
 
 from gym import Env, spaces
 import numpy as np
-from sys import stdout
+from time import time
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
@@ -17,6 +17,9 @@ class CopterEnv(Env):
     # Altitude threshold for being airborne
     ALTITUDE_MIN = 0.1
 
+    # Default time constant
+    DELTA_T = 0.001
+
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
@@ -24,13 +27,16 @@ class CopterEnv(Env):
         self.num_envs = 1
         self.hud = None
 
+        # We handle time differently if we're rendering
+        self.dt = CopterEnv.DELTA_T
+
         self._init()
 
-    def step(self, action, dt):
+    def step(self, action):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
-        self.dynamics.update(dt)
+        self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
 
         # Increment time count
@@ -52,9 +58,13 @@ class CopterEnv(Env):
         from gym_copter.envs.hud import HUD
 
         if self.hud is None:
-
             self.hud = HUD()
 
+        # Track time
+        curr = time()
+        self.dt = (curr - self.prev) if self.prev > 0 else CopterEnv.DELTA_T
+        self.prev = curr
+ 
         # Detect window close
         if not self.hud.isOpen(): return None
 
@@ -68,3 +78,4 @@ class CopterEnv(Env):
         self.dynamics = DJIPhantomDynamics()
         self.state = np.zeros(12)
         self.ticks = 0
+        self.prev = 0

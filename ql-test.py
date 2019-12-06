@@ -7,9 +7,6 @@ Copyright (C) Simon D. Levy 2019
 MIT License
 '''
 
-from ql import QLAgent
-import gym_copter
-import gym
 import pickle
 
 GAME = 'Copter-v0'
