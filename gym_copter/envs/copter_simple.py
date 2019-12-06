@@ -16,8 +16,8 @@ class CopterSimple(CopterEnv):
     Action space (motor values) and observation space (altitude) are discretized.
     '''
 
-    ALTITUDE_MAX = 10
-    TICKS_MAX    = 400
+    ALTITUDE_MAX = 100
+    TIMEOUT      = 4.0
     MOTOR_STEPS  = 5
 
     def __init__(self):
@@ -47,7 +47,7 @@ class CopterSimple(CopterEnv):
             episode_over = True 
 
         # Too many ticks elapsed: set episode-over flag
-        if self.ticks > self.TICKS_MAX:
+        if self.ticks*dt > self.TIMEOUT:
             episode_over = True
 
         # Altitude is both the state and the reward
