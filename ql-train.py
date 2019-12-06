@@ -23,7 +23,7 @@ env = gym.make(GAME)
 
 agent = QLAgent(env)
 
-moving_average_rewards = agent.train(EPISODES, ALPHA, GAMMA, EPSILON)
+moving_average_rewards = agent.train(EPISODES, ALPHA, GAMMA, EPSILON, report=1)
 
 plt.plot(moving_average_rewards)
 plt.ylabel('Moving average ep reward')
