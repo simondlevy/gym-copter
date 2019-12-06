@@ -30,7 +30,7 @@ class CopterSimple(CopterEnv):
         # Observation space = altitude, discretized to meters
         self.observation_space = spaces.Discrete(self.ALTITUDE_MAX+1)
 
-    def step(self, action, dt):
+    def step(self, action, dt=.01):
 
         # Convert discrete action index to array of floating-point number values
         #motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
