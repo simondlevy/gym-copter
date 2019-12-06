@@ -116,7 +116,7 @@ class HUD:
             dy = diff*HUD.VERTICAL_STEP_PIXELS
 
             # Use a linear fade-in/out for numbers at top, bottom
-            alpha = int(255 * (4  - abs(k)) / 4.)
+            alpha = int(255 * (HUD.VERTICAL_BOX_HEIGHT/2 - abs(dy)) / (HUD.VERTICAL_BOX_HEIGHT/2.))
             
             # Avoid putting tick label below bottom of box
             if dy > -HUD.VERTICAL_BOX_HEIGHT/2+20:
