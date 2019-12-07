@@ -14,9 +14,6 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterEnv(Env):
 
-    # Altitude threshold for being airborne
-    ALTITUDE_MIN = 0.1
-
     # Default time constant
     DELTA_T = 0.001
 

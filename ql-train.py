@@ -26,8 +26,8 @@ agent = QLAgent(env)
 moving_average_rewards = agent.train(EPISODES, ALPHA, GAMMA, EPSILON, report=1)
 
 plt.plot(moving_average_rewards)
-plt.ylabel('Moving average ep reward')
-plt.xlabel('Step')
+plt.ylabel('Reward')
+plt.xlabel('Episode')
 plt.title(GAME)
 plt.show()
 
