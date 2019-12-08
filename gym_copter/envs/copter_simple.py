@@ -13,41 +13,37 @@ import numpy as np
 class CopterSimple(CopterEnv):
     '''
     A simplified copter class for Q-Learning.
-    Action space (motor values) and observation space (altitude) are discretized.
+    Observation space: on-ground (0) or airborne (1)
+    Action space:      motors=0 or motors=1
+    Reward             altitude
     '''
 
-    ALTITUDE_MAX = 100
-    TIMEOUT      = 4.0
-    MOTOR_STEPS  = 5
+    TIMEOUT      = 10.0
 
     def __init__(self):
 
         CopterEnv.__init__(self)
 
-        # Action space = motors, discretize to intervals
-        self.action_space = spaces.Discrete(self.MOTOR_STEPS+1)
+        self.action_space = spaces.Discrete(2)
 
-        # Observation space = altitude, discretized to meters
-        self.observation_space = spaces.Discrete(self.ALTITUDE_MAX+1)
+        self.observation_space = spaces.Discrete(2)
 
     def step(self, action):
 
         # Convert discrete action index to array of floating-point number values
-        #motors = [(action//(self.MOTOR_STEPS+1)**k)%(self.MOTOR_STEPS+1)/float(self.MOTOR_STEPS) for k in range(4)]
-        motors = [action / float(self.MOTOR_STEPS) for _ in range(4)]
+        motors = [float(action)]*4
 
         # Call parent-class step() to do basic update
         state, reward, episode_over, info = CopterEnv.step(self, motors)
 
-        # Dynamics uses NED coordinates, so negate to get altitude; then cap at max
-        altitude = min(int(-state[5]), self.ALTITUDE_MAX)
+        # Dynamics uses NED coordinates, so negate to get altitude
+        altitude = -state[4]
 
         # Too many ticks elapsed: set episode-over flag
         if self.ticks*self.dt > self.TIMEOUT:
             episode_over = True
 
-        # Altitude is both the state and the reward
-        return np.array([altitude]), altitude, episode_over, info
+        return int(altitude>.1), altitude, episode_over, info
 
     def reset(self):
         CopterEnv.reset(self)
