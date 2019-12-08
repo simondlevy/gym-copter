@@ -42,10 +42,6 @@ class CopterSimple(CopterEnv):
         # Dynamics uses NED coordinates, so negate to get altitude; then cap at max
         altitude = min(int(-state[5]), self.ALTITUDE_MAX)
 
-        # Maximum altitude attained: set episode-over flag
-        if altitude > (self.ALTITUDE_MAX-1):
-            episode_over = True 
-
         # Too many ticks elapsed: set episode-over flag
         if self.ticks*self.dt > self.TIMEOUT:
             episode_over = True
