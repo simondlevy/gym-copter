@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Tests a copter for maximum altitude using
+Tests a copter for maximum-altitude reward using fixed or trained Q-table
 
 Copyright (C) Simon D. Levy 2019
 
