@@ -10,10 +10,9 @@ MIT License
 from ql import QLAgent
 import gym_copter
 import gym
-import matplotlib.pyplot as plt
 import pickle
 
-EPISODES = 10
+EPISODES = 1
 ALPHA    = .1
 GAMMA    = 0.9
 EPSILON  = 0.1
@@ -23,13 +22,7 @@ env = gym.make(GAME)
 
 agent = QLAgent(env)
 
-moving_average_rewards = agent.train(EPISODES, ALPHA, GAMMA, EPSILON)
-
-plt.plot(moving_average_rewards)
-plt.ylabel('Reward')
-plt.xlabel('Episode')
-plt.title(GAME)
-plt.show()
+agent.train(EPISODES, ALPHA, GAMMA, EPSILON)
 
 filename = GAME + '.pkl'
 
