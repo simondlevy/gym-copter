@@ -13,7 +13,7 @@ import numpy as np
 class CopterSimple(CopterEnv):
     '''
     A simplified copter class for Q-Learning.
-    Observation space: on-ground (0) or airborne (1)
+    Observation space: one state only
     Action space:      motors=0 or motors=1
     Reward             altitude
     '''
@@ -26,7 +26,7 @@ class CopterSimple(CopterEnv):
 
         self.action_space = spaces.Discrete(2)
 
-        self.observation_space = spaces.Discrete(2)
+        self.observation_space = spaces.Discrete(1)
 
     def step(self, action):
 
@@ -43,7 +43,8 @@ class CopterSimple(CopterEnv):
         if self.ticks*self.dt > self.TIMEOUT:
             episode_over = True
 
-        return int(altitude>.1), altitude, episode_over, info
+        # Only one state; reward is altitude
+        return 0, altitude, episode_over, info
 
     def reset(self):
         CopterEnv.reset(self)

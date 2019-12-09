@@ -37,3 +37,5 @@ print('Saving ' + filename)
 
 with open(filename, 'wb') as f:
     pickle.dump(agent, f)
+
+print(agent)
