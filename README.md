@@ -24,6 +24,14 @@ This should pop up the HUD and show the copter rising rapidly.
 
 ## Going further
 
+To use gym-copter in your Reinforcement Learning work, you'll want to install it in the usual way:
+
+```
+% python3 setup.py install
+```
+
+(On Linux you will probably have to run this command with <tt>sudo</tt>.)
+
 For current work on this project, check out the [wiki](https://github.com/simondlevy/gym-copter/wiki).
 
 ## Similar projects
