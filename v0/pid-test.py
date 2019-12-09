@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Run simple altitude-hold PID controller to test dynamics
+Run simple constant-climb-rate PID controller to test dynamics
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -12,51 +12,44 @@ import numpy as np
 from time import time
 from sys import stdout
 
-# Target 
-ALTITUDE_TARGET = 10
+# Target (meters per second)
+TARGET = 1
 
 # PID params
-ALT_P = 0.425
-VEL_P = 0.25
-VEL_I = 0
-VEL_D = 0
-
-# Time constant
-DT = 0.001
+P = 1.0
+I = 0
+D = 0
 
 class AltitudePidController(object):
 
-    def __init__(self, target, posP, velP, velI, velD, windupMax=10):
+    def __init__(self, target, P, I, D, windupMax=10):
 
         # In a real PID controller, this would be a set-point
         self.target = target
 
         # Constants
-        self.posP = posP
-        self.velP = velP
-        self.velI = velI
-        self.velD = velD
+        self.P = P
+        self.I = I
+        self.D = D
         self.windupMax = windupMax
 
         # Values modified in-flight
-        self.posTarget      = 0
         self.lastError      = 0
         self.integralError  = 0
 
-    def u(self, alt, vel, dt):
+    def u(self, vel, dt):
 
         # Compute dzdt setpoint and error
-        velTarget = (self.target - alt) * self.posP
-        velError = velTarget - vel
+        error = self.target - vel
 
         # Update error integral and error derivative
-        self.integralError +=  velError * dt
-        self.integralError = AltitudePidController._constrainAbs(self.integralError + velError * dt, self.windupMax)
-        deltaError = (velError - self.lastError) / dt if abs(self.lastError) > 0 else 0
-        self.lastError = velError
+        self.integralError +=  error * dt
+        self.integralError = AltitudePidController._constrainAbs(self.integralError + error * dt, self.windupMax)
+        deltaError = (error - self.lastError) / dt if abs(self.lastError) > 0 else 0
+        self.lastError = error
 
         # Compute control u
-        return self.velP * velError + self.velD * deltaError + self.velI * self.integralError
+        return self.P * error + self.D * deltaError + self.I * self.integralError
 
     def _constrainAbs(x, lim):
 
@@ -74,7 +67,7 @@ if __name__ == '__main__':
     u = np.zeros(4)
 
     # Create PID controller
-    pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
+    pid  = AltitudePidController(TARGET, P, I, D)
 
     # Start timing
     prev = time()
@@ -93,23 +86,16 @@ if __name__ == '__main__':
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 
-        # Extract altitude from state (negate to accommodate NED)
-        z = -state[4]
-
-        # Use temporal first difference to compute vertical velocity
-        dzdt = (z-zprev) / dt
+        # Extract velocity from state (negate to accommodate NED)
+        vel = -state[5]
 
         # Get correction from PID controller
-        u = pid.u(z, dzdt, dt)
+        u = pid.u(vel, dt)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
 
-        # Update for first difference
-        zprev = z
-
-        #print('%3.0f %1.1f' % (z, u))
-        print(z, u)
+        print('%+3.3f %1.1f' % (vel, u))
         stdout.flush()
 
     del env
