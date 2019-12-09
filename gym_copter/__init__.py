@@ -12,6 +12,6 @@ register(
 )
 
 register(
-    id='Copter-v1',
+    id='Copter-v2',
     entry_point='gym_copter.envs:CopterRealistic',
 )

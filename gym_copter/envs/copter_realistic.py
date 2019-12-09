@@ -22,5 +22,5 @@ class CopterRealistic(CopterEnv):
         # Action space = motors
         self.action_space = spaces.Box(np.array([0,0,0,0]), np.array([1,1,1,1]))
 
-        # Observation space = roll,pitch,heading,altitude,groundspeed
+        # Observation space = full vehicle state
         self.observation_space = spaces.Box(np.array([-90,-90,0,0,0]), np.array([+90,+90,359,1000,100])) 
