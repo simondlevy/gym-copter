@@ -47,5 +47,5 @@ class CopterSimple(CopterEnv):
 
     def reset(self):
         CopterEnv.reset(self)
-        return np.array([0])
+        return 0
 
