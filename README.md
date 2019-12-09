@@ -22,6 +22,10 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 This should pop up the HUD and show the copter rising rapidly.
 
+## Going further
+
+For current work on this project, check out the [wiki](https://github.com/simondlevy/gym-copter/wiki).
+
 ## Similar projects
 
 [GymFC](https://github.com/wil3/gymfc)
