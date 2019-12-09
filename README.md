@@ -17,7 +17,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 ```
 % pip3 install gym
-% python3 v0-test.py
+% python3 takeoff.py
 ```
 
 This should pop up the HUD and show the copter rising rapidly.
