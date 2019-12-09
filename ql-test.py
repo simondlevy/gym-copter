@@ -7,20 +7,24 @@ Copyright (C) Simon D. Levy 2019
 MIT License
 '''
 
-import pickle
 import numpy as np
+from ql import QLAgent
+import gym
+import gym_copter
+import pickle
+from sys import argv
 
-GAME = 'Copter-v0'
-
-filename = GAME + '.pkl'
-
-print('Loading ' + filename)
-
-with open(filename, 'rb') as f:
-
+def load_agent():
+    f = open('Copter-v0.pkl', 'rb')
     agent = pickle.load(f)
+    f.close()
+    return agent
 
-    np.set_printoptions(precision=2)
-    print(agent)
+def make_agent():
+    env = gym.make('Copter-v0')
+    q_table = np.array([[0,1]])
+    return QLAgent(env, q_table)
 
-    agent.play()
+agent = load_agent() if len(argv) < 1 else make_agent()
+
+agent.play()
