@@ -17,10 +17,10 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 ```
 % pip3 install gym
-% python3 pid-test.py
+% python3 v0-test.py
 ```
 
-This should pop up the HUD and show the copter rising to an altitude of 100 meters.
+This should pop up the HUD and show the copter rising rapidly.
 
 ## Similar projects
 

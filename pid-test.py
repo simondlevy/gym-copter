@@ -10,13 +10,14 @@ MIT License
 import gym
 import numpy as np
 from time import time
+from sys import stdout
 
 # Target 
-ALTITUDE_TARGET = 100
+ALTITUDE_TARGET = 10
 
 # PID params
-ALT_P = 0.5
-VEL_P = 0.5
+ALT_P = 0.425
+VEL_P = 0.25
 VEL_I = 0
 VEL_D = 0
 
@@ -106,5 +107,9 @@ if __name__ == '__main__':
 
         # Update for first difference
         zprev = z
+
+        #print('%3.0f %1.1f' % (z, u))
+        print(z, u)
+        stdout.flush()
 
     del env
