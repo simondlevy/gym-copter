@@ -10,7 +10,7 @@ MIT License
 from ql import QLAgent
 import gym_copter
 import gym
-import pickle
+from sys import stdout
 
 EPISODES = 1
 ALPHA    = .1
@@ -24,11 +24,7 @@ agent = QLAgent(env)
 
 agent.train(EPISODES, ALPHA, GAMMA, EPSILON)
 
-filename = GAME + '.pkl'
+print('Q-table:', agent.q_table)
+stdout.flush()
 
-print('Saving ' + filename)
-
-with open(filename, 'wb') as f:
-    pickle.dump(agent, f)
-
-print(agent.q_table)
+agent.play()
