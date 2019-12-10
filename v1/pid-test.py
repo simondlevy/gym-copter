@@ -81,7 +81,7 @@ if __name__ == '__main__':
     while True:
 
         # Draw the current environment
-        if env.render() is None: break
+        env.render()
 
         # Update timer
         curr = time()
