@@ -10,15 +10,16 @@ MIT License
 import gym
 import numpy as np
 from time import time
+import matplotlib.pyplot as plt
 from sys import stdout
 
-# Target (meters per second)
-TARGET = 1
+DURATION = 10 # seconds
+TARGET   = 1  # meters per second
 
 # PID params
-P = 1.0
-I = 0
-D = 0
+P = 0.1
+I = 0.1
+D = 0.1
 
 class AltitudePidController(object):
 
@@ -71,6 +72,10 @@ if __name__ == '__main__':
 
     # Start timing
     prev = time()
+    start = prev
+
+    # Initialize array for plotting
+    plotdata = []
 
     # Loop until user hits the stop button
     while True:
@@ -81,7 +86,10 @@ if __name__ == '__main__':
         # Update timer
         curr = time()
         dt = curr - prev
+        elapsed = curr - start
         prev = curr
+
+        if elapsed > DURATION: break
 
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
@@ -95,7 +103,12 @@ if __name__ == '__main__':
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
 
-        print('%+3.3f %1.1f' % (vel, u))
-        stdout.flush()
+        # Accumulate array for plotting
+        plotdata.append([elapsed, vel, u])
+
+    
+    plotdata = np.array(plotdata)
+    plt.plot(plotdata[:,0], plotdata[:,1])
+    plt.show()
 
     del env
