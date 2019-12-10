@@ -19,7 +19,7 @@ TARGET   = 1  # meters per second
 # PID params
 P = 0.1
 I = 0.1
-D = 0.1
+D = 0.0
 
 class AltitudePidController(object):
 
