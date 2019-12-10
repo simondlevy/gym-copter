@@ -106,9 +106,16 @@ if __name__ == '__main__':
         # Accumulate array for plotting
         plotdata.append([elapsed, vel, u])
 
-    
+    # Plot results
     plotdata = np.array(plotdata)
+    plt.subplot(2,1,1)
     plt.plot(plotdata[:,0], plotdata[:,1])
+    plt.ylabel('Velocity (m/s)')
+    plt.subplot(2,1,2)
+    plt.plot(plotdata[:,0], plotdata[:,2])
+    plt.ylabel('Motors')
+    plt.xlabel('Time (s)')
     plt.show()
 
+    # Cleanup
     del env

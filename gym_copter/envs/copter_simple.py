@@ -18,7 +18,7 @@ class CopterSimple(CopterEnv):
     Reward             altitude
     '''
 
-    TIMEOUT      = 10.0
+    TIMEOUT = 1
 
     def __init__(self):
 
@@ -41,6 +41,7 @@ class CopterSimple(CopterEnv):
 
         # Too many ticks elapsed: set episode-over flag
         if self.ticks*self.dt > self.TIMEOUT:
+            print(self.ticks)
             episode_over = True
 
         # Only one state; reward is altitude
