@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import time
 
-DURATION        = 10  # seconds
+DURATION        = 30  # seconds
 ALTITUDE_TARGET = 100 # meters
 
 # PID params
