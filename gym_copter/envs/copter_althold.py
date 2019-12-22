@@ -1,5 +1,5 @@
 '''
-gym-copter Environment class with realistic physics
+gym-copter Environment class for altitude-hold
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -10,7 +10,7 @@ from gym_copter.envs.copter_env import CopterEnv
 from gym import spaces
 import numpy as np
 
-class CopterRealistic(CopterEnv):
+class CopterAltHold(CopterEnv):
     '''
     A class with continous state and action space.
     '''
