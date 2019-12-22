@@ -10,6 +10,7 @@ MIT License
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
 DURATION        = 30  # seconds
 ALTITUDE_TARGET = 100 # meters
@@ -67,20 +68,34 @@ if __name__ == '__main__':
     env = gym.make('gym_copter:Copter-v1')
     env.reset()
 
+    # initial conditions
+    z = 0
+    u = np.zeros(4)
+    prev = time()
+    start = prev
+
     # Create PID controller
     pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
 
-    # Initialize arrays for plotting
-    n = int(DURATION/DT)
-    tvals = np.linspace(0, DURATION, n)
-    uvals = np.zeros(n)
-    zvals = np.zeros(n)
+    # Start timing
+    prev = time()
 
-    # Motors are initially off
-    u = 0
+    # Initialize array for plotting
+    plotdata = []
 
-    # Loop over time values
-    for k,t in np.ndenumerate(tvals):
+    # Loop until user hits the stop button
+    while True:
+
+        # Draw the current environment
+        if env.render() is None: break
+
+        # Update timer
+        curr = time()
+        dt = curr - prev
+        elapsed = curr - start
+        prev = curr
+
+        if elapsed > DURATION: break
 
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
@@ -92,26 +107,24 @@ if __name__ == '__main__':
         dzdt = -state[5]
 
         # Get correction from PID controller
-        u = pid.u(z, dzdt, DT)
+        u = pid.u(z, dzdt, dt)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
 
-        # Track values
-        k = k[0]
-        uvals[k] = u
-        zvals[k] = z
+        # Accumulate array for plotting
+        plotdata.append([elapsed, z, u])
 
     # Plot results
+    plotdata = np.array(plotdata)
     plt.subplot(2,1,1)
-    plt.plot(tvals, zvals)
+    plt.plot(plotdata[:,0], plotdata[:,1])
     plt.ylabel('Altitude (m)')
     plt.subplot(2,1,2)
-    plt.plot(tvals, uvals)
+    plt.plot(plotdata[:,0], plotdata[:,2])
     plt.ylabel('Motors')
     plt.xlabel('Time (s)')
     plt.show()
-
 
     # Cleanup
     del env
