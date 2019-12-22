@@ -33,7 +33,7 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
 
 For current work on this project, check out the
-[wiki](https://github.com/simondlevy/gym-copter/wiki/GymCopter-wiki).
+[wiki](https://github.com/simondlevy/gym-copter/wiki/Home).
 
 ## Similar projects
 
