@@ -70,7 +70,6 @@ if __name__ == '__main__':
 
     # initial conditions
     z = 0
-    zprev = 0
     u = np.zeros(4)
     prev = time()
     start = prev
@@ -104,17 +103,14 @@ if __name__ == '__main__':
         # Extract altitude from state (negate to accommodate NED)
         z = -state[4]
 
-        # Use temporal first difference to compute vertical velocity
-        dzdt = (z-zprev) / dt
+        # Extract velocity from state (negate to accommodate NED)
+        dzdt = -state[5]
 
         # Get correction from PID controller
         u = pid.u(z, dzdt, dt)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
-
-        # Update for first difference
-        zprev = z
 
         # Accumulate array for plotting
         plotdata.append([elapsed, z, u])
