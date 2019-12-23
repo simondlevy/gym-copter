@@ -70,6 +70,7 @@ if __name__ == '__main__':
     tvals = np.linspace(0, DURATION, n)
     uvals = np.zeros(n)
     vvals = np.zeros(n)
+    avals = np.zeros(n)
 
     # Motors are initially off
     u = 0
@@ -80,7 +81,8 @@ if __name__ == '__main__':
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 
-        # Extract velocity from state (negate to accommodate NED)
+        # Extract altitude and velocity from state (negate to accommodate NED)
+        a = -state[4]
         v = -state[5]
 
         # Get correction from PID controller
@@ -93,12 +95,16 @@ if __name__ == '__main__':
         k = k[0]
         uvals[k] = u
         vvals[k] = v
+        avals[k] = a
 
     # Plot results
-    plt.subplot(2,1,1)
+    plt.subplot(3,1,1)
+    plt.plot(tvals, avals)
+    plt.ylabel('Altitude (m)')
+    plt.subplot(3,1,2)
     plt.plot(tvals, vvals)
     plt.ylabel('Velocity (m/s)')
-    plt.subplot(2,1,2)
+    plt.subplot(3,1,3)
     plt.plot(tvals, uvals)
     plt.ylabel('Motors')
     plt.xlabel('Time (s)')

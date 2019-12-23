@@ -94,7 +94,8 @@ if __name__ == '__main__':
         # Update the environment with the current motor commands
         state, _, _, _ = env.step(u*np.ones(4))
 
-        # Extract velocity from state (negate to accommodate NED)
+        # Extract altitude and velocity from state (negate to accommodate NED)
+        alt = -state[4]
         vel = -state[5]
 
         # Get correction from PID controller
@@ -104,15 +105,18 @@ if __name__ == '__main__':
         u = max(0, min(1, u))
 
         # Accumulate array for plotting
-        plotdata.append([elapsed, vel, u])
+        plotdata.append([elapsed, alt, vel, u])
 
     # Plot results
     plotdata = np.array(plotdata)
-    plt.subplot(2,1,1)
+    plt.subplot(3,1,1)
     plt.plot(plotdata[:,0], plotdata[:,1])
-    plt.ylabel('Velocity (m/s)')
-    plt.subplot(2,1,2)
+    plt.ylabel('Altitude (m)')
+    plt.subplot(3,1,2)
     plt.plot(plotdata[:,0], plotdata[:,2])
+    plt.ylabel('Velocity (m/s)')
+    plt.subplot(3,1,3)
+    plt.plot(plotdata[:,0], plotdata[:,3])
     plt.ylabel('Motors')
     plt.xlabel('Time (s)')
     plt.show()
