@@ -75,6 +75,7 @@ if __name__ == '__main__':
     tvals = np.linspace(0, DURATION, n)
     uvals = np.zeros(n)
     avals = np.zeros(n)
+    vvals = np.zeros(n)
 
     # Motors are initially off
     u = 0
@@ -101,12 +102,16 @@ if __name__ == '__main__':
         k = k[0]
         uvals[k] = u
         avals[k] = a
+        vvals[k] = v
 
     # Plot results
-    plt.subplot(2,1,1)
+    plt.subplot(3,1,1)
     plt.plot(tvals, avals)
     plt.ylabel('Altitude (m)')
-    plt.subplot(2,1,2)
+    plt.subplot(3,1,2)
+    plt.plot(tvals, vvals)
+    plt.ylabel('Velocity (m/s)')
+    plt.subplot(3,1,3)
     plt.plot(tvals, uvals)
     plt.ylabel('Motors')
     plt.xlabel('Time (s)')
