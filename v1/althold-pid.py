@@ -10,10 +10,9 @@ MIT License
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
-from time import time
 
-DURATION        = 30  # seconds
-ALTITUDE_TARGET = 100 # meters
+DURATION        = 30 # seconds
+ALTITUDE_TARGET = 10 # meters
 
 # PID params
 ALT_P = 1.0
@@ -45,7 +44,7 @@ class AltitudePidController(object):
 
     def u(self, alt, vel, dt):
 
-        # Compute dzdt setpoint and error
+        # Compute v setpoint and error
         velTarget = (self.target - alt) * self.posP
         velError = velTarget - vel
 
@@ -62,68 +61,58 @@ class AltitudePidController(object):
 
         return -lim if x < -lim else (+lim if x > +lim else x)
 
+def _subplot(t, x, k, label):
+    plt.subplot(4,1,k)
+    plt.plot(t, x)
+    plt.ylabel(label)
+ 
 if __name__ == '__main__':
 
     # Create and initialize copter environment
     env = gym.make('gym_copter:Copter-v1')
     env.reset()
 
-    # initial conditions
-    z = 0
-    u = np.zeros(4)
-    prev = time()
-    start = prev
-
     # Create PID controller
     pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
 
-    # Start timing
-    prev = time()
+    # Initialize arrays for plotting
+    n = int(DURATION/DT)
+    tvals = np.linspace(0, DURATION, n)
+    uvals = np.zeros(n)
+    zvals = np.zeros(n)
+    vvals = np.zeros(n)
+    rvals = np.zeros(n)
 
-    # Initialize array for plotting
-    plotdata = []
+    # Motors are initially off
+    u = 0
 
-    # Loop until user hits the stop button
-    while True:
+    # Loop over time values
+    for k,t in np.ndenumerate(tvals):
 
-        # Draw the current environment
-        if env.render() is None: break
+        # Update the environment with the current motor command
+        s, r, _, _ = env.step(u)
 
-        # Update timer
-        curr = time()
-        dt = curr - prev
-        elapsed = curr - start
-        prev = curr
-
-        if elapsed > DURATION: break
-
-        # Update the environment with the current motor commands
-        state, _, _, _ = env.step(u*np.ones(4))
-
-        # Extract altitude from state (negate to accommodate NED)
-        z = -state[4]
-
-        # Extract velocity from state (negate to accommodate NED)
-        dzdt = -state[5]
+        # Extract altitude, vertical velocity from state
+        z, v = s
 
         # Get correction from PID controller
-        u = pid.u(z, dzdt, dt)
+        u = pid.u(z, v, DT)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
 
-        # Accumulate array for plotting
-        plotdata.append([elapsed, z, u])
+        # Track values
+        k = k[0]
+        uvals[k] = u
+        zvals[k] = z
+        vvals[k] = v
+        rvals[k] = r
 
     # Plot results
-    plotdata = np.array(plotdata)
-    plt.subplot(2,1,1)
-    plt.plot(plotdata[:,0], plotdata[:,1])
-    plt.ylabel('Altitude (m)')
-    plt.subplot(2,1,2)
-    plt.plot(plotdata[:,0], plotdata[:,2])
-    plt.ylabel('Motors')
-    plt.xlabel('Time (s)')
+    _subplot(tvals, rvals, 1, 'Reward')
+    _subplot(tvals, zvals, 2, 'Altitude (m)')
+    _subplot(tvals, vvals, 3, 'Velocity (m/s)')
+    _subplot(tvals, uvals, 4, 'Motors')
     plt.show()
 
     # Cleanup
