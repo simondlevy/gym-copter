@@ -44,7 +44,7 @@ class AltitudePidController(object):
 
     def u(self, alt, vel, dt):
 
-        # Compute dzdt setpoint and error
+        # Compute v setpoint and error
         velTarget = (self.target - alt) * self.posP
         velError = velTarget - vel
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     n = int(DURATION/DT)
     tvals = np.linspace(0, DURATION, n)
     uvals = np.zeros(n)
-    zvals = np.zeros(n)
+    avals = np.zeros(n)
 
     # Motors are initially off
     u = 0
@@ -86,13 +86,13 @@ if __name__ == '__main__':
         state, _, _, _ = env.step(u*np.ones(4))
 
         # Extract altitude from state (negate to accommodate NED)
-        z = -state[4]
+        a = -state[4]
 
         # Extract velocity from state (negate to accommodate NED)
-        dzdt = -state[5]
+        v = -state[5]
 
         # Get correction from PID controller
-        u = pid.u(z, dzdt, DT)
+        u = pid.u(a, v, DT)
 
         # Constrain correction to [0,1] to represent motor value
         u = max(0, min(1, u))
@@ -100,11 +100,11 @@ if __name__ == '__main__':
         # Track values
         k = k[0]
         uvals[k] = u
-        zvals[k] = z
+        avals[k] = a
 
     # Plot results
     plt.subplot(2,1,1)
-    plt.plot(tvals, zvals)
+    plt.plot(tvals, avals)
     plt.ylabel('Altitude (m)')
     plt.subplot(2,1,2)
     plt.plot(tvals, uvals)
