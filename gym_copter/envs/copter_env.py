@@ -1,5 +1,5 @@
 '''
-gym-copter Environment classes
+gym-copter Environment superclass
 
 Copyright (C) 2019 Simon D. Levy
 
