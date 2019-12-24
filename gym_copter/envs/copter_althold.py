@@ -49,7 +49,7 @@ class CopterAltHold(CopterEnv):
             episode_over = True
 
         # Reward is proximity to target altitude
-        reward = np.log(1/np.abs(self.target-altitude))
+        reward = -np.log(np.abs(self.target-altitude))
 
         # Only one state; reward is altitude
         return (altitude,velocity), reward, episode_over, info
