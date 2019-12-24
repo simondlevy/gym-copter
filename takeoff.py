@@ -12,7 +12,7 @@ import numpy as np
 
 if __name__ == '__main__':
 
-    # Create and initialize the simples copter environment (on/off motors)
+    # Create and initialize the simplest copter environment (on/off motors)
     env = gym.make('gym_copter:Copter-v0')
     env.reset()
 
