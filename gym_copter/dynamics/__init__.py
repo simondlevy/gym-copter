@@ -213,14 +213,7 @@ class MultirotorDynamics:
         _bodyToInertial method optimized for body X=Y=0
         '''
     
-        phi, theta, psi = rotation
-
-        cph = np.cos(phi)
-        sph = np.sin(phi)
-        cth = np.cos(theta)
-        sth = np.sin(theta)
-        cps = np.cos(psi)
-        sps = np.sin(psi)
+        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
 
         # This is the rightmost column of the body-to-inertial rotation matrix
         R = np.array([sph * sps + cph * cps * sth, cph * sps * sth - cps * sph, cph * cth])
@@ -229,14 +222,7 @@ class MultirotorDynamics:
 
     def _inertialToBody(inertial, rotation):
     
-        phi, theta, psi = rotation
-
-        cph = np.cos(phi)
-        sph = np.sin(phi)
-        cth = np.cos(theta)
-        sth = np.sin(theta)
-        cps = np.cos(psi)
-        sps = np.sin(psi)
+        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
 
         R = [[cps * cth,                    cth * sps,                         -sth],
              [cps * sph * sth - cph * sps,  cph * cps + sph * sps * sth,  cth * sph],
@@ -251,14 +237,7 @@ class MultirotorDynamics:
          See Section 5 of http:#www.chrobotics.com/library/understanding-euler-angles
         '''
 
-        phi, theta, psi = rotation
-
-        cph = np.cos(phi)
-        sph = np.sin(phi)
-        cth = np.cos(theta)
-        sth = np.sin(theta)
-        cps = np.cos(psi)
-        sps = np.sin(psi)
+        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
 
         R = [[cps * cth,  cps * sph * sth - cph * sps,  sph * sps + cph * cps * sth],
              [cth * sps,  cph * cps + sph * sps * sth,  cph * sps * sth - cps * sph],
@@ -266,12 +245,19 @@ class MultirotorDynamics:
 
         return np.dot(R, body)
 
-    def _eulerToQuaternion(eulerAngles):
+    def _eulerToQuaternion(euler):
 
-        # Convenient renaming
-        phi, the, psi = eulerAngles / 2
+        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(euler/2)
 
-        # Pre-computation
+        return [[ cph * cth * cps + sph * sth * sps],
+                [cph * sth * sps - sph * cth * cps],
+                [-cph * sth * cps - sph * cth * sps],
+                [cph * cth * sps - sph * sth * cps]]
+
+    def _sincos(angles):
+
+        phi, the, psi = angles
+
         cph = np.cos(phi)
         cth = np.cos(the)
         cps = np.cos(psi)
@@ -279,10 +265,6 @@ class MultirotorDynamics:
         sth = np.sin(the)
         sps = np.sin(psi)
 
-        # Conversion
-        return [[ cph * cth * cps + sph * sth * sps],
-                [cph * sth * sps - sph * cth * cps],
-                [-cph * sth * cps - sph * cth * sps],
-                [cph * cth * sps - sph * sth * cps]]
+        return cph, cth, cps, sph, sth, sps
 
 
