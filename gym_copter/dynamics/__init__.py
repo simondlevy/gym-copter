@@ -94,7 +94,7 @@ class MultirotorDynamics:
         self._x    = np.zeros(12)
         self._dxdt = np.zeros(12)
 
-        self._airborne = False
+        self._airborne = airborne
 
         # Values computed in Equation 6
         self._U1 = 0     # total thrust
