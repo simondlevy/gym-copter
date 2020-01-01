@@ -88,7 +88,6 @@ class MultirotorDynamics:
         self._motorCount = motorCount
 
         self._omegas  = np.zeros(motorCount)
-        self._omegas2 = np.zeros(motorCount)
 
         # Always start at location (0,0,0) with zero velocities
         self._x    = np.zeros(12)
@@ -122,13 +121,13 @@ class MultirotorDynamics:
         self._Omega = self.u4(self._omegas)
 
         # Overall thrust is sum of squared omegas
-        self._omegas2 = self._omegas**2
-        self._U1 = np.sum(self._p.b * self._omegas2)
+        omegas2 = self._omegas**2
+        self._U1 = np.sum(self._p.b * omegas2)
 
         # Use the squared Omegas to implement the rest of Eqn. 6
-        self._U2 = self._p.l * self._p.b * self.u2(self._omegas2)
-        self._U3 = self._p.l * self._p.b * self.u3(self._omegas2)
-        self._U4 = self._p.d * self.u4(self._omegas2)
+        self._U2 = self._p.l * self._p.b * self.u2(omegas2)
+        self._U3 = self._p.l * self._p.b * self.u3(omegas2)
+        self._U4 = self._p.d * self.u4(omegas2)
         
     def update(self, dt):
         '''
