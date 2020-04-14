@@ -19,10 +19,15 @@ if __name__ == '__main__':
     # Loop until user hits the stop button
     while True:
 
-        # Draw the current environment
-        if env.render() is None: break
+        try:
 
-        # Turn the motors on
-        env.step(1)
+            # Draw the current environment
+            if env.render() is None: break
+
+            # Turn the motors on
+            env.step(1)
+
+        except KeyboardInterrupt:
+            break
 
     del env
