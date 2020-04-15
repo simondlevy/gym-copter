@@ -26,16 +26,16 @@ class CopterAltHold(CopterEnv):
         self.target = target
         self.timeout = timeout
 
-        # Action space = motors
-        self.action_space = spaces.Box(np.array([0]), np.array([1]))
+        # Action space = motors, rescaled from [0,1] to [-1,+1]
+        self.action_space = spaces.Box(np.array([-1]), np.array([1]))
 
         # Observation space = altitude, vertical_velocity
         self.observation_space = spaces.Box(np.array([0,-np.inf]), np.array([np.inf,np.inf]))
         
     def step(self, action):
 
-        # Convert discrete action index to array of floating-point number values
-        motors = [float(action)]*4
+        # Rescale action from [-1,+1] to [0,1] and use it for all four motors
+        motors = [(action+1)/2]*4
 
         # Call parent-class step() to do basic update
         state, _, episode_over, info = CopterEnv.step(self, motors)
