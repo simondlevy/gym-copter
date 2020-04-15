@@ -44,6 +44,8 @@ class CopterAltHold(CopterEnv):
         altitude = -state[4]
         velocity = -state[5]
 
+        #print(action, altitude)
+
         # Too many ticks elapsed: set episode-over flag
         if self.ticks*self.dt > self.timeout:
             episode_over = True
