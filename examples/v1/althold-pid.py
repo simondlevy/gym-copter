@@ -84,13 +84,13 @@ if __name__ == '__main__':
     rvals = np.zeros(n)
 
     # Motors are initially off
-    u = 0
+    u = -1
 
     # Loop over time values
     for k,t in np.ndenumerate(tvals):
 
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
-        s, r, _, _ = env.step([2*u-1])
+        s, r, _, _ = env.step([u])
 
         # Extract altitude, vertical velocity from state
         z, v = s
@@ -98,8 +98,11 @@ if __name__ == '__main__':
         # Get correction from PID controller
         u = pid.u(z, v, DT)
 
-        # Constrain correction to [0,1] to represent motor value
-        u = max(0, min(1, u))
+        # Convert u from [0,1] to [-1,+1]
+        u = 2 * u - 1
+
+        # Constrain correction to [-1,+1]
+        u = max(-1, min(+1, u))
 
         # Track values
         k = k[0]
@@ -112,7 +115,8 @@ if __name__ == '__main__':
     _subplot(tvals, rvals, 1, 'Reward')
     _subplot(tvals, zvals, 2, 'Altitude (m)')
     _subplot(tvals, vvals, 3, 'Velocity (m/s)')
-    _subplot(tvals, uvals, 4, 'Motors')
+    _subplot(tvals, uvals, 4, 'Action')
+    plt.ylim([-1.1,+1.1])
     plt.show()
 
     # Cleanup
