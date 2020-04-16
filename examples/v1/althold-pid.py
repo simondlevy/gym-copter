@@ -89,8 +89,8 @@ if __name__ == '__main__':
     # Loop over time values
     for k,t in np.ndenumerate(tvals):
 
-        # Update the environment with the current motor command, scaled to [-1,+1]
-        s, r, _, _ = env.step(2*u-1)
+        # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
+        s, r, _, _ = env.step([2*u-1])
 
         # Extract altitude, vertical velocity from state
         z, v = s

@@ -35,7 +35,7 @@ class CopterAltHold(CopterEnv):
     def step(self, action):
 
         # Rescale action from [-1,+1] to [0,1] and use it for all four motors
-        motors = [(action+1)/2]*4
+        motors = (1 + action[0] * np.ones(4)) / 2
 
         # Call parent-class step() to do basic update
         state, _, episode_over, info = CopterEnv.step(self, motors)
