@@ -11,7 +11,7 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 
-DURATION        = 30 # seconds
+DURATION        = 5 # seconds
 ALTITUDE_TARGET = 10 # meters
 
 # PID params
@@ -91,8 +91,6 @@ if __name__ == '__main__':
 
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, _, _ = env.step([u])
-
-        env.render()
 
         # Extract altitude, vertical velocity from state
         z, v = s

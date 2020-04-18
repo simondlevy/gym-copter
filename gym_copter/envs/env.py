@@ -17,8 +17,6 @@ class CopterEnv(Env):
     # Default time constant
     DELTA_T = 0.001
 
-    metadata = {'render.modes': ['human']}
-
     def __init__(self):
 
         self.num_envs = 1
