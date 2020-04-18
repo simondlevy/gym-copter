@@ -45,27 +45,27 @@ class CopterEnv(Env):
         return self.state, reward, episode_over, info
 
     def reset(self):
+
         self._init()
         return self.state
 
     def render(self, mode='hud'):
 
-        from gym_copter.envs.hud import HUD
-
-        if self.hud is None:
-            self.hud = HUD()
-
         # Track time
         tcurr = time()
         self.dt = (tcurr - self.tprev) if self.tprev > 0 else CopterEnv.DELTA_T
         self.tprev = tcurr
- 
-        # Detect window close
-        if not self.hud.isOpen(): return None
 
-        return self.hud.display(mode, self.state)
+        # Support various modes
+        if mode == 'hud':
+            return self._render_hud(mode)
+        elif mode.lower() == '3d':
+            return self._render_3d(mode)
+        else:
+            raise Exception('Unsupported render mode ' + mode)
 
     def close(self):
+
         Env.close(self)        
 
     def time(self):
@@ -78,3 +78,15 @@ class CopterEnv(Env):
         self.state = np.zeros(12)
         self.tprev = 0
         self.t = 0
+
+    def _render_hud(self, mode):
+        
+        from gym_copter.envs.hud import HUD
+
+        if self.hud is None:
+            self.hud = HUD()
+ 
+        # Detect window close
+        if not self.hud.isOpen(): return None
+
+        return self.hud.display(mode, self.state)

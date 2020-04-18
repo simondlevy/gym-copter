@@ -57,6 +57,3 @@ class CopterAltHold(CopterEnv):
     def reset(self):
         CopterEnv.reset(self)
         return -self.state[4:6]
-
-    def time(self):
-        return CopterEnv.time(self)
