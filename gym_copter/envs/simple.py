@@ -39,10 +39,6 @@ class CopterSimple(CopterEnv):
         # Dynamics uses NED coordinates, so negate to get altitude
         altitude = -state[4]
 
-        # Too many ticks elapsed: set episode-over flag
-        if self.ticks*self.dt > self.TIMEOUT:
-            episode_over = True
-
         # Only one state; reward is altitude
         return 0, altitude, episode_over, info
 
