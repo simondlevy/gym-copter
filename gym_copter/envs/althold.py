@@ -44,8 +44,8 @@ class CopterAltHold(CopterEnv):
         altitude = -state[4]
         velocity = -state[5]
 
-        # Too many ticks elapsed: set episode-over flag
-        if self.ticks*self.dt > self.timeout:
+        # Too much time elapsed: set episode-over flag
+        if self.t > self.timeout:
             episode_over = True
 
         # Reward is proximity to target altitude
@@ -58,3 +58,5 @@ class CopterAltHold(CopterEnv):
         CopterEnv.reset(self)
         return -self.state[4:6]
 
+    def time(self):
+        return CopterEnv.time(self)

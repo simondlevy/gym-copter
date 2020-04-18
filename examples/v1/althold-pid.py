@@ -20,9 +20,6 @@ VEL_P = 1.0
 VEL_I = 0
 VEL_D = 0
 
-# Time constant
-DT = 0.001
-
 class AltitudePidController(object):
 
     def __init__(self, target, posP, velP, velI, velD, windupMax=10):
@@ -76,27 +73,34 @@ if __name__ == '__main__':
     pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
 
     # Initialize arrays for plotting
-    n = int(DURATION/DT)
-    tvals = np.linspace(0, DURATION, n)
-    uvals = np.zeros(n)
-    zvals = np.zeros(n)
-    vvals = np.zeros(n)
-    rvals = np.zeros(n)
+    tvals = []
+    uvals = []
+    zvals = []
+    vvals = []
+    rvals = []
 
     # Motors are initially off
     u = -1
 
-    # Loop over time values
-    for k,t in np.ndenumerate(tvals):
+    # Loop for specified duration
+    while True:
+
+        # Get current time from environment
+        t = env.time()
+
+        # Stop if time excedes duration
+        if t > DURATION: break
 
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, _, _ = env.step([u])
+
+        env.render()
 
         # Extract altitude, vertical velocity from state
         z, v = s
 
         # Get correction from PID controller
-        u = pid.u(z, v, DT)
+        u = pid.u(z, v, env.dt)
 
         # Convert u from [0,1] to [-1,+1]
         u = 2 * u - 1
@@ -105,11 +109,11 @@ if __name__ == '__main__':
         u = max(-1, min(+1, u))
 
         # Track values
-        k = k[0]
-        uvals[k] = u
-        zvals[k] = z
-        vvals[k] = v
-        rvals[k] = r
+        tvals.append(t)
+        uvals.append(u)
+        zvals.append(z)
+        vvals.append(v)
+        rvals.append(r)
 
     # Plot results
     _subplot(tvals, rvals, 1, 'Reward')

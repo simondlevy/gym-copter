@@ -34,13 +34,13 @@ class CopterEnv(Env):
         self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
 
-        # Increment time count
-        self.ticks += 1
-
         # Get return values 
         reward       = 0      # floating-point reward value from previous action
-        episode_over = False  # whether it's time to reset the environment again (e.g., circle tipped over)
+        episode_over = False  # whether it's time to reset the environment again
         info         = {}     # diagnostic info for debugging
+
+        # Accumulate time
+        self.t += self.dt
 
         return self.state, reward, episode_over, info
 
@@ -48,7 +48,7 @@ class CopterEnv(Env):
         self._init()
         return self.state
 
-    def render(self, mode='human'):
+    def render(self, mode='hud'):
 
         from gym_copter.envs.hud import HUD
 
@@ -56,21 +56,25 @@ class CopterEnv(Env):
             self.hud = HUD()
 
         # Track time
-        curr = time()
-        self.dt = (curr - self.prev) if self.prev > 0 else CopterEnv.DELTA_T
-        self.prev = curr
+        tcurr = time()
+        self.dt = (tcurr - self.tprev) if self.tprev > 0 else CopterEnv.DELTA_T
+        self.tprev = tcurr
  
         # Detect window close
         if not self.hud.isOpen(): return None
 
-        return self.hud.display(mode,  self.state)
+        return self.hud.display(mode, self.state)
 
     def close(self):
         Env.close(self)        
+
+    def time(self):
+
+        return self.t
 
     def _init(self):
         
         self.dynamics = DJIPhantomDynamics()
         self.state = np.zeros(12)
-        self.ticks = 0
-        self.prev = 0
+        self.tprev = 0
+        self.t = 0
