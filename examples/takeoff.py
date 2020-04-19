@@ -66,7 +66,7 @@ def _subplot(t, x, k, label):
 if __name__ == '__main__':
 
     # Create and initialize copter environment
-    env = gym.make('gym_copter:Copter-v1')
+    env = gym.make('gym_copter:Copter-v0')
     env.reset()
 
     # Create PID controller

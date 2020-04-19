@@ -48,6 +48,8 @@ class CopterAltHold(CopterEnv):
         altitude = -state[4]
         velocity = -state[5]
 
+        print(velocity)
+
         costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
 
         done = abs(self.target-altitude) < self.tolerance or self.t > self.timeout
