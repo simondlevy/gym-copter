@@ -8,6 +8,6 @@ from drlho2e_ch19 import play
 
 args = play.parse_args()
 
-test_env = gym.make('Copter-v1')
+test_env = gym.make(args.env)
 
 play.play(test_env, args)
