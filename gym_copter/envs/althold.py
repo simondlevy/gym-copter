@@ -52,7 +52,7 @@ class CopterAltHold(CopterEnv):
         velocity = -state[5]
 
         # Reward for being close to altitude target at low velocity
-        if abs(self.target-altitude) < self.tolerance and abs(velocity) < self.maxvel:
+        if abs(self.target-altitude) < self.tolerance: #and abs(velocity) < self.maxvel:
             reward = 1
             done = True
 
@@ -64,6 +64,5 @@ class CopterAltHold(CopterEnv):
         return (altitude,velocity), reward, done, info
 
     def reset(self):
-        print('reset')
         CopterEnv.reset(self)
         return -self.state[4:6]
