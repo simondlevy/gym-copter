@@ -20,7 +20,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 % python3 examples/takeoff.py
 ```
 
-This should pop up the HUD and show the copter rising rapidly.
+This should pop up the HUD and show the copter rising to an altitude of 10 meters.
 
 ## Going further
 
@@ -31,9 +31,6 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 ```
 
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
-
-For current work on this project, check out the
-[wiki](https://github.com/simondlevy/gym-copter/wiki/Home).
 
 ## Similar projects
 
