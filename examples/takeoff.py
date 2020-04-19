@@ -11,7 +11,7 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 
-DURATION        = 5 # seconds
+DURATION        = 5  # seconds
 ALTITUDE_TARGET = 10 # meters
 
 # PID params

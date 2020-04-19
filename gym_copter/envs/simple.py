@@ -34,13 +34,13 @@ class CopterSimple(CopterEnv):
         motors = [float(action)]*4
 
         # Call parent-class step() to do basic update
-        state, reward, episode_over, info = CopterEnv.step(self, motors)
+        state, reward, done, info = CopterEnv.step(self, motors)
 
         # Dynamics uses NED coordinates, so negate to get altitude
         altitude = -state[4]
 
         # Only one state; reward is altitude
-        return 0, altitude, episode_over, info
+        return 0, altitude, done, info
 
     def reset(self):
         CopterEnv.reset(self)

@@ -36,13 +36,13 @@ class CopterEnv(Env):
 
         # Get return values 
         reward       = 0      # floating-point reward value from previous action
-        episode_over = False  # whether it's time to reset the environment again
+        done = False  # whether it's time to reset the environment again
         info         = {}     # diagnostic info for debugging
 
         # Accumulate time
         self.t += self.dt
 
-        return self.state, reward, episode_over, info
+        return self.state, reward, done, info
 
     def reset(self):
 
