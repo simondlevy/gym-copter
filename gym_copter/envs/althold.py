@@ -18,7 +18,7 @@ class CopterAltHold(CopterEnv):
     Reward is proximity to a target altitude.
     '''
 
-    def __init__(self, dt=.001, target=10, timeout=10, tolerance=1.0, maxvel=1.0):
+    def __init__(self, dt=.001, target=10, timeout=10, tolerance=1.0):
 
         CopterEnv.__init__(self)
 
@@ -26,7 +26,6 @@ class CopterAltHold(CopterEnv):
         self.target = target
         self.timeout = timeout
         self.tolerance = tolerance
-        self.maxvel = maxvel
 
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]), np.array([1]))
@@ -49,19 +48,17 @@ class CopterAltHold(CopterEnv):
         altitude = -state[4]
         velocity = -state[5]
 
-        # Reward for being close to altitude target at low velocity
-        #if abs(self.target-altitude) < self.tolerance: #and abs(velocity) < self.maxvel:
-        #    reward = 1
-        #    done = True
-
         costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
 
+        done = abs(self.target-altitude) < self.tolerance or self.t > self.timeout
+
+        #    reward = 1
         # Too much time elapsed: set episode-over flag
-        if self.t > self.timeout:
-            done = True
+        #if self.t > self.timeout:
+        #    done = True
 
         # Only one state; reward is altitude
-        return (altitude,velocity), -costs, False, {}
+        return (altitude,velocity), -costs, done, {}
 
     def reset(self):
         CopterEnv.reset(self)
