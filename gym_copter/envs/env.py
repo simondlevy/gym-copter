@@ -24,7 +24,7 @@ class CopterEnv(Env):
 
         self._init()
 
-    def step(self, action):
+    def _get_state(self, action):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
@@ -39,7 +39,7 @@ class CopterEnv(Env):
         # Accumulate time
         self.t += self.dt
 
-        return self.state, reward, done, info
+        return self.state
 
     def reset(self):
 
@@ -78,7 +78,7 @@ class CopterEnv(Env):
 
     def _render_hud(self, mode):
         
-        from gym_copter.envs.hud import HUD
+        from gym_copter.envs.rendering.hud import HUD
 
         if self.hud is None:
             self.hud = HUD()
