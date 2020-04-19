@@ -18,7 +18,7 @@ class CopterAltHold(CopterEnv):
     Reward is proximity to a target altitude.
     '''
 
-    def __init__(self, dt=.001, target=10, timeout=10, tolerance=0.5):
+    def __init__(self, dt=.001, target=10, timeout=10, tolerance=1.0):
 
         CopterEnv.__init__(self)
 

@@ -14,16 +14,13 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterEnv(Env):
 
-    # Default time constant
-    DELTA_T = 0.001
-
-    def __init__(self):
+    def __init__(self, dt=0.001):
 
         self.num_envs = 1
         self.hud = None
 
         # We handle time differently if we're rendering
-        self.dt = CopterEnv.DELTA_T
+        self.dt = dt
 
         self._init()
 
@@ -53,7 +50,7 @@ class CopterEnv(Env):
 
         # Track time
         tcurr = time()
-        self.dt = (tcurr - self.tprev) if self.tprev > 0 else CopterEnv.DELTA_T
+        self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
         self.tprev = tcurr
 
         # Support various modes
