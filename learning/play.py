@@ -4,7 +4,7 @@ import gym
 
 import gym_copter
 
-from drlho2e_ch19 import play
+from drlho2e.ch19 import play
 
 args = play.parse_args()
 

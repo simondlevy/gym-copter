@@ -4,7 +4,7 @@ import gym
 
 import gym_copter
 
-from drlho2e_ch19 import sac
+from drlho2e.ch19 import sac
 
 args = sac.parse_args()
 

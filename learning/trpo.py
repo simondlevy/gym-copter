@@ -4,7 +4,7 @@ import gym
 
 import gym_copter
 
-from drlho2e_ch19 import trpo
+from drlho2e.ch19 import trpo
 
 args = trpo.parse_args()
 

@@ -4,7 +4,7 @@ import gym
 
 import gym_copter
 
-from drlho2e_ch19 import a2c
+from drlho2e.ch19 import a2c
 
 args = a2c.parse_args()
 

@@ -24,7 +24,7 @@ class CopterEnv(Env):
 
         self._init()
 
-    def _get_state(self, action):
+    def _update(self, action):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)

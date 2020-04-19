@@ -36,32 +36,32 @@ class CopterAltHold(CopterEnv):
         
     def step(self, action):
 
-        # Rescale action from [-1,+1] to [0,1] and use it for all four motors
-        motors = (1 + action[0] * np.ones(4)) / 2
+        # Rescale action from [-1,+1] to [0,1]
+        motor = (1 + action[0]) / 2
+
+        # Use it for all four motors
+        motors = motor * np.ones(4)
 
         # Call parent-class step() to do basic update
-        state = CopterEnv._get_state(self, motors)
-
-        # Defaults for return
-        done = False
-        reward = 0
-        info = {}
+        state = CopterEnv._update(self, motors)
 
         # Dynamics uses NED coordinates, so negate to get altitude and vertical velocity
         altitude = -state[4]
         velocity = -state[5]
 
         # Reward for being close to altitude target at low velocity
-        if abs(self.target-altitude) < self.tolerance: #and abs(velocity) < self.maxvel:
-            reward = 1
-            done = True
+        #if abs(self.target-altitude) < self.tolerance: #and abs(velocity) < self.maxvel:
+        #    reward = 1
+        #    done = True
+
+        costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
 
         # Too much time elapsed: set episode-over flag
         if self.t > self.timeout:
             done = True
 
         # Only one state; reward is altitude
-        return (altitude,velocity), reward, done, info
+        return (altitude,velocity), -costs, False, {}
 
     def reset(self):
         CopterEnv.reset(self)
