@@ -10,3 +10,8 @@ register(
     id='Copter-v0',
     entry_point='gym_copter.envs:CopterAltHold',
 )
+
+register(
+    id='Copter-v1',
+    entry_point='gym_copter.envs:CopterDistance',
+)

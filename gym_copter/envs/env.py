@@ -39,8 +39,6 @@ class CopterEnv(Env):
         # Accumulate time
         self.t += self.dt
 
-        return self.state
-
     def reset(self):
 
         self._init()
@@ -71,8 +69,8 @@ class CopterEnv(Env):
 
     def _init(self):
         
-        self.dynamics = DJIPhantomDynamics()
         self.state = np.zeros(12)
+        self.dynamics = DJIPhantomDynamics()
         self.tprev = 0
         self.t = 0
 

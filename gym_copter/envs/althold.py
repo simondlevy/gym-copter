@@ -1,5 +1,5 @@
 '''
-gym-copter Environment class for altitude-hold
+gym-copter Environment class for takeoff to altitude
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -13,8 +13,8 @@ import numpy as np
 class CopterAltHold(CopterEnv):
     '''
     A GymCopter class with continous state and action space.
-    Action space is [0,1], with all motors set to the same value.
-    State space is altitude,vertical_velocity.
+    Action space is [-1,+1], translated to [0,1], with all motors set to the
+    same value.  State space is altitude,vertical_velocity.
     Reward is proximity to a target altitude.
     '''
 
@@ -26,6 +26,8 @@ class CopterAltHold(CopterEnv):
         self.target = target
         self.timeout = timeout
         self.tolerance = tolerance
+
+        self.count = 0
 
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]), np.array([1]))
@@ -42,26 +44,21 @@ class CopterAltHold(CopterEnv):
         motors = motor * np.ones(4)
 
         # Call parent-class step() to do basic update
-        state = CopterEnv._update(self, motors)
+        CopterEnv._update(self, motors)
 
         # Dynamics uses NED coordinates, so negate to get altitude and vertical velocity
-        altitude = -state[4]
-        velocity = -state[5]
+        altitude = -self.state[4]
+        velocity = -self.state[5]
 
-        print(velocity)
-
-        costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
+        #costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
+        costs = (altitude-self.target)**2 + velocity**2
 
         done = abs(self.target-altitude) < self.tolerance or self.t > self.timeout
-
-        #    reward = 1
-        # Too much time elapsed: set episode-over flag
-        #if self.t > self.timeout:
-        #    done = True
 
         # Only one state; reward is altitude
         return (altitude,velocity), -costs, done, {}
 
     def reset(self):
         CopterEnv.reset(self)
+        self.count = 0
         return -self.state[4:6]
