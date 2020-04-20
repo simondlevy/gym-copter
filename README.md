@@ -54,9 +54,14 @@ doing:
 ```
 
 where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
-(It is easiest to do this through tab completion.)
+(It is easiest to do this through tab completion.) You should see brief animation of the vehicle rising to
+10 meters altitude.
 
-
+In addition to TRPO, the <tt>learning</tt> folder has program to try other learning agents, including
+[A2C](https://arxiv.org/abs/1506.02438), 
+[ACKTR](https://arxiv.org/abs/1708.05144), 
+[PPO](https://arxiv.org/abs/1707.06347), 
+and [SAC](https://arxiv.org/abs/1801.01290).
 
 ## Similar projects
 
