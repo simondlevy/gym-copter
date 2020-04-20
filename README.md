@@ -22,7 +22,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 This should pop up the HUD and show the copter rising to an altitude of 10 meters.
 
-## Going further
+## Reinforcement learning of behaviors
 
 To use gym-copter in your Reinforcement Learning work, you'll want to install it in the usual way:
 
@@ -32,9 +32,19 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
 
+To run the scripts in the [learning](https://github.com/simondlevy/gym-copter/tree/master/learning) folder,
+you'll also want to clone and install my
+[fork](https://github.com/simondlevy/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
+of the code from Deep Reinforcement Learning Hands-On, Second Edition.  After downloading:
+
+```
+% python3 setup.py install
+```
+
+
 ## Similar projects
 
-[gym_rotor](https://github.com/inkyusa/gym_rotor)
+[gym\_rotor](https://github.com/inkyusa/gym_rotor)
 
 [GymFC](https://github.com/wil3/gymfc)
 

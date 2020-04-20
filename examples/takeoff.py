@@ -95,7 +95,7 @@ if __name__ == '__main__':
         s, r, _, _ = env.step([u])
 
         # Display the environment
-        env.render()
+        #env.render()
 
         # Extract altitude, vertical velocity from state
         z, v = s
