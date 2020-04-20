@@ -43,6 +43,20 @@ return to the gym-copter repository and do the following:
 % python3 trpo.py -e Copter-v0 -n altitude
 ```
 
+This will use a [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477) agent on a model
+that is rewarded for reaching an altitude of 10 meters.  After a few hundred
+thosand iterations or so, the program should should report saving the current
+best agent to a file.  As soon as this happens, you can test the agent by
+doing:
+
+```
+% python3 play.py --render -e Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat
+```
+
+where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
+(It is easiest to do this through tab completion.)
+
+
 
 ## Similar projects
 
