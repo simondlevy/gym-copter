@@ -48,16 +48,13 @@ class CopterDistance(CopterEnv):
        # Integrate position
         self.position += self.state[0:5:2]
 
-        # Reward is Euclidean distance from origin
-        distance = np.sqrt(np.sum(self.position[0:2]**2))
-
-        #if distance > 0: print('%04d %3.3e' % (self.count, distance))
+        # Reward is logarithm of Euclidean distance from origin
+        reward = np.sqrt(np.sum(self.position[0:2]**2))
 
         # Quit if we haven't moved after a specified amount of time
         done = self.t > self.timeout #and distance == 0
 
-        #return self.state, distance, done, {}
-        return self.state, distance, done, {}
+        return self.state, reward, done, {}
 
     def reset(self):
         CopterEnv.reset(self)

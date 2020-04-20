@@ -207,7 +207,7 @@ class HUD:
         HUD._vertical_display(self.viewer, HUD.W-HUD.VERTICAL_BOX_WIDTH, HUD.W-HUD.VERTICAL_BOX_WIDTH+1, -state[4], 'Alt (m)')
 
         # Display ground speed at left
-        groundspeed = 0
+        groundspeed = np.sqrt(state[1]**2 + state[3]**2)
         HUD._vertical_display(self.viewer, 0, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed, 'GS (m/s)')
 
         # Add a reticle at the top for roll
