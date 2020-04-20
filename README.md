@@ -62,7 +62,7 @@ You can also try to learn a second task, covering the maximum distance, by doing
 ```
 % python3 trpo.py -e Copter-v1 -n distance
 ```
-In addition to TRPO, the <tt>learning</tt> folder has program to try other learning agents, including
+In addition to TRPO, the <tt>learning</tt> folder has programs to try other learning agents, including
 [A2C](https://arxiv.org/abs/1506.02438), 
 [ACKTR](https://arxiv.org/abs/1708.05144), 
 [PPO](https://arxiv.org/abs/1707.06347), 
