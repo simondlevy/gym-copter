@@ -57,6 +57,11 @@ where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of i
 (It is easiest to do this through tab completion.) You should see brief animation of the vehicle rising to
 10 meters altitude.
 
+You can also try to learn a second task, covering the maximum distance, by doing:
+
+```
+% python3 trpo.py -e Copter-v1 -n distance
+```
 In addition to TRPO, the <tt>learning</tt> folder has program to try other learning agents, including
 [A2C](https://arxiv.org/abs/1506.02438), 
 [ACKTR](https://arxiv.org/abs/1708.05144), 
