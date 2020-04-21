@@ -45,7 +45,7 @@ return to the gym-copter repository and do the following:
 
 This will use a [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477) agent on a model
 that is rewarded for reaching an altitude of 10 meters.  After a few hundred
-thosand iterations or so, the program should should report saving the current
+thousand iterations or so, the program should should report saving the current
 best agent to a file.  As soon as this happens, you can test the agent by
 doing:
 
