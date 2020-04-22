@@ -1,5 +1,5 @@
 '''
-gym-copter Environment class for takeoff to altitude
+gym-copter Environment class for takeoff
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -10,7 +10,7 @@ from gym_copter.envs.env import CopterEnv
 from gym import spaces
 import numpy as np
 
-class CopterAltHold(CopterEnv):
+class CopterTakeoff(CopterEnv):
     '''
     A GymCopter class with continous state and action space.
     Action space is [-1,+1], translated to [0,1], with all motors set to the
