@@ -24,7 +24,7 @@ if __name__ == '__main__':
     for k in range(NITER):
 
         # Run full-throttle
-        env.step(1)
+        env.step([1])
 
     del env
 
