@@ -1,57 +1,41 @@
 #!/usr/bin/env python3
-"""
-============
-3D animation
-============
+'''
+Adapted from
 
-An animated plot in 3D.
-"""
+https://jakevdp.github.io/blog/2013/02/16/animating-the-lorentz-system-in-3d/
+'''
+
 import numpy as np
-import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d.axes3d as p3
-import matplotlib.animation as animation
+from scipy import integrate
 
-# Fixing random state for reproducibility
-np.random.seed(19680801)
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import cnames
+from matplotlib import animation
 
-
-def Gen_RandLine(length, dims=2):
-    """
-    Create a line using a random walk algorithm
-
-    length is the number of points for the line.
-    dims is the number of dimensions the line has.
-    """
-    lineData = np.empty((dims, length))
-    lineData[:, 0] = np.random.rand(dims)
-    for index in range(1, length):
-        # scaling the random numbers by 0.1 so
-        # movement is small compared to position.
-        # subtraction by 0.5 is to change the range to [-0.5, 0.5]
-        # to allow a line to move backwards.
-        step = ((np.random.rand(dims) - 0.5) * 0.1)
-        lineData[:, index] = lineData[:, index - 1] + step
-
-    return lineData
+N_trajectories = 1
 
 
-def update_lines(num, dataLines, lines):
-    for line, data in zip(lines, dataLines):
-        # NOTE: there is no .set_data() for 3 dim data...
-        line.set_data(data[0:2, :num])
-        line.set_3d_properties(data[2, :num])
-    return lines
+#def lorentz_deriv((x, y, z), t0, sigma=10., beta=8./3, rho=28.0):
+def lorentz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
+    """Compute the time-derivative of a Lorentz system."""
+    x,y, z = xyz
+    return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
 
-# Attaching 3D axis to the figure
+
+# Choose random starting points, uniformly distributed from -15 to 15
+np.random.seed(1)
+x0 = -15 + 30 * np.random.random((N_trajectories, 3))
+
+# Solve for the trajectories
+t = np.linspace(0, 4, 1000)
+x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t)
+                  for x0i in x0])
+
+# Set up figure & 3D axis for animation
 fig = plt.figure()
-ax = p3.Axes3D(fig)
-
-# Fifty lines of random 3-D lines
-data = [Gen_RandLine(25, 3) for index in range(50)]
-
-# Creating fifty line objects.
-# NOTE: Can't pass empty arrays into 3d version of plot()
-lines = [ax.plot(dat[0, 0:1], dat[1, 0:1], dat[2, 0:1])[0] for dat in data]
+ax = fig.add_axes([0, 0, 1, 1], projection='3d')
+#ax.axis('off')
 
 # Setting the axes properties
 ax.set_xlim3d([0.0, 1.0])
@@ -65,8 +49,54 @@ ax.set_zlabel('Z')
 
 ax.set_title('3D Test')
 
-# Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 25, fargs=(data, lines),
-                                   interval=50, blit=False)
+
+# choose a different color for each trajectory
+colors = plt.cm.jet(np.linspace(0, 1, N_trajectories))
+
+# set up lines and points
+lines = sum([ax.plot([], [], [], '-', c=c)
+             for c in colors], [])
+pts = sum([ax.plot([], [], [], 'o', c=c)
+           for c in colors], [])
+
+# prepare the axes limits
+ax.set_xlim((-25, 25))
+ax.set_ylim((-35, 35))
+ax.set_zlim((5, 55))
+
+# set point-of-view: specified by (altitude degrees, azimuth degrees)
+ax.view_init(30, 0)
+
+# initialization function: plot the background of each frame
+def init():
+    for line, pt in zip(lines, pts):
+        line.set_data([], [])
+        line.set_3d_properties([])
+
+        pt.set_data([], [])
+        pt.set_3d_properties([])
+    return lines + pts
+
+# animation function.  This will be called sequentially with the frame number
+def animate(i):
+    # we'll step two time-steps per frame.  This leads to nice results.
+    i = (2 * i) % x_t.shape[1]
+
+    for line, pt, xi in zip(lines, pts, x_t):
+        x, y, z = xi[:i].T
+        line.set_data(x, y)
+        line.set_3d_properties(z)
+
+        pt.set_data(x[-1:], y[-1:])
+        pt.set_3d_properties(z[-1:])
+
+    #ax.view_init(30, 0.3 * i)
+    fig.canvas.draw()
+    return lines + pts
+
+# instantiate the animator.
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=500, interval=30, blit=False)
+
 
 plt.show()
