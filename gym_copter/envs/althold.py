@@ -61,7 +61,6 @@ class CopterAltHold(CopterEnv):
         return (altitude,velocity), -costs, done, {}
 
     def reset(self):
-        print('reset --------------------')
         CopterEnv.reset(self)
         self.count = 0
         self._init_state()

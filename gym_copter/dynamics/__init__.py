@@ -132,8 +132,6 @@ class MultirotorDynamics:
         dt time in seconds since previous update
         '''
 
-        print('update', type(self._x[self._STATE_Z]))
-    
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
         euler = ( self._x[6], self._x[8], self._x[10] )
