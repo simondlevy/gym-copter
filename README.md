@@ -33,8 +33,7 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
 
-To run the scripts in the [learning](https://github.com/simondlevy/gym-copter/tree/master/learning) folder,
-you'll also want to clone this
+To get started, I recommend cloning this
 [fork](https://github.com/simondlevy/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
 of the code from the excellent
 [Deep Reinforcement Learning Hands-On, Second Edition](https://www.amazon.com/Deep-Reinforcement-Learning-Hands-Q-networks-ebook/dp/B076H9VQH6) book.  Once you've done that (and installed whatever additional
@@ -50,12 +49,11 @@ that is rewarded for reaching an altitude of 10 meters.  After a few hundred
 thousand iterations or so, the program should should report saving the current
 best agent to a file.  
 
-To play back this best agent (and subsequent ones), you should find the <tt>play.py</tt> script from
-the Deep Reinforcement Learning Hands-On, Second Edition repository (in the <tt>drlho2e/ch19</tt> folder),
-and copy it to the <tt>learning</tt> folder of gym-copter.  Then you can test the agent by doing:
+To play back this best agent (and subsequent ones), you can use the <tt>02\_play.py</tt> script in
+the Chapter 19 folder:
 
 ```
-% python3 play.py --render -e Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat
+% python3 02_play.py -e gym_copter:Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat
 ```
 
 where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
