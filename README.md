@@ -33,14 +33,15 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
 
 To run the scripts in the [learning](https://github.com/simondlevy/gym-copter/tree/master/learning) folder,
-you'll also want to clone and install my
+you'll also want to clone this
 [fork](https://github.com/simondlevy/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
-of the code from Deep Reinforcement Learning Hands-On, Second Edition.  Once you've done that, you can
-return to the gym-copter repository and do the following:
+of the code from the excellent
+[Deep Reinforcement Learning Hands-On, Second Edition](https://www.amazon.com/Deep-Reinforcement-Learning-Hands-Q-networks-ebook/dp/B076H9VQH6) book.  Once you've done that (and installed whatever additional
+packages you need), you can try out the code from Chapter 19 of the book:
 
 ```
-% cd learning
-% python3 trpo.py -e Copter-v0 -n altitude
+% cd Deep-Reinforcement-Learning-Hands-On-Second-Edition/Chapter19
+% python3 03_train_trpo.py -e gym_copter:Copter-v0 -n takeoff
 ```
 
 This will use a [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477) agent on a model
