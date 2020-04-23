@@ -35,6 +35,8 @@ class CopterAltHold(CopterEnv):
         # Observation space = altitude, vertical_velocity
         self.observation_space = spaces.Box(np.array([0,-np.inf]), np.array([np.inf,np.inf]))
         
+        self._init_state()
+
     def step(self, action):
 
         # Rescale action from [-1,+1] to [0,1]
@@ -59,6 +61,12 @@ class CopterAltHold(CopterEnv):
         return (altitude,velocity), -costs, done, {}
 
     def reset(self):
+        print('reset --------------------')
         CopterEnv.reset(self)
         self.count = 0
+        self._init_state()
         return -self.state[4:6]
+
+    def _init_state(self):
+        self.dynamics.setState((0,0,0,0,-float(self.target),0,0,0,0,0,0,0))
+

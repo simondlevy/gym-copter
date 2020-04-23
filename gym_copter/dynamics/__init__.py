@@ -78,7 +78,7 @@ class MultirotorDynamics:
     # universal constants
     g = 9.80665 # might want to allow this to vary!
 
-    def __init__(self, params, motorCount, airborne=False):
+    def __init__(self, params, motorCount):
         '''
         Constructor
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
@@ -93,7 +93,7 @@ class MultirotorDynamics:
         self._x    = np.zeros(12)
         self._dxdt = np.zeros(12)
 
-        self._airborne = airborne
+        self._airborne = False
 
         # Values computed in Equation 6
         self._U1 = 0     # total thrust
@@ -104,9 +104,6 @@ class MultirotorDynamics:
 
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, (0,0,0))
-
-        # We usuall start on ground, but can start in air for testing
-        self._airborne = airborne
 
     def setMotors(self, motorvals):
         '''
@@ -134,6 +131,8 @@ class MultirotorDynamics:
         Updates state.
         dt time in seconds since previous update
         '''
+
+        print('update', type(self._x[self._STATE_Z]))
     
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
@@ -164,6 +163,13 @@ class MultirotorDynamics:
         Returns a copy of the state vector as a tuple
         '''
         return tuple(self._x)
+
+    def setState(self, state):
+        '''
+        Sets the state to the values specified in a sequence
+        '''
+        self._x = np.array(state)
+        self._airborne = self._x[self._STATE_Z] < 0
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
