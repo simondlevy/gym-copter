@@ -52,13 +52,14 @@ class CopterAltHold(CopterEnv):
         altitude = -self.state[4]
         velocity = -self.state[5]
 
-        #costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
-        costs = (altitude-self.target)**2 + velocity**2
+        # Get a reward for every timestep on target
+        self.reward += (int)(abs(altitude-self.target) < self.tolerance)
 
-        done = abs(self.target-altitude) < self.tolerance or self.t > self.timeout
+        # Time out after specified interval
+        done = self.t > self.timeout
 
         # Only one state; reward is altitude
-        return (altitude,velocity), -costs, done, {}
+        return (altitude,velocity), self.reward, done, {}
 
     def reset(self):
         CopterEnv.reset(self)
@@ -68,4 +69,5 @@ class CopterAltHold(CopterEnv):
 
     def _init_state(self):
         self.dynamics.setState((0,0,0,0,-float(self.target),0,0,0,0,0,0,0))
+        self.reward = 0
 
