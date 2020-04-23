@@ -20,7 +20,8 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 % python3 examples/takeoff.py
 ```
 
-This should pop up the HUD and show the copter rising to an altitude of 10 meters.
+After a few seconds you should see a plot showing the copter rising to an altitude of 10 meters, along
+with the associated reward, vertical velocity, and motor actions.
 
 ## Reinforcement learning
 
