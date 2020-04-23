@@ -53,12 +53,12 @@ To play back this best agent (and subsequent ones), you can use the <tt>02\_play
 the Chapter 19 folder:
 
 ```
-% python3 02_play.py -e gym_copter:Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat
+% python3 02_play.py -e gym_copter:Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat -r copter-v0
 ```
 
 where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
 (It is easiest to do this through tab completion.) You should see brief animation of the vehicle rising to
-10 meters altitude.
+10 meters altitude.  A new folder <tt>copter-v0</tt> will contain an mp4 copy of the animation.
 
 You can also try to learn a second task, covering the maximum distance, by doing:
 
