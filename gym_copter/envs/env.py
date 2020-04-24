@@ -14,6 +14,11 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterEnv(Env):
 
+    metadata = {
+        'render.modes' : ['human', 'rgb_array'],
+        'video.frames_per_second' : 30
+    }
+
     def __init__(self, dt=0.001):
 
         self.num_envs = 1
@@ -47,7 +52,7 @@ class CopterEnv(Env):
         self.tprev = tcurr
 
         # Support various modes
-        if mode == 'hud':
+        if mode == 'hud' or mode == 'rgb_array': 
             return self._render_hud(mode)
         elif mode.lower() == '3d':
             return self._render_3d(mode)
