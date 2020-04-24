@@ -28,6 +28,8 @@ while True:
     # Get current time from environment
     t = env.time()
 
+    print(t)
+
     # Stop if time excedes duration
     if t > DURATION: break
 
@@ -35,5 +37,5 @@ while True:
     s, r, _, _ = env.step(u)
 
     # Display the environment
-    env.render()
+    #env.render()
 

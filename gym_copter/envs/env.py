@@ -40,6 +40,9 @@ class CopterEnv(Env):
         self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
 
+        # Update timestep
+        self.tick += 1
+
     def reset(self):
 
         self._init()
@@ -61,13 +64,14 @@ class CopterEnv(Env):
 
     def time(self):
 
-        return self.tprev
+        return self.tick * self.dt
 
     def _init(self):
         
         self.state = np.zeros(12)
         self.dynamics = DJIPhantomDynamics()
         self.tprev = 0
+        self.tick = 0
 
     def _render_hud(self, mode):
         
