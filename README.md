@@ -34,7 +34,7 @@ To use gym-copter in your Reinforcement Learning work, you'll want to install it
 (On Linux you will probably have to run this command with <tt>sudo</tt>.)
 
 To get started, I recommend cloning this
-[fork](https://github.com/simondlevy/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
+[repository](https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
 of the code from the excellent
 [Deep Reinforcement Learning Hands-On, Second Edition](https://www.amazon.com/Deep-Reinforcement-Learning-Hands-Q-networks-ebook/dp/B076H9VQH6) book.  Once you've done that (and installed whatever additional
 packages you need), you can try out the code from Chapter 19 of the book:
