@@ -15,9 +15,11 @@ register(
 register(
     id='Copter-v1',
     entry_point='gym_copter.envs:CopterDistance',
+    max_episode_steps=1000
 )
 
 register(
     id='Copter-v2',
     entry_point='gym_copter.envs:CopterAltHold',
+    max_episode_steps=1000
 )

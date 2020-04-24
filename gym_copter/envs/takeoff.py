@@ -27,8 +27,6 @@ class CopterTakeoff(CopterEnv):
         self.timeout = timeout
         self.tolerance = tolerance
 
-        self.count = 0
-
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]), np.array([1]))
 
@@ -53,12 +51,9 @@ class CopterTakeoff(CopterEnv):
         #costs = (altitude-self.target)**2 + .1*velocity**2 + .001*(motor**2)
         costs = (altitude-self.target)**2 + velocity**2
 
-        done = abs(self.target-altitude) < self.tolerance or self.t > self.timeout
-
-        # Only one state; reward is altitude
-        return (altitude,velocity), -costs, done, {}
+        # False = max_episodes in registry determines whether we're done
+        return (altitude,velocity), -costs, False, {}
 
     def reset(self):
         CopterEnv.reset(self)
-        self.count = 0
         return -self.state[4:6]

@@ -18,11 +18,9 @@ class CopterDistance(CopterEnv):
     Reward is distance traveled.
     '''
 
-    def __init__(self, timeout=10):
+    def __init__(self):
 
         CopterEnv.__init__(self)
-
-        self.timeout = timeout
 
         # Initialize state
         self._init()
@@ -33,14 +31,10 @@ class CopterDistance(CopterEnv):
         # Observation space = altitude, vertical_velocity
         self.observation_space = spaces.Box(np.array([-np.inf]*12), np.array([+np.inf]*12))
 
-        self.count = 0
-
     def step(self, action):
 
         # Rescale action from [-1,+1] to [0,1]
         motors = (1 + action) / 2
-
-        self.count += 1
 
         # Call parent-class method to do basic state update
         CopterEnv._update(self, motors)
@@ -51,14 +45,11 @@ class CopterDistance(CopterEnv):
         # Reward is logarithm of Euclidean distance from origin
         reward = np.sqrt(np.sum(self.position[0:2]**2))
 
-        # Quit if we haven't moved after a specified amount of time
-        done = self.t > self.timeout #and distance == 0
-
-        return self.state, reward, done, {}
+        # False = max_episodes in registry determines whether we're done
+        return self.state, reward, False, {}
 
     def reset(self):
         CopterEnv.reset(self)
         self.position = np.zeros(3)
-        self.count = 0
         return self.state
 

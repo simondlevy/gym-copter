@@ -26,8 +26,6 @@ class CopterAltHold(CopterEnv):
         self.target = target
         self.tolerance = tolerance
 
-        self.count = 0
-
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]), np.array([1]))
 
@@ -54,12 +52,11 @@ class CopterAltHold(CopterEnv):
         # Get a reward for every timestep on target
         self.reward += (int)(abs(altitude-self.target) < self.tolerance)
 
-        # Only one state; reward is altitude; max_episodes in registry determines whether we're done
+        # False = max_episodes in registry determines whether we're done
         return (altitude,velocity), self.reward, False, {}
 
     def reset(self):
         CopterEnv.reset(self)
-        self.count = 0
         self._init_state()
         return -self.state[4:6]
 
