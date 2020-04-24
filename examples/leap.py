@@ -12,7 +12,7 @@ import numpy as np
 
 import gym_copter
 
-DURATION        = 5  # seconds
+DURATION        = 20  # seconds
 ALTITUDE_TARGET = 10 # meters
 
 # Create and initialize copter environment
@@ -28,13 +28,17 @@ while True:
     # Get current time from environment
     t = env.time()
 
-    print(t)
-
     # Stop if time excedes duration
     if t > DURATION: break
 
     # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
     s, r, _, _ = env.step(u)
+
+    # Once we reach altitude, switch to forward motion
+    if -s[4] > ALTITUDE_TARGET:
+        u = np.array([0,1,0,1])
+
+    print(s)
 
     # Display the environment
     #env.render()
