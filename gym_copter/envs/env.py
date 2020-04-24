@@ -30,6 +30,7 @@ class CopterEnv(Env):
         # Default to HUD display
         self.disp = disp
 
+        # Also called by reset()
         self._init()
 
     def _update(self, action):
@@ -57,6 +58,10 @@ class CopterEnv(Env):
     def close(self):
 
         Env.close(self)        
+
+    def time(self):
+
+        return self.tprev
 
     def _init(self):
         

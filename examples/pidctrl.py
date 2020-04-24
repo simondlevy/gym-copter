@@ -1,5 +1,5 @@
 '''
-Simple aaltitude-hold PID controller to test dynamics
+Simple altitude-hold PID controller to test dynamics
 
 Copyright (C) 2020 Simon D. Levy
 

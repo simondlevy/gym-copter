@@ -97,7 +97,7 @@ def animate(i):
 # instantiate the animator.
 anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=30, blit=False)
 
-
+class TPV:
 
     def __init__(self):
 
@@ -113,5 +113,3 @@ anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interva
 
 if __name__ == '__main__':
     plt.show()
-
-class HUD:

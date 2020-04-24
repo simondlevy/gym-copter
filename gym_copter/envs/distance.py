@@ -20,7 +20,7 @@ class CopterDistance(CopterEnv):
 
     def __init__(self):
 
-        CopterEnv.__init__(self)
+        CopterEnv.__init__(self, disp='tpv')
 
         # Initialize state
         self._init()
