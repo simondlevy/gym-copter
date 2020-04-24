@@ -19,7 +19,7 @@ class CopterEnv(Env):
         'video.frames_per_second' : 30
     }
 
-    def __init__(self, dt=0.001):
+    def __init__(self, dt=0.001, disp='hud'):
 
         self.num_envs = 1
         self.display = None
@@ -28,7 +28,7 @@ class CopterEnv(Env):
         self.dt = dt
 
         # Default to HUD display
-        self.disp = 'HUD'
+        self.disp = disp
 
         self._init()
 
@@ -64,13 +64,6 @@ class CopterEnv(Env):
     def time(self):
 
         return self.t
-
-    def setDisplay(self, disp):
-
-        if not disp in ['HUD', 'TPV']:
-            raise Exception('Unrecognized display type ' + disp)
-
-        self.disp = disp
 
     def _init(self):
         
