@@ -6,7 +6,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym import Env, spaces
+from gym import Env
 import numpy as np
 from time import time
 
@@ -17,7 +17,7 @@ class CopterEnv(Env):
     def __init__(self, dt=0.001):
 
         self.num_envs = 1
-        self.hud = None
+        self.display = None
 
         # We handle time differently if we're rendering
         self.dt = dt
@@ -30,11 +30,6 @@ class CopterEnv(Env):
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt)
         self.state = self.dynamics.getState()
-
-        # Get return values 
-        reward       = 0      # floating-point reward value from previous action
-        done = False  # whether it's time to reset the environment again
-        info         = {}     # diagnostic info for debugging
 
         # Accumulate time
         self.t += self.dt
@@ -78,10 +73,22 @@ class CopterEnv(Env):
         
         from gym_copter.envs.rendering.hud import HUD
 
-        if self.hud is None:
-            self.hud = HUD()
+        if self.display is None:
+            self.display = HUD()
  
         # Detect window close
-        if not self.hud.isOpen(): return None
+        if not self.display.isOpen(): return None
 
-        return self.hud.display(mode, self.state)
+        return self.display.display(mode, self.state)
+
+    def _render_tpv(self, mode):
+        
+        from gym_copter.envs.rendering.tpv import TPV
+
+        if self.display is None:
+            self.display = TPV()
+ 
+        # Detect window close
+        if not self.display.isOpen(): return None
+
+        return self.display.display(mode, self.state)

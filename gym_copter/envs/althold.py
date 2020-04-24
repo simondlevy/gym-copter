@@ -53,7 +53,7 @@ class CopterAltHold(CopterEnv):
         velocity = -self.state[5]
 
         # Get a reward for every timestep on target
-        self.reward += (int)(abs(altitude-self.target) < self.tolerance)
+        self.reward += 1 #(int)(abs(altitude-self.target) < self.tolerance)
 
         # Time out after specified interval
         done = self.t > self.timeout
@@ -70,4 +70,3 @@ class CopterAltHold(CopterEnv):
     def _init_state(self):
         self.dynamics.setState((0,0,0,0,-float(self.target),0,0,0,0,0,0,0))
         self.reward = 0
-

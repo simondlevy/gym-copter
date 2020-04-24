@@ -95,8 +95,23 @@ def animate(i):
     return lines + pts
 
 # instantiate the animator.
-anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=500, interval=30, blit=False)
+anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=30, blit=False)
 
 
-plt.show()
+
+    def __init__(self):
+
+        return
+
+    def display(self, mode, state):
+
+        return
+
+    def isOpen(self):
+
+        return False
+
+if __name__ == '__main__':
+    plt.show()
+
+class HUD:
