@@ -27,6 +27,9 @@ class CopterEnv(Env):
         # We handle time differently if we're rendering
         self.dt = dt
 
+        # Default to HUD display
+        self.disp = 'HUD'
+
         self._init()
 
     def _update(self, action):
@@ -44,20 +47,15 @@ class CopterEnv(Env):
         self._init()
         return self.state
 
-    def render(self, mode='hud'):
+    def render(self, mode='human'):
 
         # Track time
         tcurr = time()
         self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
         self.tprev = tcurr
 
-        # Support various modes
-        if mode == 'hud' or mode == 'rgb_array': 
-            return self._render_hud(mode)
-        elif mode.lower() == '3d':
-            return self._render_3d(mode)
-        else:
-            raise Exception('Unsupported render mode ' + mode)
+        # Support different display types
+        return self._render_tpv(mode) if self.disp == 'tpv' else self._render_hud(mode)
 
     def close(self):
 
@@ -66,6 +64,13 @@ class CopterEnv(Env):
     def time(self):
 
         return self.t
+
+    def setDisplay(self, disp):
+
+        if not disp in ['HUD', 'TPV']:
+            raise Exception('Unrecognized display type ' + disp)
+
+        self.disp = disp
 
     def _init(self):
         
