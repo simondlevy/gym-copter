@@ -32,7 +32,6 @@ x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t)
 # Set up figure & 3D axis for animation
 fig = plt.figure()
 ax = fig.add_axes([0, 0, 1, 1], projection='3d')
-#ax.axis('off')
 
 # Setting the axes properties
 ax.set_xlim3d([0.0, 1.0])
@@ -91,17 +90,28 @@ def animate(i):
     fig.canvas.draw()
     return lines + pts
 
-# instantiate the animator.
-anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=30, blit=False)
-
 class TPV:
 
     def __init__(self):
 
         self.state = None
+        self.is_open = True
+
+        # instantiate the animator.
+        anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=30, blit=False)
+
+        fig.canvas.mpl_connect('close_event', self._handle_close)
 
         plt.show()
 
     def display(self, mode, state):
 
         self.state = state
+
+    def isOpen(self):
+
+        return self.is_open
+
+    def _handle_close(self, event):
+
+        self.is_open = False

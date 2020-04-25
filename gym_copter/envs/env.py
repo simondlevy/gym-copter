@@ -86,10 +86,7 @@ class CopterEnv(Env):
         if self.display is None:
             self.display = HUD()
  
-        # Detect window close
-        if not self.display.isOpen(): return None
-
-        return self.display.display(mode, self.state)
+        return self.display.display(mode, self.state) if self.display.isOpen() else None
 
     def _render_tpv(self, mode):
 
@@ -98,4 +95,4 @@ class CopterEnv(Env):
         if self.display is None:
             self.display = TPV()
  
-        return self.display.display(mode, self.state)
+        return self.display.display(mode, self.state) if self.display.isOpen() else None
