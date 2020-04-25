@@ -51,10 +51,6 @@ class TPV:
         t = np.linspace(0, 4, 1000)
         self.x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t) for x0i in x0])
 
-        # set up line and point
-        self.line = ax.plot([], [], [], '-', c='b')[0]
-        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
-
         # prepare the axes limits
         ax.set_xlim((-25, 25))
         ax.set_ylim((-35, 35))
@@ -63,8 +59,16 @@ class TPV:
         # set point-of-view: specified by (altitude degrees, azimuth degrees)
         ax.view_init(30, 0)
 
+        # set up line and point
+        self.line = ax.plot([], [], [], '-', c='b')[0]
+        self.line.set_data([], [])
+        self.line.set_3d_properties([])
+        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
+        self.pt.set_data([], [])
+        self.pt.set_3d_properties([])
+
         # instantiate the animator.
-        anim = animation.FuncAnimation(self.fig, self._animate, init_func=self._init, frames=500, interval=30, blit=False)
+        anim = animation.FuncAnimation(self.fig, self._animate, frames=500, interval=30, blit=False)
 
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
@@ -96,13 +100,3 @@ class TPV:
             self.pt.set_3d_properties(z[-1:])
 
         self.fig.canvas.draw()
-
-    # initialization function: plot the background of each frame
-    def _init(self):
-        self.line.set_data([], [])
-        self.line.set_3d_properties([])
-
-        self.pt.set_data([], [])
-        self.pt.set_3d_properties([])
-
-
