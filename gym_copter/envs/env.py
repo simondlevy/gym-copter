@@ -93,6 +93,6 @@ class CopterEnv(Env):
         from gym_copter.envs.rendering.tpv import TPV
 
         if self.display is None:
-            self.display = TPV()
+            self.display = TPV(self.unwrapped.spec.id)
  
         return self.display.display(mode, self.state) if self.display.isOpen() else None

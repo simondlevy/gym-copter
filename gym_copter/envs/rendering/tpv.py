@@ -22,7 +22,7 @@ def lorentz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
 
 class TPV:
 
-    def __init__(self):
+    def __init__(self, title):
 
         self.state = None
         self.is_open = True
@@ -41,7 +41,7 @@ class TPV:
         ax.set_zlim3d([0.0, 1.0])
         ax.set_zlabel('Z')
 
-        ax.set_title('3D Test')
+        ax.set_title(title)
 
         # Choose random starting points, uniformly distributed from -15 to 15
         np.random.seed(1)
