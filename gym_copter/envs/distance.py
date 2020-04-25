@@ -37,7 +37,7 @@ class CopterDistance(CopterEnv):
         motors = (1 + action) / 2
 
         # Call parent-class method to do basic state update
-        CopterEnv._update(self, motors)
+        crashed = CopterEnv._update(self, motors)
 
        # Integrate position
         self.position += self.state[0:5:2]
@@ -46,7 +46,7 @@ class CopterDistance(CopterEnv):
         reward = np.sqrt(np.sum(self.position[0:2]**2))
 
         # False = max_episodes in registry determines whether we're done
-        return self.state, reward, False, {}
+        return self.state, reward, crashed, {}
 
     def reset(self):
         CopterEnv.reset(self)

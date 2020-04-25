@@ -43,6 +43,8 @@ class CopterEnv(Env):
         # Update timestep
         self.tick += 1
 
+        return False
+
     def reset(self):
 
         self._init()
