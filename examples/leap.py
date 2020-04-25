@@ -71,6 +71,7 @@ if __name__ == '__main__':
     # Plot results
     _subplot(tvals, rvals, 1, 'Reward')
     _subplot(tvals, zvals, 2, 'Altitude (m)')
+    plt.xlabel('Time (sec)')
     plt.show()
 
     # Cleanup
