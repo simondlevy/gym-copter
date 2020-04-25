@@ -60,8 +60,19 @@ class CopterEnv(Env):
         self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
         self.tprev = tcurr
 
-        # Support different display types
-        return self._render_tpv(mode) if self.disp == 'tpv' else self._render_hud(mode)
+        if self.display is None:
+            self.display = HUD()
+ 
+        return self.display.display(mode, self.state) if self.display.isOpen() else None
+
+    def render3d(self, mode):
+
+        from gym_copter.envs.rendering.tpv import TPV
+
+        if self.display is None:
+            self.display = TPV(self.unwrapped.spec.id)
+ 
+        return self.display.display(mode, self.state) if self.display.isOpen() else None
 
     def close(self):
 
@@ -79,20 +90,3 @@ class CopterEnv(Env):
         self.tick = 0
         self.done = False
 
-    def _render_hud(self, mode):
-        
-        from gym_copter.envs.rendering.hud import HUD
-
-        if self.display is None:
-            self.display = HUD()
- 
-        return self.display.display(mode, self.state) if self.display.isOpen() else None
-
-    def _render_tpv(self, mode):
-
-        from gym_copter.envs.rendering.tpv import TPV
-
-        if self.display is None:
-            self.display = TPV(self.unwrapped.spec.id)
- 
-        return self.display.display(mode, self.state) if self.display.isOpen() else None
