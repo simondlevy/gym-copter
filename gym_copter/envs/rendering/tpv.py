@@ -98,9 +98,7 @@ class TPV:
             pt.set_data(x[-1:], y[-1:])
             pt.set_3d_properties(z[-1:])
 
-        #ax.view_init(30, 0.3 * i)
         self.fig.canvas.draw()
-        return self.lines + self.pts
 
     # initialization function: plot the background of each frame
     def _init(self):
@@ -110,6 +108,5 @@ class TPV:
 
             pt.set_data([], [])
             pt.set_3d_properties([])
-        return self.lines + self.pts
 
 
