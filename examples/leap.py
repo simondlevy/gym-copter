@@ -16,7 +16,7 @@ import gym_copter
 
 ALTITUDE_TARGET = 10 # meters
 
-def update(env, plotter):
+def update(env):
 
     # Create and initialize copter environment
     env.reset()
@@ -33,7 +33,7 @@ def update(env, plotter):
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, d, _ = env.step(u)
 
-        #time.sleep(.001)
+        time.sleep(.001)
 
         # Quit if we're done (crashed)
         if d: break
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     plotter = env.tpvplotter()
 
     # Run simulation on its own thread
-    thread = threading.Thread(target=update, args=(env,plotter))
+    thread = threading.Thread(target=update, args=(env,))
     thread.daemon = True
     thread.start()
 
