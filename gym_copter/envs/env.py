@@ -43,8 +43,10 @@ class CopterEnv(Env):
         # Update timestep
         self.tick += 1
 
-        # Return True if vehicle crashed, False otherwise
-        return self.state[4]>0 and self.state[5]>1
+        # We're done when vehicle has crashed
+        self.done = self.state[4]>0 and self.state[5]>1
+
+        return self.done
 
     def reset(self):
 
@@ -75,6 +77,7 @@ class CopterEnv(Env):
         self.dynamics = DJIPhantomDynamics()
         self.tprev = 0
         self.tick = 0
+        self.done = False
 
     def _render_hud(self, mode):
         
@@ -89,13 +92,10 @@ class CopterEnv(Env):
         return self.display.display(mode, self.state)
 
     def _render_tpv(self, mode):
-        
+
         from gym_copter.envs.rendering.tpv import TPV
 
         if self.display is None:
             self.display = TPV()
  
-        # Detect window close
-        if not self.display.isOpen(): return None
-
         return self.display.display(mode, self.state)
