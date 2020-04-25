@@ -67,14 +67,14 @@ class CopterEnv(Env):
  
         return self.display.display(mode, self.state) if self.display.isOpen() else None
 
-    def render3d(self, mode):
+    def render3d(self):
 
         from gym_copter.envs.rendering.tpv import TPV
 
         if self.display is None:
             self.display = TPV(self.unwrapped.spec.id)
  
-        return self.display.display(mode, self.state) if self.display.isOpen() else None
+        return self.display.display(self.state) if self.display.isOpen() else None
 
     def close(self):
 

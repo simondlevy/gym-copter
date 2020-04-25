@@ -72,7 +72,7 @@ class TPV:
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
         plt.show()
 
-    def display(self, mode, state):
+    def display(self, state):
 
         print(state[0:6:2])
         self.state = state

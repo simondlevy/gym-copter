@@ -15,10 +15,9 @@ import gym_copter
 
 ALTITUDE_TARGET = 10 # meters
 
-def update():
+def update(env):
 
     # Create and initialize copter environment
-    env = gym.make('Copter-v1')
     env.reset()
 
     # Start with motors full-throttle
@@ -26,8 +25,6 @@ def update():
 
     # Loop for specified duration
     while True:
-
-        print(u)
 
         # Get current time from environment
         t = env.time()
@@ -48,13 +45,14 @@ def update():
 
 if __name__ == '__main__':
 
+    # Create environment
+    env = gym.make('Copter-v1')
+
     # Run simulation on its own thread
-    #thread = Thread(target=update, args = (port, plotter))
-    thread = threading.Thread(target=update)
+    thread = threading.Thread(target=update, args=(env,))
     thread.daemon = True
     thread.start()
 
-    while True:
-        pass
-
+    # Run 3D rendering on main thread
+    env.render3d()
 
