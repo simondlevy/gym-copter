@@ -36,16 +36,15 @@ class CopterDistance(CopterEnv):
         # Rescale action from [-1,+1] to [0,1]
         motors = (1 + action) / 2
 
-        # Call parent-class method to do basic state update
+        # Call parent-class method to do basic state update, return whether vehicle crashed
         crashed = CopterEnv._update(self, motors)
 
-       # Integrate position
+        # Integrate position
         self.position += self.state[0:5:2]
 
         # Reward is logarithm of Euclidean distance from origin
         reward = np.sqrt(np.sum(self.position[0:2]**2))
 
-        # False = max_episodes in registry determines whether we're done
         return self.state, reward, crashed, {}
 
     def reset(self):

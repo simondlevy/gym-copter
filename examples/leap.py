@@ -48,7 +48,11 @@ if __name__ == '__main__':
         if t > DURATION: break
 
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
-        s, r, _, _ = env.step(u)
+        s, r, d, _ = env.step(u)
+
+        # Quit if we're done (crashed)
+        if d:
+            break
 
         # Once we reach altitude, switch to forward motion
         z = -s[4]

@@ -43,7 +43,8 @@ class CopterEnv(Env):
         # Update timestep
         self.tick += 1
 
-        return False
+        # Return True if vehicle crashed, False otherwise
+        return self.state[4]>0 and self.state[5]>1
 
     def reset(self):
 
