@@ -82,7 +82,9 @@ class TPV:
         
     def _animate(self, i):
 
-        print(self.env.state)
+        x,y,z = self.env.state[0:6:2]
+
+        print('%+3.3f %+3.3f %+3.3f' % (x,y,z))
 
         # we'll step two time-steps per frame.  This leads to nice results.
         i = (2 * i) % self.x_t.shape[1]
