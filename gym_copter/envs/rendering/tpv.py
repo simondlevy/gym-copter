@@ -49,7 +49,7 @@ class TPV:
         # prepare the axes limits
         ax.set_xlim((-100, 100))
         ax.set_ylim((-100, 100))
-        ax.set_zlim((-100, 100))
+        ax.set_zlim((0, 100))
 
         # set point-of-view: specified by (altitude degrees, azimuth degrees)
         ax.view_init(30, 0)
@@ -61,6 +61,10 @@ class TPV:
         self.pt   = ax.plot([], [], [], 'o', c='b')[0]
         self.pt.set_data([], [])
         self.pt.set_3d_properties([])
+
+        self.xs = []
+        self.ys = []
+        self.zs = []
 
     def start(self):
 
@@ -78,24 +82,30 @@ class TPV:
 
         x,y,z = self.env.state[0:6:2]
 
+        z = -z
+
+        self.xs.append(x)
+        self.ys.append(y)
+        self.zs.append(z)
+
         print('%+3.3f %+3.3f %+3.3f' % (x,y,z))
 
-        self.pt.set_data(x, y)
-        self.pt.set_3d_properties(-z)
+        self.line.set_data(self.xs, self.ys)
+        self.line.set_3d_properties(self.zs)
 
-        '''
+        self.pt.set_data(x, y)
+        self.pt.set_3d_properties(z)
+
         i = (2 * i) % self.x_t.shape[1]
 
         for xi in self.x_t:
+
             x, y, z = xi[:i].T
 
-            print(x,y,z,'\n')
+            #self.line.set_data(x, y)
+            #self.line.set_3d_properties(z)
 
-            self.line.set_data(x, y)
-            self.line.set_3d_properties(z)
-
-            self.pt.set_data(x[-1:], y[-1:])
-            self.pt.set_3d_properties(z[-1:])
-        '''
+            #self.pt.set_data(x[-1:], y[-1:])
+            #self.pt.set_3d_properties(z[-1:])
 
         self.fig.canvas.draw()
