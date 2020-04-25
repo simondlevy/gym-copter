@@ -76,10 +76,6 @@ class TPV:
 
         plt.show()
 
-    def isOpen(self):
-
-        return self.is_open
-
     def _handle_close(self, event):
 
         self.is_open = False
