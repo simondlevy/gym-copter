@@ -55,26 +55,28 @@ class CopterEnv(Env):
 
     def render(self, mode='human'):
 
-        from gym_copter.envs.rendering.hud import HUD
-
         # Track time
         tcurr = time()
         self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
         self.tprev = tcurr
 
+        # Default to HUD display if start3d() wasn't called
         if self.display is None:
+            from gym_copter.envs.rendering.hud import HUD
             self.display = HUD()
  
         return self.display.display(mode, self.state) if self.display.isOpen() else None
 
-    def render3d(self):
+    def start3d(self):
 
         from gym_copter.envs.rendering.tpv import TPV
 
-        if self.display is None:
-            self.display = TPV(self.unwrapped.spec.id)
- 
-        return self.display.display(self.state) if self.display.isOpen() else None
+        # Pass title to 3D display
+        self.display = TPV(self.unwrapped.spec.id)
+
+    def render3d(self):
+
+        return
 
     def close(self):
 
