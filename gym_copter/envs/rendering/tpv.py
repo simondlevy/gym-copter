@@ -32,14 +32,8 @@ class TPV:
         self.fig = plt.figure()
         ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
 
-        # Setting the axes properties
-        ax.set_xlim3d([0.0, 1.0])
         ax.set_xlabel('X')
-
-        ax.set_ylim3d([0.0, 1.0])
         ax.set_ylabel('Y')
-
-        ax.set_zlim3d([0.0, 1.0])
         ax.set_zlabel('Z')
 
         ax.set_title(env.unwrapped.spec.id)
@@ -87,10 +81,12 @@ class TPV:
         print('%+3.3f %+3.3f %+3.3f' % (x,y,z))
 
         # we'll step two time-steps per frame.  This leads to nice results.
+        
         i = (2 * i) % self.x_t.shape[1]
 
         for xi in self.x_t:
             x, y, z = xi[:i].T
+
             self.line.set_data(x, y)
             self.line.set_3d_properties(z)
 
