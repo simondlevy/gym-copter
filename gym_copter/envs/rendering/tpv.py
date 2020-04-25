@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
-N_trajectories = 1
+from threading import Thread
 
 def lorentz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
     """Compute the time-derivative of a Lorentz system."""
@@ -45,7 +45,7 @@ class TPV:
 
         # Choose random starting points, uniformly distributed from -15 to 15
         np.random.seed(1)
-        x0 = -15 + 30 * np.random.random((N_trajectories, 3))
+        x0 = -15 + 30 * np.random.random((1, 3))
 
         # Solve for the trajectories
         t = np.linspace(0, 4, 1000)
@@ -69,13 +69,12 @@ class TPV:
 
         # instantiate the animator.
         anim = animation.FuncAnimation(self.fig, self._animate, frames=500, interval=30, blit=False)
-
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
-
         plt.show()
 
     def display(self, mode, state):
 
+        print(state[0:6:2])
         self.state = state
 
     def isOpen(self):
