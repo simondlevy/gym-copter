@@ -81,7 +81,7 @@ class TPV:
         print('%+3.3f %+3.3f %+3.3f' % (x,y,z))
 
         self.pt.set_data(x, y)
-        self.pt.set_3d_properties(z)
+        self.pt.set_3d_properties(-z)
 
         '''
         i = (2 * i) % self.x_t.shape[1]
