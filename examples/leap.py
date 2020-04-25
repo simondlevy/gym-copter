@@ -51,8 +51,7 @@ if __name__ == '__main__':
         s, r, d, _ = env.step(u)
 
         # Quit if we're done (crashed)
-        if d:
-            break
+        if d: break
 
         # Once we reach altitude, switch to forward motion
         z = -s[4]
