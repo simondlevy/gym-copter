@@ -55,8 +55,11 @@ class TPV:
         colors = plt.cm.jet(np.linspace(0, 1, N_trajectories))
 
         # set up lines and points
-        self.lines = sum([ax.plot([], [], [], '-', c=c) for c in colors], [])
-        self.pts = sum([ax.plot([], [], [], 'o', c=c) for c in colors], [])
+        lines = sum([ax.plot([], [], [], '-', c=c) for c in colors], [])
+        pts = sum([ax.plot([], [], [], 'o', c=c) for c in colors], [])
+
+        self.line = lines[0]
+        self.pt = pts[0]
 
         # prepare the axes limits
         ax.set_xlim((-25, 25))
@@ -90,23 +93,22 @@ class TPV:
         # we'll step two time-steps per frame.  This leads to nice results.
         i = (2 * i) % self.x_t.shape[1]
 
-        for line, pt, xi in zip(self.lines, self.pts, self.x_t):
+        for xi in self.x_t:
             x, y, z = xi[:i].T
-            line.set_data(x, y)
-            line.set_3d_properties(z)
+            self.line.set_data(x, y)
+            self.line.set_3d_properties(z)
 
-            pt.set_data(x[-1:], y[-1:])
-            pt.set_3d_properties(z[-1:])
+            self.pt.set_data(x[-1:], y[-1:])
+            self.pt.set_3d_properties(z[-1:])
 
         self.fig.canvas.draw()
 
     # initialization function: plot the background of each frame
     def _init(self):
-        for line, pt in zip(self.lines, self.pts):
-            line.set_data([], [])
-            line.set_3d_properties([])
+        self.line.set_data([], [])
+        self.line.set_3d_properties([])
 
-            pt.set_data([], [])
-            pt.set_3d_properties([])
+        self.pt.set_data([], [])
+        self.pt.set_3d_properties([])
 
 
