@@ -55,6 +55,8 @@ class CopterEnv(Env):
 
     def render(self, mode='human'):
 
+        from gym_copter.envs.rendering.hud import HUD
+
         # Track time
         tcurr = time()
         self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
