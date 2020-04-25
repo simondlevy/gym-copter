@@ -73,23 +73,6 @@ def init():
         pt.set_3d_properties([])
     return lines + pts
 
-# animation function.  This will be called sequentially with the frame number
-def animate(i):
-    # we'll step two time-steps per frame.  This leads to nice results.
-    i = (2 * i) % x_t.shape[1]
-
-    for line, pt, xi in zip(lines, pts, x_t):
-        x, y, z = xi[:i].T
-        line.set_data(x, y)
-        line.set_3d_properties(z)
-
-        pt.set_data(x[-1:], y[-1:])
-        pt.set_3d_properties(z[-1:])
-
-    #ax.view_init(30, 0.3 * i)
-    fig.canvas.draw()
-    return lines + pts
-
 class TPV:
 
     def __init__(self):
@@ -98,7 +81,7 @@ class TPV:
         self.is_open = True
 
         # instantiate the animator.
-        anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=30, blit=False)
+        anim = animation.FuncAnimation(fig, self._animate, init_func=init, frames=500, interval=30, blit=False)
 
         fig.canvas.mpl_connect('close_event', self._handle_close)
 
@@ -115,3 +98,22 @@ class TPV:
     def _handle_close(self, event):
 
         self.is_open = False
+        
+    def _animate(self, i):
+
+        # we'll step two time-steps per frame.  This leads to nice results.
+        i = (2 * i) % x_t.shape[1]
+
+        for line, pt, xi in zip(lines, pts, x_t):
+            x, y, z = xi[:i].T
+            line.set_data(x, y)
+            line.set_3d_properties(z)
+
+            pt.set_data(x[-1:], y[-1:])
+            pt.set_3d_properties(z[-1:])
+
+        #ax.view_init(30, 0.3 * i)
+        fig.canvas.draw()
+        return lines + pts
+
+
