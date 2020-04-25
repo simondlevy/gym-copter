@@ -10,12 +10,13 @@ MIT License
 import gym
 import numpy as np
 import threading
+import time
 
 import gym_copter
 
 ALTITUDE_TARGET = 10 # meters
 
-def update(env):
+def update(env, plotter):
 
     # Create and initialize copter environment
     env.reset()
@@ -32,8 +33,7 @@ def update(env):
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, d, _ = env.step(u)
 
-        # Render the current frame in 3D
-        env.render3d()
+        #time.sleep(.001)
 
         # Quit if we're done (crashed)
         if d: break
@@ -51,11 +51,13 @@ if __name__ == '__main__':
     # Create environment
     env = gym.make('Copter-v1')
 
+    plotter = env.tpvplotter()
+
     # Run simulation on its own thread
-    thread = threading.Thread(target=update, args=(env,))
+    thread = threading.Thread(target=update, args=(env,plotter))
     thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
-    env.start3d()
+    plotter.start()
 

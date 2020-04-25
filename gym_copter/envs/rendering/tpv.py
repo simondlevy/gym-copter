@@ -22,9 +22,10 @@ def lorentz_deriv(xyz, t0, sigma=10., beta=8./3, rho=28.0):
 
 class TPV:
 
-    def __init__(self, title):
+    def __init__(self, env):
 
-        self.state = None
+        self.env = env
+
         self.is_open = True
 
         # Set up figure & 3D axis for animation
@@ -41,7 +42,7 @@ class TPV:
         ax.set_zlim3d([0.0, 1.0])
         ax.set_zlabel('Z')
 
-        ax.set_title(title)
+        ax.set_title(env.unwrapped.spec.id)
 
         # Choose random starting points, uniformly distributed from -15 to 15
         np.random.seed(1)
@@ -67,15 +68,13 @@ class TPV:
         self.pt.set_data([], [])
         self.pt.set_3d_properties([])
 
+    def start(self):
+
         # instantiate the animator.
         anim = animation.FuncAnimation(self.fig, self._animate, frames=500, interval=30, blit=False)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
+
         plt.show()
-
-    def display(self, mode, state):
-
-        print(state[0:6:2])
-        self.state = state
 
     def isOpen(self):
 
@@ -86,6 +85,8 @@ class TPV:
         self.is_open = False
         
     def _animate(self, i):
+
+        print(self.env.state)
 
         # we'll step two time-steps per frame.  This leads to nice results.
         i = (2 * i) % self.x_t.shape[1]
