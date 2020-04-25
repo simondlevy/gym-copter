@@ -51,15 +51,9 @@ class TPV:
         t = np.linspace(0, 4, 1000)
         self.x_t = np.asarray([integrate.odeint(lorentz_deriv, x0i, t) for x0i in x0])
 
-        # choose a different color for each trajectory
-        colors = plt.cm.jet(np.linspace(0, 1, N_trajectories))
-
-        # set up lines and points
-        lines = sum([ax.plot([], [], [], '-', c=c) for c in colors], [])
-        pts = sum([ax.plot([], [], [], 'o', c=c) for c in colors], [])
-
-        self.line = lines[0]
-        self.pt = pts[0]
+        # set up line and point
+        self.line = ax.plot([], [], [], '-', c='b')[0]
+        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
 
         # prepare the axes limits
         ax.set_xlim((-25, 25))
