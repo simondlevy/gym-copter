@@ -9,13 +9,13 @@ MIT License
 
 import gym
 import numpy as np
-import matplotlib.pyplot as plt
+import threading
 
 import gym_copter
 
 ALTITUDE_TARGET = 10 # meters
 
-if __name__ == '__main__':
+def update():
 
     # Create and initialize copter environment
     env = gym.make('Copter-v1')
@@ -26,6 +26,8 @@ if __name__ == '__main__':
 
     # Loop for specified duration
     while True:
+
+        print(u)
 
         # Get current time from environment
         t = env.time()
@@ -41,9 +43,18 @@ if __name__ == '__main__':
         if z > ALTITUDE_TARGET:
             u = np.array([0,1,0,1])
 
-        # Display the environment
-        env.render()
-
     # Cleanup
     del env
+
+if __name__ == '__main__':
+
+    # Run simulation on its own thread
+    #thread = Thread(target=update, args = (port, plotter))
+    thread = threading.Thread(target=update)
+    thread.daemon = True
+    thread.start()
+
+    while True:
+        pass
+
 
