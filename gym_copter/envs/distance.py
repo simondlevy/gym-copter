@@ -49,6 +49,10 @@ class CopterDistance(CopterEnv):
 
     def reset(self):
         CopterEnv.reset(self)
-        self.position = np.zeros(3)
+        self._init()
         return self.state
+
+    def _init(self):
+        self.position = np.zeros(3)
+
 

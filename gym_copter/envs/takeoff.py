@@ -42,7 +42,7 @@ class CopterTakeoff(CopterEnv):
         motors = motor * np.ones(4)
 
         # Call parent-class step() to do basic update
-        CopterEnv._update(self, motors)
+        crashed = CopterEnv._update(self, motors)
 
         # Dynamics uses NED coordinates, so negate to get altitude and vertical velocity
         altitude = -self.state[4]
@@ -52,7 +52,7 @@ class CopterTakeoff(CopterEnv):
         costs = (altitude-self.target)**2 + velocity**2
 
         # False = max_episodes in registry determines whether we're done
-        return (altitude,velocity), -costs, False, {}
+        return (altitude,velocity), -costs, crashed, {}
 
     def reset(self):
         CopterEnv.reset(self)
