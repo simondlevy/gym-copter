@@ -142,7 +142,6 @@ class HUD:
 
     def display(self, mode, state, t):
 
-        '''
         # Extract pitch, roll, heading, converting them from radians to degrees
         pitch, roll, heading = np.degrees(state[6:12:2])
 
@@ -241,14 +240,12 @@ class HUD:
         y -= HUD.ROLL_POINTER_SIZE
         self.viewer.draw_polygon([(x+x1, y+y1), (x+x2,y+y2), (x+x3,y+y3)], color=HUD.POINTER_COLOR)
 
-        '''
         # Add a time display at bottom
         HUD._add_label(self.viewer, Label('Time: %3.2f' % t, 
             x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
                 font_size=HUD.LARGE_FONT_SIZE, 
                 color=(*HUD.FONT_COLOR,255), 
                 anchor_x='center', anchor_y='center')) 
-
 
         return self.viewer.render(return_rgb_array = True)
 
