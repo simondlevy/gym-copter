@@ -8,7 +8,6 @@ MIT License
 
 from gym import Env
 import numpy as np
-from time import time
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
@@ -31,7 +30,7 @@ class CopterEnv(Env):
         self.disp = disp
 
         # Also called by reset()
-        self._init()
+        self._reset()
 
     def _update(self, action):
 
@@ -50,15 +49,10 @@ class CopterEnv(Env):
 
     def reset(self):
 
-        self._init()
+        self._reset()
         return self.state
 
     def render(self, mode='human'):
-
-        # Track time
-        tcurr = time()
-        self.dt = (tcurr - self.tprev) if self.tprev > 0 else self.dt
-        self.tprev = tcurr
 
         # Default to HUD display if start3d() wasn't called
         if self.display is None:
@@ -82,11 +76,9 @@ class CopterEnv(Env):
 
         return self.tick * self.dt
 
-    def _init(self):
+    def _reset(self):
         
         self.state = np.zeros(12)
         self.dynamics = DJIPhantomDynamics()
-        self.tprev = 0
         self.tick = 0
         self.done = False
-

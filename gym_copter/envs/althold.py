@@ -15,7 +15,7 @@ class CopterAltHold(CopterEnv):
     A GymCopter class with continous state and action space.
     Action space is [-1,+1], translated to [0,1], with all motors set to the
     same value.  State space is altitude,vertical_velocity.
-    Reward is proximity to a target altitude.
+    Copter starts at target altitude.  Reward is how long it remains there.
     '''
 
     def __init__(self, dt=.001, target=10, tolerance=1.0):
@@ -31,8 +31,8 @@ class CopterAltHold(CopterEnv):
 
         # Observation space = altitude, vertical_velocity
         self.observation_space = spaces.Box(np.array([0,-np.inf]), np.array([np.inf,np.inf]))
-        
-        self._init_state()
+
+        self._init()
 
     def step(self, action):
 
@@ -57,9 +57,9 @@ class CopterAltHold(CopterEnv):
 
     def reset(self):
         CopterEnv.reset(self)
-        self._init_state()
+        self._init()
         return -self.state[4:6]
 
-    def _init_state(self):
+    def _init(self):
         self.dynamics.setState((0,0,0,0,-float(self.target),0,0,0,0,0,0,0))
         self.reward = 0

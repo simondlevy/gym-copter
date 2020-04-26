@@ -9,4 +9,4 @@ MIT License
 
 from pidctrl import main
 
-main('Copter-v0')
+main('gym_copter:Copter-v0')
