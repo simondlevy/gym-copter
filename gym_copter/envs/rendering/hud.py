@@ -50,6 +50,7 @@ class HUD:
     HEADING_BOX_WIDTH       = 20
     FONT_SIZE               = 18
     SMALL_FONT_SIZE         = 14
+    LARGE_FONT_SIZE         = 20
     FONT_COLOR              = 255,255,255
     PITCH_RETICLE_SPACING   = 40
     PITCH_RETICLE_INCREMENT = 10
@@ -73,6 +74,8 @@ class HUD:
     ROLL_RETICLE_TICK_YOFF  = 25
     ROLL_RETICLE_TICKVALS   = [10, 20, 30, 45, 60]
     ROLL_POINTER_SIZE       = 10
+    TIME_LABEL_X            = 400
+    TIME_LABEL_Y            = 50
 
     def _rotate(x, y, angle):
         angle = np.radians(angle)
@@ -126,7 +129,7 @@ class HUD:
 
         # Add a title at the bottom
         HUD._add_label(viewer, Label(title, x=l+HUD.VERTICAL_TITLE_X_OFFSET, y=HUD.H/2-HUD.VERTICAL_BOX_HEIGHT/2-HUD.VERTICAL_TITLE_Y_OFFSET,
-                font_size=HUD.SMALL_FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center')) 
+                font_size=HUD.FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center')) 
 
     def __init__(self):
 
@@ -137,7 +140,7 @@ class HUD:
         sky.set_color(*HUD.SKY_COLOR)
         self.viewer.add_geom(sky)
 
-    def display(self, mode, state):
+    def display(self, mode, state, t):
 
         # Extract pitch, roll, heading, converting them from radians to degrees
         pitch, roll, heading = np.degrees(state[6:12:2])
@@ -208,7 +211,7 @@ class HUD:
 
         # Display ground speed at left
         groundspeed = np.sqrt(state[1]**2 + state[3]**2)
-        HUD._vertical_display(self.viewer, 0, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed, 'GS (m/s)')
+        HUD._vertical_display(self.viewer, 10, -HUD.VERTICAL_POINTER_HEIGHT, groundspeed, 'GS (m/s)')
 
         # Add a reticle at the top for roll
         angles = np.linspace(np.radians(180-HUD.ROLL_RETICLE_LIM), np.radians(HUD.ROLL_RETICLE_LIM), HUD.ROLL_RETICLE_PTS)
@@ -236,6 +239,11 @@ class HUD:
         x3,y3 = HUD._rotate(0, HUD.ROLL_POINTER_SIZE, -roll)
         y -= HUD.ROLL_POINTER_SIZE
         self.viewer.draw_polygon([(x+x1, y+y1), (x+x2,y+y2), (x+x3,y+y3)], color=HUD.POINTER_COLOR)
+
+        # Add a time display at bottom
+        HUD._add_label(self.viewer, Label('Time: %3.2f' % t, x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
+                font_size=HUD.LARGE_FONT_SIZE, color=(*HUD.FONT_COLOR,255), anchor_x='center', anchor_y='center')) 
+
 
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 

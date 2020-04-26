@@ -59,7 +59,7 @@ class CopterEnv(Env):
             from gym_copter.envs.rendering.hud import HUD
             self.display = HUD()
  
-        return self.display.display(mode, self.state) if self.display.isOpen() else None
+        return self.display.display(mode, self.state, self.dt*self.tick) if self.display.isOpen() else None
 
     def tpvplotter(self):
 
