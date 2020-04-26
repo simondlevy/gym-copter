@@ -12,8 +12,6 @@ import numpy as np
 import threading
 import time
 
-import gym_copter
-
 ALTITUDE_TARGET = 10 # meters
 
 def update(env):
@@ -27,13 +25,10 @@ def update(env):
     # Loop for specified duration
     while True:
 
-        # Get current time from environment
-        t = env.time()
-
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, d, _ = env.step(u)
 
-        time.sleep(.001)
+        time.sleep(.0001)
 
         # Quit if we're done (crashed)
         if d: break
@@ -49,7 +44,7 @@ def update(env):
 if __name__ == '__main__':
 
     # Create environment
-    env = gym.make('Copter-v1')
+    env = gym.make('gym_copter:Copter-v1')
 
     plotter = env.tpvplotter()
 
