@@ -18,16 +18,13 @@ class CopterEnv(Env):
         'video.frames_per_second' : 30
     }
 
-    def __init__(self, dt=0.001, disp='hud'):
+    def __init__(self, dt=0.001):
 
         self.num_envs = 1
         self.display = None
 
         # We handle time differently if we're rendering
         self.dt = dt
-
-        # Default to HUD display
-        self.disp = disp
 
         # Also called by reset()
         self._reset()
