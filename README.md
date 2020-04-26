@@ -21,7 +21,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 ```
 
 You should see a Heads-Up Display (HUD) of the vehicle rising to 10 meters altitude.  If you omit the
-```--render``` you'll get a plot of the altitude, iassociated reward, vertical velocity, and motor actions.
+```--render``` you'll get a plot of the altitude, associated reward, vertical velocity, and motor actions.
 
 ## Reinforcement learning
 
