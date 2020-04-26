@@ -28,7 +28,8 @@ def update(env):
         # Update the environment with the current motor command, scaled to [-1,+1] and sent as an array
         s, r, d, _ = env.step(u)
 
-        time.sleep(.0001)
+        # Yield to other thread
+        time.sleep(np.finfo('float').eps)
 
         # Quit if we're done (crashed)
         if d: break
