@@ -71,6 +71,17 @@ In addition to TRPO, the <tt>Chapter19</tt> folder has programs to try other lea
 [PPO](https://arxiv.org/abs/1707.06347), 
 and [SAC](https://arxiv.org/abs/1801.01290).
 
+## Third-person (3D) display
+
+Gym-copter also supports third-person (3D) display for rendering.  To try it out:
+
+```
+% python3 examples/leap.py
+```
+
+This simulation runs the motors at full speed until the vehicle reaches an altitude of 10 meters, after which the front motors
+are reduced to half speed, causing the vehicle to fly forward into a dive.
+
 ## Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
