@@ -8,6 +8,7 @@ MIT License
 
 from gym import Env
 import numpy as np
+from time import time
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
@@ -25,6 +26,8 @@ class CopterEnv(Env):
 
         # We handle time differently if we're rendering
         self.dt = dt
+        self.dt_realtime = dt
+        self.tprev = 0
 
         # Also called by reset()
         self._reset()
@@ -33,7 +36,7 @@ class CopterEnv(Env):
 
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
-        self.dynamics.update(self.dt)
+        self.dynamics.update(self.dt_realtime)
         self.state = self.dynamics.getState()
 
         # Update timestep
@@ -56,7 +59,12 @@ class CopterEnv(Env):
             from gym_copter.envs.rendering.hud import HUD
             self.display = HUD()
  
-        return self.display.display(mode, self.state, self.dt*self.tick) if self.display.isOpen() else None
+        # Track time
+        tcurr = time()
+        self.dt_realtime = (tcurr - self.tprev) if self.tprev > 0 else self.dt
+        self.tprev = tcurr
+
+        return self.display.display(mode, self.state, self.dt_realtime*self.tick) if self.display.isOpen() else None
 
     def tpvplotter(self):
 
@@ -71,7 +79,7 @@ class CopterEnv(Env):
 
     def time(self):
 
-        return self.tick * self.dt
+        return self.tick * self.dt_realtime
 
     def _reset(self):
         

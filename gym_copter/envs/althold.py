@@ -20,9 +20,8 @@ class CopterAltHold(CopterEnv):
 
     def __init__(self, dt=.001, target=10, tolerance=1.0):
 
-        CopterEnv.__init__(self)
+        CopterEnv.__init__(self, dt)
 
-        self.dt = dt
         self.target = target
         self.tolerance = tolerance
 
