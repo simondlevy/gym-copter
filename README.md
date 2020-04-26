@@ -71,9 +71,9 @@ In addition to TRPO, the <tt>Chapter19</tt> folder has programs to try other lea
 [PPO](https://arxiv.org/abs/1707.06347), 
 and [SAC](https://arxiv.org/abs/1801.01290).
 
-## Third-person view (3D) display
+## Third-person (3D) view
 
-Gym-copter also supports a third-person view (3D) display for rendering.  To try it out:
+Gym-copter also supports a third-person (3D) view for rendering.  To try it out:
 
 ```
 % python3 examples/leap.py
