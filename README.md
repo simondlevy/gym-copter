@@ -17,11 +17,11 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 
 ```
 % pip3 install gym
-% python3 examples/takeoff.py
+% python3 examples/takeoff.py --render
 ```
 
-After a few seconds you should see a plot showing the copter rising to an altitude of 10 meters, along
-with the associated reward, vertical velocity, and motor actions.
+You should see a Heads-Up Display (HUD) of the vehicle rising to 10 meters altitude.  If you omit the
+```--render``` you'll get a plot of the altitude, iassociated reward, vertical velocity, and motor actions.
 
 ## Reinforcement learning
 

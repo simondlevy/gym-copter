@@ -9,6 +9,7 @@ MIT License
 import gym
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
 import gym_copter
 
@@ -66,7 +67,11 @@ def _subplot(t, x, k, label):
  
 def main(envname):
 
-    # Create and initialize copter environment
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--render", default=False, action='store_true', help="Show Heads-Up Display")
+    args = parser.parse_args()
+
+     # Create and initialize copter environment
     env = gym.make(envname)
     env.reset()
 
@@ -96,7 +101,7 @@ def main(envname):
         s, r, _, _ = env.step([u])
 
         # Display the environment
-        env.render()
+        if args.render: env.render()
 
         # Extract altitude, vertical velocity from state
         z, v = s
@@ -118,12 +123,13 @@ def main(envname):
         rvals.append(r)
 
     # Plot results
-    _subplot(tvals, rvals, 1, 'Reward')
-    _subplot(tvals, zvals, 2, 'Altitude (m)')
-    _subplot(tvals, vvals, 3, 'Velocity (m/s)')
-    _subplot(tvals, uvals, 4, 'Action')
-    plt.ylim([-1.1,+1.1])
-    plt.show()
+    if not args.render:
+        _subplot(tvals, rvals, 1, 'Reward')
+        _subplot(tvals, zvals, 2, 'Altitude (m)')
+        _subplot(tvals, vvals, 3, 'Velocity (m/s)')
+        _subplot(tvals, uvals, 4, 'Action')
+        plt.ylim([-1.1,+1.1])
+        plt.show()
 
     # Cleanup
     del env
