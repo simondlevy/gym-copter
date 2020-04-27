@@ -45,7 +45,7 @@ def update(env):
 if __name__ == '__main__':
 
     # Create environment
-    env = gym.make('gym_copter:Copter-v1')
+    env = gym.make('gym_copter:CopterDistance-v0')
 
     plotter = env.tpvplotter()
 
