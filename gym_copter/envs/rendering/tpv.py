@@ -54,23 +54,23 @@ class TPV:
 
         # Set up figure & 3D axis for animation
         self.fig = plt.figure()
-        ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
+        self.ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
 
         # Set up axis labels
-        ax.set_xlabel('X (m)')
-        ax.set_ylabel('Y (m)')
-        ax.set_zlabel('Z (m)')
+        self.ax.set_xlabel('X (m)')
+        self.ax.set_ylabel('Y (m)')
+        self.ax.set_zlabel('Z (m)')
 
         # Set title to name of environment
-        ax.set_title(env.unwrapped.spec.id)
+        self.ax.set_title(env.unwrapped.spec.id)
 
         # Set axis limits
-        ax.set_xlim((-100, 100))
-        ax.set_ylim((-100, 100))
-        ax.set_zlim((0, 100))
+        self.ax.set_xlim((-100, 100))
+        self.ax.set_ylim((-100, 100))
+        self.ax.set_zlim((0, 100))
 
         # Create a representation of the copter
-        self.copter = _Vehicle(ax)
+        self.copter = _Vehicle(self.ax)
 
     def start(self):
 
