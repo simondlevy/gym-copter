@@ -40,7 +40,7 @@ class CopterEnv(Env):
         # Update dynamics and get kinematic state
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt_realtime)
-        self.state = self.dynamics.getState()
+        self.state[:self.statedims] = self.dynamics.getState()
 
         # Update timestep
         self.tick += 1
