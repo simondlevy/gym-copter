@@ -15,12 +15,8 @@ class _Vehicle:
     def __init__(self, ax, color='b'):
 
         # Set up line and point
-        self.line = ax.plot([], [], [], '-', c=color)[0]
-        self.line.set_data([], [])
-        self.line.set_3d_properties([])
-        self.pt   = ax.plot([], [], [], 'o', c=color)[0]
-        self.pt.set_data([], [])
-        self.pt.set_3d_properties([])
+        self.line = self._create(ax, '-', color)
+        self.pt   = self._create(ax, 'o', color)
 
         # Initialize arrays that we will accumulate to plot trajectory
         self.xs = []
@@ -41,6 +37,12 @@ class _Vehicle:
         # Show vehicle as a dot
         self.pt.set_data(x, y)
         self.pt.set_3d_properties(z)
+
+    def _create(self, ax, symbol, color):
+        obj = ax.plot([], [], [], symbol, c=color)[0]
+        obj.set_data([], [])
+        obj.set_3d_properties([])
+        return obj
 
 class TPV:
 
