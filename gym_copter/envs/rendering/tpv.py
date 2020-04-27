@@ -1,3 +1,11 @@
+'''
+Third-Person (3D) view using matplotlib
+
+Copyright (C) 2019 Simon D. Levy
+
+MIT License
+'''
+
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
