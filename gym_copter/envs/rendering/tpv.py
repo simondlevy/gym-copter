@@ -66,7 +66,7 @@ class TPV:
 
         self.is_open = False
         
-    def _animate(self, i):
+    def _animate(self, _):
 
         # Get vehicle position
         x,y,z = self.env.state[0:6:2]

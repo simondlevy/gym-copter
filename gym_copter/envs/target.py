@@ -41,7 +41,7 @@ class CopterTarget(CopterEnv):
         # Call parent-class method to do basic state update, return whether vehicle crashed
         crashed = CopterEnv._update(self, motors)
 
-        # Update target position
+        # Update target position.  For now we just make it go in circles
         self.state[12] = 10 * np.cos(self.target_theta)
         self.state[13] = 10 * np.sin(self.target_theta)
         self.target_theta += .01
