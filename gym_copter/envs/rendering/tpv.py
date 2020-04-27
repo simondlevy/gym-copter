@@ -1,3 +1,11 @@
+'''
+Third-Person (3D) view using matplotlib
+
+Copyright (C) 2019 Simon D. Levy
+
+MIT License
+'''
+
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
@@ -17,9 +25,9 @@ class TPV:
         ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
 
         # Set up axis labels
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        ax.set_xlabel('X (m)')
+        ax.set_ylabel('Y (m)')
+        ax.set_zlabel('Z (m)')
 
         # Set title to name of environment
         ax.set_title(env.unwrapped.spec.id)
@@ -49,7 +57,10 @@ class TPV:
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
-        plt.show()
+        try:
+            plt.show()
+        except:
+            pass
 
     def _handle_close(self, event):
 

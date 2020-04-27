@@ -1,5 +1,5 @@
 '''
-gym-copter Environment class for maximizing distance
+gym-copter Environment class for visually-guided targeting
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -10,17 +10,17 @@ from gym_copter.envs.env import CopterEnv
 from gym import spaces
 import numpy as np
 
-class CopterDistance(CopterEnv):
+class CopterTarget(CopterEnv):
     '''
     A GymCopter class with continous state and action space.
     Action space is [-1,+1]^4, translated to [0,1]^4
-    State space is full 12-dimensional state space from dynamics.
-    Reward is distance traveled.
+    State space is full 12-dimensional state space from dynamics, plus target position.
+    Reward is hitting prey.
     '''
 
     def __init__(self):
 
-        CopterEnv.__init__(self)
+        CopterEnv.__init__(self, statedims=15)
 
         # Initialize state
         self._init()
@@ -28,8 +28,10 @@ class CopterDistance(CopterEnv):
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]*4), np.array([1]*4))
 
-        # Observation space = full state space
-        self.observation_space = spaces.Box(np.array([-np.inf]*12), np.array([+np.inf]*12))
+        # Observation space = full state space plus target position
+        self.observation_space = spaces.Box(np.array([-np.inf]*15), np.array([+np.inf]*15))
+
+        self.target_theta = 0
 
     def step(self, action):
 
@@ -39,11 +41,13 @@ class CopterDistance(CopterEnv):
         # Call parent-class method to do basic state update, return whether vehicle crashed
         crashed = CopterEnv._update(self, motors)
 
-        # Integrate position
-        self.position += self.state[0:5:2]
+        # Update target position
+        self.state[12] = 10 * np.cos(self.target_theta)
+        self.state[13] = 10 * np.sin(self.target_theta)
+        self.target_theta += .01
 
-        # Reward is logarithm of Euclidean distance from origin
-        reward = np.sqrt(np.sum(self.position[0:2]**2))
+        # Fake up reward for now
+        reward = 0
 
         return self.state, reward, crashed, {}
 
@@ -52,7 +56,14 @@ class CopterDistance(CopterEnv):
         self._init()
         return self.state
 
+    def tpvplotter(self):
+
+        from gym_copter.envs.rendering.tpv_target import TpvTarget
+
+        # Pass title to 3D display
+        return TpvTarget(self)
+
     def _init(self):
-        self.position = np.zeros(3)
+        self.state[14] = 10 # target altitude (m)
 
 

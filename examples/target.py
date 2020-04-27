@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Climb up and leap forward
+Visually-guided predation
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -45,7 +45,7 @@ def update(env):
 if __name__ == '__main__':
 
     # Create environment
-    env = gym.make('gym_copter:CopterDistance-v0')
+    env = gym.make('gym_copter:CopterTarget-v0')
 
     plotter = env.tpvplotter()
 
