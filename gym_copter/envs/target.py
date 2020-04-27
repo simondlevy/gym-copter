@@ -46,8 +46,6 @@ class CopterTarget(CopterEnv):
         self.state[13] = 10 * np.sin(self.target_theta)
         self.target_theta += .01
 
-        print(self.state[12:])
-
         # Fake up reward for now
         reward = 0
 
@@ -57,6 +55,13 @@ class CopterTarget(CopterEnv):
         CopterEnv.reset(self)
         self._init()
         return self.state
+
+    def tpvplotter(self):
+
+        from gym_copter.envs.rendering.tpv import TPV
+
+        # Pass title to 3D display
+        return TPV(self)
 
     def _init(self):
         self.state[14] = 10 # target altitude (m)
