@@ -37,7 +37,7 @@ def update(env):
         # Once we reach altitude, switch to forward motion
         z = -s[4]
         if z > ALTITUDE_TARGET:
-            u = np.array([0,.5,0,.5])
+            u = np.array([0,.25,0,.25])
 
     # Cleanup
     del env
