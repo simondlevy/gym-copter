@@ -12,15 +12,15 @@ import numpy as np
 import threading
 import time
 
-ALTITUDE_TARGET = 10 # meters
+ALTITUDE_TARGET = 5 # meters
 
 def update(env):
 
     # Create and initialize copter environment
     env.reset()
 
-    # Start with motors full-throttle
-    u = 1 * np.ones(4)
+    # Start with all motors running 75%
+    u = .5 * np.ones(4)
 
     # Loop for specified duration
     while True:
@@ -37,7 +37,7 @@ def update(env):
         # Once we reach altitude, switch to forward motion
         z = -s[4]
         if z > ALTITUDE_TARGET:
-            u = np.array([0,1,0,1])
+            u = np.array([0,.5,0,.5])
 
     # Cleanup
     del env

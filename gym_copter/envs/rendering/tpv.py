@@ -67,9 +67,9 @@ class TPV:
         self.ax.set_title(env.unwrapped.spec.id)
 
         # Set axis limits
-        self.ax.set_xlim((-100, 100))
-        self.ax.set_ylim((-100, 100))
-        self.ax.set_zlim((0, 100))
+        self.ax.set_xlim((-50, 50))
+        self.ax.set_ylim((-50, 50))
+        self.ax.set_zlim((0, 50))
 
         # Create a representation of the copter
         self.copter = _Vehicle(self.ax)
