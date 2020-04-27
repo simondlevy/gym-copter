@@ -19,7 +19,7 @@ class CopterEnv(Env):
         'video.frames_per_second' : 30
     }
 
-    def __init__(self, dt=0.001, statesize=12):
+    def __init__(self, dt=0.001, statedims=12):
 
         self.num_envs = 1
         self.display = None
@@ -30,7 +30,7 @@ class CopterEnv(Env):
         self.tprev = 0
 
         # Support custom state representations
-        self.statesize = statesize
+        self.statedims = statedims
 
         # Also called by reset()
         self._reset()
@@ -86,7 +86,7 @@ class CopterEnv(Env):
 
     def _reset(self):
         
-        self.state = np.zeros(self.statesize)
+        self.state = np.zeros(self.statedims)
         self.dynamics = DJIPhantomDynamics()
         self.tick = 0
         self.done = False
