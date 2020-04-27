@@ -14,7 +14,7 @@ class TpvTarget(TPV):
 
         TPV.__init__(self, env)
 
-        self.target = _Vehicle(self.ax)
+        self.target = _Vehicle(self.ax, 'r')
         
     def _animate(self, _):
 

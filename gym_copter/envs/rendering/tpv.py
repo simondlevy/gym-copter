@@ -12,13 +12,13 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class _Vehicle:
 
-    def __init__(self, ax):
+    def __init__(self, ax, color='b'):
 
         # Set up line and point
-        self.line = ax.plot([], [], [], '-', c='b')[0]
+        self.line = ax.plot([], [], [], '-', c=color)[0]
         self.line.set_data([], [])
         self.line.set_3d_properties([])
-        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
+        self.pt   = ax.plot([], [], [], 'o', c=color)[0]
         self.pt.set_data([], [])
         self.pt.set_3d_properties([])
 
