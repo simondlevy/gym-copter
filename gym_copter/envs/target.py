@@ -28,8 +28,8 @@ class CopterTarget(CopterEnv):
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]*4), np.array([1]*4))
 
-        # Observation space = altitude, vertical_velocity
-        self.observation_space = spaces.Box(np.array([-np.inf]*12), np.array([+np.inf]*12))
+        # Observation space = full state space plus target position
+        self.observation_space = spaces.Box(np.array([-np.inf]*15), np.array([+np.inf]*15))
 
     def step(self, action):
 

@@ -28,7 +28,7 @@ class CopterDistance(CopterEnv):
         # Action space = motors, rescaled from [0,1] to [-1,+1]
         self.action_space = spaces.Box(np.array([-1]*4), np.array([1]*4))
 
-        # Observation space = altitude, vertical_velocity
+        # Observation space = full state space
         self.observation_space = spaces.Box(np.array([-np.inf]*12), np.array([+np.inf]*12))
 
     def step(self, action):
