@@ -50,6 +50,6 @@ class CopterTarget(CopterEnv):
         return self.state
 
     def _init(self):
-        return
+        self.state[14] = 10 # target altitude (m)
 
 
