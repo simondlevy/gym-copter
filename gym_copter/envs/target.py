@@ -14,13 +14,13 @@ class CopterTarget(CopterEnv):
     '''
     A GymCopter class with continous state and action space.
     Action space is [-1,+1]^4, translated to [0,1]^4
-    State space is full 12-dimensional state space from dynamics.
+    State space is full 12-dimensional state space from dynamics, plus target position.
     Reward is hitting prey.
     '''
 
     def __init__(self):
 
-        CopterEnv.__init__(self)
+        CopterEnv.__init__(self, statedims=15)
 
         # Initialize state
         self._init()
