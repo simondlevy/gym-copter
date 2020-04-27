@@ -39,11 +39,8 @@ class CopterTarget(CopterEnv):
         # Call parent-class method to do basic state update, return whether vehicle crashed
         crashed = CopterEnv._update(self, motors)
 
-        # Integrate position
-        self.position += self.state[0:5:2]
-
-        # Reward is logarithm of Euclidean distance from origin
-        reward = np.sqrt(np.sum(self.position[0:2]**2))
+        # Fake up reward for now
+        reward = 0
 
         return self.state, reward, crashed, {}
 
@@ -53,6 +50,6 @@ class CopterTarget(CopterEnv):
         return self.state
 
     def _init(self):
-        self.position = np.zeros(3)
+        return
 
 
