@@ -17,9 +17,9 @@ class TPV:
         ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
 
         # Set up axis labels
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        ax.set_xlabel('X (m)')
+        ax.set_ylabel('Y (m)')
+        ax.set_zlabel('Z (m)')
 
         # Set title to name of environment
         ax.set_title(env.unwrapped.spec.id)
