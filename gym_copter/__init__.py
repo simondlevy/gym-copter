@@ -23,3 +23,9 @@ register(
     entry_point='gym_copter.envs:CopterAltHold',
     max_episode_steps=10000
 )
+
+register(
+    id='CopterPredator-v0',
+    entry_point='gym_copter.envs:CopterPredator',
+    max_episode_steps=10000
+)
