@@ -1,5 +1,5 @@
 '''
-gym-copter Environment class for visually-guided predation
+gym-copter Environment class for visually-guided targeting
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -10,7 +10,7 @@ from gym_copter.envs.env import CopterEnv
 from gym import spaces
 import numpy as np
 
-class CopterPredator(CopterEnv):
+class CopterTarget(CopterEnv):
     '''
     A GymCopter class with continous state and action space.
     Action space is [-1,+1]^4, translated to [0,1]^4

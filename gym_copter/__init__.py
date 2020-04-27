@@ -25,7 +25,7 @@ register(
 )
 
 register(
-    id='CopterPredator-v0',
-    entry_point='gym_copter.envs:CopterPredator',
+    id='CopterTarget-v0',
+    entry_point='gym_copter.envs:CopterTarget',
     max_episode_steps=10000
 )
