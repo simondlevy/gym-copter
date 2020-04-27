@@ -31,6 +31,8 @@ class CopterTarget(CopterEnv):
         # Observation space = full state space plus target position
         self.observation_space = spaces.Box(np.array([-np.inf]*15), np.array([+np.inf]*15))
 
+        self.target_theta = 0
+
     def step(self, action):
 
         # Rescale action from [-1,+1] to [0,1]
@@ -38,6 +40,13 @@ class CopterTarget(CopterEnv):
 
         # Call parent-class method to do basic state update, return whether vehicle crashed
         crashed = CopterEnv._update(self, motors)
+
+        # Update target position
+        self.state[12] = 10 * np.cos(self.target_theta)
+        self.state[13] = 10 * np.sin(self.target_theta)
+        self.target_theta += .01
+
+        print(self.state[12:])
 
         # Fake up reward for now
         reward = 0
