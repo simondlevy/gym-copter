@@ -18,4 +18,4 @@ class TpvTarget(TPV):
 
        TPV._animate(self, _)
 
-
+       print(self.env.state[12:])

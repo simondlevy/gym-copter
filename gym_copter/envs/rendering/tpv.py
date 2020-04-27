@@ -10,6 +10,38 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
+class _Vehicle:
+
+    def __init__(self, ax):
+
+        # Set up line and point
+        self.line = ax.plot([], [], [], '-', c='b')[0]
+        self.line.set_data([], [])
+        self.line.set_3d_properties([])
+        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
+        self.pt.set_data([], [])
+        self.pt.set_3d_properties([])
+
+        # Initialize arrays that we will accumulate to plot trajectory
+        self.xs = []
+        self.ys = []
+        self.zs = []
+
+    def update(self, x, y, z):
+
+        # Append position to arrays for plotting trajectory
+        self.xs.append(x)
+        self.ys.append(y)
+        self.zs.append(z)
+
+        # Plot trajectory
+        self.line.set_data(self.xs, self.ys)
+        self.line.set_3d_properties(self.zs)
+
+        # Show vehicle as a dot
+        self.pt.set_data(x, y)
+        self.pt.set_3d_properties(z)
+
 class TPV:
 
     def __init__(self, env):
@@ -37,18 +69,8 @@ class TPV:
         ax.set_ylim((-100, 100))
         ax.set_zlim((0, 100))
 
-        # Set up line and point
-        self.line = ax.plot([], [], [], '-', c='b')[0]
-        self.line.set_data([], [])
-        self.line.set_3d_properties([])
-        self.pt   = ax.plot([], [], [], 'o', c='b')[0]
-        self.pt.set_data([], [])
-        self.pt.set_3d_properties([])
-
-        # Initialize arrays that we will accumulate to plot trajectory
-        self.xs = []
-        self.ys = []
-        self.zs = []
+        # Create a representation of the copter
+        self.copter = _Vehicle(ax)
 
     def start(self):
 
@@ -74,18 +96,8 @@ class TPV:
         # Negate Z to accomodate NED
         z = -z
 
-        # Append position to arrays for plotting trajectory
-        self.xs.append(x)
-        self.ys.append(y)
-        self.zs.append(z)
-
-        # Plot trajectory
-        self.line.set_data(self.xs, self.ys)
-        self.line.set_3d_properties(self.zs)
-
-        # Show vehicle as a dot
-        self.pt.set_data(x, y)
-        self.pt.set_3d_properties(z)
+        # Update the copter animation
+        self.copter.update(x, y, z)
 
         # Draw everything
         self.fig.canvas.draw()
