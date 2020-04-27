@@ -57,7 +57,10 @@ class TPV:
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
-        plt.show()
+        try:
+            plt.show()
+        except:
+            pass
 
     def _handle_close(self, event):
 
