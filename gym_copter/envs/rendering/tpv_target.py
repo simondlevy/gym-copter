@@ -13,3 +13,9 @@ class TpvTarget(TPV):
     def __init__(self, env):
 
         TPV.__init__(self, env)
+        
+    def _animate(self, _):
+
+       TPV._animate(self, _)
+
+
