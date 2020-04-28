@@ -148,6 +148,8 @@ class CopterLander(gym.Env, EzPickle):
                 )
         self.lander.color1 = (0.5, 0.4, 0.9)
         self.lander.color2 = (0.3, 0.3, 0.5)
+
+        # XXX
         self.lander.ApplyForceToCenter( (
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
@@ -197,15 +199,17 @@ class CopterLander(gym.Env, EzPickle):
 
         m1_power,m2_power = self._update(action)
 
+        # XXX
         pos = self.lander.position
         vel = self.lander.linearVelocity
+
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
             (pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
             vel.x*(VIEWPORT_W/SCALE/2)/FPS,
             vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-            self.lander.angle,
-            20.0*self.lander.angularVelocity/FPS,
+            self.lander.angle, # XXX
+            20.0*self.lander.angularVelocity/FPS, # XXX
             1.0 if self.legs[0].ground_contact else 0.0,
             1.0 if self.legs[1].ground_contact else 0.0
             ]
