@@ -192,7 +192,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.drawlist = [self.lander] + self.legs
 
-        return self.step(np.array([0, 0]) if True else 0)[0]
+        return self.step(np.array([0, 0]))[0]
 
     def _create_particle(self, mass, x, y, ttl):
         p = self.world.CreateDynamicBody(
