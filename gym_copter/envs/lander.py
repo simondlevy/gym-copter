@@ -62,8 +62,6 @@ class CopterLander(gym.Env, EzPickle):
         'video.frames_per_second' : FPS
     }
 
-    continuous = False
-
     def __init__(self):
         EzPickle.__init__(self)
         self.seed()
@@ -79,14 +77,10 @@ class CopterLander(gym.Env, EzPickle):
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
 
-        if self.continuous:
-            # Action is two floats [main engine, left-right engines].
-            # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
-            # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
-            self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
-        else:
-            # Nop, fire left engine, main engine, right engine
-            self.action_space = spaces.Discrete(4)
+        # Action is two floats [main engine, left-right engines].
+        # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
+        # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
+        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         self.reset()
 
@@ -198,7 +192,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.drawlist = [self.lander] + self.legs
 
-        return self.step(np.array([0, 0]) if self.continuous else 0)[0]
+        return self.step(np.array([0, 0]) if True else 0)[0]
 
     def _create_particle(self, mass, x, y, ttl):
         p = self.world.CreateDynamicBody(
@@ -222,7 +216,7 @@ class CopterLander(gym.Env, EzPickle):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
-        if self.continuous:
+        if True:
             action = np.clip(action, -1, +1).astype(np.float32)
         else:
             assert self.action_space.contains(action), "%r (%s) invalid " % (action, type(action))
@@ -233,9 +227,9 @@ class CopterLander(gym.Env, EzPickle):
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         m_power = 0.0
-        if (self.continuous and action[0] > 0.0) or (not self.continuous and action == 2):
+        if (True and action[0] > 0.0) or (not True and action == 2):
             # Main engine
-            if self.continuous:
+            if True:
                 m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
                 assert m_power >= 0.5 and m_power <= 1.0
             else:
@@ -256,9 +250,9 @@ class CopterLander(gym.Env, EzPickle):
                                            True)
 
         s_power = 0.0
-        if (self.continuous and np.abs(action[1]) > 0.5) or (not self.continuous and action in [1, 3]):
+        if (True and np.abs(action[1]) > 0.5) or (not True and action in [1, 3]):
             # Orientation engines
-            if self.continuous:
+            if True:
                 direction = np.sign(action[1])
                 s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
                 assert s_power >= 0.5 and s_power <= 1.0
@@ -395,7 +389,7 @@ def heuristic(env, s):
         angle_todo = 0
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    if env.continuous:
+    if True:
         a = np.array([hover_todo*20 - 1, -angle_todo*20])
         a = np.clip(a, -1, +1)
     else:
