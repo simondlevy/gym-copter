@@ -29,3 +29,9 @@ register(
     entry_point='gym_copter.envs:CopterTarget',
     max_episode_steps=10000
 )
+
+register(
+    id='CopterLander-v0',
+    entry_point='gym_copter.envs:CopterLander',
+    max_episode_steps=10000
+)
