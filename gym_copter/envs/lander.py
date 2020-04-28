@@ -201,21 +201,17 @@ class CopterLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
-        ml_power,mr_power = self._update(action)
+        ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
 
-        ml_power2,mr_power2 = self._update2(action)
-
-        # XXX
-        pos = self.lander.position
-        vel = self.lander.linearVelocity
+        #ml_power2,mr_power2 = self._update2(action)
 
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
             (pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
             vel.x*(VIEWPORT_W/SCALE/2)/FPS,
             vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-            self.lander.angle, # XXX
-            20.0*self.lander.angularVelocity/FPS, # XXX
+            angle,
+            angularVelocity, 
             1.0 if self.legs[0].ground_contact else 0.0,
             1.0 if self.legs[1].ground_contact else 0.0
             ]
@@ -286,14 +282,13 @@ class CopterLander(gym.Env, EzPickle):
 
         # Use first motor value for right motors, second for left
         motors = action[0], action[1], action[0], action[1]
-        print(motors)
 
         # Update dynamics and get kinematic state
-        #self.dynamics.setMotors(action)
-        #self.dynamics.update(.001)
-        #state = self.dynamics.getState()
+        self.dynamics.setMotors(motors)
+        self.dynamics.update(.001)
+        state = self.dynamics.getState()
 
-        return 0,0
+        return action
         
     def _update(self, action):
 
@@ -331,7 +326,8 @@ class CopterLander(gym.Env, EzPickle):
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
-        return ml_power,mr_power
+        return ml_power,mr_power, self.lander.position, \
+                self.lander.linearVelocity, self.lander.angle, 20*self.lander.angularVelocity/FPS
 
 def heuristic(env, s):
     """
