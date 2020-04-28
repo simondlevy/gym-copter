@@ -216,10 +216,7 @@ class CopterLander(gym.Env, EzPickle):
             self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
-        if True:
-            action = np.clip(action, -1, +1).astype(np.float32)
-        else:
-            assert self.action_space.contains(action), "%r (%s) invalid " % (action, type(action))
+        action = np.clip(action, -1, +1).astype(np.float32)
 
         # Engines
         tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
@@ -229,11 +226,8 @@ class CopterLander(gym.Env, EzPickle):
         m_power = 0.0
         if (True and action[0] > 0.0) or (not True and action == 2):
             # Main engine
-            if True:
-                m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
-                assert m_power >= 0.5 and m_power <= 1.0
-            else:
-                m_power = 1.0
+            m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
+            assert m_power >= 0.5 and m_power <= 1.0
             ox = (tip[0] * (4/SCALE + 2 * dispersion[0]) +
                   side[0] * dispersion[1])  # 4 is move a bit downwards, +-2 for randomness
             oy = -tip[1] * (4/SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
@@ -252,13 +246,9 @@ class CopterLander(gym.Env, EzPickle):
         s_power = 0.0
         if (True and np.abs(action[1]) > 0.5) or (not True and action in [1, 3]):
             # Orientation engines
-            if True:
-                direction = np.sign(action[1])
-                s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
-                assert s_power >= 0.5 and s_power <= 1.0
-            else:
-                direction = action-2
-                s_power = 1.0
+            direction = np.sign(action[1])
+            s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
+            assert s_power >= 0.5 and s_power <= 1.0
             ox = tip[0] * dispersion[0] + side[0] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
             oy = -tip[1] * dispersion[0] - side[1] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
@@ -389,14 +379,8 @@ def heuristic(env, s):
         angle_todo = 0
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    if True:
-        a = np.array([hover_todo*20 - 1, -angle_todo*20])
-        a = np.clip(a, -1, +1)
-    else:
-        a = 0
-        if hover_todo > np.abs(angle_todo) and hover_todo > 0.05: a = 2
-        elif angle_todo < -0.05: a = 3
-        elif angle_todo > +0.05: a = 1
+    a = np.array([hover_todo*20 - 1, -angle_todo*20])
+    a = np.clip(a, -1, +1)
     return a
 
 def demo_heuristic_lander(env, seed=None, render=False):
