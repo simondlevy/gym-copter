@@ -4,7 +4,7 @@ Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/box2d/
 """
 
 
-import sys, math
+import math
 import numpy as np
 
 import Box2D
