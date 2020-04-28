@@ -224,7 +224,7 @@ class CopterLander(gym.Env, EzPickle):
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         m_power = 0.0
-        if (True and action[0] > 0.0) or (not True and action == 2):
+        if (action[0] > 0.0):
             # Main engine
             m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
             assert m_power >= 0.5 and m_power <= 1.0
@@ -244,7 +244,7 @@ class CopterLander(gym.Env, EzPickle):
                                            True)
 
         s_power = 0.0
-        if (True and np.abs(action[1]) > 0.5) or (not True and action in [1, 3]):
+        if np.abs(action[1]) > 0.5:
             # Orientation engines
             direction = np.sign(action[1])
             s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
