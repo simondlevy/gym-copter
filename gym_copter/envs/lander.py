@@ -197,7 +197,7 @@ class CopterLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
-        m1_power,m2_power = self._update(action)
+        ml_power,mr_power = self._update(action)
 
         # XXX
         pos = self.lander.position
@@ -225,8 +225,8 @@ class CopterLander(gym.Env, EzPickle):
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
 
-        reward -= m1_power*0.30  # less fuel spent is better, about -30 for heuristic landing
-        reward -= m2_power*0.03
+        reward -= ml_power*0.30  # less fuel spent is better, about -30 for heuristic landing
+        reward -= mr_power*0.03
 
         done = False
         if self.game_over or abs(state[0]) >= 1.0:
@@ -280,36 +280,36 @@ class CopterLander(gym.Env, EzPickle):
         side = (-tip[1], tip[0])
         dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
-        m1_power = 0.0
+        ml_power = 0.0
         if (action[0] > 0.0):
             # Main engine
-            m1_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
-            assert m1_power >= 0.5 and m1_power <= 1.0
+            ml_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
+            assert ml_power >= 0.5 and ml_power <= 1.0
             ox = (tip[0] * (4/SCALE + 2 * dispersion[0]) +
                   side[0] * dispersion[1])  # 4 is move a bit downwards, +-2 for randomness
             oy = -tip[1] * (4/SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * m1_power, -oy * MAIN_ENGINE_POWER * m1_power),
+            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * ml_power, -oy * MAIN_ENGINE_POWER * ml_power),
                                            impulse_pos,
                                            True)
 
-        m2_power = 0.0
+        mr_power = 0.0
         if np.abs(action[1]) > 0.5:
             # Orientation engines
             direction = np.sign(action[1])
-            m2_power = np.clip(np.abs(action[1]), 0.5, 1.0)
-            assert m2_power >= 0.5 and m2_power <= 1.0
+            mr_power = np.clip(np.abs(action[1]), 0.5, 1.0)
+            assert mr_power >= 0.5 and mr_power <= 1.0
             ox = tip[0] * dispersion[0] + side[0] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
             oy = -tip[1] * dispersion[0] - side[1] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
                            self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
-            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * m2_power, -oy * SIDE_ENGINE_POWER * m2_power),
+            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * mr_power, -oy * SIDE_ENGINE_POWER * mr_power),
                                            impulse_pos,
                                            True)
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
-        return m1_power,m2_power
+        return ml_power,mr_power
 
 def heuristic(env, s):
     """
