@@ -203,7 +203,7 @@ class CopterLander(gym.Env, EzPickle):
 
         ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
 
-        #ml_power2,mr_power2 = self._update2(action)
+        ml_power2,mr_power2, pos2, vel2, angle2, angularVelocity2 = self._update2(action)
 
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
@@ -275,21 +275,6 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-    def _update2(self, action):
-
-        # Rescale [-1,+1] => [0,1]
-        action = (action + 1) / 2
-
-        # Use first motor value for right motors, second for left
-        motors = action[0], action[1], action[0], action[1]
-
-        # Update dynamics and get kinematic state
-        self.dynamics.setMotors(motors)
-        self.dynamics.update(.001)
-        state = self.dynamics.getState()
-
-        return action
-        
     def _update(self, action):
 
         # Engines
@@ -329,6 +314,21 @@ class CopterLander(gym.Env, EzPickle):
         return ml_power,mr_power, self.lander.position, \
                 self.lander.linearVelocity, self.lander.angle, 20*self.lander.angularVelocity/FPS
 
+    def _update2(self, action):
+
+        # Rescale [-1,+1] => [0,1]
+        action = (action + 1) / 2
+
+        # Use first motor value for right motors, second for left
+        motors = action[0], action[1], action[0], action[1]
+
+        # Update dynamics and get kinematic state
+        self.dynamics.setMotors(motors)
+        self.dynamics.update(.001)
+        state = self.dynamics.getState()
+
+        return action[0], action[1], state[2], state[3], state[8], state[9]
+        
 def heuristic(env, s):
     """
     The heuristic for
