@@ -13,6 +13,8 @@ import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 
+from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
@@ -103,6 +105,8 @@ class CopterLander(gym.Env, EzPickle):
         self.game_over = False
         self.prev_shaping = None
 
+        self.dynamics = DJIPhantomDynamics()
+
         W = VIEWPORT_W/SCALE
         H = VIEWPORT_H/SCALE
 
@@ -150,10 +154,10 @@ class CopterLander(gym.Env, EzPickle):
         self.lander.color2 = (0.3, 0.3, 0.5)
 
         # XXX
-        self.lander.ApplyForceToCenter( (
-            self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
-            self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
-            ), True)
+        #self.lander.ApplyForceToCenter( (
+        #    self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
+        #    self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
+        #    ), True)
 
         self.legs = []
         for i in [-1, +1]:
@@ -198,6 +202,8 @@ class CopterLander(gym.Env, EzPickle):
         action = np.clip(action, -1, +1).astype(np.float32)
 
         ml_power,mr_power = self._update(action)
+
+        ml_power2,mr_power2 = self._update2(action)
 
         # XXX
         pos = self.lander.position
@@ -273,6 +279,22 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
+    def _update2(self, action):
+
+        # Rescale [-1,+1] => [0,1]
+        action = (action + 1) / 2
+
+        # Use first motor value for right motors, second for left
+        motors = action[0], action[1], action[0], action[1]
+        print(motors)
+
+        # Update dynamics and get kinematic state
+        #self.dynamics.setMotors(action)
+        #self.dynamics.update(.001)
+        #state = self.dynamics.getState()
+
+        return 0,0
+        
     def _update(self, action):
 
         # Engines
