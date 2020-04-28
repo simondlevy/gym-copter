@@ -343,9 +343,6 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer = None
 
 
-class CopterLanderContinuous(CopterLander):
-    continuous = True
-
 def heuristic(env, s):
     """
     The heuristic for
