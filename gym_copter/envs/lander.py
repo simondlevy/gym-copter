@@ -285,31 +285,8 @@ class CopterLander(gym.Env, EzPickle):
 
     def _update(self, action):
 
-        # Engines
-        tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
-        side = (-tip[1], tip[0])
-
         ml_power = 0.0
-        if (action[0] > 0.0):
-            # Main engine
-            ml_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
-            assert ml_power >= 0.5 and ml_power <= 1.0
-            ox =  tip[0] * 4/SCALE 
-            oy = -tip[1] * 4/SCALE
-            impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * ml_power, -oy * MAIN_ENGINE_POWER * ml_power), impulse_pos, True)
-
         mr_power = 0.0
-        if np.abs(action[1]) > 0.5:
-            # Orientation engines
-            direction = np.sign(action[1])
-            mr_power = np.clip(np.abs(action[1]), 0.5, 1.0)
-            assert mr_power >= 0.5 and mr_power <= 1.0
-            ox =   side[0] * (direction * SIDE_ENGINE_AWAY/SCALE)
-            oy = - side[1] * (direction * SIDE_ENGINE_AWAY/SCALE)
-            impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
-                           self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
-            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * mr_power, -oy * SIDE_ENGINE_POWER * mr_power), impulse_pos, True)
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
