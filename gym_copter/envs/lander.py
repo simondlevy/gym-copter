@@ -203,13 +203,13 @@ class CopterLander(gym.Env, EzPickle):
 
         ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
 
-        ml_power2,mr_power2, pos2, vel2, angle2, angularVelocity2 = self._update2(action)
+        #ml_power,mr_power, pos, vel, angle, angularVelocity = self._update2(action)
 
         state = [
-            (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
-            vel.x*(VIEWPORT_W/SCALE/2)/FPS,
-            vel.y*(VIEWPORT_H/SCALE/2)/FPS,
+            (pos[0] - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
+            (pos[1]- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            vel[0]*(VIEWPORT_W/SCALE/2)/FPS,
+            vel[1]*(VIEWPORT_H/SCALE/2)/FPS,
             angle,
             angularVelocity, 
             1.0 if self.legs[0].ground_contact else 0.0,
@@ -311,8 +311,10 @@ class CopterLander(gym.Env, EzPickle):
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
-        return ml_power,mr_power, self.lander.position, \
-                self.lander.linearVelocity, self.lander.angle, 20*self.lander.angularVelocity/FPS
+        pos = self.lander.position
+        vel = self.lander.linearVelocity
+
+        return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, 20*self.lander.angularVelocity/FPS
 
     def _update2(self, action):
 
@@ -363,6 +365,7 @@ def heuristic(env, s):
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
+
     a = np.clip(a, -1, +1)
     return a
 
@@ -380,9 +383,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
+        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        '''
         steps += 1
         if done: break
     return total_reward
