@@ -106,6 +106,10 @@ class CopterLander(gym.Env, EzPickle):
         self.prev_shaping = None
 
         self.dynamics = DJIPhantomDynamics()
+        state = np.zeros(12)
+        state[self.dynamics.STATE_Y] = 10
+        state[self.dynamics.STATE_Z] = 13.33
+        self.dynamics.setState(state)
 
         W = VIEWPORT_W/SCALE
         H = VIEWPORT_H/SCALE
@@ -277,6 +281,10 @@ class CopterLander(gym.Env, EzPickle):
 
     def _update(self, action):
 
+        print(self.lander.position.y)
+        exit(0)
+
+
         # Engines
         tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
         side = (-tip[1], tip[0])
@@ -328,6 +336,8 @@ class CopterLander(gym.Env, EzPickle):
         self.dynamics.setMotors(motors)
         self.dynamics.update(.001)
         state = self.dynamics.getState()
+
+        #print(state[0], state[2], state[4])
 
         return action[0], action[1], (state[0], state[2]), (state[1], state[3]), state[8], state[9]
         

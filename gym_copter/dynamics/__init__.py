@@ -62,18 +62,18 @@ class MultirotorDynamics:
     '''
     Position map for state vector
     '''
-    _STATE_X         = 0
-    _STATE_X_DOT     = 1
-    _STATE_Y         = 2
-    _STATE_Y_DOT     = 3
-    _STATE_Z         = 4
-    _STATE_Z_DOT     = 5
-    _STATE_PHI       = 6
-    _STATE_PHI_DOT   = 7
-    _STATE_THETA     = 8
-    _STATE_THETA_DOT = 9
-    _STATE_PSI       = 10
-    _STATE_PSI_DOT   = 11
+    STATE_X         = 0
+    STATE_X_DOT     = 1
+    STATE_Y         = 2
+    STATE_Y_DOT     = 3
+    STATE_Z         = 4
+    STATE_Z_DOT     = 5
+    STATE_PHI       = 6
+    STATE_PHI_DOT   = 7
+    STATE_THETA     = 8
+    STATE_THETA_DOT = 9
+    STATE_PSI       = 10
+    STATE_PSI_DOT   = 11
 
     # universal constants
     g = 9.80665 # might want to allow this to vary!
@@ -167,7 +167,7 @@ class MultirotorDynamics:
         Sets the state to the values specified in a sequence
         '''
         self._x = np.array(state)
-        self._airborne = self._x[self._STATE_Z] < 0
+        self._airborne = self._x[self.STATE_Z] < 0
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
@@ -180,24 +180,24 @@ class MultirotorDynamics:
         psidot rotational acceleration in yaw axis
         '''
  
-        phidot = self._x[self._STATE_PHI_DOT]
-        thedot = self._x[self._STATE_THETA_DOT]
-        psidot = self._x[self._STATE_PSI_DOT]
+        phidot = self._x[self.STATE_PHI_DOT]
+        thedot = self._x[self.STATE_THETA_DOT]
+        psidot = self._x[self.STATE_PSI_DOT]
 
         p = self._p
 
-        self._dxdt[self._STATE_X]         = self._x[self._STATE_X_DOT]
-        self._dxdt[self._STATE_X_DOT]     = accelNED[0]         
-        self._dxdt[self._STATE_Y]         = self._x[self._STATE_Y_DOT]
-        self._dxdt[self._STATE_Y_DOT]     = accelNED[1]         
-        self._dxdt[self._STATE_Z]         = self._x[self._STATE_Z_DOT]
-        self._dxdt[self._STATE_Z_DOT]     = netz                
-        self._dxdt[self._STATE_PHI]       = phidot                                                                               
-        self._dxdt[self._STATE_PHI_DOT]   = psidot * thedot * (p.Iy - p.Iz) / p.Ix - p.Jr / p.Ix * thedot * self._Omega + self._U2 / p.Ix    
-        self._dxdt[self._STATE_THETA]     = thedot                                                                               
-        self._dxdt[self._STATE_THETA_DOT] = -(psidot * phidot * (p.Iz - p.Ix) / p.Iy + p.Jr / p.Iy * phidot * self._Omega + self._U3 / p.Iy) 
-        self._dxdt[self._STATE_PSI]       = psidot                                                                               
-        self._dxdt[self._STATE_PSI_DOT]   = thedot * phidot * (p.Ix - p.Iy) / p.Iz + self._U4 / p.Iz                                   
+        self._dxdt[self.STATE_X]         = self._x[self.STATE_X_DOT]
+        self._dxdt[self.STATE_X_DOT]     = accelNED[0]         
+        self._dxdt[self.STATE_Y]         = self._x[self.STATE_Y_DOT]
+        self._dxdt[self.STATE_Y_DOT]     = accelNED[1]         
+        self._dxdt[self.STATE_Z]         = self._x[self.STATE_Z_DOT]
+        self._dxdt[self.STATE_Z_DOT]     = netz                
+        self._dxdt[self.STATE_PHI]       = phidot                                                                               
+        self._dxdt[self.STATE_PHI_DOT]   = psidot * thedot * (p.Iy - p.Iz) / p.Ix - p.Jr / p.Ix * thedot * self._Omega + self._U2 / p.Ix    
+        self._dxdt[self.STATE_THETA]     = thedot                                                                               
+        self._dxdt[self.STATE_THETA_DOT] = -(psidot * phidot * (p.Iz - p.Ix) / p.Iy + p.Jr / p.Iy * phidot * self._Omega + self._U3 / p.Iy) 
+        self._dxdt[self.STATE_PSI]       = psidot                                                                               
+        self._dxdt[self.STATE_PSI_DOT]   = thedot * phidot * (p.Ix - p.Iy) / p.Iz + self._U4 / p.Iz                                   
 
     def _computeMotorSpeed(self, motorvals):
         '''
