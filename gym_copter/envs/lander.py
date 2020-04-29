@@ -45,6 +45,7 @@ class ContactDetector(contactListener):
         self.env = env
 
     def BeginContact(self, contact):
+        print('BEGIN')
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.game_over = True
         for i in range(2):
@@ -52,6 +53,7 @@ class ContactDetector(contactListener):
                 self.env.legs[i].ground_contact = True
 
     def EndContact(self, contact):
+        print('END')
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = False
@@ -114,6 +116,9 @@ class CopterLander(gym.Env, EzPickle):
         W = VIEWPORT_W/SCALE
         H = VIEWPORT_H/SCALE
 
+        # Turn off gravity so we can run our own dynamics
+        self.world.gravity = 0,0
+
         # terrain
         CHUNKS = 11
         height = self.np_random.uniform(0, H/2, size=(CHUNKS+1,))
@@ -157,10 +162,12 @@ class CopterLander(gym.Env, EzPickle):
         self.lander.color1 = (0.5, 0.4, 0.9)
         self.lander.color2 = (0.3, 0.3, 0.5)
 
+        '''
         self.lander.ApplyForceToCenter( (
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
             ), True)
+        '''
 
         self.legs = []
         for i in [-1, +1]:
@@ -290,9 +297,7 @@ class CopterLander(gym.Env, EzPickle):
             ox =  tip[0] * 4/SCALE 
             oy = -tip[1] * 4/SCALE
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * ml_power, -oy * MAIN_ENGINE_POWER * ml_power),
-                                           impulse_pos,
-                                           True)
+            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * ml_power, -oy * MAIN_ENGINE_POWER * ml_power), impulse_pos, True)
 
         mr_power = 0.0
         if np.abs(action[1]) > 0.5:
@@ -304,11 +309,13 @@ class CopterLander(gym.Env, EzPickle):
             oy = - side[1] * (direction * SIDE_ENGINE_AWAY/SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
                            self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
-            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * mr_power, -oy * SIDE_ENGINE_POWER * mr_power),
-                                           impulse_pos,
-                                           True)
+            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * mr_power, -oy * SIDE_ENGINE_POWER * mr_power), impulse_pos, True)
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
+
+        pos = self.lander.position
+
+        self.lander.position = pos[0], pos[1]-.05
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
