@@ -206,8 +206,6 @@ class CopterLander(gym.Env, EzPickle):
 
         ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
 
-        ml_power2, mr_power2, pos2, vel2, angle2, angularVelocity2 = self._update2(action)
-
         state = [
             (pos[0] - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
             (pos[1]- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
@@ -283,16 +281,14 @@ class CopterLander(gym.Env, EzPickle):
         # Engines
         tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
         side = (-tip[1], tip[0])
-        dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         ml_power = 0.0
         if (action[0] > 0.0):
             # Main engine
             ml_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
             assert ml_power >= 0.5 and ml_power <= 1.0
-            ox = (tip[0] * (4/SCALE + 2 * dispersion[0]) +
-                  side[0] * dispersion[1])  # 4 is move a bit downwards, +-2 for randomness
-            oy = -tip[1] * (4/SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            ox =  tip[0] * 4/SCALE 
+            oy = -tip[1] * 4/SCALE
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * ml_power, -oy * MAIN_ENGINE_POWER * ml_power),
                                            impulse_pos,
@@ -304,8 +300,8 @@ class CopterLander(gym.Env, EzPickle):
             direction = np.sign(action[1])
             mr_power = np.clip(np.abs(action[1]), 0.5, 1.0)
             assert mr_power >= 0.5 and mr_power <= 1.0
-            ox = tip[0] * dispersion[0] + side[0] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
-            oy = -tip[1] * dispersion[0] - side[1] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
+            ox =   side[0] * (direction * SIDE_ENGINE_AWAY/SCALE)
+            oy = - side[1] * (direction * SIDE_ENGINE_AWAY/SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
                            self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
             self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * mr_power, -oy * SIDE_ENGINE_POWER * mr_power),
@@ -319,26 +315,6 @@ class CopterLander(gym.Env, EzPickle):
 
         return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, 20*self.lander.angularVelocity/FPS
 
-    def _update2(self, action):
-
-        # Rescale [-1,+1] => [0,1]
-        action = (action + 1) / 2
-
-        # Use first motor value for right motors, second for left
-        motors = action[0], action[1], action[0], action[1]
-
-        # Update dynamics and get kinematic state
-        #self.dynamics.setMotors(motors)
-        self.dynamics.update(.01)
-        state = self.dynamics.getState()
-
-        dyn = self.dynamics
-
-        return action[0], action[1], \
-                (state[dyn.STATE_Y], state[dyn.STATE_Z]), \
-                (state[dyn.STATE_Y_DOT], state[dyn.STATE_Y_DOT]), \
-                state[dyn.STATE_THETA], state[dyn.STATE_THETA_DOT]
-        
 def heuristic(env, s):
     """
     The heuristic for
