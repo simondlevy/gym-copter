@@ -108,7 +108,7 @@ class CopterLander(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
         state = np.zeros(12)
         state[self.dynamics.STATE_Y] = 10
-        state[self.dynamics.STATE_Z] = 13.33
+        state[self.dynamics.STATE_Z] = -13.33
         self.dynamics.setState(state)
 
         W = VIEWPORT_W/SCALE
@@ -332,10 +332,8 @@ class CopterLander(gym.Env, EzPickle):
 
         # Update dynamics and get kinematic state
         #self.dynamics.setMotors(motors)
-        #self.dynamics.update(.001)
+        self.dynamics.update(.01)
         state = self.dynamics.getState()
-
-        #print(state[0], state[2], state[4])
 
         dyn = self.dynamics
 
