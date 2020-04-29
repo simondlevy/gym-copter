@@ -203,7 +203,7 @@ class CopterLander(gym.Env, EzPickle):
 
         ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
 
-        #ml_power,mr_power, pos, vel, angle, angularVelocity = self._update2(action)
+        ml_power2, mr_power2, pos2, vel2, angle2, angularVelocity2 = self._update2(action)
 
         state = [
             (pos[0] - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
@@ -329,7 +329,7 @@ class CopterLander(gym.Env, EzPickle):
         self.dynamics.update(.001)
         state = self.dynamics.getState()
 
-        return action[0], action[1], state[2], state[3], state[8], state[9]
+        return action[0], action[1], (state[0], state[2]), (state[1], state[3]), state[8], state[9]
         
 def heuristic(env, s):
     """
