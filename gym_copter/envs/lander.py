@@ -107,7 +107,7 @@ class CopterLander(gym.Env, EzPickle):
         self.game_over = False
         self.prev_shaping = None
 
-        self.dynamics = DJIPhantomDynamics()
+        self.dynamics = DJIPhantomDynamics(g=1.62) # XXX use Moon gravity for now
         state = np.zeros(12)
         state[self.dynamics.STATE_Y] = 10
         state[self.dynamics.STATE_Z] = -13.33
@@ -296,11 +296,12 @@ class CopterLander(gym.Env, EzPickle):
 
         pos = self.lander.position
 
-        print('%3.3f %3.3f' % (pos.y, -state[self.dynamics.STATE_Z]))
-
-        self.lander.position = pos.x, pos.y-.05
-
+        dyn = self.dynamics
+        self.lander.position = state[dyn.STATE_Y], -state[dyn.STATE_Z]
+ 
         pos = self.lander.position
+
+        print(pos)
         vel = self.lander.linearVelocity
 
         return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, 20*self.lander.angularVelocity/FPS
