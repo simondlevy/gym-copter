@@ -166,7 +166,6 @@ class CopterLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
         state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
 
-
         self.dynamics.setState(state)
 
         self.legs = []
@@ -220,8 +219,6 @@ class CopterLander(gym.Env, EzPickle):
 
         state = self.dynamics.getState()
 
-        pos = self.lander.position
-
         # Copy dynamics back out to lander
         dyn = self.dynamics
         self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
@@ -234,10 +231,10 @@ class CopterLander(gym.Env, EzPickle):
         vel = self.lander.linearVelocity
 
         state = [
-            (pos[0] - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos[1]- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
-            vel[0]*(VIEWPORT_W/SCALE/2)/FPS,
-            vel[1]*(VIEWPORT_H/SCALE/2)/FPS,
+            (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
+            (pos.y- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            vel.x*(VIEWPORT_W/SCALE/2)/FPS,
+            vel.y*(VIEWPORT_H/SCALE/2)/FPS,
             self.lander.angle,
             20*self.lander.angularVelocity/FPS,
             1.0 if self.legs[0].ground_contact else 0.0,
