@@ -21,7 +21,7 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 MAIN_ENGINE_POWER = 13.0
 SIDE_ENGINE_POWER = 0.6
 
-INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
+INITIAL_RANDOM = 1.0   # Increase to make game harder
 
 LANDER_POLY =[
     (-14, +17), (-17, 0), (-17 ,-10),
@@ -157,11 +157,17 @@ class CopterLander(gym.Env, EzPickle):
         self.lander.color2 = (0.3, 0.3, 0.5)
 
         self.dynamics = DJIPhantomDynamics(g=1.62) # XXX use Moon gravity for now
+
         state = np.zeros(12)
+
         state[self.dynamics.STATE_Y] = 10
-        state[self.dynamics.STATE_Y_DOT] = -1.
         state[self.dynamics.STATE_Z] = -13.33
-        state[self.dynamics.STATE_THETA] = np.pi/4
+
+        # Add a little random noise to initial pose
+        state[self.dynamics.STATE_Y_DOT] = INITIAL_RANDOM * np.random.randn()
+        state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
+
+
         self.dynamics.setState(state)
 
         self.legs = []
