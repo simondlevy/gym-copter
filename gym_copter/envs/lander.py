@@ -300,10 +300,11 @@ class CopterLander(gym.Env, EzPickle):
  
         pos = self.lander.position
 
-        print(pos)
         vel = self.lander.linearVelocity
 
-        return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, 20*self.lander.angularVelocity/FPS
+        angularVelocity = 20*self.lander.angularVelocity/FPS
+
+        return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, angularVelocity
 
 def heuristic(env, s):
     """
