@@ -158,11 +158,12 @@ class CopterLander(gym.Env, EzPickle):
 
         state = np.zeros(12)
 
+        # Start at top center
         state[self.dynamics.STATE_Y] = 10
         state[self.dynamics.STATE_Z] = -13.33
 
-        # Add a little random noise to initial pose
-        state[self.dynamics.STATE_Y_DOT] = INITIAL_RANDOM * np.random.randn()
+        # Add a little random noise to initial velocities
+        state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
         state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
 
 
