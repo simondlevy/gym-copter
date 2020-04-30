@@ -210,6 +210,8 @@ class CopterLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
+        print(action)
+
         ml_power = 0.0
         mr_power = 0.0
 
@@ -219,12 +221,12 @@ class CopterLander(gym.Env, EzPickle):
 
         state = self.dynamics.getState()
 
-        # Copy dynamics back out to lander
+        # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
         self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
         self.lander.angle           = state[dyn.STATE_THETA]
         self.lander.angularVelocity = state[dyn.STATE_THETA_DOT]
-        self.lander.vel             = (state[dyn.STATE_Y_DOT], state[dyn.STATE_Z_DOT])
+        self.lander.vel             = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
  
         pos = self.lander.position
 
@@ -352,9 +354,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
+        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        '''
 
         steps += 1
         if done: break
