@@ -216,7 +216,11 @@ class CopterLander(gym.Env, EzPickle):
         # Rescale [-1,+1] => [0,1]
         action = (action + 1) / 2 
 
-        self.dynamics.setMotors([action[0], action[0], action[0], action[0]])
+        motors = [action[1], action[0], action[0], action[1]]
+
+        print(motors)
+
+        self.dynamics.setMotors(motors)
 
         self.dynamics.update(1.0/FPS)
 
@@ -337,7 +341,8 @@ def heuristic(env, s):
         angle_todo = 0
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    a = np.array([hover_todo*20 - 1, -angle_todo*20])
+    #a = np.array([hover_todo*20 - 1, -angle_todo*20])
+    a = np.array([hover_todo*20 - 1, angle_todo*20 - 1])
 
     a = np.clip(a, -1, +1)
 
