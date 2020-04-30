@@ -159,7 +159,7 @@ class CopterLander(gym.Env, EzPickle):
         state = np.zeros(12)
 
         # Start at top center
-        state[self.dynamics.STATE_Y] = 10
+        state[self.dynamics.STATE_Y] = 8 #10
         state[self.dynamics.STATE_Z] = -13.33
 
         # Add a little random noise to initial velocities
@@ -213,9 +213,10 @@ class CopterLander(gym.Env, EzPickle):
         ml_power = 0.0
         mr_power = 0.0
 
-        motor = (action[0] + 1) / 2
+        # Rescale [-1,+1] => [0,1]
+        action = (action + 1) / 2 
 
-        self.dynamics.setMotors([motor]*4)
+        self.dynamics.setMotors([action[0], action[0], action[0], action[0]])
 
         self.dynamics.update(1.0/FPS)
 
@@ -339,6 +340,7 @@ def heuristic(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
 
     a = np.clip(a, -1, +1)
+
     return a
 
 def demo_heuristic_lander(env, seed=None, render=False):
