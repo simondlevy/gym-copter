@@ -1,9 +1,33 @@
 #!/usr/bin/env python3
 """
-Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/box2d/lunar_lander.py
+Rocket trajectory optimization is a classic topic in Optimal Control.
+
+According to Pontryagin's maximum principle it's optimal to fire engine full throttle or
+turn it off. That's the reason this environment is OK to have discreet actions (engine on or off).
+
+The landing pad is always at coordinates (0,0). The coordinates are the first two numbers in the state vector.
+Reward for moving from the top of the screen to the landing pad and zero speed is about 100..140 points.
+If the lander moves away from the landing pad it loses reward. The episode finishes if the lander crashes or
+comes to rest, receiving an additional -100 or +100 points. Each leg with ground contact is +10 points.
+Firing the main engine is -0.3 points each frame. Firing the side engine is -0.03 points each frame.
+Solved is 200 points.
+
+Landing outside the landing pad is possible. Fuel is infinite, so an agent can learn to fly and then land
+on its first attempt. Please see the source code for details.
+
+To see a heuristic landing, run:
+
+python gym/envs/box2d/lunar_lander.py
+
+To play yourself, run:
+
+python examples/agents/keyboard_agent.py LunarLander-v2
+
+Created by Oleg Klimov. Licensed on the same terms as the rest of OpenAI Gym.
 """
 
-import math
+
+import sys, math
 import numpy as np
 
 import Box2D
@@ -12,8 +36,6 @@ from Box2D.b2 import (edgeShape, circleShape, fixtureDef, polygonShape, revolute
 import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
-
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
@@ -45,7 +67,6 @@ class ContactDetector(contactListener):
         self.env = env
 
     def BeginContact(self, contact):
-        print('BEGIN')
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.game_over = True
         for i in range(2):
@@ -53,17 +74,18 @@ class ContactDetector(contactListener):
                 self.env.legs[i].ground_contact = True
 
     def EndContact(self, contact):
-        print('END')
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = False
 
 
-class CopterLander(gym.Env, EzPickle):
+class LunarLander(gym.Env, EzPickle):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
     }
+
+    continuous = False
 
     def __init__(self):
         EzPickle.__init__(self)
@@ -73,16 +95,21 @@ class CopterLander(gym.Env, EzPickle):
         self.world = Box2D.b2World()
         self.moon = None
         self.lander = None
+        self.particles = []
 
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
 
-        # Action is two floats [main engine, left-right engines].
-        # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
-        # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        if self.continuous:
+            # Action is two floats [main engine, left-right engines].
+            # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
+            # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
+            self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        else:
+            # Nop, fire left engine, main engine, right engine
+            self.action_space = spaces.Discrete(4)
 
         self.reset()
 
@@ -93,6 +120,7 @@ class CopterLander(gym.Env, EzPickle):
     def _destroy(self):
         if not self.moon: return
         self.world.contactListener = None
+        self._clean_particles(True)
         self.world.DestroyBody(self.moon)
         self.moon = None
         self.world.DestroyBody(self.lander)
@@ -109,9 +137,6 @@ class CopterLander(gym.Env, EzPickle):
 
         W = VIEWPORT_W/SCALE
         H = VIEWPORT_H/SCALE
-
-        # Turn off gravity so we can run our own dynamics
-        self.world.gravity = 0,0
 
         # terrain
         CHUNKS = 11
@@ -155,14 +180,10 @@ class CopterLander(gym.Env, EzPickle):
                 )
         self.lander.color1 = (0.5, 0.4, 0.9)
         self.lander.color2 = (0.3, 0.3, 0.5)
-
-        self.dynamics = DJIPhantomDynamics(g=1.62) # XXX use Moon gravity for now
-        state = np.zeros(12)
-        state[self.dynamics.STATE_Y] = 10
-        state[self.dynamics.STATE_Y_DOT] = -1.
-        state[self.dynamics.STATE_Z] = -13.33
-        state[self.dynamics.STATE_THETA] = np.pi/4
-        self.dynamics.setState(state)
+        self.lander.ApplyForceToCenter( (
+            self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
+            self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
+            ), True)
 
         self.legs = []
         for i in [-1, +1]:
@@ -200,21 +221,96 @@ class CopterLander(gym.Env, EzPickle):
 
         self.drawlist = [self.lander] + self.legs
 
-        return self.step(np.array([0, 0]))[0]
+        return self.step(np.array([0, 0]) if self.continuous else 0)[0]
+
+    def _create_particle(self, mass, x, y, ttl):
+        p = self.world.CreateDynamicBody(
+            position = (x, y),
+            angle=0.0,
+            fixtures = fixtureDef(
+                shape=circleShape(radius=2/SCALE, pos=(0, 0)),
+                density=mass,
+                friction=0.1,
+                categoryBits=0x0100,
+                maskBits=0x001,  # collide only with ground
+                restitution=0.3)
+                )
+        p.ttl = ttl
+        self.particles.append(p)
+        self._clean_particles(False)
+        return p
+
+    def _clean_particles(self, all):
+        while self.particles and (all or self.particles[0].ttl < 0):
+            self.world.DestroyBody(self.particles.pop(0))
 
     def step(self, action):
+        if self.continuous:
+            action = np.clip(action, -1, +1).astype(np.float32)
+        else:
+            assert self.action_space.contains(action), "%r (%s) invalid " % (action, type(action))
 
-        action = np.clip(action, -1, +1).astype(np.float32)
+        # Engines
+        tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
+        side = (-tip[1], tip[0])
+        dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
-        ml_power,mr_power, pos, vel, angle, angularVelocity = self._update(action)
+        m_power = 0.0
+        if (self.continuous and action[0] > 0.0) or (not self.continuous and action == 2):
+            # Main engine
+            if self.continuous:
+                m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
+                assert m_power >= 0.5 and m_power <= 1.0
+            else:
+                m_power = 1.0
+            ox = (tip[0] * (4/SCALE + 2 * dispersion[0]) +
+                  side[0] * dispersion[1])  # 4 is move a bit downwards, +-2 for randomness
+            oy = -tip[1] * (4/SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
+            p = self._create_particle(3.5,  # 3.5 is here to make particle speed adequate
+                                      impulse_pos[0],
+                                      impulse_pos[1],
+                                      m_power)  # particles are just a decoration
+            p.ApplyLinearImpulse((ox * MAIN_ENGINE_POWER * m_power, oy * MAIN_ENGINE_POWER * m_power),
+                                 impulse_pos,
+                                 True)
+            self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
+                                           impulse_pos,
+                                           True)
 
+        s_power = 0.0
+        if (self.continuous and np.abs(action[1]) > 0.5) or (not self.continuous and action in [1, 3]):
+            # Orientation engines
+            if self.continuous:
+                direction = np.sign(action[1])
+                s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
+                assert s_power >= 0.5 and s_power <= 1.0
+            else:
+                direction = action-2
+                s_power = 1.0
+            ox = tip[0] * dispersion[0] + side[0] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
+            oy = -tip[1] * dispersion[0] - side[1] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
+            impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
+                           self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
+            p = self._create_particle(0.7, impulse_pos[0], impulse_pos[1], s_power)
+            p.ApplyLinearImpulse((ox * SIDE_ENGINE_POWER * s_power, oy * SIDE_ENGINE_POWER * s_power),
+                                 impulse_pos
+                                 , True)
+            self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * s_power, -oy * SIDE_ENGINE_POWER * s_power),
+                                           impulse_pos,
+                                           True)
+
+        self.world.Step(1.0/FPS, 6*30, 2*30)
+
+        pos = self.lander.position
+        vel = self.lander.linearVelocity
         state = [
-            (pos[0] - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos[1]- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
-            vel[0]*(VIEWPORT_W/SCALE/2)/FPS,
-            vel[1]*(VIEWPORT_H/SCALE/2)/FPS,
-            angle,
-            angularVelocity, 
+            (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
+            (pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            vel.x*(VIEWPORT_W/SCALE/2)/FPS,
+            vel.y*(VIEWPORT_H/SCALE/2)/FPS,
+            self.lander.angle,
+            20.0*self.lander.angularVelocity/FPS,
             1.0 if self.legs[0].ground_contact else 0.0,
             1.0 if self.legs[1].ground_contact else 0.0
             ]
@@ -230,8 +326,8 @@ class CopterLander(gym.Env, EzPickle):
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
 
-        reward -= ml_power*0.30  # less fuel spent is better, about -30 for heuristic landing
-        reward -= mr_power*0.03
+        reward -= m_power*0.30  # less fuel spent is better, about -30 for heuristic landing
+        reward -= s_power*0.03
 
         done = False
         if self.game_over or abs(state[0]) >= 1.0:
@@ -248,10 +344,17 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer = rendering.Viewer(VIEWPORT_W, VIEWPORT_H)
             self.viewer.set_bounds(0, VIEWPORT_W/SCALE, 0, VIEWPORT_H/SCALE)
 
+        for obj in self.particles:
+            obj.ttl -= 0.15
+            obj.color1 = (max(0.2, 0.2+obj.ttl), max(0.2, 0.5*obj.ttl), max(0.2, 0.5*obj.ttl))
+            obj.color2 = (max(0.2, 0.2+obj.ttl), max(0.2, 0.5*obj.ttl), max(0.2, 0.5*obj.ttl))
+
+        self._clean_particles(False)
+
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=(0, 0, 0))
 
-        for obj in self.drawlist:
+        for obj in self.particles + self.drawlist:
             for f in obj.fixtures:
                 trans = f.body.transform
                 if type(f.shape) is circleShape:
@@ -278,29 +381,9 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-    def _update(self, action):
 
-        ml_power = 0.0
-        mr_power = 0.0
-
-        self.dynamics.update(1.0/FPS)
-
-        self.world.Step(1.0/FPS, 6*30, 2*30)
-
-        state = self.dynamics.getState()
-
-        pos = self.lander.position
-
-        dyn = self.dynamics
-        self.lander.position = state[dyn.STATE_Y], -state[dyn.STATE_Z]
-        self.lander.angle = state[dyn.STATE_THETA]
- 
-        pos = self.lander.position
-
-        print(pos)
-        vel = self.lander.linearVelocity
-
-        return ml_power,mr_power, (pos.x, pos.y), (vel.x,vel.y), self.lander.angle, 20*self.lander.angularVelocity/FPS
+class LunarLanderContinuous(LunarLander):
+    continuous = True
 
 def heuristic(env, s):
     """
@@ -335,9 +418,14 @@ def heuristic(env, s):
         angle_todo = 0
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    a = np.array([hover_todo*20 - 1, -angle_todo*20])
-
-    a = np.clip(a, -1, +1)
+    if env.continuous:
+        a = np.array([hover_todo*20 - 1, -angle_todo*20])
+        a = np.clip(a, -1, +1)
+    else:
+        a = 0
+        if hover_todo > np.abs(angle_todo) and hover_todo > 0.05: a = 2
+        elif angle_todo < -0.05: a = 3
+        elif angle_todo > +0.05: a = 1
     return a
 
 def demo_heuristic_lander(env, seed=None, render=False):
@@ -354,15 +442,13 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
         steps += 1
         if done: break
     return total_reward
 
 
 if __name__ == '__main__':
-    demo_heuristic_lander(CopterLander(), render=True)
+    demo_heuristic_lander(LunarLander(), render=True)
