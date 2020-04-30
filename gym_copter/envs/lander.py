@@ -291,9 +291,12 @@ class CopterLander(gym.Env, EzPickle):
 
         pos = self.lander.position
 
+        # Copy dynamics back out to lander
         dyn = self.dynamics
         self.lander.position = state[dyn.STATE_Y], -state[dyn.STATE_Z]
         self.lander.angle = state[dyn.STATE_THETA]
+        self.lander.angularVelocity = state[dyn.STATE_THETA_DOT]
+        self.lander.vel = (state[dyn.STATE_Y_DOT], state[dyn.STATE_Z_DOT])
  
         pos = self.lander.position
 
