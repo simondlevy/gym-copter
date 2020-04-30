@@ -21,7 +21,7 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 MAIN_ENGINE_POWER = 13.0
 SIDE_ENGINE_POWER = 0.6
 
-INITIAL_RANDOM = 1.0   # Increase to make game harder
+INITIAL_RANDOM = 0.1   # Increase to make game harder
 
 LANDER_POLY =[
     (-14, +17), (-17, 0), (-17 ,-10),
