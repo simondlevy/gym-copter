@@ -163,8 +163,8 @@ class CopterLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_Z] = -13.33
 
         # Add a little random noise to initial velocities
-        state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
-        state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
+        #state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
+        #state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
 
         self.dynamics.setState(state)
 
@@ -210,10 +210,12 @@ class CopterLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
-        print('%+3.3f %+3.3f' % (action[0], action[1]))
-
         ml_power = 0.0
         mr_power = 0.0
+
+        motor = (action[0] + 1) / 2
+
+        self.dynamics.setMotors([motor]*4)
 
         self.dynamics.update(1.0/FPS)
 
@@ -229,7 +231,6 @@ class CopterLander(gym.Env, EzPickle):
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
  
         pos = self.lander.position
-
         vel = self.lander.linearVelocity
 
         state = [
