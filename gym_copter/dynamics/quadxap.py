@@ -19,9 +19,9 @@ from gym_copter.dynamics import MultirotorDynamics
 
 class QuadXAPDynamics(MultirotorDynamics):
 
-    def __init__(self, params):
+    def __init__(self, params, g):
 
-        MultirotorDynamics.__init__(self, params, 4)
+        MultirotorDynamics.__init__(self, params, 4, g)
 
     def u2(self,  o):
         '''

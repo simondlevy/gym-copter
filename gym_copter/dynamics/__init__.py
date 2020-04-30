@@ -78,7 +78,7 @@ class MultirotorDynamics:
     # Default to Earth gravity
     G = 9.80665
 
-    def __init__(self, params, motorCount, g=G):
+    def __init__(self, params, motorCount, g):
         '''
         Constructor
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).

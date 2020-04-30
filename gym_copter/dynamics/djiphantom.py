@@ -12,7 +12,7 @@ from gym_copter.dynamics.quadxap import QuadXAPDynamics
 
 class DJIPhantomDynamics(QuadXAPDynamics):
 
-    def __init__(self):
+    def __init__(self,g=QuadXAPDynamics.G):
 
         QuadXAPDynamics.__init__(self, Parameters(
 
@@ -31,7 +31,8 @@ class DJIPhantomDynamics(QuadXAPDynamics):
             38E-04, # Jr prop inertial [kg*m^2] 
 
             15000   # maxrpm
-            ))
+            ),
+            g)
 
 if __name__ == '__main__':
 
