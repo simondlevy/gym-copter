@@ -75,10 +75,7 @@ class MultirotorDynamics:
     STATE_PSI       = 10
     STATE_PSI_DOT   = 11
 
-    # universal constants
-    g = 9.80665 # might want to allow this to vary!
-
-    def __init__(self, params, motorCount):
+    def __init__(self, params, motorCount, g=9.80665):
         '''
         Constructor
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
@@ -86,6 +83,7 @@ class MultirotorDynamics:
         '''
         self._p = params
         self._motorCount = motorCount
+        self.g = g
 
         self._omegas  = np.zeros(motorCount)
 
@@ -103,7 +101,7 @@ class MultirotorDynamics:
         self._Omega = 0  # torque clockwise
 
         # Initialize inertial frame acceleration in NED coordinates
-        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-MultirotorDynamics.g, (0,0,0))
+        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-self.g, (0,0,0))
 
     def setMotors(self, motorvals):
         '''
@@ -138,7 +136,7 @@ class MultirotorDynamics:
         accelNED = MultirotorDynamics._bodyZToInertiall(-self._U1 / self._p.m, euler)
 
         # We're airborne once net downward acceleration goes below zero
-        netz = accelNED[2] + MultirotorDynamics.g
+        netz = accelNED[2] + self.g
 
         # If we're not airborne, we become airborne when downward acceleration has become negative
         if not self._airborne:

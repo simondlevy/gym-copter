@@ -288,11 +288,17 @@ class CopterLander(gym.Env, EzPickle):
         ml_power = 0.0
         mr_power = 0.0
 
+        self.dynamics.update(1.0/FPS)
+
         self.world.Step(1.0/FPS, 6*30, 2*30)
+
+        state = self.dynamics.getState()
 
         pos = self.lander.position
 
-        self.lander.position = pos[0], pos[1]-.05
+        print('%3.3f %3.3f' % (pos.y, -state[self.dynamics.STATE_Z]))
+
+        self.lander.position = pos.x, pos.y-.05
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
