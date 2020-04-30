@@ -210,6 +210,8 @@ class CopterLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
+        print('%+3.3f %+3.3f' % (action[0], action[1]))
+
         ml_power = 0.0
         mr_power = 0.0
 
@@ -229,8 +231,6 @@ class CopterLander(gym.Env, EzPickle):
         pos = self.lander.position
 
         vel = self.lander.linearVelocity
-
-        print(vel)
 
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
