@@ -30,10 +30,11 @@ LANDER_POLY =[
     (+14, 0), 
     (+20, +14)
     ]
-LEG_AWAY = 20
-LEG_DOWN = 18
-LEG_W, LEG_H = 2, 8
-LEG_SPRING_TORQUE = 40
+
+LEG_AWAY = 0
+LEG_DOWN = 25
+LEG_W = 2
+LEG_H = 8
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -187,15 +188,14 @@ class CopterLander(gym.Env, EzPickle):
                 localAnchorB=(i * LEG_AWAY/SCALE, LEG_DOWN/SCALE),
                 enableMotor=True,
                 enableLimit=True,
-                maxMotorTorque=LEG_SPRING_TORQUE,
                 motorSpeed=+0.3 * i  # low enough not to jump back into the sky
                 )
             if i == -1:
-                rjd.lowerAngle = +0.9 - 0.5  # The most esoteric numbers here, angled legs have freedom to travel within
+                rjd.lowerAngle = +0.9
                 rjd.upperAngle = +0.9
             else:
                 rjd.lowerAngle = -0.9
-                rjd.upperAngle = -0.9 + 0.5
+                rjd.upperAngle = -0.9
             leg.joint = self.world.CreateJoint(rjd)
             self.legs.append(leg)
 
