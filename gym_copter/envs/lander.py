@@ -40,6 +40,9 @@ SIDE_ENGINE_AWAY = 12.0
 VIEWPORT_W = 600
 VIEWPORT_H = 400
 
+SKY_COLOR    = 0.5, 0.8, 1.0
+GROUND_COLOR = 0.5, 0.7, 0.3
+
 class ContactDetector(contactListener):
     def __init__(self, env):
         contactListener.__init__(self)
@@ -70,7 +73,7 @@ class CopterLander(gym.Env, EzPickle):
         self.viewer = None
 
         self.world = Box2D.b2World()
-        self.moon = None
+        self.ground = None
         self.lander = None
 
         self.prev_reward = None
@@ -90,10 +93,10 @@ class CopterLander(gym.Env, EzPickle):
         return [seed]
 
     def _destroy(self):
-        if not self.moon: return
+        if not self.ground: return
         self.world.contactListener = None
-        self.world.DestroyBody(self.moon)
-        self.moon = None
+        self.world.DestroyBody(self.ground)
+        self.ground = None
         self.world.DestroyBody(self.lander)
         self.lander = None
         self.world.DestroyBody(self.legs[0])
@@ -126,19 +129,16 @@ class CopterLander(gym.Env, EzPickle):
         height[CHUNKS//2+2] = self.helipad_y
         smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(CHUNKS)]
 
-        self.moon = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
+        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
         self.sky_polys = []
         for i in range(CHUNKS-1):
             p1 = (chunk_x[i], smooth_y[i])
             p2 = (chunk_x[i+1], smooth_y[i+1])
-            self.moon.CreateEdgeFixture(
+            self.ground.CreateEdgeFixture(
                 vertices=[p1,p2],
                 density=0,
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
-
-        self.moon.color1 = (0.0, 0.0, 0.0)
-        self.moon.color2 = (0.0, 0.0, 0.0)
 
         initial_y = VIEWPORT_H/SCALE
         self.lander = self.world.CreateDynamicBody(
@@ -277,13 +277,17 @@ class CopterLander(gym.Env, EzPickle):
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
+
         from gym.envs.classic_control import rendering
+
         if self.viewer is None:
             self.viewer = rendering.Viewer(VIEWPORT_W, VIEWPORT_H)
             self.viewer.set_bounds(0, VIEWPORT_W/SCALE, 0, VIEWPORT_H/SCALE)
 
+        self.viewer.draw_polygon([(0,0), (VIEWPORT_W,0), (VIEWPORT_W,VIEWPORT_H), (0,VIEWPORT_H)], color=GROUND_COLOR)
+
         for p in self.sky_polys:
-            self.viewer.draw_polygon(p, color=(0, 0, 0))
+            self.viewer.draw_polygon(p, color=SKY_COLOR)
 
         for obj in self.drawlist:
             for f in obj.fixtures:
