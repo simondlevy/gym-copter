@@ -186,16 +186,12 @@ class CopterLander(gym.Env, EzPickle):
                 bodyB=leg,
                 localAnchorA=(0, 0),
                 localAnchorB=(i * LEG_AWAY/SCALE, LEG_DOWN/SCALE),
+                lowerAngle = -i * 0.9,
+                upperAngle = -i * 0.9,
                 enableMotor=True,
                 enableLimit=True,
                 motorSpeed=+0.3 * i  # low enough not to jump back into the sky
                 )
-            if i == -1:
-                rjd.lowerAngle = +0.9
-                rjd.upperAngle = +0.9
-            else:
-                rjd.lowerAngle = -0.9
-                rjd.upperAngle = -0.9
             leg.joint = self.world.CreateJoint(rjd)
             self.legs.append(leg)
 
