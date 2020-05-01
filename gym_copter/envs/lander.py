@@ -40,9 +40,11 @@ SIDE_ENGINE_AWAY = 12.0
 VIEWPORT_W = 600
 VIEWPORT_H = 400
 
-SKY_COLOR    = 0.5, 0.8, 1.0
-GROUND_COLOR = 0.5, 0.7, 0.3
-FLAG_COLOR   = 0.8, 0.0, 0.0
+SKY_COLOR     = 0.5, 0.8, 1.0
+GROUND_COLOR  = 0.5, 0.7, 0.3
+FLAG_COLOR    = 0.8, 0.0, 0.0
+VEHICLE_COLOR = 1.0, 1.0, 1.0
+OUTLINE_COLOR = 0.0, 0.0, 0.0
 
 class ContactDetector(contactListener):
     def __init__(self, env):
@@ -153,8 +155,6 @@ class CopterLander(gym.Env, EzPickle):
                 maskBits=0x001,   # collide only with ground
                 restitution=0.0)  # 0.99 bouncy
                 )
-        self.lander.color1 = (0.5, 0.4, 0.9)
-        self.lander.color2 = (0.3, 0.3, 0.5)
 
         self.dynamics = DJIPhantomDynamics(g=1.62) # XXX use Moon gravity for now
 
@@ -183,8 +183,6 @@ class CopterLander(gym.Env, EzPickle):
                     maskBits=0x001)
                 )
             leg.ground_contact = False
-            leg.color1 = (0.5, 0.4, 0.9)
-            leg.color2 = (0.3, 0.3, 0.5)
             rjd = revoluteJointDef(
                 bodyA=self.lander,
                 bodyB=leg,
@@ -295,13 +293,13 @@ class CopterLander(gym.Env, EzPickle):
                 trans = f.body.transform
                 if type(f.shape) is circleShape:
                     t = rendering.Transform(translation=trans*f.shape.pos)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=obj.color1).add_attr(t)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=obj.color2, filled=False, linewidth=2).add_attr(t)
+                    self.viewer.draw_circle(f.shape.radius, 20, color=VEHICLE_COLOR).add_attr(t)
+                    self.viewer.draw_circle(f.shape.radius, 20, color=OUTLINE_COLOR, filled=False, linewidth=2).add_attr(t)
                 else:
                     path = [trans*v for v in f.shape.vertices]
-                    self.viewer.draw_polygon(path, color=obj.color1)
+                    self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
                     path.append(path[0])
-                    self.viewer.draw_polyline(path, color=obj.color2, linewidth=2)
+                    self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=2)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
