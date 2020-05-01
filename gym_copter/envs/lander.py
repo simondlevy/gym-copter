@@ -15,6 +15,9 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+START_X = 12
+START_Y = 13.33
+
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
@@ -37,7 +40,6 @@ SIDE_ENGINE_AWAY = 12.0
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
-
 
 class ContactDetector(contactListener):
     def __init__(self, env):
@@ -159,8 +161,8 @@ class CopterLander(gym.Env, EzPickle):
         state = np.zeros(12)
 
         # Start at top center
-        state[self.dynamics.STATE_Y] = 8 #10
-        state[self.dynamics.STATE_Z] = -13.33
+        state[self.dynamics.STATE_Y] = START_X
+        state[self.dynamics.STATE_Z] = -START_Y
 
         # Add a little random noise to initial velocities
         #state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
@@ -207,18 +209,23 @@ class CopterLander(gym.Env, EzPickle):
         return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
-
-        action = np.clip(action, -1, +1).astype(np.float32)
+        '''
+        action[0] = throttle strength
+        action[1] = roll strength
+        '''
 
         ml_power = 0.0
         mr_power = 0.0
 
         # Rescale [-1,+1] => [0,1]
-        action = (action + 1) / 2 
+        action[0] = (action[0] + 1) / 2 
 
-        motors = [action[1], action[0], action[0], action[1]]
+        motors = [action[0]]*4
 
-        print(motors)
+        print(action[1])
+
+        motors[0] += action[1]
+        motors[3] += action[1]
 
         self.dynamics.setMotors(motors)
 
@@ -329,24 +336,20 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    angle_targ = s[0]*0.5 + s[2]*1.0         # angle should point towards center
-    if angle_targ > 0.4: angle_targ = 0.4    # more than 0.4 radians (22 degrees) is bad
-    if angle_targ < -0.4: angle_targ = -0.4
-    hover_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
+    throttle_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
 
-    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
-    hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
+    roll_todo = s[0]/100
+    throttle_todo = (throttle_targ - s[1])*0.5 - (s[3])*0.5
 
     if s[6] or s[7]:  # legs have contact
-        angle_todo = 0
-        hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
+        roll_todo = 0
+        throttle_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    #a = np.array([hover_todo*20 - 1, -angle_todo*20])
-    a = np.array([hover_todo*20 - 1, angle_todo*20 - 1])
+    throttle_todo = throttle_todo*20 - 1
 
-    a = np.clip(a, -1, +1)
+    throttle_todo = np.clip(throttle_todo, -1, +1)
 
-    return a
+    return [throttle_todo, roll_todo]
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
@@ -361,12 +364,6 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-
-        '''
-        if steps % 20 == 0 or done:
-            print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
-            print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
 
         steps += 1
         if done: break
