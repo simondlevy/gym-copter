@@ -42,6 +42,7 @@ VIEWPORT_H = 400
 
 SKY_COLOR    = 0.5, 0.8, 1.0
 GROUND_COLOR = 0.5, 0.7, 0.3
+FLAG_COLOR   = 0.8, 0.0, 0.0
 
 class ContactDetector(contactListener):
     def __init__(self, env):
@@ -307,7 +308,7 @@ class CopterLander(gym.Env, EzPickle):
             flagy2 = flagy1 + 50/SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/SCALE), (x + 25/SCALE, flagy2 - 5/SCALE)],
-                                     color=(0.8, 0.8, 0))
+                                     color=FLAG_COLOR)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
