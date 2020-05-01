@@ -222,8 +222,6 @@ class CopterLander(gym.Env, EzPickle):
 
         motors = [action[0]]*4
 
-        print(action[1])
-
         motors[0] += action[1]
         motors[3] += action[1]
 
@@ -339,7 +337,6 @@ def heuristic(env, s):
     throttle_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
 
     roll_todo = s[0]/10
-    #throttle_todo = (throttle_targ - s[1])*0.5 - (s[3])*0.5
     throttle_todo = (throttle_targ - s[1])*0.25 - (s[3])*.5
 
     if s[6] or s[7]:  # legs have contact
@@ -365,7 +362,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-
+        if steps % 20 == 0 or done:
+            print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
+            print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
         if done: break
     return total_reward
