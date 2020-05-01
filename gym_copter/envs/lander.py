@@ -3,7 +3,6 @@
 Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/box2d/lunar_lander.py
 """
 
-import math
 import numpy as np
 
 import Box2D
