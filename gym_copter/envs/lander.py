@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-START_X = 12
+START_X = 8
 START_Y = 13.33
 
 FPS = 50
@@ -338,14 +338,15 @@ def heuristic(env, s):
 
     throttle_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
 
-    roll_todo = s[0]/100
-    throttle_todo = (throttle_targ - s[1])*0.5 - (s[3])*0.5
+    roll_todo = s[0]/10
+    #throttle_todo = (throttle_targ - s[1])*0.5 - (s[3])*0.5
+    throttle_todo = (throttle_targ - s[1])*0.25 - (s[3])*.5
 
     if s[6] or s[7]:  # legs have contact
         roll_todo = 0
         throttle_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
-    throttle_todo = throttle_todo*20 - 1
+    throttle_todo = throttle_todo*10 - 1
 
     throttle_todo = np.clip(throttle_todo, -1, +1)
 
