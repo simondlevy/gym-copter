@@ -20,22 +20,20 @@ START_Y = 13.33
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
-MAIN_ENGINE_POWER = 13.0
-SIDE_ENGINE_POWER = 0.6
-
-INITIAL_RANDOM = 0.1   # Increase to make game harder
+INITIAL_RANDOM = 0.2   # Increase to make game harder
 
 LANDER_POLY =[
-    (-14, +17), (-17, 0), (-17 ,-10),
-    (+17, -10), (+17, 0), (+14, +17)
+    (-20, +14), 
+    (-14, 0), 
+    (-14 ,-10),
+    (+14, -10), 
+    (+14, 0), 
+    (+20, +14)
     ]
 LEG_AWAY = 20
 LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
 LEG_SPRING_TORQUE = 40
-
-SIDE_ENGINE_HEIGHT = 14.0
-SIDE_ENGINE_AWAY = 12.0
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -62,7 +60,6 @@ class ContactDetector(contactListener):
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = False
-
 
 class CopterLander(gym.Env, EzPickle):
     metadata = {
