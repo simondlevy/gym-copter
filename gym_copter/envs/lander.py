@@ -349,7 +349,7 @@ def heuristic(env, s):
 
     throttle_todo = np.clip(throttle_todo, -1, +1)
 
-    return [throttle_todo, roll_todo]
+    return np.array([throttle_todo, roll_todo])
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
