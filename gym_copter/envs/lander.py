@@ -51,6 +51,7 @@ class ContactDetector(contactListener):
     def __init__(self, env):
         contactListener.__init__(self)
         self.env = env
+        self.leg_contacts = [False, False]
 
     def BeginContact(self, contact):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
@@ -58,11 +59,15 @@ class ContactDetector(contactListener):
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = True
+                self.leg_contacts[i] = True
 
     def EndContact(self, contact):
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
                 self.env.legs[i].ground_contact = False
+
+    def bothLegsDown(self):
+        return all(self.leg_contacts)
 
 class CopterLander(gym.Env, EzPickle):
     metadata = {
@@ -265,7 +270,7 @@ class CopterLander(gym.Env, EzPickle):
         if self.game_over or abs(state[0]) >= 1.0:
             done = True
             reward = -100
-        if not self.lander.awake:
+        if not self.lander.awake or self.world.contactListener.bothLegsDown():
             done = True
             reward = +100
         return np.array(state, dtype=np.float32), reward, done, {}
