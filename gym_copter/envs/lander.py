@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 START_X = 8
-START_Y = 13.33
+START_Y = 13
 
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
@@ -170,7 +170,7 @@ class CopterLander(gym.Env, EzPickle):
 
         # Add a little random noise to initial velocities
         #state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
-        #state[self.dynamics.STATE_THETA_DOT] = INITIAL_RANDOM * np.random.randn()
+        #state[self.dynamics.STATE_PHI_DOT] = INITIAL_RANDOM * np.random.randn()
 
         self.dynamics.setState(state)
 
@@ -187,11 +187,12 @@ class CopterLander(gym.Env, EzPickle):
                     maskBits=0x001)
             )
             leg.ground_contact = False
+
             rjd = revoluteJointDef(
                 bodyA=self.lander,
                 bodyB=leg,
                 localAnchorA=(0, 0),
-                localAnchorB=(i*.5, LEG_DOWN/SCALE),
+                localAnchorB=(i*.4, LEG_DOWN/SCALE),
                 lowerAngle = 0, 
                 upperAngle = 0, 
                 enableMotor=True,
@@ -199,6 +200,7 @@ class CopterLander(gym.Env, EzPickle):
                 motorSpeed=+0.3 * i  # low enough not to jump back into the sky
                 )
             leg.joint = self.world.CreateJoint(rjd)
+
             self.legs.append(leg)
 
         self.drawlist = [self.lander] + self.legs
@@ -233,10 +235,10 @@ class CopterLander(gym.Env, EzPickle):
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
         self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
-        self.lander.angle           = state[dyn.STATE_THETA]
-        self.lander.angularVelocity = state[dyn.STATE_THETA_DOT]
+        self.lander.angle           = -state[dyn.STATE_PHI]
+        self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
- 
+
         pos = self.lander.position
         vel = self.lander.linearVelocity
 
@@ -363,11 +365,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-        '''
-        if steps % 20 == 0 or done:
+        if False: #steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
         steps += 1
         if done: break
     env.close()
