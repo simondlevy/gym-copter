@@ -121,7 +121,8 @@ class ContactDetector(contactListener):
         self.leg_contacts = [False, False]
 
     def BeginContact(self, contact):
-        if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
+        if self.env.lander1 == contact.fixtureA.body or self.env.lander1 == contact.fixtureB.body:
+            return
             self.env.game_over = True
 
 class CopterLander(gym.Env, EzPickle):
@@ -137,7 +138,8 @@ class CopterLander(gym.Env, EzPickle):
 
         self.world = Box2D.b2World()
         self.ground = None
-        self.lander = None
+        self.lander1 = None
+        self.lander2 = None
 
         self.prev_reward = None
 
@@ -160,8 +162,10 @@ class CopterLander(gym.Env, EzPickle):
         self.world.contactListener = None
         self.world.DestroyBody(self.ground)
         self.ground = None
-        self.world.DestroyBody(self.lander)
-        self.lander = None
+        self.world.DestroyBody(self.lander1)
+        self.world.DestroyBody(self.lander2)
+        self.lander1 = None
+        self.lander2 = None
 
     def reset(self):
         self._destroy()
@@ -202,9 +206,22 @@ class CopterLander(gym.Env, EzPickle):
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
         initial_y = VIEWPORT_H/SCALE
-        self.lander = self.world.CreateDynamicBody(
+
+        self.lander1 = self.world.CreateDynamicBody(
                 position=(VIEWPORT_W/SCALE/2, initial_y),
                 angle=0.0,
+
+                fixtures = [
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
+                    for poly in [BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY, LEG1_POLY,LEG2_POLY, 
+                        MOTOR1_POLY, MOTOR2_POLY, HULL_POLY]
+                    ]
+                )
+
+        self.lander2 = self.world.CreateDynamicBody(
+                position=(VIEWPORT_W/SCALE/2, initial_y),
+                angle=0.0,
+
                 fixtures = [
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
                     for poly in [BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY, LEG1_POLY,LEG2_POLY, 
@@ -226,6 +243,8 @@ class CopterLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_PHI_DOT] = INITIAL_RANDOM * np.random.randn()
 
         self.dynamics.setState(state)
+
+        self.flip = False
 
         return self.step(np.array([0, 0]))[0]
 
@@ -257,29 +276,34 @@ class CopterLander(gym.Env, EzPickle):
 
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
-        self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
-        self.lander.angle           = -state[dyn.STATE_PHI]
-        self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
-        self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
+        self.lander1.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
+        self.lander1.angle           = -state[dyn.STATE_PHI]
+        self.lander1.angularVelocity = -state[dyn.STATE_PHI_DOT]
+        self.lander1.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
 
-        pos = self.lander.position
-        vel = self.lander.linearVelocity
+        self.lander2.position        = self.lander1.position
+        self.lander2.angle           = self.lander1.angle
+        self.lander2.angularVelocity = self.lander1.angularVelocity
+        self.lander2.linearVelocity  = self.lander1.linearVelocity
+
+        pos = self.lander1.position
+        vel = self.lander1.linearVelocity
 
         state = [
-            (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
-            vel.x*(VIEWPORT_W/SCALE/2)/FPS,
-            vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-            self.lander.angle,
-            20*self.lander.angularVelocity/FPS
-            ]
+                (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
+                (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
+                vel.x*(VIEWPORT_W/SCALE/2)/FPS,
+                vel.y*(VIEWPORT_H/SCALE/2)/FPS,
+                self.lander1.angle,
+                20*self.lander1.angularVelocity/FPS
+                ]
         assert len(state) == 6
 
         reward = 0
         shaping = \
-            - 100*np.sqrt(state[0]*state[0] + state[1]*state[1]) \
-            - 100*np.sqrt(state[2]*state[2] + state[3]*state[3]) \
-            - 100*abs(state[4])
+                - 100*np.sqrt(state[0]*state[0] + state[1]*state[1]) \
+                - 100*np.sqrt(state[2]*state[2] + state[3]*state[3]) \
+                - 100*abs(state[4])
                                                              # lose contact again after landing, you get negative reward
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -292,6 +316,7 @@ class CopterLander(gym.Env, EzPickle):
         if self.game_over or abs(state[0]) >= 1.0:
             done = True
             reward = -100
+
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
@@ -307,7 +332,9 @@ class CopterLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
-        for f in self.lander.fixtures:
+        lander = self.lander2 if self.flip else self.lander1
+
+        for f in lander.fixtures:
             trans = f.body.transform
             path = [trans*v for v in f.shape.vertices]
             self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
@@ -320,6 +347,8 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/SCALE), (x + 25/SCALE, flagy2 - 5/SCALE)],
                                      color=FLAG_COLOR)
+
+        self.flip = not self.flip
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
