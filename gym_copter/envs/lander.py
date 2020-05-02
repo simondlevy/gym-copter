@@ -154,17 +154,9 @@ class CopterLander(gym.Env, EzPickle):
                 position=(VIEWPORT_W/SCALE/2, initial_y),
                 angle=0.0,
                 fixtures = [
-                    fixtureDef(
-                        shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]),
-                        density=5.0,
-                        friction=0.1,
-                        categoryBits=0x0010,
-                        maskBits=0x001,   # collide only with ground
-                        restitution=0.0),  # 0.99 bouncy
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG1_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG2_POLY]), density=1.0),
-                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY3]), density=1.0),
-                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY4]), density=1.0)
                     ]
                 )
 
