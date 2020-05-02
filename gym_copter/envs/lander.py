@@ -60,6 +60,13 @@ BLADE2L_POLY = [
         (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
         ]
 
+BLADE2R_POLY = [
+        (-BLADE_X,BLADE_Y),
+        (-BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+        (-BLADE_X+BLADE_W,BLADE_Y),
+        (-BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+        ]
+
 HULL_POLY =[
         (-30, 0),
         (-4, +4),
@@ -206,6 +213,7 @@ class CopterLander(gym.Env, EzPickle):
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE1L_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE1R_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE2L_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE2R_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]), density=1.0),
                     ]
                 )
