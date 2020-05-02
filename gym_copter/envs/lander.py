@@ -14,13 +14,13 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-START_X = 8
+START_X = 10
 START_Y = 13
 
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
-INITIAL_RANDOM = 0.2   # Increase to make game harder
+INITIAL_RANDOM = 0.1   # Increase to make game harder
 
 LANDER_POLY =[
         (-30, 0),
@@ -169,8 +169,9 @@ class CopterLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_Z] = -START_Y
 
         # Add a little random noise to initial velocities
-        #state[self.dynamics.STATE_Y_DOT]     = INITIAL_RANDOM * np.random.randn()
-        #state[self.dynamics.STATE_PHI_DOT] = INITIAL_RANDOM * np.random.randn()
+        state[self.dynamics.STATE_Y]       = START_X + INITIAL_RANDOM * np.random.randn()
+        state[self.dynamics.STATE_Y_DOT]   = INITIAL_RANDOM * np.random.randn()
+        state[self.dynamics.STATE_PHI_DOT] = INITIAL_RANDOM * np.random.randn()
 
         self.dynamics.setState(state)
 
@@ -337,10 +338,10 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    throttle_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
+    throttle_targ = np.abs(s[0])           # target y should be proportional to horizontal offset
 
     roll_todo = s[0]/10
-    throttle_todo = (throttle_targ - s[1])*0.25 - (s[3])*.5
+    throttle_todo = (throttle_targ - s[1])*0.20 - (s[3])*.5
 
     if s[6] or s[7]:  # legs have contact
         roll_todo = 0
