@@ -27,6 +27,9 @@ INITIAL_RANDOM = 0   # Increase to make game harder
 LEG_W = 3
 LEG_H = 15
 
+LEG1_X = -20
+LEG_Y  = -10
+
 HULL_POLY =[
         (-30, 0),
         (-4, +8),
@@ -37,10 +40,10 @@ HULL_POLY =[
     ]
 
 LEG1_POLY = [
-        (-20,-20),
-        (0,-20),
-        (0,-40),
-        (-20,-40)
+        (LEG1_X,LEG_Y),
+        (LEG1_X+LEG_W,LEG_Y),
+        (LEG1_X+LEG_W,LEG_Y-LEG_H),
+        (LEG1_X,LEG_Y-LEG_H)
     ]
 
 VIEWPORT_W = 600
