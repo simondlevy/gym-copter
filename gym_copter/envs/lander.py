@@ -25,10 +25,10 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 INITIAL_RANDOM = 0   # Increase to make game harder
 
 LEG_W = 3
-LEG_H = 15
+LEG_H = 12
 
-LEG1_X = -20
-LEG_Y  = -10
+LEG_X  = 15
+LEG_Y  = -7
 
 HULL_POLY =[
         (-30, 0),
@@ -40,10 +40,17 @@ HULL_POLY =[
     ]
 
 LEG1_POLY = [
-        (LEG1_X,LEG_Y),
-        (LEG1_X+LEG_W,LEG_Y),
-        (LEG1_X+LEG_W,LEG_Y-LEG_H),
-        (LEG1_X,LEG_Y-LEG_H)
+        (-LEG_X,LEG_Y),
+        (-LEG_X+LEG_W,LEG_Y),
+        (-LEG_X+LEG_W,LEG_Y-LEG_H),
+        (-LEG_X,LEG_Y-LEG_H)
+    ]
+
+LEG2_POLY = [
+        (+LEG_X,LEG_Y),
+        (+LEG_X+LEG_W,LEG_Y),
+        (+LEG_X+LEG_W,LEG_Y-LEG_H),
+        (+LEG_X,LEG_Y-LEG_H)
     ]
 
 VIEWPORT_W = 600
@@ -155,7 +162,7 @@ class CopterLander(gym.Env, EzPickle):
                         maskBits=0x001,   # collide only with ground
                         restitution=0.0),  # 0.99 bouncy
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG1_POLY]), density=1.0),
-                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY2]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG2_POLY]), density=1.0),
                     #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY3]), density=1.0),
                     #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY4]), density=1.0)
                     ]
