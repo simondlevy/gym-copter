@@ -237,8 +237,8 @@ class CopterLander(gym.Env, EzPickle):
 
     def step(self, action):
         '''
-        action[0] = throttle strength
-        action[1] = roll strength
+        action[0] = throttle demand
+        action[1] = roll demand
         '''
 
         ml_power = 0.0
@@ -247,15 +247,14 @@ class CopterLander(gym.Env, EzPickle):
         # Rescale [-1,+1] => [0,1]
         action[0] = (action[0] + 1) / 2 
 
+        # A simple mixer
         motors = [action[0]]*4
-
         motors[0] += action[1]
         motors[3] += action[1]
 
         self.dynamics.setMotors(motors)
 
-        if -self.dynamics.getState()[self.dynamics.STATE_Z] > 10:
-            self.dynamics.update(1.0/FPS)
+        self.dynamics.update(1.0/FPS)
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
