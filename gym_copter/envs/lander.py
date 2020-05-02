@@ -23,14 +23,12 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 INITIAL_RANDOM = 0.2   # Increase to make game harder
 
 LANDER_POLY =[
-    (-20, +10),
-    (+20, +10),
-    (+26, +7),
-    (+26,-7),
-    (+20,-10),
-    (-20,-10),
-    (-26,-7),
-    (-26,+7)
+        (-30, 0),
+        (-4, +8),
+        (+4, +8),
+        (+30,  0),
+        (+4, -12),
+        (-4, -12),
     ]
 
 LEG_AWAY = -3 
