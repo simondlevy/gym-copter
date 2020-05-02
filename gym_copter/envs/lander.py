@@ -14,6 +14,8 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+SIZE = 0.005
+
 START_X = 10
 START_Y = 13
 
@@ -29,6 +31,29 @@ LANDER_POLY =[
         (+30,  0),
         (+4, -12),
         (-4, -12),
+    ]
+
+HULL_POLY1 = [
+    (-60, +130), (+60, +130),
+    (+60, +110), (-60, +110)
+    ]
+HULL_POLY2 = [
+    (-15, +120), (+15, +120),
+    (+20, +20), (-20, 20)
+    ]
+HULL_POLY3 = [
+    (+25, +20),
+    (+50, -10),
+    (+50, -40),
+    (+20, -90),
+    (-20, -90),
+    (-50, -40),
+    (-50, -10),
+    (-25, +20)
+    ]
+HULL_POLY4 = [
+    (-50, -120), (+50, -120),
+    (+50, -90),  (-50, -90)
     ]
 
 LEG_AWAY = -3 
@@ -149,16 +174,23 @@ class CopterLander(gym.Env, EzPickle):
 
         initial_y = VIEWPORT_H/SCALE
         self.lander = self.world.CreateDynamicBody(
-            position=(VIEWPORT_W/SCALE/2, initial_y),
-            angle=0.0,
-            fixtures = fixtureDef(
-                shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LANDER_POLY]),
-                density=5.0,
-                friction=0.1,
-                categoryBits=0x0010,
-                maskBits=0x001,   # collide only with ground
-                restitution=0.0)  # 0.99 bouncy
+                position=(VIEWPORT_W/SCALE/2, initial_y),
+                angle=0.0,
+                fixtures = [
+                    fixtureDef(
+                        shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LANDER_POLY]),
+                        density=5.0,
+                        friction=0.1,
+                        categoryBits=0x0010,
+                        maskBits=0x001,   # collide only with ground
+                        restitution=0.0),  # 0.99 bouncy
+                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY1]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY2]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY3]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY4]), density=1.0)
+                    ]
                 )
+
 
         self.dynamics = DJIPhantomDynamics()
 
@@ -293,15 +325,10 @@ class CopterLander(gym.Env, EzPickle):
         for obj in self.drawlist:
             for f in obj.fixtures:
                 trans = f.body.transform
-                if type(f.shape) is circleShape:
-                    t = rendering.Transform(translation=trans*f.shape.pos)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=VEHICLE_COLOR).add_attr(t)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=OUTLINE_COLOR, filled=False, linewidth=2).add_attr(t)
-                else:
-                    path = [trans*v for v in f.shape.vertices]
-                    self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
-                    path.append(path[0])
-                    self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=2)
+                path = [trans*v for v in f.shape.vertices]
+                self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
+                path.append(path[0])
+                self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
