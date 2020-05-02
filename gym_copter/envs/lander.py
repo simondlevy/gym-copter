@@ -112,6 +112,8 @@ SKY_COLOR     = 0.5, 0.8, 1.0
 GROUND_COLOR  = 0.5, 0.7, 0.3
 FLAG_COLOR    = 0.8, 0.0, 0.0
 VEHICLE_COLOR = 1.0, 1.0, 1.0
+MOTOR_COLOR   = 0.5, 0.5, 0.5
+PROP_COLOR    = 0.0, 0.0, 0.0
 OUTLINE_COLOR = 0.0, 0.0, 0.0
 
 class ContactDetector(contactListener):
@@ -209,7 +211,7 @@ class CopterLander(gym.Env, EzPickle):
 
                 fixtures = [
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
-                    for poly in [LEG1_POLY, LEG2_POLY, MOTOR1_POLY, MOTOR2_POLY, HULL_POLY,
+                    for poly in [HULL_POLY, LEG1_POLY, LEG2_POLY, MOTOR1_POLY, MOTOR2_POLY,
                         BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY]
                     ]
                 )
@@ -312,14 +314,16 @@ class CopterLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
+        self._show_fixture(1, VEHICLE_COLOR)
+        self._show_fixture(2, VEHICLE_COLOR)
+        self._show_fixture(0, VEHICLE_COLOR)
+        self._show_fixture(3, MOTOR_COLOR)
+        self._show_fixture(4, MOTOR_COLOR)
+
         # Simulate spinning props by alernating
-        lim = 6 if self.show_props else len(self.lander.fixtures)
-        for f in self.lander.fixtures[:lim]:
-            trans = f.body.transform
-            path = [trans*v for v in f.shape.vertices]
-            self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
-            path.append(path[0])
-            self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
+        if self.show_props:
+            for k in range(5,9):
+                self._show_fixture(k, PROP_COLOR)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
@@ -336,6 +340,15 @@ class CopterLander(gym.Env, EzPickle):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
+
+    def _show_fixture(self, index, color):
+        fixture = self.lander.fixtures[index]
+        trans = fixture.body.transform
+        path = [trans*v for v in fixture.shape.vertices]
+        self.viewer.draw_polygon(path, color=color)
+        path.append(path[0])
+        self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
+
 
 def heuristic(env, s):
     """
