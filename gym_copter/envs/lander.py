@@ -121,8 +121,7 @@ class ContactDetector(contactListener):
         self.leg_contacts = [False, False]
 
     def BeginContact(self, contact):
-        if self.env.lander1 == contact.fixtureA.body or self.env.lander1 == contact.fixtureB.body:
-            return
+        if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.game_over = True
 
 class CopterLander(gym.Env, EzPickle):
@@ -138,8 +137,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.world = Box2D.b2World()
         self.ground = None
-        self.lander1 = None
-        self.lander2 = None
+        self.lander = None
 
         self.prev_reward = None
 
@@ -162,10 +160,8 @@ class CopterLander(gym.Env, EzPickle):
         self.world.contactListener = None
         self.world.DestroyBody(self.ground)
         self.ground = None
-        self.world.DestroyBody(self.lander1)
-        self.world.DestroyBody(self.lander2)
-        self.lander1 = None
-        self.lander2 = None
+        self.world.DestroyBody(self.lander)
+        self.lander = None
 
     def reset(self):
         self._destroy()
@@ -207,18 +203,7 @@ class CopterLander(gym.Env, EzPickle):
 
         initial_y = VIEWPORT_H/SCALE
 
-        self.lander1 = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W/SCALE/2, initial_y),
-                angle=0.0,
-
-                fixtures = [
-                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
-                    for poly in [BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY, LEG1_POLY,LEG2_POLY, 
-                        MOTOR1_POLY, MOTOR2_POLY, HULL_POLY]
-                    ]
-                )
-
-        self.lander2 = self.world.CreateDynamicBody(
+        self.lander = self.world.CreateDynamicBody(
                 position=(VIEWPORT_W/SCALE/2, initial_y),
                 angle=0.0,
 
@@ -276,26 +261,21 @@ class CopterLander(gym.Env, EzPickle):
 
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
-        self.lander1.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
-        self.lander1.angle           = -state[dyn.STATE_PHI]
-        self.lander1.angularVelocity = -state[dyn.STATE_PHI_DOT]
-        self.lander1.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
+        self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
+        self.lander.angle           = -state[dyn.STATE_PHI]
+        self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
+        self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
 
-        self.lander2.position        = self.lander1.position
-        self.lander2.angle           = self.lander1.angle
-        self.lander2.angularVelocity = self.lander1.angularVelocity
-        self.lander2.linearVelocity  = self.lander1.linearVelocity
-
-        pos = self.lander1.position
-        vel = self.lander1.linearVelocity
+        pos = self.lander.position
+        vel = self.lander.linearVelocity
 
         state = [
                 (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
                 (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
                 vel.x*(VIEWPORT_W/SCALE/2)/FPS,
                 vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-                self.lander1.angle,
-                20*self.lander1.angularVelocity/FPS
+                self.lander.angle,
+                20*self.lander.angularVelocity/FPS
                 ]
         assert len(state) == 6
 
@@ -332,9 +312,8 @@ class CopterLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
-        lander = self.lander2 if self.flip else self.lander1
-
-        for f in lander.fixtures:
+        # Simulate spinning props by alernating
+        for f in self.lander.fixtures:
             trans = f.body.transform
             path = [trans*v for v in f.shape.vertices]
             self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
