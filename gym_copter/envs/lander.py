@@ -229,7 +229,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
-        self.hide_props = False
+        self.show_props = 0
 
         return self.step(np.array([0, 0]))[0]
 
@@ -313,7 +313,7 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
         # Simulate spinning props by alernating
-        lim = 6 if self.hide_props else len(self.lander.fixtures)
+        lim = 6 if self.show_props else len(self.lander.fixtures)
         for f in self.lander.fixtures[:lim]:
             trans = f.body.transform
             path = [trans*v for v in f.shape.vertices]
@@ -328,7 +328,7 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/SCALE), (x + 25/SCALE, flagy2 - 5/SCALE)],
                                      color=FLAG_COLOR)
 
-        self.hide_props = not self.hide_props
+        self.show_props = (self.show_props + 1) % 3
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
