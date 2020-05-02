@@ -209,8 +209,8 @@ class CopterLander(gym.Env, EzPickle):
 
                 fixtures = [
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
-                    for poly in [BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY, LEG1_POLY,LEG2_POLY, 
-                        MOTOR1_POLY, MOTOR2_POLY, HULL_POLY]
+                    for poly in [LEG1_POLY, LEG2_POLY, MOTOR1_POLY, MOTOR2_POLY, HULL_POLY,
+                        BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY]
                     ]
                 )
 
@@ -229,7 +229,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
-        self.flip = False
+        self.hide_props = False
 
         return self.step(np.array([0, 0]))[0]
 
@@ -313,7 +313,8 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
         # Simulate spinning props by alernating
-        for f in self.lander.fixtures:
+        lim = 6 if self.hide_props else len(self.lander.fixtures)
+        for f in self.lander.fixtures[:lim]:
             trans = f.body.transform
             path = [trans*v for v in f.shape.vertices]
             self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
@@ -327,7 +328,7 @@ class CopterLander(gym.Env, EzPickle):
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/SCALE), (x + 25/SCALE, flagy2 - 5/SCALE)],
                                      color=FLAG_COLOR)
 
-        self.flip = not self.flip
+        self.hide_props = not self.hide_props
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
