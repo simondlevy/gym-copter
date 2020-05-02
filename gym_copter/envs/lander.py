@@ -33,8 +33,9 @@ LANDER_POLY =[
     (-26,+7)
     ]
 
-LEG_AWAY = 0
-LEG_DOWN = 25
+LEG_AWAY = -3 
+LEG_DOWN = 15
+LEG_UP   =  9
 LEG_W = 2
 LEG_H = 8
 
@@ -178,7 +179,7 @@ class CopterLander(gym.Env, EzPickle):
         self.legs = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W/SCALE/2 - i*LEG_AWAY/SCALE, initial_y),
+                position=(VIEWPORT_W/SCALE/2 - i*LEG_AWAY/SCALE, initial_y-LEG_UP),
                 angle=(i * 0.05),
                 fixtures=fixtureDef(
                     shape=polygonShape(box=(LEG_W/SCALE, LEG_H/SCALE)),
@@ -186,15 +187,15 @@ class CopterLander(gym.Env, EzPickle):
                     restitution=0.0,
                     categoryBits=0x0020,
                     maskBits=0x001)
-                )
+            )
             leg.ground_contact = False
             rjd = revoluteJointDef(
                 bodyA=self.lander,
                 bodyB=leg,
                 localAnchorA=(0, 0),
-                localAnchorB=(i * LEG_AWAY/SCALE, LEG_DOWN/SCALE),
-                lowerAngle = -i * 0.9,
-                upperAngle = -i * 0.9,
+                localAnchorB=(i*.5, LEG_DOWN/SCALE),
+                lowerAngle = 0, 
+                upperAngle = 0, 
                 enableMotor=True,
                 enableLimit=True,
                 motorSpeed=+0.3 * i  # low enough not to jump back into the sky
@@ -364,9 +365,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
+        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        '''
         steps += 1
         if done: break
     env.close()
