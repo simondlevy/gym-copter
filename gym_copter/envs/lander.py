@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
 Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/box2d/lunar_lander.py
+
+The landing pad is always at coordinates (0,0). The coordinates are the first two numbers in the state vector.
+Reward for moving from the top of the screen to the landing pad and zero speed is about 100..140 points.
+If the lander moves away from the landing pad it loses reward. The episode finishes if the lander crashes or
+comes to rest, receiving an additional -100 or +100 points.  Firing the main
+engine is -0.3 points each frame. Firing the side engine is -0.03 points each
+frame.  Solved is 200 points.
+
+Landing outside the landing pad is possible. Fuel is infinite, so an agent can learn to fly and then land
+on its first attempt. Please see the source code for details.
+
+To see a heuristic landing, run:
+
+python gym_copter/envs/lander.py
 """
 
 import numpy as np
@@ -146,9 +160,7 @@ class CopterLander(gym.Env, EzPickle):
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
 
-        # Action is two floats [main engine, left-right engines].
-        # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
-        # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
+        # Action is two floats [throttle_demand, roll_demand]
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         self.reset()
@@ -214,14 +226,13 @@ class CopterLander(gym.Env, EzPickle):
                     for poly in [HULL_POLY, LEG1_POLY, LEG2_POLY, MOTOR1_POLY, MOTOR2_POLY,
                         BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY]
                     ]
-                )
+               ) 
 
         self.dynamics = DJIPhantomDynamics()
 
+        # Start at top center.  Note that 3D copter Z comes from 2D copter Y
         state = np.zeros(12)
-
-        # Start at top center
-        state[self.dynamics.STATE_Y] = START_X
+        state[self.dynamics.STATE_Y] =  START_X
         state[self.dynamics.STATE_Z] = -START_Y
 
         # Add a little random noise to initial velocities
@@ -231,6 +242,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
+        # By showing props every third rendering, we can emulate prop rotation
         self.show_props = 0
 
         return self.step(np.array([0, 0]))[0]
