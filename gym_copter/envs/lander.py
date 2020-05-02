@@ -25,18 +25,18 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 INITIAL_RANDOM = 0   # Increase to make game harder
 
 LEG_W = 3
-LEG_H = 12
+LEG_H = 20
 
-LEG_X  = 15
+LEG_X  = 12
 LEG_Y  = -7
 
 HULL_POLY =[
         (-30, 0),
-        (-4, +8),
-        (+4, +8),
+        (-4, +4),
+        (+4, +4),
         (+30,  0),
-        (+4, -12),
-        (-4, -12),
+        (+4, -14),
+        (-4, -14),
     ]
 
 LEG1_POLY = [
@@ -154,9 +154,9 @@ class CopterLander(gym.Env, EzPickle):
                 position=(VIEWPORT_W/SCALE/2, initial_y),
                 angle=0.0,
                 fixtures = [
-                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG1_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG2_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]), density=1.0),
                     ]
                 )
 
@@ -199,7 +199,8 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setMotors(motors)
 
-        self.dynamics.update(1.0/FPS)
+        if -self.dynamics.getState()[self.dynamics.STATE_Z] > 10:
+            self.dynamics.update(1.0/FPS)
 
         self.world.Step(1.0/FPS, 6*30, 2*30)
 
