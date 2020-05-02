@@ -24,11 +24,34 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 
 INITIAL_RANDOM = 0   # Increase to make game harder
 
-LEG_W = 3
-LEG_H = 20
-
 LEG_X  = 12
 LEG_Y  = -7
+LEG_W  = 3
+LEG_H  = 20
+
+MOTOR_X  = 25
+MOTOR_Y  = 7
+MOTOR_W  = 4
+MOTOR_H  = 5
+
+BLADE_X = 25
+BLADE_Y = 6
+BLADE_W = 20
+BLADE_H = 2
+
+BLADE1R_POLY = [
+        (-BLADE_X,BLADE_Y),
+        (-(BLADE_X+BLADE_W/2),BLADE_Y+BLADE_H),
+        (-(BLADE_X+BLADE_W),BLADE_Y),
+        (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
+        ]
+
+BLADE2L_POLY = [
+        (BLADE_X,BLADE_Y),
+        (BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+        (BLADE_X+BLADE_W,BLADE_Y),
+        (BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+        ]
 
 HULL_POLY =[
         (-30, 0),
@@ -52,6 +75,21 @@ LEG2_POLY = [
         (+LEG_X+LEG_W,LEG_Y-LEG_H),
         (+LEG_X,LEG_Y-LEG_H)
     ]
+
+MOTOR1_POLY = [
+        (+MOTOR_X,MOTOR_Y),
+        (+MOTOR_X+MOTOR_W,MOTOR_Y),
+        (+MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+        (+MOTOR_X,MOTOR_Y-MOTOR_H)
+    ]
+
+MOTOR2_POLY = [
+        (-MOTOR_X,MOTOR_Y),
+        (-MOTOR_X+MOTOR_W,MOTOR_Y),
+        (-MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+        (-MOTOR_X,MOTOR_Y-MOTOR_H)
+    ]
+
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -156,6 +194,10 @@ class CopterLander(gym.Env, EzPickle):
                 fixtures = [
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG1_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG2_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in MOTOR1_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in MOTOR2_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE2L_POLY]), density=1.0),
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in BLADE1R_POLY]), density=1.0),
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]), density=1.0),
                     ]
                 )
