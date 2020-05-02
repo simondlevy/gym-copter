@@ -160,7 +160,7 @@ class CopterLander(gym.Env, EzPickle):
                 restitution=0.0)  # 0.99 bouncy
                 )
 
-        self.dynamics = DJIPhantomDynamics(g=1.62) # XXX use Moon gravity for now
+        self.dynamics = DJIPhantomDynamics()
 
         state = np.zeros(12)
 
@@ -365,7 +365,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-        if False: #steps % 20 == 0 or done:
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
