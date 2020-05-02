@@ -16,15 +16,18 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 SIZE = 0.005
 
-START_X = 10
+START_X = 10  # 10 is center
 START_Y = 13
 
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
-INITIAL_RANDOM = 0.1   # Increase to make game harder
+INITIAL_RANDOM = 0   # Increase to make game harder
 
-LANDER_POLY =[
+LEG_W = 3
+LEG_H = 15
+
+HULL_POLY =[
         (-30, 0),
         (-4, +8),
         (+4, +8),
@@ -33,34 +36,12 @@ LANDER_POLY =[
         (-4, -12),
     ]
 
-HULL_POLY1 = [
-    (-60, +130), (+60, +130),
-    (+60, +110), (-60, +110)
+LEG1_POLY = [
+        (-20,-20),
+        (0,-20),
+        (0,-40),
+        (-20,-40)
     ]
-HULL_POLY2 = [
-    (-15, +120), (+15, +120),
-    (+20, +20), (-20, 20)
-    ]
-HULL_POLY3 = [
-    (+25, +20),
-    (+50, -10),
-    (+50, -40),
-    (+20, -90),
-    (-20, -90),
-    (-50, -40),
-    (-50, -10),
-    (-25, +20)
-    ]
-HULL_POLY4 = [
-    (-50, -120), (+50, -120),
-    (+50, -90),  (-50, -90)
-    ]
-
-LEG_AWAY = -3 
-LEG_DOWN = 15
-LEG_UP   =  9
-LEG_W = 2
-LEG_H = 8
 
 VIEWPORT_W = 600
 VIEWPORT_H = 400
@@ -80,18 +61,6 @@ class ContactDetector(contactListener):
     def BeginContact(self, contact):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.game_over = True
-        for i in range(2):
-            if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = True
-                self.leg_contacts[i] = True
-
-    def EndContact(self, contact):
-        for i in range(2):
-            if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = False
-
-    def bothLegsDown(self):
-        return all(self.leg_contacts)
 
 class CopterLander(gym.Env, EzPickle):
     metadata = {
@@ -131,8 +100,6 @@ class CopterLander(gym.Env, EzPickle):
         self.ground = None
         self.world.DestroyBody(self.lander)
         self.lander = None
-        self.world.DestroyBody(self.legs[0])
-        self.world.DestroyBody(self.legs[1])
 
     def reset(self):
         self._destroy()
@@ -178,16 +145,16 @@ class CopterLander(gym.Env, EzPickle):
                 angle=0.0,
                 fixtures = [
                     fixtureDef(
-                        shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LANDER_POLY]),
+                        shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in HULL_POLY]),
                         density=5.0,
                         friction=0.1,
                         categoryBits=0x0010,
                         maskBits=0x001,   # collide only with ground
                         restitution=0.0),  # 0.99 bouncy
-                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY1]), density=1.0),
-                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY2]), density=1.0),
-                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY3]), density=1.0),
-                    fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY4]), density=1.0)
+                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in LEG1_POLY]), density=1.0),
+                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY2]), density=1.0),
+                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY3]), density=1.0),
+                    #fixtureDef(shape=polygonShape(vertices=[(x*SIZE, y*SIZE) for x, y in HULL_POLY4]), density=1.0)
                     ]
                 )
 
@@ -207,36 +174,7 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
-        self.legs = []
-        for i in [-1, +1]:
-            leg = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W/SCALE/2 - i*LEG_AWAY/SCALE, initial_y-LEG_UP),
-                angle=(i * 0.05),
-                fixtures=fixtureDef(
-                    shape=polygonShape(box=(LEG_W/SCALE, LEG_H/SCALE)),
-                    density=1.0,
-                    restitution=0.0,
-                    categoryBits=0x0020,
-                    maskBits=0x001)
-            )
-            leg.ground_contact = False
-
-            rjd = revoluteJointDef(
-                bodyA=self.lander,
-                bodyB=leg,
-                localAnchorA=(0, 0),
-                localAnchorB=(i*.4, LEG_DOWN/SCALE),
-                lowerAngle = 0, 
-                upperAngle = 0, 
-                enableMotor=True,
-                enableLimit=True,
-                motorSpeed=+0.3 * i  # low enough not to jump back into the sky
-                )
-            leg.joint = self.world.CreateJoint(rjd)
-
-            self.legs.append(leg)
-
-        self.drawlist = [self.lander] + self.legs
+        self.drawlist = [self.lander]
 
         return self.step(np.array([0, 0]))[0]
 
@@ -277,21 +215,19 @@ class CopterLander(gym.Env, EzPickle):
 
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos.y- (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
             vel.x*(VIEWPORT_W/SCALE/2)/FPS,
             vel.y*(VIEWPORT_H/SCALE/2)/FPS,
             self.lander.angle,
-            20*self.lander.angularVelocity/FPS,
-            1.0 if self.legs[0].ground_contact else 0.0,
-            1.0 if self.legs[1].ground_contact else 0.0
+            20*self.lander.angularVelocity/FPS
             ]
-        assert len(state) == 8
+        assert len(state) == 6
 
         reward = 0
         shaping = \
             - 100*np.sqrt(state[0]*state[0] + state[1]*state[1]) \
             - 100*np.sqrt(state[2]*state[2] + state[3]*state[3]) \
-            - 100*abs(state[4]) + 10*state[6] + 10*state[7]  # And ten points for legs contact, the idea is if you
+            - 100*abs(state[4])
                                                              # lose contact again after landing, you get negative reward
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -304,9 +240,6 @@ class CopterLander(gym.Env, EzPickle):
         if self.game_over or abs(state[0]) >= 1.0:
             done = True
             reward = -100
-        if not self.lander.awake or self.world.contactListener.bothLegsDown():
-            done = True
-            reward = +100
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
@@ -369,10 +302,6 @@ def heuristic(env, s):
 
     roll_todo = s[0]/10
     throttle_todo = (throttle_targ - s[1])*0.20 - (s[3])*.5
-
-    if s[6] or s[7]:  # legs have contact
-        roll_todo = 0
-        throttle_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
 
     throttle_todo = throttle_todo*10 - 1
 
