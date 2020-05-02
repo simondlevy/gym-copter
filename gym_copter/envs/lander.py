@@ -23,12 +23,14 @@ SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted a
 INITIAL_RANDOM = 0.2   # Increase to make game harder
 
 LANDER_POLY =[
-    (-20, +14), 
-    (-14, 0), 
-    (-14 ,-10),
-    (+14, -10), 
-    (+14, 0), 
-    (+20, +14)
+    (-20, +10),
+    (+20, +10),
+    (+26, +7),
+    (+26,-7),
+    (+20,-10),
+    (-20,-10),
+    (-26,-7),
+    (-26,+7)
     ]
 
 LEG_AWAY = 0
@@ -362,6 +364,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
         if done: break
+    env.close()
     return total_reward
 
 
