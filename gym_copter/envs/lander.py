@@ -203,11 +203,8 @@ class CopterLander(gym.Env, EzPickle):
 
         initial_y = VIEWPORT_H/SCALE
         self.lander = self.world.CreateDynamicBody(
-
                 position=(VIEWPORT_W/SCALE/2, initial_y),
-
                 angle=0.0,
-
                 fixtures = [
                     fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
                     for poly in [BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY, LEG1_POLY,LEG2_POLY, 
