@@ -227,8 +227,6 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
-        self.drawlist = [self.lander]
-
         return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
@@ -309,13 +307,12 @@ class CopterLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=SKY_COLOR)
 
-        for obj in self.drawlist:
-            for f in obj.fixtures:
-                trans = f.body.transform
-                path = [trans*v for v in f.shape.vertices]
-                self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
-                path.append(path[0])
-                self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
+        for f in self.lander.fixtures:
+            trans = f.body.transform
+            path = [trans*v for v in f.shape.vertices]
+            self.viewer.draw_polygon(path, color=VEHICLE_COLOR)
+            path.append(path[0])
+            self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
