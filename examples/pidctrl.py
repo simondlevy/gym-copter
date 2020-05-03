@@ -101,7 +101,8 @@ def main(envname):
         s, r, _, _ = env.step([u])
 
         # Display the environment
-        if args.render: env.render()
+        if args.render: 
+            env.render()
 
         # Extract altitude, vertical velocity from state
         z, v = s

@@ -7,11 +7,7 @@ class CopterWaypoint(CopterBox2D):
 
         CopterBox2D.__init__(self, 2, 6)
 
-        self.target = 0
-
-    def reset(self, target, xoff=0):
-
-        self.target = target
+    def reset(self, xoff):
 
         return CopterBox2D._reset(self, xoff, 0)
 
