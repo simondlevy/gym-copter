@@ -1,5 +1,5 @@
 <img src="media/hud.gif" height=300 align="left">
-<img src="media/lander1d.gif" align="top">
+<img src="media/lander1d.gif" width=500 align="top">
 
 <p>
 
