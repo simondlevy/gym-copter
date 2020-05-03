@@ -8,24 +8,15 @@ MIT License
 import gym
 import gym_copter
 
-from pidctrl import AltitudePidController
+from pidctrl import AltitudePidController, DURATION, ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D
 
 # Create and initialize copter environment
 env = gym.make('CopterWaypoint-v0')
 
 env.reset(xoff=3)
 
-exit(0)
-
 # Create PID controller
 pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
-
-# Initialize arrays for plotting
-tvals = []
-uvals = []
-zvals = []
-vvals = []
-rvals = []
 
 # Motors are initially off
 u = -1
@@ -57,22 +48,6 @@ while True:
 
     # Constrain correction to [-1,+1]
     u = max(-1, min(+1, u))
-
-    # Track values
-    tvals.append(t)
-    uvals.append(u)
-    zvals.append(z)
-    vvals.append(v)
-    rvals.append(r)
-
-# Plot results
-if not args.render:
-    _subplot(tvals, rvals, 1, 'Reward')
-    _subplot(tvals, zvals, 2, 'Altitude (m)')
-    _subplot(tvals, vvals, 3, 'Velocity (m/s)')
-    _subplot(tvals, uvals, 4, 'Action')
-    plt.ylim([-1.1,+1.1])
-    plt.show()
 
 # Cleanup
 del env
