@@ -10,6 +10,10 @@ class CopterLander1D(CopterBox2D):
 
         CopterBox2D.__init__(self, 2, 1)
 
+    def reset(self, yoff=0):
+
+        return CopterBox2D.reset(self)
+
     def _action_to_motors(self, action):
 
         # Rescale [-1,+1] => [0,1]
