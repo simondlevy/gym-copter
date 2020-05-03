@@ -291,11 +291,6 @@ class CopterLander1D(gym.Env):
 
         done = False
 
-        # Quit with a big penalty if we go outside left or right edge of window
-        if abs(state[0]) >= 1.0:
-            done = True
-            reward = -100
-
         # If we've landed, we're done, with extra reward for a soft landing
         if self.landed:
             if self.ground_count == 0:
