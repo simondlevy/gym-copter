@@ -249,9 +249,6 @@ class CopterLander2D(gym.Env):
         action[1] = roll demand
         '''
 
-        ml_power = 0.0
-        mr_power = 0.0
-
         # Rescale [-1,+1] => [0,1]
         action[0] = (action[0] + 1) / 2 
 
@@ -296,10 +293,6 @@ class CopterLander2D(gym.Env):
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
-
-        # less fuel spent is better, about -30 for heuristic landing        
-        reward -= ml_power*0.30  
-        reward -= mr_power*0.03
 
         done = False
 
