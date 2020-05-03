@@ -27,108 +27,6 @@ from gym.utils import seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-START_X = 10
-START_Y = 13
-
-MAX_LANDING_SPEED = 0.05
-
-GROUND_COUNT_MAX = 15
-
-FPS = 50
-SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
-
-LEG_X  = 12
-LEG_Y  = -7
-LEG_W  = 3
-LEG_H  = 20
-
-MOTOR_X  = 25
-MOTOR_Y  = 7
-MOTOR_W  = 4
-MOTOR_H  = 5
-
-BLADE_X = 25
-BLADE_Y = 8
-BLADE_W = 20
-BLADE_H = 2
-
-BLADE1L_POLY = [
-        (BLADE_X,BLADE_Y),
-        (BLADE_X-BLADE_W/2,BLADE_Y+BLADE_H),
-        (BLADE_X-BLADE_W,BLADE_Y),
-        (BLADE_X-BLADE_W/2,BLADE_Y+-BLADE_H),
-        ]
-
-BLADE1R_POLY = [
-        (BLADE_X,BLADE_Y),
-        (BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
-        (BLADE_X+BLADE_W,BLADE_Y),
-        (BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
-        ]
-
-BLADE2L_POLY = [
-        (-BLADE_X,BLADE_Y),
-        (-(BLADE_X+BLADE_W/2),BLADE_Y+BLADE_H),
-        (-(BLADE_X+BLADE_W),BLADE_Y),
-        (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
-        ]
-
-BLADE2R_POLY = [
-        (-BLADE_X,BLADE_Y),
-        (-BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
-        (-BLADE_X+BLADE_W,BLADE_Y),
-        (-BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
-        ]
-
-HULL_POLY =[
-        (-30, 0),
-        (-4, +4),
-        (+4, +4),
-        (+30,  0),
-        (+4, -14),
-        (-4, -14),
-    ]
-
-LEG1_POLY = [
-        (-LEG_X,LEG_Y),
-        (-LEG_X+LEG_W,LEG_Y),
-        (-LEG_X+LEG_W,LEG_Y-LEG_H),
-        (-LEG_X,LEG_Y-LEG_H)
-    ]
-
-LEG2_POLY = [
-        (+LEG_X,LEG_Y),
-        (+LEG_X+LEG_W,LEG_Y),
-        (+LEG_X+LEG_W,LEG_Y-LEG_H),
-        (+LEG_X,LEG_Y-LEG_H)
-    ]
-
-MOTOR1_POLY = [
-        (+MOTOR_X,MOTOR_Y),
-        (+MOTOR_X+MOTOR_W,MOTOR_Y),
-        (+MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
-        (+MOTOR_X,MOTOR_Y-MOTOR_H)
-    ]
-
-MOTOR2_POLY = [
-        (-MOTOR_X,MOTOR_Y),
-        (-MOTOR_X+MOTOR_W,MOTOR_Y),
-        (-MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
-        (-MOTOR_X,MOTOR_Y-MOTOR_H)
-    ]
-
-
-VIEWPORT_W = 600
-VIEWPORT_H = 400
-
-SKY_COLOR     = 0.5, 0.8, 1.0
-GROUND_COLOR  = 0.5, 0.7, 0.3
-FLAG_COLOR    = 0.8, 0.0, 0.0
-VEHICLE_COLOR = 1.0, 1.0, 1.0
-MOTOR_COLOR   = 0.5, 0.5, 0.5
-PROP_COLOR    = 0.0, 0.0, 0.0
-OUTLINE_COLOR = 0.0, 0.0, 0.0
-
 class ContactDetector(contactListener):
     def __init__(self, env):
         contactListener.__init__(self)
@@ -139,6 +37,105 @@ class ContactDetector(contactListener):
             self.env.landed = True
 
 class CopterBox2D(gym.Env):
+
+    START_X = 10
+    START_Y = 13
+
+    FPS = 50
+    SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
+
+    LEG_X  = 12
+    LEG_Y  = -7
+    LEG_W  = 3
+    LEG_H  = 20
+
+    MOTOR_X  = 25
+    MOTOR_Y  = 7
+    MOTOR_W  = 4
+    MOTOR_H  = 5
+
+    BLADE_X = 25
+    BLADE_Y = 8
+    BLADE_W = 20
+    BLADE_H = 2
+
+    BLADE1L_POLY = [
+            (BLADE_X,BLADE_Y),
+            (BLADE_X-BLADE_W/2,BLADE_Y+BLADE_H),
+            (BLADE_X-BLADE_W,BLADE_Y),
+            (BLADE_X-BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE1R_POLY = [
+            (BLADE_X,BLADE_Y),
+            (BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+            (BLADE_X+BLADE_W,BLADE_Y),
+            (BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE2L_POLY = [
+            (-BLADE_X,BLADE_Y),
+            (-(BLADE_X+BLADE_W/2),BLADE_Y+BLADE_H),
+            (-(BLADE_X+BLADE_W),BLADE_Y),
+            (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE2R_POLY = [
+            (-BLADE_X,BLADE_Y),
+            (-BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+            (-BLADE_X+BLADE_W,BLADE_Y),
+            (-BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    HULL_POLY =[
+            (-30, 0),
+            (-4, +4),
+            (+4, +4),
+            (+30,  0),
+            (+4, -14),
+            (-4, -14),
+        ]
+
+    LEG1_POLY = [
+            (-LEG_X,LEG_Y),
+            (-LEG_X+LEG_W,LEG_Y),
+            (-LEG_X+LEG_W,LEG_Y-LEG_H),
+            (-LEG_X,LEG_Y-LEG_H)
+        ]
+
+    LEG2_POLY = [
+            (+LEG_X,LEG_Y),
+            (+LEG_X+LEG_W,LEG_Y),
+            (+LEG_X+LEG_W,LEG_Y-LEG_H),
+            (+LEG_X,LEG_Y-LEG_H)
+        ]
+
+    MOTOR1_POLY = [
+            (+MOTOR_X,MOTOR_Y),
+            (+MOTOR_X+MOTOR_W,MOTOR_Y),
+            (+MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+            (+MOTOR_X,MOTOR_Y-MOTOR_H)
+        ]
+
+    MOTOR2_POLY = [
+            (-MOTOR_X,MOTOR_Y),
+            (-MOTOR_X+MOTOR_W,MOTOR_Y),
+            (-MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+            (-MOTOR_X,MOTOR_Y-MOTOR_H)
+        ]
+
+
+    VIEWPORT_W = 600
+    VIEWPORT_H = 400
+
+    SKY_COLOR     = 0.5, 0.8, 1.0
+    GROUND_COLOR  = 0.5, 0.7, 0.3
+    FLAG_COLOR    = 0.8, 0.0, 0.0
+    VEHICLE_COLOR = 1.0, 1.0, 1.0
+    MOTOR_COLOR   = 0.5, 0.5, 0.5
+    PROP_COLOR    = 0.0, 0.0, 0.0
+    OUTLINE_COLOR = 0.0, 0.0, 0.0
+
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
@@ -155,7 +152,7 @@ class CopterBox2D(gym.Env):
         self.prev_reward = None
 
         # Useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(observaton_size,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(observation_size,), dtype=np.float32)
 
         # [-1,+1] will be rescaled to [0,1] for dynamics input
         self.action_space = spaces.Box(-1, +1, (action_size,), dtype=np.float32)
@@ -182,8 +179,8 @@ class CopterBox2D(gym.Env):
         self.prev_shaping = None
         self.rendering = False
 
-        W = VIEWPORT_W/SCALE
-        H = VIEWPORT_H/SCALE
+        W = self.VIEWPORT_W/self.SCALE
+        H = self.VIEWPORT_H/self.SCALE
 
         # Turn off gravity so we can run our own dynamics
         self.world.gravity = 0,0
@@ -213,16 +210,16 @@ class CopterBox2D(gym.Env):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        initial_y = VIEWPORT_H/SCALE
+        initial_y = self.VIEWPORT_H/self.SCALE
 
         self.lander = self.world.CreateDynamicBody(
-                position=(VIEWPORT_W/SCALE/2, initial_y),
+                position=(self.VIEWPORT_W/self.SCALE/2, initial_y),
                 angle=0.0,
 
                 fixtures = [
-                    fixtureDef(shape=polygonShape(vertices=[(x/SCALE, y/SCALE) for x, y in poly]), density=1.0)
-                    for poly in [HULL_POLY, LEG1_POLY, LEG2_POLY, MOTOR1_POLY, MOTOR2_POLY,
-                        BLADE1L_POLY, BLADE1R_POLY, BLADE2L_POLY, BLADE2R_POLY]
+                    fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=1.0)
+                    for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
+                        self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
                     ]
                ) 
 
@@ -230,8 +227,8 @@ class CopterBox2D(gym.Env):
 
         # Start at top center, plus optional offset
         state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  START_X
-        state[self.dynamics.STATE_Z] = -(START_Y + yoff)  # 3D copter Z comes from 2D copter Y
+        state[self.dynamics.STATE_Y] =  self.START_X
+        state[self.dynamics.STATE_Z] = -(self.START_Y + yoff)  # 3D copter Z comes from 2D copter Y
 
         self.dynamics.setState(state)
 
@@ -249,11 +246,11 @@ class CopterBox2D(gym.Env):
 
         # Set motors and compute dynamics
         self.dynamics.setMotors(motors)
-        self.dynamics.update(1.0/FPS)
+        self.dynamics.update(1.0/self.FPS)
         state = self.dynamics.getState()
 
         # Run one tick of Box2D simulator
-        self.world.Step(1.0/FPS, 6*30, 2*30)
+        self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
@@ -262,29 +259,7 @@ class CopterBox2D(gym.Env):
         self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
 
-        pos = self.lander.position
-        vel = self.lander.linearVelocity
-
-        state = [ (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2), vel.y*(VIEWPORT_H/SCALE/2)/FPS ]
-
-        reward = 0
-
-        shaping = - 100*np.sqrt(state[0]**2) - 100*np.sqrt(state[1]**2) 
-
-        if self.prev_shaping is not None:
-            reward = shaping - self.prev_shaping
-        self.prev_shaping = shaping
-
-        done = False
-
-        # If we've landed, we're done, with extra reward for a soft landing
-        if self.landed:
-            if self.ground_count == 0:
-                reward += 100 * (abs(state[1]) < MAX_LANDING_SPEED)
-            else:
-                if not self.rendering or self.ground_count == GROUND_COUNT_MAX:
-                    done = True
-            self.ground_count += 1
+        state, reward, done = self._get_state_reward_done()
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -296,31 +271,35 @@ class CopterBox2D(gym.Env):
         self.rendering = True
 
         if self.viewer is None:
-            self.viewer = rendering.Viewer(VIEWPORT_W, VIEWPORT_H)
-            self.viewer.set_bounds(0, VIEWPORT_W/SCALE, 0, VIEWPORT_H/SCALE)
+            self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
+            self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
 
-        self.viewer.draw_polygon([(0,0), (VIEWPORT_W,0), (VIEWPORT_W,VIEWPORT_H), (0,VIEWPORT_H)], color=GROUND_COLOR)
+        self.viewer.draw_polygon([(0,0), 
+            (self.VIEWPORT_W,0), 
+            (self.VIEWPORT_W,self.VIEWPORT_H), 
+            (0,self.VIEWPORT_H)], 
+            color=self.GROUND_COLOR)
 
         for p in self.sky_polys:
-            self.viewer.draw_polygon(p, color=SKY_COLOR)
+            self.viewer.draw_polygon(p, color=self.SKY_COLOR)
 
-        self._show_fixture(1, VEHICLE_COLOR)
-        self._show_fixture(2, VEHICLE_COLOR)
-        self._show_fixture(0, VEHICLE_COLOR)
-        self._show_fixture(3, MOTOR_COLOR)
-        self._show_fixture(4, MOTOR_COLOR)
+        self._show_fixture(1, self.VEHICLE_COLOR)
+        self._show_fixture(2, self.VEHICLE_COLOR)
+        self._show_fixture(0, self.VEHICLE_COLOR)
+        self._show_fixture(3, self.MOTOR_COLOR)
+        self._show_fixture(4, self.MOTOR_COLOR)
 
         # Simulate spinning props by alernating
         if self.landed or self.show_props:
             for k in range(5,9):
-                self._show_fixture(k, PROP_COLOR)
+                self._show_fixture(k, self.PROP_COLOR)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
-            flagy2 = flagy1 + 50/SCALE
+            flagy2 = flagy1 + 50/self.SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
-            self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/SCALE), (x + 25/SCALE, flagy2 - 5/SCALE)],
-                                     color=FLAG_COLOR)
+            self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
+                                     color=self.FLAG_COLOR)
 
         self.show_props = (self.show_props + 1) % 3
 
@@ -337,4 +316,4 @@ class CopterBox2D(gym.Env):
         path = [trans*v for v in fixture.shape.vertices]
         self.viewer.draw_polygon(path, color=color)
         path.append(path[0])
-        self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
+        self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=1)
