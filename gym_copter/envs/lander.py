@@ -27,9 +27,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-INITIAL_RANDOM = 0  # Increase to make game harder
-
-START_X = 10.5 # 10 is center
+START_X = 10
 START_Y = 13
 
 MAX_LANDING_SPEED = 0.05
@@ -232,16 +230,7 @@ class CopterLander(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Start at top center.  Note that 3D copter Z comes from 2D copter Y
-        state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  START_X
-        state[self.dynamics.STATE_Z] = -START_Y
-
-        # Add a little random noise to initial velocities
-        state[self.dynamics.STATE_Y]       = START_X + INITIAL_RANDOM * np.random.randn()
-        state[self.dynamics.STATE_Y_DOT]   = INITIAL_RANDOM * np.random.randn()
-        state[self.dynamics.STATE_PHI_DOT] = INITIAL_RANDOM * np.random.randn()
-
-        self.dynamics.setState(state)
+        self.start()
 
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
@@ -250,6 +239,20 @@ class CopterLander(gym.Env, EzPickle):
         self.ground_count = 0
 
         return self.step(np.array([0, 0]))[0]
+
+    def start(self, rndamt=0):
+
+        # Start at top center.  Note that 3D copter Z comes from 2D copter Y
+        state = np.zeros(12)
+        state[self.dynamics.STATE_Y] =  START_X
+        state[self.dynamics.STATE_Z] = -START_Y
+
+        # Add a little random noise to initial velocities
+        state[self.dynamics.STATE_Y]       = START_X + rndamt * np.random.randn()
+        state[self.dynamics.STATE_Y_DOT]   = rndamt * np.random.randn()
+        state[self.dynamics.STATE_PHI_DOT] = rndamt * np.random.randn()
+
+        self.dynamics.setState(state)
 
     def step(self, action):
         '''
