@@ -305,6 +305,8 @@ class CopterLander(gym.Env, EzPickle):
         reward -= ml_power*0.30  # less fuel spent is better, about -30 for heuristic landing
         reward -= mr_power*0.03
 
+        print(self.lander.awake)
+
         done = False
         if self.game_over or abs(state[0]) >= 1.0:
             done = True
@@ -406,7 +408,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-        if steps % 20 == 0 or done:
+        if False: #steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
