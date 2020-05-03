@@ -1,5 +1,7 @@
-<img src="media/hud.gif" width=400 align="left">
-<img src="media/lander1d.gif" width=400 align="right">
+<img src="media/hud.gif" height=300 align="left">
+<img src="media/lander1d.gif" height=300 align="right">
+
+<br>
 
 # gym-copter
 Gym environment for reinforcement learning with multicopters.  
