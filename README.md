@@ -1,4 +1,4 @@
-<img src="media/hud.gif" align="left">
+<img src="media/hud.gif" height=300 align="left">
 <img src="media/lander1d.gif" align="top">
 
 <p>
