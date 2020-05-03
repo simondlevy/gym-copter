@@ -174,7 +174,7 @@ class CopterLander1D(gym.Env):
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def reset(self, xoff=0, yoff=0):
+    def reset(self, yoff=0):
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
@@ -230,7 +230,7 @@ class CopterLander1D(gym.Env):
 
         # Start at top center, plus optional offset
         state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  START_X + xoff
+        state[self.dynamics.STATE_Y] =  START_X
         state[self.dynamics.STATE_Z] = -(START_Y + yoff)  # 3D copter Z comes from 2D copter Y
 
         self.dynamics.setState(state)
@@ -283,9 +283,7 @@ class CopterLander1D(gym.Env):
 
         reward = 0
 
-        shaping = - 100*np.sqrt(state[0]**2 + state[1]**2) \
-                  - 100*np.sqrt(state[2]**2 + state[3]**2) \
-                  - 100*abs(state[4])
+        shaping = - 100*np.sqrt(state[1]**2) - 100*np.sqrt(state[3]**2) 
 
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
