@@ -347,7 +347,7 @@ class CopterLander(gym.Env, EzPickle):
         self._show_fixture(4, MOTOR_COLOR)
 
         # Simulate spinning props by alernating
-        if self.show_props:
+        if self.landed or self.show_props:
             for k in range(5,9):
                 self._show_fixture(k, PROP_COLOR)
 
