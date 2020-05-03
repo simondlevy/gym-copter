@@ -138,7 +138,7 @@ class ContactDetector(contactListener):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.landed = True
 
-class CopterLander(gym.Env):
+class CopterLander2D(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
