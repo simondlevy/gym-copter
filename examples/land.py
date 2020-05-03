@@ -41,7 +41,7 @@ if __name__ == '__main__':
     env = gym.make('CopterLander-v0')
     total_reward = 0
     steps = 0
-    s = env.reset()
+    s = env.reset(xoff=4)
     while True:
         a = heuristic(env, s)
         s, r, done, _ = env.step(a)
