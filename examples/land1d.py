@@ -31,9 +31,7 @@ def heuristic(env, s):
 
     throttle_todo = np.clip(throttle_todo, -1, +1)
 
-    roll_todo = s[0]/100
-
-    return np.array([throttle_todo, roll_todo])
+    return np.array([throttle_todo])
 
 
 if __name__ == '__main__':

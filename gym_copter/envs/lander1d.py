@@ -158,7 +158,7 @@ class CopterLander1D(gym.Env):
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
         # Action is two floats [throttle_demand, roll_demand]
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        self.action_space = spaces.Box(-1, +1, (1,), dtype=np.float32)
 
         self.reset()
 
@@ -246,7 +246,6 @@ class CopterLander1D(gym.Env):
     def step(self, action):
         '''
         action[0] = throttle demand
-        action[1] = roll demand
         '''
 
         # Rescale [-1,+1] => [0,1]
@@ -254,8 +253,6 @@ class CopterLander1D(gym.Env):
 
         # A simple mixer
         motors = [action[0]]*4
-        motors[0] += action[1]
-        motors[3] += action[1]
 
         # Set motors and compute dynamics
         self.dynamics.setMotors(motors)
