@@ -12,7 +12,7 @@ class CopterLander2D(CopterBox2D):
 
     def reset(self, xoff=0, yoff=0):
 
-        return CopterBox2D.reset(self)
+        return CopterBox2D._reset(self, xoff, yoff)
 
     def _action_to_motors(self, action):
 

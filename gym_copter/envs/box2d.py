@@ -157,7 +157,7 @@ class CopterBox2D(gym.Env):
         # [-1,+1] will be rescaled to [0,1] for dynamics input
         self.action_space = spaces.Box(-1, +1, (action_size,), dtype=np.float32)
 
-        self.reset()
+        self._reset(0,0)
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -171,7 +171,7 @@ class CopterBox2D(gym.Env):
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def reset(self, yoff=0):
+    def _reset(self, xoff=0, yoff=0):
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
@@ -227,7 +227,7 @@ class CopterBox2D(gym.Env):
 
         # Start at top center, plus optional offset
         state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  self.START_X
+        state[self.dynamics.STATE_Y] =  self.START_X + xoff    # 3D copter Y comes from 2D copter X
         state[self.dynamics.STATE_Z] = -(self.START_Y + yoff)  # 3D copter Z comes from 2D copter Y
 
         self.dynamics.setState(state)
