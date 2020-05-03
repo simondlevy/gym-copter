@@ -138,13 +138,13 @@ class ContactDetector(contactListener):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.landed = True
 
-class CopterLander1D(gym.Env):
+class CopterBox2D(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
     }
 
-    def __init__(self):
+    def __init__(self, observation_size, action_size):
         self.seed()
         self.viewer = None
 
@@ -154,11 +154,11 @@ class CopterLander1D(gym.Env):
 
         self.prev_reward = None
 
-        # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(2,), dtype=np.float32)
+        # Useful range is -1 .. +1, but spikes can be higher
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(observaton_size,), dtype=np.float32)
 
-        # Action is two floats [throttle_demand, roll_demand]
-        self.action_space = spaces.Box(-1, +1, (1,), dtype=np.float32)
+        # [-1,+1] will be rescaled to [0,1] for dynamics input
+        self.action_space = spaces.Box(-1, +1, (action_size,), dtype=np.float32)
 
         self.reset()
 
@@ -244,15 +244,8 @@ class CopterLander1D(gym.Env):
         return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
-        '''
-        action[0] = throttle demand
-        '''
 
-        # Rescale [-1,+1] => [0,1]
-        action[0] = (action[0] + 1) / 2 
-
-        # A simple mixer
-        motors = [action[0]]*4
+        motors = self._action_to_motors(action)
 
         # Set motors and compute dynamics
         self.dynamics.setMotors(motors)
@@ -265,15 +258,14 @@ class CopterLander1D(gym.Env):
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
         self.lander.position        =  state[dyn.STATE_Y], -state[dyn.STATE_Z]
+        self.lander.angle           = -state[dyn.STATE_PHI]
+        self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
 
-        state = [
-                (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
-                vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-                ]
+        state = [ (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2), vel.y*(VIEWPORT_H/SCALE/2)/FPS ]
 
         reward = 0
 
