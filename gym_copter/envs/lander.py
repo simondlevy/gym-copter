@@ -32,6 +32,8 @@ SIZE = 0.005
 
 MAX_LANDING_SPEED = 0.05
 
+GROUND_COUNT_MAX = 100
+
 START_X = 10  # 10 is center
 START_Y = 13
 
@@ -321,7 +323,7 @@ class CopterLander(gym.Env, EzPickle):
             if self.ground_count == 0:
                 reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
             else:
-                if self.ground_count == 1000:
+                if self.ground_count == GROUND_COUNT_MAX:
                     done = True
             self.ground_count += 1
 
