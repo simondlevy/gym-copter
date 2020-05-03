@@ -28,19 +28,17 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-SIZE = 0.005
+INITIAL_RANDOM = 0   # Increase to make game harder
+
+START_X = 10  # 10 is center
+START_Y = 13
 
 MAX_LANDING_SPEED = 0.05
 
 GROUND_COUNT_MAX = 15
 
-START_X = 10  # 10 is center
-START_Y = 13
-
 FPS = 50
 SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
-
-INITIAL_RANDOM = 0   # Increase to make game harder
 
 LEG_X  = 12
 LEG_Y  = -7
