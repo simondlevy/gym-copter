@@ -30,6 +30,8 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 SIZE = 0.005
 
+MAX_LANDING_SPEED = 0.05
+
 START_X = 10  # 10 is center
 START_Y = 13
 
@@ -134,11 +136,10 @@ class ContactDetector(contactListener):
     def __init__(self, env):
         contactListener.__init__(self)
         self.env = env
-        self.leg_contacts = [False, False]
 
     def BeginContact(self, contact):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
-            self.env.game_over = True
+            self.env.landed = True
 
 class CopterLander(gym.Env, EzPickle):
     metadata = {
@@ -181,7 +182,7 @@ class CopterLander(gym.Env, EzPickle):
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
-        self.game_over = False
+        self.landed = False
         self.prev_shaping = None
 
         W = VIEWPORT_W/SCALE
@@ -274,7 +275,7 @@ class CopterLander(gym.Env, EzPickle):
 
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
-        self.lander.position        = state[dyn.STATE_Y], -state[dyn.STATE_Z]
+        self.lander.position        =  state[dyn.STATE_Y], -state[dyn.STATE_Z]
         self.lander.angle           = -state[dyn.STATE_PHI]
         self.lander.angularVelocity = -state[dyn.STATE_PHI_DOT]
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
@@ -293,24 +294,29 @@ class CopterLander(gym.Env, EzPickle):
         assert len(state) == 6
 
         reward = 0
-        shaping = \
-                - 100*np.sqrt(state[0]*state[0] + state[1]*state[1]) \
-                - 100*np.sqrt(state[2]*state[2] + state[3]*state[3]) \
-                - 100*abs(state[4])
-                                                             # lose contact again after landing, you get negative reward
+        shaping = - 100*np.sqrt(state[0]**2 + state[1]**2) \
+                  - 100*np.sqrt(state[2]**2 + state[3]**2) \
+                  - 100*abs(state[4])
+
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
 
-        reward -= ml_power*0.30  # less fuel spent is better, about -30 for heuristic landing
+        # less fuel spent is better, about -30 for heuristic landing        
+        reward -= ml_power*0.30  
         reward -= mr_power*0.03
 
-        print(self.lander.awake)
-
         done = False
-        if self.game_over or abs(state[0]) >= 1.0:
+
+        # Quit with a big penalty if we go outside left or right edge of window
+        if abs(state[0]) >= 1.0:
             done = True
             reward = -100
+
+        # If we've landed, we're done, with extra reward for a soft landing
+        if self.landed:
+            done = True
+            reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -378,20 +384,19 @@ def heuristic(env, s):
                   s[3] is the vertical speed
                   s[4] is the angle
                   s[5] is the angular speed
-                  s[6] 1 if first leg has contact, else 0
-                  s[7] 1 if second leg has contact, else 0
     returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    throttle_targ = np.abs(s[0])           # target y should be proportional to horizontal offset
+    throttle_targ = 0.55 * np.abs(s[0])           # target y should be proportional to horizontal offset
 
-    roll_todo = s[0]/10
-    throttle_todo = (throttle_targ - s[1])*0.20 - (s[3])*.5
+    throttle_todo = (throttle_targ - s[1])*2 - s[3]*8
 
     throttle_todo = throttle_todo*10 - 1
 
     throttle_todo = np.clip(throttle_todo, -1, +1)
+
+    roll_todo = s[0]/10
 
     return np.array([throttle_todo, roll_todo])
 
@@ -408,7 +413,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             still_open = env.render()
             if still_open == False: break
-        if False: #steps % 20 == 0 or done:
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
