@@ -243,8 +243,11 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics.setState(state)
 
-        # By showing props every third rendering, we can emulate prop rotation
+        # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
+
+        # Support showing vehicle while on ground
+        self.ground_count = 0
 
         return self.step(np.array([0, 0]))[0]
 
@@ -265,13 +268,13 @@ class CopterLander(gym.Env, EzPickle):
         motors[0] += action[1]
         motors[3] += action[1]
 
+        # Set motors and compute dynamics
         self.dynamics.setMotors(motors)
-
         self.dynamics.update(1.0/FPS)
-
-        self.world.Step(1.0/FPS, 6*30, 2*30)
-
         state = self.dynamics.getState()
+
+        # Run one tick of Box2D simulator
+        self.world.Step(1.0/FPS, 6*30, 2*30)
 
         # Copy dynamics kinematics out to lander, negating Z for NED => ENU
         dyn = self.dynamics
@@ -315,8 +318,12 @@ class CopterLander(gym.Env, EzPickle):
 
         # If we've landed, we're done, with extra reward for a soft landing
         if self.landed:
-            done = True
-            reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
+            if self.ground_count == 0:
+                reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
+            else:
+                if self.ground_count == 1000:
+                    done = True
+            self.ground_count += 1
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
