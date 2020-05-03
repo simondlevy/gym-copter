@@ -175,7 +175,7 @@ class CopterLander(gym.Env, EzPickle):
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def reset(self):
+    def reset(self, xoff=0, yoff=0):
         self._destroy()
         self.world.contactListener_keepref = ContactDetector(self)
         self.world.contactListener = self.world.contactListener_keepref
@@ -229,8 +229,12 @@ class CopterLander(gym.Env, EzPickle):
 
         self.dynamics = DJIPhantomDynamics()
 
-        # Start at top center
-        self.start()
+        # Start at top center, plus optional offset
+        state = np.zeros(12)
+        state[self.dynamics.STATE_Y] =  START_X + xoff
+        state[self.dynamics.STATE_Z] = -(START_Y + yoff)  # 3D copter Z comes from 2D copter Y
+
+        self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
@@ -239,20 +243,6 @@ class CopterLander(gym.Env, EzPickle):
         self.ground_count = 0
 
         return self.step(np.array([0, 0]))[0]
-
-    def start(self, rndamt=0):
-
-        # Start at top center.  Note that 3D copter Z comes from 2D copter Y
-        state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  START_X
-        state[self.dynamics.STATE_Z] = -START_Y
-
-        # Add a little random noise to initial velocities
-        state[self.dynamics.STATE_Y]     = START_X + rndamt * np.random.randn()
-        state[self.dynamics.STATE_Y_DOT] = rndamt * np.random.randn()
-        state[self.dynamics.STATE_PHI]   = rndamt * np.random.randn()
-
-        self.dynamics.setState(state)
 
     def step(self, action):
         '''
