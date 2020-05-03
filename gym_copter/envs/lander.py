@@ -156,7 +156,7 @@ class CopterLander(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
         # Action is two floats [throttle_demand, roll_demand]
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
