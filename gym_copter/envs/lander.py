@@ -23,7 +23,7 @@ from Box2D.b2 import edgeShape, fixtureDef, polygonShape, contactListener
 
 import gym
 from gym import spaces
-from gym.utils import seeding, EzPickle
+from gym.utils import seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
@@ -138,14 +138,13 @@ class ContactDetector(contactListener):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.landed = True
 
-class CopterLander(gym.Env, EzPickle):
+class CopterLander(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
     }
 
     def __init__(self):
-        EzPickle.__init__(self)
         self.seed()
         self.viewer = None
 
