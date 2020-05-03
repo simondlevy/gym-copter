@@ -32,7 +32,7 @@ SIZE = 0.005
 
 MAX_LANDING_SPEED = 0.05
 
-GROUND_COUNT_MAX = 100
+GROUND_COUNT_MAX = 10
 
 START_X = 10  # 10 is center
 START_Y = 13
@@ -186,6 +186,7 @@ class CopterLander(gym.Env, EzPickle):
         self.world.contactListener = self.world.contactListener_keepref
         self.landed = False
         self.prev_shaping = None
+        self.rendering = False
 
         W = VIEWPORT_W/SCALE
         H = VIEWPORT_H/SCALE
@@ -296,9 +297,9 @@ class CopterLander(gym.Env, EzPickle):
                 self.lander.angle,
                 20*self.lander.angularVelocity/FPS
                 ]
-        assert len(state) == 6
 
         reward = 0
+
         shaping = - 100*np.sqrt(state[0]**2 + state[1]**2) \
                   - 100*np.sqrt(state[2]**2 + state[3]**2) \
                   - 100*abs(state[4])
@@ -323,7 +324,7 @@ class CopterLander(gym.Env, EzPickle):
             if self.ground_count == 0:
                 reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
             else:
-                if self.ground_count == GROUND_COUNT_MAX:
+                if not self.rendering or self.ground_count == GROUND_COUNT_MAX:
                     done = True
             self.ground_count += 1
 
@@ -332,6 +333,9 @@ class CopterLander(gym.Env, EzPickle):
     def render(self, mode='human'):
 
         from gym.envs.classic_control import rendering
+
+        # Helps with a little extra time at the end
+        self.rendering = True
 
         if self.viewer is None:
             self.viewer = rendering.Viewer(VIEWPORT_W, VIEWPORT_H)
@@ -416,7 +420,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     s = env.reset()
     while True:
         a = heuristic(env, s)
-        s, r, done, info = env.step(a)
+        s, r, done, _ = env.step(a)
         total_reward += r
 
         if render:
