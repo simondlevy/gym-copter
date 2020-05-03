@@ -267,12 +267,9 @@ class CopterLander1D(gym.Env):
         self.lander.position        =  state[dyn.STATE_Y], -state[dyn.STATE_Z]
         self.lander.linearVelocity  = (state[dyn.STATE_Y_DOT], -state[dyn.STATE_Z_DOT])
 
-        pos = self.lander.position
-        vel = self.lander.linearVelocity
-
         state = [
-                (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
-                vel.y*(VIEWPORT_H/SCALE/2)/FPS,
+                (self.lander.position[1] - (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
+                 self.lander.linearVelocity[1] *(VIEWPORT_H/SCALE/2)/FPS,
                 ]
 
         reward = 0
