@@ -35,8 +35,10 @@ def heuristic(env, s):
 
     return np.array([throttle_todo, roll_todo])
 
-def demo_heuristic_lander(env, seed=None):
-    env.seed(seed)
+
+if __name__ == '__main__':
+
+    env = gym.make('CopterLander-v0')
     total_reward = 0
     steps = 0
     s = env.reset()
@@ -53,11 +55,5 @@ def demo_heuristic_lander(env, seed=None):
         steps += 1
         if done: break
     env.close()
-    return total_reward
 
 
-if __name__ == '__main__':
-
-    env = gym.make('CopterLander-v0')
-
-    demo_heuristic_lander(env)
