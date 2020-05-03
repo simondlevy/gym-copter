@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
 """
 Adapted from https://raw.githubusercontent.com/openai/gym/master/gym/envs/box2d/lunar_lander.py
 
 The landing pad is always at coordinates (0,0). The coordinates are the first two numbers in the state vector.
 Reward for moving from the top of the screen to the landing pad and zero speed is about 100..140 points.
-If the lander moves away from the landing pad it loses reward. The episode finishes if the lander crashes or
+If the copter moves away from the landing pad it loses reward. The episode finishes if the copter crashes or
 comes to rest, receiving an additional -100 or +100 points.  Firing the main
 engine is -0.3 points each frame. Firing the side engine is -0.03 points each
 frame.  Solved is 200 points.
@@ -28,9 +27,9 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-INITIAL_RANDOM = 0   # Increase to make game harder
+INITIAL_RANDOM = 0  # Increase to make game harder
 
-START_X = 10  # 10 is center
+START_X = 10.5 # 10 is center
 START_Y = 13
 
 MAX_LANDING_SPEED = 0.05
@@ -378,60 +377,3 @@ class CopterLander(gym.Env, EzPickle):
         self.viewer.draw_polygon(path, color=color)
         path.append(path[0])
         self.viewer.draw_polyline(path, color=OUTLINE_COLOR, linewidth=1)
-
-
-def heuristic(env, s):
-    """
-    The heuristic for
-    1. Testing
-    2. Demonstration rollout.
-
-    Args:
-        env: The environment
-        s (list): The state. Attributes:
-                  s[0] is the horizontal coordinate
-                  s[1] is the vertical coordinate
-                  s[2] is the horizontal speed
-                  s[3] is the vertical speed
-                  s[4] is the angle
-                  s[5] is the angular speed
-    returns:
-         a: The heuristic to be fed into the step function defined above to determine the next step and reward.
-    """
-
-    throttle_targ = 0.55 * np.abs(s[0])           # target y should be proportional to horizontal offset
-
-    throttle_todo = (throttle_targ - s[1])*2 - s[3]*8
-
-    throttle_todo = throttle_todo*10 - 1
-
-    throttle_todo = np.clip(throttle_todo, -1, +1)
-
-    roll_todo = s[0]/10
-
-    return np.array([throttle_todo, roll_todo])
-
-def demo_heuristic_lander(env, seed=None, render=False):
-    env.seed(seed)
-    total_reward = 0
-    steps = 0
-    s = env.reset()
-    while True:
-        a = heuristic(env, s)
-        s, r, done, _ = env.step(a)
-        total_reward += r
-
-        if render:
-            still_open = env.render()
-            if still_open == False: break
-        if steps % 20 == 0 or done:
-            print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
-            print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        steps += 1
-        if done: break
-    env.close()
-    return total_reward
-
-
-if __name__ == '__main__':
-    demo_heuristic_lander(CopterLander(), render=True)
