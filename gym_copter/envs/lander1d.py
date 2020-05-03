@@ -155,7 +155,7 @@ class CopterLander1D(gym.Env):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(2,), dtype=np.float32)
 
         # Action is two floats [throttle_demand, roll_demand]
         self.action_space = spaces.Box(-1, +1, (1,), dtype=np.float32)
@@ -273,17 +273,13 @@ class CopterLander1D(gym.Env):
         vel = self.lander.linearVelocity
 
         state = [
-                (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
                 (pos.y- (self.helipad_y+LEG_H/SCALE)) / (VIEWPORT_H/SCALE/2),
-                vel.x*(VIEWPORT_W/SCALE/2)/FPS,
                 vel.y*(VIEWPORT_H/SCALE/2)/FPS,
-                self.lander.angle,
-                20*self.lander.angularVelocity/FPS
                 ]
 
         reward = 0
 
-        shaping = - 100*np.sqrt(state[1]**2) - 100*np.sqrt(state[3]**2) 
+        shaping = - 100*np.sqrt(state[0]**2) - 100*np.sqrt(state[1]**2) 
 
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -294,7 +290,7 @@ class CopterLander1D(gym.Env):
         # If we've landed, we're done, with extra reward for a soft landing
         if self.landed:
             if self.ground_count == 0:
-                reward += 100 * (abs(state[3]) < MAX_LANDING_SPEED)
+                reward += 100 * (abs(state[1]) < MAX_LANDING_SPEED)
             else:
                 if not self.rendering or self.ground_count == GROUND_COUNT_MAX:
                     done = True

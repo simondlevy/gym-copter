@@ -23,9 +23,7 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    throttle_targ = 0.55 * np.abs(s[0])           # target y should be proportional to horizontal offset
-
-    throttle_todo = (throttle_targ - s[1])*2 - s[3]*8
+    throttle_todo = -s[0]*2 - s[1]*8
 
     throttle_todo = throttle_todo*10 - 1
 
