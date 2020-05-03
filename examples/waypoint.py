@@ -13,9 +13,9 @@ from pidctrl import AltitudePidController
 # Create and initialize copter environment
 env = gym.make('CopterWaypoint-v0')
 
-exit(0)
+env.reset(xoff=3)
 
-env.reset()
+exit(0)
 
 # Create PID controller
 pid  = AltitudePidController(ALTITUDE_TARGET, ALT_P, VEL_P, VEL_I, VEL_D)
