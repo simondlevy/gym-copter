@@ -233,7 +233,6 @@ class LunarLander(gym.Env, EzPickle):
             self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
                                            impulse_pos,
                                            True)
-
         s_power = 0.0
         if np.abs(action[1]) > 0.5:
             # Orientation engines
@@ -262,7 +261,6 @@ class LunarLander(gym.Env, EzPickle):
             1.0 if self.legs[0].ground_contact else 0.0,
             1.0 if self.legs[1].ground_contact else 0.0
             ]
-        assert len(state) == 8
 
         reward = 0
         shaping = \
