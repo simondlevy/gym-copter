@@ -221,16 +221,14 @@ class LunarLander(gym.Env, EzPickle):
         # Engines
         tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
         side = (-tip[1], tip[0])
-        dispersion = [self.np_random.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         m_power = 0.0
         if action[0] > 0.0:
             # Main engine
             m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
             assert m_power >= 0.5 and m_power <= 1.0
-            ox = (tip[0] * (4/SCALE + 2 * dispersion[0]) +
-                  side[0] * dispersion[1])  # 4 is move a bit downwards, +-2 for randomness
-            oy = -tip[1] * (4/SCALE + 2 * dispersion[0]) - side[1] * dispersion[1]
+            ox =  tip[0] * (4/SCALE)
+            oy = -tip[1] * (4/SCALE)
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
             self.lander.ApplyLinearImpulse((-ox * MAIN_ENGINE_POWER * m_power, -oy * MAIN_ENGINE_POWER * m_power),
                                            impulse_pos,
@@ -242,8 +240,8 @@ class LunarLander(gym.Env, EzPickle):
             direction = np.sign(action[1])
             s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
             assert s_power >= 0.5 and s_power <= 1.0
-            ox = tip[0] * dispersion[0] + side[0] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
-            oy = -tip[1] * dispersion[0] - side[1] * (3 * dispersion[1] + direction * SIDE_ENGINE_AWAY/SCALE)
+            ox =  side[0] * (direction * SIDE_ENGINE_AWAY/SCALE)
+            oy = -side[1] * (direction * SIDE_ENGINE_AWAY/SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/SCALE,
                            self.lander.position[1] + oy + tip[1] * SIDE_ENGINE_HEIGHT/SCALE)
             self.lander.ApplyLinearImpulse((-ox * SIDE_ENGINE_POWER * s_power, -oy * SIDE_ENGINE_POWER * s_power),
