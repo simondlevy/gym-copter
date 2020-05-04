@@ -41,9 +41,3 @@ register(
     entry_point='gym_copter.envs:CopterLander2D',
     max_episode_steps=10000
 )
-
-register(
-    id='CopterWaypoint-v0',
-    entry_point='gym_copter.envs:CopterWaypoint',
-    max_episode_steps=10000
-)

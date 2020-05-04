@@ -17,6 +17,7 @@ python gym_copter/envs/lander.py
 """
 
 import numpy as np
+from time import time
 
 import Box2D
 from Box2D.b2 import edgeShape, fixtureDef, polygonShape, contactListener
@@ -142,6 +143,7 @@ class CopterBox2D(gym.Env):
     }
 
     def __init__(self, observation_size, action_size):
+
         self.seed()
         self.viewer = None
 

@@ -8,7 +8,7 @@ class CopterLander2D(CopterBox2D):
 
     def __init__(self):
 
-        CopterBox2D.__init__(self, 2, 6)
+        CopterBox2D.__init__(self, 6, 2)
 
     def reset(self, xoff=0, yoff=0):
 
