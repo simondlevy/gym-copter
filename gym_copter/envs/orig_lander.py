@@ -27,7 +27,7 @@ Created by Oleg Klimov. Licensed on the same terms as the rest of OpenAI Gym.
 """
 
 
-import sys, math
+import math
 import numpy as np
 
 import Box2D
