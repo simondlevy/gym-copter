@@ -68,7 +68,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.viewer = None
 
         self.world = Box2D.b2World()
-        self.moon = None
+        self.ground = None
         self.lander = None
 
         self.prev_reward = None
@@ -88,10 +88,10 @@ class LoonieLander(gym.Env, EzPickle):
         return [seed]
 
     def _destroy(self):
-        if not self.moon: return
+        if not self.ground: return
         self.world.contactListener = None
-        self.world.DestroyBody(self.moon)
-        self.moon = None
+        self.world.DestroyBody(self.ground)
+        self.ground = None
         self.world.DestroyBody(self.lander)
         self.lander = None
 
@@ -117,19 +117,19 @@ class LoonieLander(gym.Env, EzPickle):
         height[CHUNKS//2+2] = self.helipad_y
         smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(CHUNKS)]
 
-        self.moon = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
+        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
         self.sky_polys = []
         for i in range(CHUNKS-1):
             p1 = (chunk_x[i], smooth_y[i])
             p2 = (chunk_x[i+1], smooth_y[i+1])
-            self.moon.CreateEdgeFixture(
+            self.ground.CreateEdgeFixture(
                 vertices=[p1,p2],
                 density=0,
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.moon.color1 = (0.0, 0.0, 0.0)
-        self.moon.color2 = (0.0, 0.0, 0.0)
+        self.ground.color1 = (0.0, 0.0, 0.0)
+        self.ground.color2 = (0.0, 0.0, 0.0)
 
         initial_y = VIEWPORT_H/SCALE
         self.lander = self.world.CreateDynamicBody(
