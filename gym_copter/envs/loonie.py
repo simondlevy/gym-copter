@@ -57,6 +57,9 @@ VIEWPORT_W = 600
 VIEWPORT_H = 400
 
 class LoonieLander(gym.Env, EzPickle):
+
+    SKY_COLOR     = 0.5, 0.8, 1.0
+
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
@@ -225,7 +228,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.viewer.set_bounds(0, VIEWPORT_W/SCALE, 0, VIEWPORT_H/SCALE)
 
         for p in self.sky_polys:
-            self.viewer.draw_polygon(p, color=(0, 0, 0))
+            self.viewer.draw_polygon(p, color=self.SKY_COLOR)
 
         for f in self.lander.fixtures:
             trans = f.body.transform
