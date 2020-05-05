@@ -56,26 +56,6 @@ SIDE_ENGINE_AWAY = 12.0
 VIEWPORT_W = 600
 VIEWPORT_H = 400
 
-class ContactDetector(contactListener):
-    def __init__(self, env):
-        contactListener.__init__(self)
-        self.env = env
-
-    def BeginContact(self, contact):
-        return
-        #if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
-        #    self.env.game_over = True
-        #for i in range(2):
-        #    if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-        #        self.env.legs[i].ground_contact = True
-
-    def EndContact(self, contact):
-        return
-        #for i in range(2):
-        #    if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-        #        self.env.legs[i].ground_contact = False
-
-
 class LoonieLander(gym.Env, EzPickle):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -119,8 +99,6 @@ class LoonieLander(gym.Env, EzPickle):
 
     def reset(self):
         self._destroy()
-        self.world.contactListener_keepref = ContactDetector(self)
-        self.world.contactListener = self.world.contactListener_keepref
         self.game_over = False
         self.prev_shaping = None
 
