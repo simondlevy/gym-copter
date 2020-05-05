@@ -221,16 +221,17 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
+        # Create initial position
         initial_x = self.VIEWPORT_W/self.SCALE/2
         initial_y = self.VIEWPORT_H/self.SCALE
 
         # Create dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Start at top center
+        # Start dynamics state in initial position
         state = np.zeros(12)
-        #state[self.dynamics.STATE_Y] =  self.START_X + xoff    # 3D copter Y comes from 2D copter X
-        #state[self.dynamics.STATE_Z] = -(self.START_Y + yoff)  # 3D copter Z comes from 2D copter Y
+        state[self.dynamics.STATE_Y] =  initial_x # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Z] = -initial_y # 3D copter Z comes from 2D copter Y, negated for NED
 
         self.lander = self.world.CreateDynamicBody(
             position=(initial_x, initial_y),
@@ -251,6 +252,7 @@ class LoonieLander(gym.Env, EzPickle):
 
                 )
 
+        # Perturb slightly
         self.lander.ApplyForceToCenter( (
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM),
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
