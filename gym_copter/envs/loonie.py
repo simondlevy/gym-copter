@@ -159,7 +159,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.seed()
         self.viewer = None
 
-        self.world = Box2D.b2World()
+        self.world = Box2D.b2World(gravity=(0,-9.8665))
         self.ground = None
         self.lander = None
 
