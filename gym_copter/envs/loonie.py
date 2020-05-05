@@ -372,6 +372,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.viewer.draw_polygon(path, color=color)
         path.append(path[0])
         self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=1)
+
 def heuristic(env, s):
     """
     The heuristic for
