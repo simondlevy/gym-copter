@@ -143,6 +143,10 @@ class LoonieLander(gym.Env, EzPickle):
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
     FLAG_COLOR    = 0.8, 0.0, 0.0
+    VEHICLE_COLOR = 1.0, 1.0, 1.0
+    MOTOR_COLOR   = 0.5, 0.5, 0.5
+    PROP_COLOR    = 0.0, 0.0, 0.0
+    OUTLINE_COLOR = 0.0, 0.0, 0.0
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -219,6 +223,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.lander = self.world.CreateDynamicBody(
             position=(self.VIEWPORT_W/self.SCALE/2, initial_y),
             angle=0.0,
+
             fixtures = fixtureDef(
                 shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in self.LANDER_POLY]),
                 density=5.0,
