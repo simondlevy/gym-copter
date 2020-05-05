@@ -299,8 +299,6 @@ def heuristic(env, s):
                   s[3] is the vertical speed
                   s[4] is the angle
                   s[5] is the angular speed
-                  s[6] 1 if first leg has contact, else 0
-                  s[7] 1 if second leg has contact, else 0
     returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
@@ -312,12 +310,6 @@ def heuristic(env, s):
 
     angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
     hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
-
-    '''
-    if s[6] or s[7]:  # legs have contact
-        angle_todo = 0
-        hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
-    '''
 
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
