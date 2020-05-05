@@ -190,6 +190,7 @@ class LoonieLander(gym.Env, EzPickle):
         self._destroy()
         self.game_over = False
         self.prev_shaping = None
+        self.landed = False
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -244,6 +245,9 @@ class LoonieLander(gym.Env, EzPickle):
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM),
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
             ), True)
+
+        # By showing props periodically, we can emulate prop rotation
+        self.show_props = 0
 
         return self.step(np.array([0, 0]))[0]
 
@@ -333,12 +337,16 @@ class LoonieLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=self.SKY_COLOR)
 
-        for f in self.lander.fixtures:
-            trans = f.body.transform
-            path = [trans*v for v in f.shape.vertices]
-            self.viewer.draw_polygon(path, color=self.VEHICLE_COLOR)
-            path.append(path[0])
-            self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=2)
+        self._show_fixture(1, self.VEHICLE_COLOR)
+        self._show_fixture(2, self.VEHICLE_COLOR)
+        self._show_fixture(0, self.VEHICLE_COLOR)
+        self._show_fixture(3, self.MOTOR_COLOR)
+        self._show_fixture(4, self.MOTOR_COLOR)
+
+        # Simulate spinning props by alernating
+        if self.landed or self.show_props:
+            for k in range(5,9):
+                self._show_fixture(k, self.PROP_COLOR)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
@@ -347,6 +355,8 @@ class LoonieLander(gym.Env, EzPickle):
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
+        self.show_props = (self.show_props + 1) % 3
+
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
     def close(self):
@@ -354,7 +364,13 @@ class LoonieLander(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-
+    def _show_fixture(self, index, color):
+        fixture = self.lander.fixtures[index]
+        trans = fixture.body.transform
+        path = [trans*v for v in fixture.shape.vertices]
+        self.viewer.draw_polygon(path, color=color)
+        path.append(path[0])
+        self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=1)
 def heuristic(env, s):
     """
     The heuristic for
