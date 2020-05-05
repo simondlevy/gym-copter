@@ -228,11 +228,6 @@ class LoonieLander(gym.Env, EzPickle):
         # Create dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Start dynamics state in initial position
-        state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  initial_x # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Z] = -initial_y # 3D copter Z comes from 2D copter Y, negated for NED
-
         self.lander = self.world.CreateDynamicBody(
             position=(initial_x, initial_y),
             angle=0.0,
@@ -258,10 +253,21 @@ class LoonieLander(gym.Env, EzPickle):
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
             ), True)
 
+        # Step once to get perturbed initial position
+        self._world_step()
+
+        # Start dynamics state in initial position
+        state = np.zeros(12)
+        state[self.dynamics.STATE_Y] =  initial_x # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Z] = -initial_y # 3D copter Z comes from 2D copter Y, negated for NED
+
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
 
         return self.step(np.array([0, 0]))[0]
+
+    def _world_step(self):
+        self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
     def step(self, action):
 
@@ -298,7 +304,7 @@ class LoonieLander(gym.Env, EzPickle):
                                            impulse_pos,
                                            True)
 
-        self.world.Step(1.0/self.FPS, 6*30, 2*30)
+        self._world_step()
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
