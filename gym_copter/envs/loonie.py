@@ -150,8 +150,6 @@ class LoonieLander(gym.Env, EzPickle):
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
             ), True)
 
-        self.drawlist = [self.lander]
-
         return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
@@ -230,19 +228,17 @@ class LoonieLander(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=(0, 0, 0))
 
-        for obj in self.drawlist:
-            print(obj)
-            for f in obj.fixtures:
-                trans = f.body.transform
-                if type(f.shape) is circleShape:
-                    t = rendering.Transform(translation=trans*f.shape.pos)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=obj.color1).add_attr(t)
-                    self.viewer.draw_circle(f.shape.radius, 20, color=obj.color2, filled=False, linewidth=2).add_attr(t)
-                else:
-                    path = [trans*v for v in f.shape.vertices]
-                    self.viewer.draw_polygon(path, color=obj.color1)
-                    path.append(path[0])
-                    self.viewer.draw_polyline(path, color=obj.color2, linewidth=2)
+        for f in self.lander.fixtures:
+            trans = f.body.transform
+            if type(f.shape) is circleShape:
+                t = rendering.Transform(translation=trans*f.shape.pos)
+                self.viewer.draw_circle(f.shape.radius, 20, color=self.lander.color1).add_attr(t)
+                self.viewer.draw_circle(f.shape.radius, 20, color=self.lander.color2, filled=False, linewidth=2).add_attr(t)
+            else:
+                path = [trans*v for v in f.shape.vertices]
+                self.viewer.draw_polygon(path, color=self.lander.color1)
+                path.append(path[0])
+                self.viewer.draw_polyline(path, color=self.lander.color2, linewidth=2)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
