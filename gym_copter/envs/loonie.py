@@ -49,6 +49,7 @@ LANDER_POLY =[
     (-14, +17), (-17, 0), (-17 ,-10),
     (+17, -10), (+17, 0), (+14, +17)
     ]
+
 LEG_AWAY = 20
 LEG_DOWN = 18
 LEG_W, LEG_H = 2, 8
@@ -60,7 +61,6 @@ SIDE_ENGINE_AWAY = 12.0
 VIEWPORT_W = 600
 VIEWPORT_H = 400
 
-
 class ContactDetector(contactListener):
     def __init__(self, env):
         contactListener.__init__(self)
@@ -69,14 +69,15 @@ class ContactDetector(contactListener):
     def BeginContact(self, contact):
         if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
             self.env.game_over = True
-        for i in range(2):
-            if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = True
+        #for i in range(2):
+        #    if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
+        #        self.env.legs[i].ground_contact = True
 
     def EndContact(self, contact):
-        for i in range(2):
-            if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = False
+        return
+        #for i in range(2):
+        #    if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
+        #        self.env.legs[i].ground_contact = False
 
 
 class LoonieLander(gym.Env, EzPickle):
@@ -216,6 +217,7 @@ class LoonieLander(gym.Env, EzPickle):
         return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
+
         action = np.clip(action, -1, +1).astype(np.float32)
 
         # Engines
@@ -263,11 +265,10 @@ class LoonieLander(gym.Env, EzPickle):
             ]
 
         reward = 0
-        shaping = \
-            - 100*np.sqrt(state[0]**2 + state[1]**2) \
-            - 100*np.sqrt(state[2]**2 + state[3]**2) \
-            - 100*abs(state[4]) + 10*state[6] + 10*state[7]  # And ten points for legs contact, the idea is if you
-                                                             # lose contact again after landing, you get negative reward
+        shaping  = -100*np.sqrt(state[0]**2 + state[1]**2)        # Lose points for altitude and vertical drop rate'
+        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)         # Lose points for distance from X center and horizontal velocity
+        shaping -= 100*abs(state[4]) + 10*state[6] + 10*state[7]  # And ten points for legs contact, the idea is if you
+                                                                  #   lose contact again after landing, you get negative reward
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
