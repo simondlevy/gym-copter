@@ -139,6 +139,8 @@ class LoonieLander(gym.Env, EzPickle):
     VIEWPORT_W = 600
     VIEWPORT_H = 400
 
+    TERRAIN_CHUNKS = 11
+
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
     FLAG_COLOR    = 0.8, 0.0, 0.0
@@ -194,22 +196,21 @@ class LoonieLander(gym.Env, EzPickle):
         H = self.VIEWPORT_H/self.SCALE
 
         # terrain
-        CHUNKS = 11
-        height = self.np_random.uniform(0, H/2, size=(CHUNKS+1,))
-        chunk_x = [W/(CHUNKS-1)*i for i in range(CHUNKS)]
-        self.helipad_x1 = chunk_x[CHUNKS//2-1]
-        self.helipad_x2 = chunk_x[CHUNKS//2+1]
+        height = self.np_random.uniform(0, H/2, size=(self.TERRAIN_CHUNKS+1,))
+        chunk_x = [W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
+        self.helipad_x1 = chunk_x[self.TERRAIN_CHUNKS//2-1]
+        self.helipad_x2 = chunk_x[self.TERRAIN_CHUNKS//2+1]
         self.helipad_y = H/4
-        height[CHUNKS//2-2] = self.helipad_y
-        height[CHUNKS//2-1] = self.helipad_y
-        height[CHUNKS//2+0] = self.helipad_y
-        height[CHUNKS//2+1] = self.helipad_y
-        height[CHUNKS//2+2] = self.helipad_y
-        smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(CHUNKS)]
+        height[self.TERRAIN_CHUNKS//2-2] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2-1] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+0] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+1] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+2] = self.helipad_y
+        smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
 
         self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
         self.sky_polys = []
-        for i in range(CHUNKS-1):
+        for i in range(self.TERRAIN_CHUNKS-1):
             p1 = (chunk_x[i], smooth_y[i])
             p2 = (chunk_x[i+1], smooth_y[i+1])
             self.ground.CreateEdgeFixture(
