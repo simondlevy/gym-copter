@@ -26,7 +26,6 @@ python examples/agents/keyboard_agent.py LunarLander-v2
 Created by Oleg Klimov. Licensed on the same terms as the rest of OpenAI Gym.
 """
 
-
 import math
 import numpy as np
 
@@ -190,7 +189,6 @@ class LoonieLander(gym.Env, EzPickle):
         self._destroy()
         self.game_over = False
         self.prev_shaping = None
-        self.landed = False
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -300,9 +298,9 @@ class LoonieLander(gym.Env, EzPickle):
 
         reward = 0
         shaping = 0
-        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)        # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)         # Lose points for distance from X center and horizontal velocity
-                                                                  #   lose contact again after landing, you get negative reward
+        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
+        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)  # Lose points for distance from X center and horizontal velocity
+                                                                  
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
@@ -344,7 +342,7 @@ class LoonieLander(gym.Env, EzPickle):
         self._show_fixture(4, self.MOTOR_COLOR)
 
         # Simulate spinning props by alernating
-        if self.landed or self.show_props:
+        if self.lander.awake and self.show_props:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
