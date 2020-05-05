@@ -36,6 +36,8 @@ import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 
+from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+
 class LoonieLander(gym.Env, EzPickle):
 
     FPS = 50
@@ -219,10 +221,19 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
+        initial_x = self.VIEWPORT_W/self.SCALE/2
         initial_y = self.VIEWPORT_H/self.SCALE
 
+        # Create dynamics model
+        self.dynamics = DJIPhantomDynamics()
+
+        # Start at top center
+        state = np.zeros(12)
+        #state[self.dynamics.STATE_Y] =  self.START_X + xoff    # 3D copter Y comes from 2D copter X
+        #state[self.dynamics.STATE_Z] = -(self.START_Y + yoff)  # 3D copter Z comes from 2D copter Y
+
         self.lander = self.world.CreateDynamicBody(
-            position=(self.VIEWPORT_W/self.SCALE/2, initial_y),
+            position=(initial_x, initial_y),
             angle=0.0,
 
             fixtures = [
@@ -252,7 +263,7 @@ class LoonieLander(gym.Env, EzPickle):
 
     def step(self, action):
 
-        print('%+3.3f %+3.3f' % (action[0], action[1]))
+        #print('%+3.3f %+3.3f' % (action[0], action[1]))
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
