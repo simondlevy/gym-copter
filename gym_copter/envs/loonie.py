@@ -128,9 +128,6 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.ground.color1 = (0.0, 0.0, 0.0)
-        self.ground.color2 = (0.0, 0.0, 0.0)
-
         initial_y = VIEWPORT_H/SCALE
         self.lander = self.world.CreateDynamicBody(
             position=(VIEWPORT_W/SCALE/2, initial_y),
