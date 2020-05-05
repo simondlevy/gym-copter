@@ -41,3 +41,9 @@ register(
     entry_point='gym_copter.envs:CopterLander2D',
     max_episode_steps=10000
 )
+
+register(
+    id='LoonieLander-v0',
+    entry_point='gym_copter.envs:LoonieLander',
+    max_episode_steps=10000
+)

@@ -79,7 +79,7 @@ class ContactDetector(contactListener):
                 self.env.legs[i].ground_contact = False
 
 
-class LunarLander(gym.Env, EzPickle):
+class LoonieLander(gym.Env, EzPickle):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
@@ -372,7 +372,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        if False: #steps % 20 == 0 or done:
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
@@ -382,4 +382,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 
 if __name__ == '__main__':
-    demo_heuristic_lander(LunarLander(), render=True)
+    demo_heuristic_lander(LoonieLander(), render=True)
