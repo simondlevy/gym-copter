@@ -245,16 +245,21 @@ class LoonieLander(gym.Env, EzPickle):
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
             ), True)
 
-        # Step once to get perturbed initial position
+        # Step once to implement perturbation, so we can initialize custom dynamics
         self._world_step()
 
-        # Create dynamics model
+        # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Start dynamics state in perturbed initial position
-        state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  self.lander.position.x # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Z] = -self.lander.position.y # 3D copter Z comes from 2D copter Y, negated for NED
+        # Initialize custom dynamics
+        state = np.zeros(12);
+        state[self.dynamics.STATE_Y]       =  self.lander.position.x # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Y_DOT]   =  self.lander.linearVelocity.x 
+        state[self.dynamics.STATE_Z]       = -self.lander.position.y # 3D copter Z comes from 2D copter Y, negated for NED
+        state[self.dynamics.STATE_Z_DOT]   = -self.lander.linearVelocity.y 
+        state[self.dynamics.STATE_PHI]     =  self.lander.angle
+        state[self.dynamics.STATE_PHI_DOT] =  self.lander.angularVelocity
+        self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
@@ -262,11 +267,11 @@ class LoonieLander(gym.Env, EzPickle):
         return self.step(np.array([0, 0]))[0]
 
     def _world_step(self):
+
+        # Step once in Box2D physics
         self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
     def step(self, action):
-
-        #print('%+3.3f %+3.3f' % (action[0], action[1]))
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
@@ -311,7 +316,6 @@ class LoonieLander(gym.Env, EzPickle):
             self.lander.angle,
             20.0*self.lander.angularVelocity/self.FPS
             ]
-
 
         reward = 0
         shaping = 0
