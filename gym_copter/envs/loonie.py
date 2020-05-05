@@ -336,6 +336,14 @@ class LoonieLander(gym.Env, EzPickle):
         if not self.lander.awake:
             done = True
             reward = +100
+
+        # Run custom dynamics ---------------------------
+
+        # Convert [-1,+1] action to [0,1] demands
+        throttle, roll = (action + 1) / 2
+
+        # -----------------------------------------------
+
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
