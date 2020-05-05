@@ -60,6 +60,7 @@ class LoonieLander(gym.Env, EzPickle):
 
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
+    FLAG_COLOR    = 0.8, 0.0, 0.0
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -251,7 +252,7 @@ class LoonieLander(gym.Env, EzPickle):
             flagy2 = flagy1 + 50/self.SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
-                                     color=(0.8, 0.8, 0))
+                                     color=self.FLAG_COLOR)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
