@@ -200,7 +200,8 @@ class LoonieLander(gym.Env, EzPickle):
 
 
         reward = 0
-        shaping  = -100*np.sqrt(state[0]**2 + state[1]**2)        # Lose points for altitude and vertical drop rate'
+        shaping = 0
+        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)        # Lose points for altitude and vertical drop rate'
         shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)         # Lose points for distance from X center and horizontal velocity
                                                                   #   lose contact again after landing, you get negative reward
         if self.prev_shaping is not None:
