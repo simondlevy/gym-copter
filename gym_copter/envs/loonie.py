@@ -59,6 +59,7 @@ class LoonieLander(gym.Env, EzPickle):
     VIEWPORT_H = 400
 
     SKY_COLOR     = 0.5, 0.8, 1.0
+    GROUND_COLOR  = 0.5, 0.7, 0.3
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -227,6 +228,13 @@ class LoonieLander(gym.Env, EzPickle):
         if self.viewer is None:
             self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
             self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
+
+        # Draw ground as background
+        self.viewer.draw_polygon([(0,0), 
+            (self.VIEWPORT_W,0), 
+            (self.VIEWPORT_W,self.VIEWPORT_H), 
+            (0,self.VIEWPORT_H)], 
+            color=self.GROUND_COLOR)
 
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=self.SKY_COLOR)
