@@ -252,6 +252,8 @@ class LoonieLander(gym.Env, EzPickle):
 
     def step(self, action):
 
+        print('%+3.3f %+3.3f' % (action[0], action[1]))
+
         action = np.clip(action, -1, +1).astype(np.float32)
 
         # Engines
@@ -415,7 +417,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        if steps % 20 == 0 or done:
+        if False: #steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
