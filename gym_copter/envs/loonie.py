@@ -94,8 +94,6 @@ class LoonieLander(gym.Env, EzPickle):
         self.moon = None
         self.world.DestroyBody(self.lander)
         self.lander = None
-        #self.world.DestroyBody(self.legs[0])
-        #self.world.DestroyBody(self.legs[1])
 
     def reset(self):
         self._destroy()
