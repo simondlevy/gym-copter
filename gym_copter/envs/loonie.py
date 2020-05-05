@@ -220,6 +220,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
         initial_y = self.VIEWPORT_H/self.SCALE
+
         self.lander = self.world.CreateDynamicBody(
             position=(self.VIEWPORT_W/self.SCALE/2, initial_y),
             angle=0.0,
@@ -232,8 +233,7 @@ class LoonieLander(gym.Env, EzPickle):
                 maskBits=0x001,   # collide only with ground
                 restitution=0.0)  # 0.99 bouncy
                 )
-        self.lander.color1 = (0.5, 0.4, 0.9)
-        self.lander.color2 = (0.3, 0.3, 0.5)
+
         self.lander.ApplyForceToCenter( (
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM),
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
@@ -330,9 +330,9 @@ class LoonieLander(gym.Env, EzPickle):
         for f in self.lander.fixtures:
             trans = f.body.transform
             path = [trans*v for v in f.shape.vertices]
-            self.viewer.draw_polygon(path, color=self.lander.color1)
+            self.viewer.draw_polygon(path, color=self.VEHICLE_COLOR)
             path.append(path[0])
-            self.viewer.draw_polyline(path, color=self.lander.color2, linewidth=2)
+            self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=2)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
