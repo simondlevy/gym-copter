@@ -339,8 +339,14 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Run custom dynamics ---------------------------
 
-        # Convert [-1,+1] action to [0,1] demands
+        # Convert [-1,+1] action to [0,1] stick demands
         throttle, roll = (action + 1) / 2
+
+        # Run stick demands through mixer to get motor demands
+
+        # Set motor demands
+
+        # Update dynamics
 
         # -----------------------------------------------
 
