@@ -137,7 +137,6 @@ class LoonieLander(gym.Env, EzPickle):
         ]
 
 
-
     VIEWPORT_W = 600
     VIEWPORT_H = 400
 
@@ -221,15 +220,8 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        # Create initial position
-        initial_x = self.VIEWPORT_W/self.SCALE/2
-        initial_y = self.VIEWPORT_H/self.SCALE
-
-        # Create dynamics model
-        self.dynamics = DJIPhantomDynamics()
-
         self.lander = self.world.CreateDynamicBody(
-            position=(initial_x, initial_y),
+            position=(self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE),
             angle=0.0,
 
             fixtures = [
@@ -256,10 +248,13 @@ class LoonieLander(gym.Env, EzPickle):
         # Step once to get perturbed initial position
         self._world_step()
 
-        # Start dynamics state in initial position
+        # Create dynamics model
+        self.dynamics = DJIPhantomDynamics()
+
+        # Start dynamics state in perturbed initial position
         state = np.zeros(12)
-        state[self.dynamics.STATE_Y] =  initial_x # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Z] = -initial_y # 3D copter Z comes from 2D copter Y, negated for NED
+        state[self.dynamics.STATE_Y] =  self.lander.position.x # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Z] = -self.lander.position.y # 3D copter Z comes from 2D copter Y, negated for NED
 
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
