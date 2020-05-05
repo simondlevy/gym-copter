@@ -31,7 +31,7 @@ import math
 import numpy as np
 
 import Box2D
-from Box2D.b2 import edgeShape, circleShape, fixtureDef, polygonShape
+from Box2D.b2 import edgeShape, fixtureDef, polygonShape
 
 import gym
 from gym import spaces
@@ -217,7 +217,9 @@ class LoonieLander(gym.Env, EzPickle):
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
+
         from gym.envs.classic_control import rendering
+
         if self.viewer is None:
             self.viewer = rendering.Viewer(VIEWPORT_W, VIEWPORT_H)
             self.viewer.set_bounds(0, VIEWPORT_W/SCALE, 0, VIEWPORT_H/SCALE)
@@ -227,15 +229,10 @@ class LoonieLander(gym.Env, EzPickle):
 
         for f in self.lander.fixtures:
             trans = f.body.transform
-            if type(f.shape) is circleShape:
-                t = rendering.Transform(translation=trans*f.shape.pos)
-                self.viewer.draw_circle(f.shape.radius, 20, color=self.lander.color1).add_attr(t)
-                self.viewer.draw_circle(f.shape.radius, 20, color=self.lander.color2, filled=False, linewidth=2).add_attr(t)
-            else:
-                path = [trans*v for v in f.shape.vertices]
-                self.viewer.draw_polygon(path, color=self.lander.color1)
-                path.append(path[0])
-                self.viewer.draw_polyline(path, color=self.lander.color2, linewidth=2)
+            path = [trans*v for v in f.shape.vertices]
+            self.viewer.draw_polygon(path, color=self.lander.color1)
+            path.append(path[0])
+            self.viewer.draw_polyline(path, color=self.lander.color2, linewidth=2)
 
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
