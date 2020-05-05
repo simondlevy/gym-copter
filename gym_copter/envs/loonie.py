@@ -55,6 +55,88 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_HEIGHT = 14.0
     SIDE_ENGINE_AWAY = 12.0
 
+    LEG_X  = 12
+    LEG_Y  = -7
+    LEG_W  = 3
+    LEG_H  = 20
+
+    MOTOR_X  = 25
+    MOTOR_Y  = 7
+    MOTOR_W  = 4
+    MOTOR_H  = 5
+
+    BLADE_X = 25
+    BLADE_Y = 8
+    BLADE_W = 20
+    BLADE_H = 2
+
+    BLADE1L_POLY = [
+            (BLADE_X,BLADE_Y),
+            (BLADE_X-BLADE_W/2,BLADE_Y+BLADE_H),
+            (BLADE_X-BLADE_W,BLADE_Y),
+            (BLADE_X-BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE1R_POLY = [
+            (BLADE_X,BLADE_Y),
+            (BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+            (BLADE_X+BLADE_W,BLADE_Y),
+            (BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE2L_POLY = [
+            (-BLADE_X,BLADE_Y),
+            (-(BLADE_X+BLADE_W/2),BLADE_Y+BLADE_H),
+            (-(BLADE_X+BLADE_W),BLADE_Y),
+            (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
+            ]
+
+    BLADE2R_POLY = [
+            (-BLADE_X,BLADE_Y),
+            (-BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
+            (-BLADE_X+BLADE_W,BLADE_Y),
+            (-BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
+            ]
+
+    HULL_POLY =[
+            (-30, 0),
+            (-4, +4),
+            (+4, +4),
+            (+30,  0),
+            (+4, -14),
+            (-4, -14),
+        ]
+
+    LEG1_POLY = [
+            (-LEG_X,LEG_Y),
+            (-LEG_X+LEG_W,LEG_Y),
+            (-LEG_X+LEG_W,LEG_Y-LEG_H),
+            (-LEG_X,LEG_Y-LEG_H)
+        ]
+
+    LEG2_POLY = [
+            (+LEG_X,LEG_Y),
+            (+LEG_X+LEG_W,LEG_Y),
+            (+LEG_X+LEG_W,LEG_Y-LEG_H),
+            (+LEG_X,LEG_Y-LEG_H)
+        ]
+
+    MOTOR1_POLY = [
+            (+MOTOR_X,MOTOR_Y),
+            (+MOTOR_X+MOTOR_W,MOTOR_Y),
+            (+MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+            (+MOTOR_X,MOTOR_Y-MOTOR_H)
+        ]
+
+    MOTOR2_POLY = [
+            (-MOTOR_X,MOTOR_Y),
+            (-MOTOR_X+MOTOR_W,MOTOR_Y),
+            (-MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
+            (-MOTOR_X,MOTOR_Y-MOTOR_H)
+        ]
+
+
+
     VIEWPORT_W = 600
     VIEWPORT_H = 400
 
