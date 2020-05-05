@@ -50,10 +50,10 @@ LANDER_POLY =[
     (+17, -10), (+17, 0), (+14, +17)
     ]
 
-LEG_AWAY = 20
-LEG_DOWN = 18
-LEG_W, LEG_H = 2, 8
-LEG_SPRING_TORQUE = 40
+#LEG_AWAY = 20
+#LEG_DOWN = 18
+#LEG_W, LEG_H = 2, 8
+#LEG_SPRING_TORQUE = 40
 
 SIDE_ENGINE_HEIGHT = 14.0
 SIDE_ENGINE_AWAY = 12.0
@@ -67,8 +67,9 @@ class ContactDetector(contactListener):
         self.env = env
 
     def BeginContact(self, contact):
-        if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
-            self.env.game_over = True
+        return
+        #if self.env.lander == contact.fixtureA.body or self.env.lander == contact.fixtureB.body:
+        #    self.env.game_over = True
         #for i in range(2):
         #    if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
         #        self.env.legs[i].ground_contact = True
@@ -118,8 +119,8 @@ class LoonieLander(gym.Env, EzPickle):
         self.moon = None
         self.world.DestroyBody(self.lander)
         self.lander = None
-        self.world.DestroyBody(self.legs[0])
-        self.world.DestroyBody(self.legs[1])
+        #self.world.DestroyBody(self.legs[0])
+        #self.world.DestroyBody(self.legs[1])
 
     def reset(self):
         self._destroy()
@@ -179,6 +180,7 @@ class LoonieLander(gym.Env, EzPickle):
             ), True)
 
         self.legs = []
+        '''
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
                 position=(VIEWPORT_W/SCALE/2 - i*LEG_AWAY/SCALE, initial_y),
@@ -211,6 +213,7 @@ class LoonieLander(gym.Env, EzPickle):
                 rjd.upperAngle = -0.9 + 0.5
             leg.joint = self.world.CreateJoint(rjd)
             self.legs.append(leg)
+        '''
 
         self.drawlist = [self.lander] + self.legs
 
@@ -255,19 +258,22 @@ class LoonieLander(gym.Env, EzPickle):
         vel = self.lander.linearVelocity
         state = [
             (pos.x - VIEWPORT_W/SCALE/2) / (VIEWPORT_W/SCALE/2),
-            (pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            #(pos.y - (self.helipad_y+LEG_DOWN/SCALE)) / (VIEWPORT_H/SCALE/2),
+            (pos.y - (self.helipad_y)) / (VIEWPORT_H/SCALE/2),
             vel.x*(VIEWPORT_W/SCALE/2)/FPS,
             vel.y*(VIEWPORT_H/SCALE/2)/FPS,
             self.lander.angle,
             20.0*self.lander.angularVelocity/FPS,
-            1.0 if self.legs[0].ground_contact else 0.0,
-            1.0 if self.legs[1].ground_contact else 0.0
+            #1.0 if self.legs[0].ground_contact else 0.0,
+            #1.0 if self.legs[1].ground_contact else 0.0
             ]
+
+        #print(state[1])
 
         reward = 0
         shaping  = -100*np.sqrt(state[0]**2 + state[1]**2)        # Lose points for altitude and vertical drop rate'
         shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)         # Lose points for distance from X center and horizontal velocity
-        shaping -= 100*abs(state[4]) + 10*state[6] + 10*state[7]  # And ten points for legs contact, the idea is if you
+        #shaping -= 100*abs(state[4]) + 10*state[6] + 10*state[7]  # And ten points for legs contact, the idea is if you
                                                                   #   lose contact again after landing, you get negative reward
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -351,9 +357,11 @@ def heuristic(env, s):
     angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
     hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
 
+    '''
     if s[6] or s[7]:  # legs have contact
         angle_todo = 0
         hover_todo = -(s[3])*0.5  # override to reduce fall speed, that's all we need after contact
+    '''
 
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
