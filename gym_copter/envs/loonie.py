@@ -150,9 +150,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)
             ), True)
 
-        self.legs = []
-
-        self.drawlist = [self.lander] + self.legs
+        self.drawlist = [self.lander]
 
         return self.step(np.array([0, 0]))[0]
 
@@ -233,6 +231,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.viewer.draw_polygon(p, color=(0, 0, 0))
 
         for obj in self.drawlist:
+            print(obj)
             for f in obj.fixtures:
                 trans = f.body.transform
                 if type(f.shape) is circleShape:
