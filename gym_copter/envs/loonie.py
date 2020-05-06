@@ -46,7 +46,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 1500.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 0 #1000.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -344,12 +344,14 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Set motors from demands
         roll = action[1]
-        motors = np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1)
-        np.set_printoptions(formatter={'float': '{: 3.3f}'.format})
-        print(motors)
-
+        self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
 
         # Update dynamics
+        self.dynamics.update(1./self.FPS)
+
+        x= self.dynamics.getState()
+
+        print('Y: %+3.3f\tdY: %+3.3f\t' % (-x[self.dynamics.STATE_Z], -x[self.dynamics.STATE_Z_DOT]))
 
         # -----------------------------------------------
 
