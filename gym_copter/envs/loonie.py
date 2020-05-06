@@ -46,7 +46,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 1500.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -339,12 +339,14 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Run custom dynamics ---------------------------
 
-        # Convert [-1,+1] action to [0,1] stick demands
-        throttle, roll = (action + 1) / 2
+        # Map throttle demand from [-1,+1] to [0,1]
+        throttle = (action[0] + 1) / 2
 
-        # Run stick demands through mixer to get motor demands
+        # Set motors from demands
+        roll = action[1]
+        motors = np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1)
+        print(motors)
 
-        # Set motor demands
 
         # Update dynamics
 
