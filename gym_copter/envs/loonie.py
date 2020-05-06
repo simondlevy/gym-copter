@@ -46,7 +46,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 0 #1000.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 800.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -167,7 +167,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
         # Action is two floats [main engine, left-right engines].
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
@@ -353,7 +353,7 @@ class LoonieLander(gym.Env, EzPickle):
 
             x= self.dynamics.getState()
 
-            print('a: %+3.3f\tt: %3.3f\tY:\t%3.3f\t(%3.3f)' % (action[0], throttle, -x[self.dynamics.STATE_Z], pos.y))
+            #print('a: %+3.3f\tt: %3.3f\tY:\t%3.3f\t(%3.3f)' % (action[0], throttle, -x[self.dynamics.STATE_Z], pos.y))
 
         # -----------------------------------------------
 
@@ -458,7 +458,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        if False: #steps % 20 == 0 or done:
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         steps += 1
