@@ -271,7 +271,7 @@ class LoonieLander(gym.Env, EzPickle):
         # Step once in Box2D physics
         self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
-    def step(self, action):
+    def step(self, action, actnew=None):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
@@ -339,19 +339,21 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Run custom dynamics ---------------------------
 
-        # Map throttle demand from [-1,+1] to [0,1]
-        throttle = (action[0] + 1) / 2
+        if not actnew is None:
 
-        # Set motors from demands
-        roll = action[1]
-        self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
+            # Map throttle demand from [-1,+1] to [0,1]
+            throttle = (action[0] + 1) / 2
 
-        # Update dynamics
-        self.dynamics.update(1./self.FPS)
+            # Set motors from demands
+            roll = action[1]
+            self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
 
-        x= self.dynamics.getState()
+            # Update dynamics
+            self.dynamics.update(1./self.FPS)
 
-        print('Y: %+3.3f\tdY: %+3.3f\t' % (-x[self.dynamics.STATE_Z], -x[self.dynamics.STATE_Z_DOT]))
+            x= self.dynamics.getState()
+
+            print('Y: %3.3f (%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
 
         # -----------------------------------------------
 
@@ -439,7 +441,7 @@ def heuristic(env, s):
 
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
-    return a
+    return a, a
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
@@ -447,8 +449,8 @@ def demo_heuristic_lander(env, seed=None, render=False):
     steps = 0
     s = env.reset()
     while True:
-        a = heuristic(env, s)
-        s, r, done, info = env.step(a)
+        a,anew = heuristic(env, s)
+        s, r, done, info = env.step(a,anew)
         total_reward += r
 
         if render:
