@@ -345,6 +345,7 @@ class LoonieLander(gym.Env, EzPickle):
         # Set motors from demands
         roll = action[1]
         motors = np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1)
+        np.set_printoptions(formatter={'float': '{: 3.3f}'.format})
         print(motors)
 
 
