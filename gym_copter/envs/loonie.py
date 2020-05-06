@@ -353,7 +353,7 @@ class LoonieLander(gym.Env, EzPickle):
 
             x= self.dynamics.getState()
 
-            print('Y: %3.3f (%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
+            print('a: %+3.3f\tt: %3.3f\tY:\t%3.3f\t(%3.3f)' % (action[0], throttle, -x[self.dynamics.STATE_Z], pos.y))
 
         # -----------------------------------------------
 
@@ -441,6 +441,7 @@ def heuristic(env, s):
 
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
+
     return a, a
 
 def demo_heuristic_lander(env, seed=None, render=False):
