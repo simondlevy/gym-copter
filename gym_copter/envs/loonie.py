@@ -43,10 +43,15 @@ class LoonieLander(gym.Env, EzPickle):
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
+    # Criteria for a successful landing
+    LANDING_POS_Y  = 4.3
+    LANDING_VEL_X  = 0.05
+    LANDING_ANGLE  = 0.006
+
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 0.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -220,7 +225,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
         self.lander = self.world.CreateDynamicBody(
-            position=(self.VIEWPORT_W/self.SCALE/2+3, self.VIEWPORT_H/self.SCALE),
+            position=(self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE),
             angle=0.0,
 
             fixtures = [
@@ -328,26 +333,26 @@ class LoonieLander(gym.Env, EzPickle):
         reward -= m_power*0.30  # less fuel spent is better, about -30 for heuristic landing
         reward -= s_power*0.03
 
-        # Lose bigly if we go outside window
+        # Assume we're not done yet
         done = False
+
+        # Lose bigly if we go outside window
         if abs(state[0]) >= 1.0:
             done = True
             reward = -100
 
-        # Touched down
-        if not self.lander.awake:
-            
+        # Win bigly if we're stationary and level inside the flags
+        if (pos.y < self.LANDING_POS_Y and
+            abs(vel.x) < self.LANDING_VEL_X and
+            abs(self.lander.angle) < self.LANDING_ANGLE  and
+            self.helipad_x1 < pos.x < self.helipad_x2):
             done = True
-
-            # Win bigly inside the flags
-            if self.helipad_x1 < pos.x < self.helipad_x2:
-                reward = +100
-                print('win!!!')
+            reward = +100
 
 
         # Run custom dynamics ---------------------------
 
-        if self.lander.awake and not actnew is None:
+        if not actnew is None:
 
             # Map throttle demand from [-1,+1] to [0,1]
             throttle = (action[0] + 1) / 2
@@ -391,8 +396,8 @@ class LoonieLander(gym.Env, EzPickle):
         self._show_fixture(3, self.MOTOR_COLOR)
         self._show_fixture(4, self.MOTOR_COLOR)
 
-        # Simulate spinning props by alernating
-        if self.lander.awake and self.show_props:
+        # Simulate spinning props by alternating show/hide
+        if self.show_props:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
