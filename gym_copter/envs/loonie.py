@@ -46,7 +46,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 800.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -190,7 +190,6 @@ class LoonieLander(gym.Env, EzPickle):
 
     def reset(self):
         self._destroy()
-        self.game_over = False
         self.prev_shaping = None
 
         W = self.VIEWPORT_W/self.SCALE
@@ -330,7 +329,7 @@ class LoonieLander(gym.Env, EzPickle):
         reward -= s_power*0.03
 
         done = False
-        if self.game_over or abs(state[0]) >= 1.0:
+        if abs(state[0]) >= 1.0:
             done = True
             reward = -100
         if not self.lander.awake:
@@ -346,14 +345,14 @@ class LoonieLander(gym.Env, EzPickle):
 
             # Set motors from demands
             roll = action[1]
-            self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
+            #self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
 
             # Update dynamics
             self.dynamics.update(1./self.FPS)
 
             x= self.dynamics.getState()
 
-            #print('a: %+3.3f\tt: %3.3f\tY:\t%3.3f\t(%3.3f)' % (action[0], throttle, -x[self.dynamics.STATE_Z], pos.y))
+            #print('Y:\t%3.3f\t(%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
 
         # -----------------------------------------------
 
