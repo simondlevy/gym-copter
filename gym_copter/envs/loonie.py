@@ -51,7 +51,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 0.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -355,18 +355,18 @@ class LoonieLander(gym.Env, EzPickle):
         if not actnew is None:
 
             # Map throttle demand from [-1,+1] to [0,1]
-            throttle = (action[0] + 1) / 2
+            throttle = (actnew[0] + 1) / 2
 
             # Set motors from demands
-            roll = action[1]
-            #self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
+            roll = 0#action[1]
+            self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
 
             # Update dynamics
             self.dynamics.update(1./self.FPS)
 
             x= self.dynamics.getState()
 
-            #print('Y:\t%3.3f\t(%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
+            print('Y:\t%3.3f\t(%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
 
         # -----------------------------------------------
 
@@ -455,7 +455,10 @@ def heuristic(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    return a, a
+    acustom = a.copy()
+    acustom[0] = a[0] - .56
+
+    return a, acustom
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
@@ -471,7 +474,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        if steps % 20 == 0 or done:
+        if False:#steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         
