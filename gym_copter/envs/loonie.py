@@ -46,7 +46,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 1000.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 0.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -220,7 +220,7 @@ class LoonieLander(gym.Env, EzPickle):
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
         self.lander = self.world.CreateDynamicBody(
-            position=(self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE),
+            position=(self.VIEWPORT_W/self.SCALE/2+3, self.VIEWPORT_H/self.SCALE),
             angle=0.0,
 
             fixtures = [
@@ -328,17 +328,26 @@ class LoonieLander(gym.Env, EzPickle):
         reward -= m_power*0.30  # less fuel spent is better, about -30 for heuristic landing
         reward -= s_power*0.03
 
+        # Lose bigly if we go outside window
         done = False
         if abs(state[0]) >= 1.0:
             done = True
             reward = -100
+
+        # Touched down
         if not self.lander.awake:
+            
             done = True
-            reward = +100
+
+            # Win bigly inside the flags
+            if self.helipad_x1 < pos.x < self.helipad_x2:
+                reward = +100
+                print('win!!!')
+
 
         # Run custom dynamics ---------------------------
 
-        if not actnew is None:
+        if self.lander.awake and not actnew is None:
 
             # Map throttle demand from [-1,+1] to [0,1]
             throttle = (action[0] + 1) / 2
@@ -460,6 +469,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        
         steps += 1
         if done: break
     env.close()
