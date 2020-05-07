@@ -358,7 +358,7 @@ class LoonieLander(gym.Env, EzPickle):
             throttle = (actnew[0] + 1) / 2
 
             # Set motors from demands
-            roll = 0#action[1]
+            roll = actnew[1]
             self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
 
             # Update dynamics
@@ -366,7 +366,7 @@ class LoonieLander(gym.Env, EzPickle):
 
             x= self.dynamics.getState()
 
-            print('Y:\t%3.3f\t(%3.3f)' % (-x[self.dynamics.STATE_Z], pos.y))
+            print('X:\t%3.3f\t(%3.3f)' % (x[self.dynamics.STATE_Y], pos.x))
 
         # -----------------------------------------------
 
@@ -455,8 +455,7 @@ def heuristic(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    acustom = a.copy()
-    acustom[0] = a[0] - .56
+    acustom = a[0] - .56, -a[1]
 
     return a, acustom
 
