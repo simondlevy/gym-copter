@@ -455,7 +455,7 @@ def heuristic(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    acustom = a[0] - .56, -a[1]
+    acustom = a[0] - .56, -a[1]/150
 
     return a, acustom
 
