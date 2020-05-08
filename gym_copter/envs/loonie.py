@@ -252,6 +252,18 @@ class LoonieLander(gym.Env, EzPickle):
         # Step once to implement perturbation, so we can initialize custom dynamics
         self._world_step()
 
+        # By showing props periodically, we can emulate prop rotation
+        self.show_props = 0
+
+        return self.step(np.array([0, 0]))[0]
+
+    def _world_step(self):
+
+        # Step once in Box2D physics
+        self.world.Step(1.0/self.FPS, 6*30, 2*30)
+
+    def reset_custom(self):
+
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
@@ -265,17 +277,9 @@ class LoonieLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_PHI_DOT] =  self.lander.angularVelocity
         self.dynamics.setState(state)
 
-        # By showing props periodically, we can emulate prop rotation
-        self.show_props = 0
+        return self.step_custom(np.array([0, 0]))
 
-        return self.step(np.array([0, 0]))[0]
-
-    def _world_step(self):
-
-        # Step once in Box2D physics
-        self.world.Step(1.0/self.FPS, 6*30, 2*30)
-
-    def step(self, action, actnew=None):
+    def step(self, action):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
@@ -312,14 +316,8 @@ class LoonieLander(gym.Env, EzPickle):
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
-        state = [
-            (pos.x - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
-            (pos.y - (self.helipad_y)) / (self.VIEWPORT_H/self.SCALE/2),
-            vel.x*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
-            vel.y*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
-            self.lander.angle,
-            20.0*self.lander.angularVelocity/self.FPS
-            ]
+
+        state = self._pose_to_state(pos.x, pos.y, vel.x, vel.y, self.lander.angle, self.lander.angularVelocity)
 
         reward = 0
         shaping = 0
@@ -350,27 +348,32 @@ class LoonieLander(gym.Env, EzPickle):
             reward = +100
 
 
-        # Run custom dynamics ---------------------------
-
-        if not actnew is None:
-
-            # Map throttle demand from [-1,+1] to [0,1]
-            throttle = (actnew[0] + 1) / 2
-
-            # Set motors from demands
-            roll = actnew[1]
-            self.dynamics.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
-
-            # Update dynamics
-            self.dynamics.update(1./self.FPS)
-
-            x= self.dynamics.getState()
-
-            print('X:\t%3.3f\t(%3.3f)' % (x[self.dynamics.STATE_Y], pos.x))
-
-        # -----------------------------------------------
-
         return np.array(state, dtype=np.float32), reward, done, {}
+
+    def step_custom(self, a):
+
+        # Map throttle demand from [-1,+1] to [0,1]
+        throttle = (a[0] + 1) / 2
+
+        d = self.dynamics
+
+        # Set motors from demands
+        roll = a[1]
+        d.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
+
+        # Update dynamics
+        d.update(1./self.FPS)
+
+        x= d.getState()
+
+        #s[0] is the horizontal coordinate
+        #s[1] is the vertical coordinate
+        #s[2] is the horizontal speed
+        #s[3] is the vertical speed
+        #s[4] is the angle
+        #s[5] is the angular speed
+
+        return x[d.STATE_Y], -x[d.STATE_Z], x[d.STATE_Y_DOT], -x[d.STATE_Z_DOT], x[d.STATE_PHI], x[d.STATE_PHI_DOT]
 
     def render(self, mode='human'):
 
@@ -416,6 +419,17 @@ class LoonieLander(gym.Env, EzPickle):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
+
+    def _pose_to_state(self, posx, posy, velx, vely, angle, angularVelocity):
+
+        return [
+            (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
+            (posy - (self.helipad_y)) / (self.VIEWPORT_H/self.SCALE/2),
+            velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
+            vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
+            angle,
+            20.0*angularVelocity/self.FPS
+            ]
 
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
@@ -470,19 +484,23 @@ def heuristic_custom(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    acustom = a[0] - .56, -a[1]
+    a = a[0] - .56, -a[1]
 
-    return acustom
+    return a
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     total_reward = 0
     steps = 0
     s = env.reset()
+    s_custom = env.reset_custom()
     while True:
         a = heuristic(env, s)
-        acustom = heuristic_custom(env,s)
-        s, r, done, info = env.step(a,acustom)
+        a_custom = heuristic_custom(env,s_custom)
+        s, r, done, info = env.step(a)
+        np.set_printoptions(precision=3)
+        print(s)
+        s_custom = env.step_custom(a_custom)
         total_reward += r
 
         if render:
