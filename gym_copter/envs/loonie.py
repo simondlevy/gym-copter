@@ -51,7 +51,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 0.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 500.0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -455,9 +455,24 @@ def heuristic(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    acustom = a[0] - .56, -a[1]/150
+    return a
 
-    return a, acustom
+def heuristic_custom(env, s):
+
+    angle_targ = s[0]*0.5 + s[2]*1.0         # angle should point towards center
+    if angle_targ > 0.4: angle_targ = 0.4    # more than 0.4 radians (22 degrees) is bad
+    if angle_targ < -0.4: angle_targ = -0.4
+    hover_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
+
+    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
+    hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
+
+    a = np.array([hover_todo*20 - 1, -angle_todo*20])
+    a = np.clip(a, -1, +1)
+
+    acustom = a[0] - .56, -a[1]
+
+    return acustom
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
@@ -465,8 +480,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
     steps = 0
     s = env.reset()
     while True:
-        a,anew = heuristic(env, s)
-        s, r, done, info = env.step(a,anew)
+        a = heuristic(env, s)
+        acustom = heuristic_custom(env,s)
+        s, r, done, info = env.step(a,acustom)
         total_reward += r
 
         if render:
