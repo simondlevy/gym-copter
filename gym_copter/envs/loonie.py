@@ -411,7 +411,7 @@ class LoonieLander(gym.Env, EzPickle):
         d = self.dynamics
         x = d.getState()
         px,py = x[d.STATE_Y], -x[d.STATE_Z]
-        print('pos: %5.3f %5.3f | %5.3f %5.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, px, py, self.lander.angle, x[d.STATE_PHI]))
+        print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, px, py, self.lander.angle, x[d.STATE_PHI]))
         ca = np.cos(self.lander.angle)
         sa = np.sin(self.lander.angle)
         self.viewer.draw_polyline([(pos.x-ca, pos.y-sa), (pos.x+ca,pos.y+sa)], color=(1,0,0), linewidth=8)
