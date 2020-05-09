@@ -408,6 +408,7 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.show_props = (self.show_props + 1) % 3
 
+        print(self.s)
         self.viewer.draw_polyline([(10,10), (15,15)], color=(1,0,0), linewidth=2)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
@@ -496,7 +497,6 @@ def demo_heuristic_lander(env, seed=None, render=False):
         a_custom = heuristic_custom(env,env.s_custom)
         env.s, r, done, info = env.step(a)
         env.s_custom = env.step_custom(a_custom)
-        print(env.s)
         total_reward += r
 
         if render:
