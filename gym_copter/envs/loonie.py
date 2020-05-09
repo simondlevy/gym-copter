@@ -366,8 +366,8 @@ class LoonieLander(gym.Env, EzPickle):
 
         x= d.getState()
 
-        return self._pose_to_state(
-                x[d.STATE_Y], -x[d.STATE_Z], x[d.STATE_Y_DOT], -x[d.STATE_Z_DOT], x[d.STATE_PHI], x[d.STATE_PHI_DOT])
+        return np.array(self._pose_to_state(
+                x[d.STATE_Y], -x[d.STATE_Z], x[d.STATE_Y_DOT], -x[d.STATE_Z_DOT], x[d.STATE_PHI], x[d.STATE_PHI_DOT]))
 
     def render(self, mode='human'):
 
@@ -492,9 +492,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
         a = heuristic(env, s)
         a_custom = heuristic_custom(env,s_custom)
         s, r, done, info = env.step(a)
-        np.set_printoptions(precision=3)
-        print(s)
         s_custom = env.step_custom(a_custom)
+        np.set_printoptions(precision=3)
+        print(s_custom)
         total_reward += r
 
         if render:
