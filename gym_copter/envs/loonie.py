@@ -243,11 +243,12 @@ class LoonieLander(gym.Env, EzPickle):
 
                 )
 
+        perturb = (
+            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM), 
+            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM) )
+
         # Perturb slightly
-        self.lander.ApplyForceToCenter( (
-            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM),
-            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM)
-            ), True)
+        self.lander.ApplyForceToCenter(perturb, True)
 
         # Step once to implement perturbation, so we can initialize custom dynamics
         self._world_step()
