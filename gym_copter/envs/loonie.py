@@ -51,7 +51,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 500.0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 1000   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -230,15 +230,12 @@ class LoonieLander(gym.Env, EzPickle):
 
             fixtures = [
 
-                fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), 
-                    density=5.0,
-                    friction=0.1,
-                    restitution=0.0)  # 0.99 bouncy
+                fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=5.0)
 
                 for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
                     self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
                 ]
-                )
+            )
 
         perturb = (
             self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM), 
