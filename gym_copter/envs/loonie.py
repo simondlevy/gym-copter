@@ -224,8 +224,10 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.lander = self.world.CreateDynamicBody(
+        self.lander = self.world.CreateDynamicBody (
+
             position=(self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE),
+
             angle=0.0,
 
             fixtures = [
@@ -402,6 +404,8 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.show_props = (self.show_props + 1) % 3
 
+        self.viewer.draw_line((10,10), (15,15), color=(1,0,0))
+
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
     def close(self):
@@ -489,7 +493,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
         s, r, done, info = env.step(a)
         s_custom = env.step_custom(a_custom)
         np.set_printoptions(precision=3)
-        print(s_custom)
+        #print(s_custom)
         total_reward += r
 
         if render:
