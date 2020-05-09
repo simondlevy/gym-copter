@@ -412,7 +412,6 @@ class LoonieLander(gym.Env, EzPickle):
         x= d.getState()
         x,y = x[d.STATE_Y], -x[d.STATE_Z]
         print('%3.3f %3.3f | %3.3f %3.3f' % (pos.x, pos.y, x, y))
-        #np.array(self._pose_to_state( x[d.STATE_Y], -x[d.STATE_Z], x[d.STATE_Y_DOT], -x[d.STATE_Z_DOT], x[d.STATE_PHI], x[d.STATE_PHI_DOT]))
         ca = np.cos(self.lander.angle)
         sa = np.sin(self.lander.angle)
         self.viewer.draw_polyline([(pos.x-ca, pos.y-sa), (pos.x+ca,pos.y+sa)], color=(1,0,0), linewidth=8)
