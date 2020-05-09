@@ -406,8 +406,9 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.show_props = (self.show_props + 1) % 3
 
+        # XXX
         pos = self.lander.position
-        self.viewer.draw_polyline([pos, (pos.x+2,pos.y)], color=(1,0,0), linewidth=2)
+        self.viewer.draw_polyline([(pos.x-1, pos.y), (pos.x+1,pos.y)], color=(1,0,0), linewidth=4)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
