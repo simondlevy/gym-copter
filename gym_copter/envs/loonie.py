@@ -197,6 +197,8 @@ class LoonieLander(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
+        self.s_custom = None
+
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
 
@@ -404,7 +406,7 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.show_props = (self.show_props + 1) % 3
 
-        self.viewer.draw_line((10,10), (15,15), color=(1,0,0))
+        self.viewer.draw_polyline([(10,10), (15,15)], color=(1,0,0), linewidth=2)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -486,14 +488,14 @@ def demo_heuristic_lander(env, seed=None, render=False):
     total_reward = 0
     steps = 0
     s = env.reset()
-    s_custom = env.reset_custom()
+    env.s_custom = env.reset_custom()
     while True:
         a = heuristic(env, s)
-        a_custom = heuristic_custom(env,s_custom)
+        a_custom = heuristic_custom(env,env.s_custom)
         s, r, done, info = env.step(a)
-        s_custom = env.step_custom(a_custom)
+        env.s_custom = env.step_custom(a_custom)
         np.set_printoptions(precision=3)
-        #print(s_custom)
+        print(env.s_custom)
         total_reward += r
 
         if render:
