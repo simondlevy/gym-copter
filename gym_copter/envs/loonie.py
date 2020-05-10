@@ -52,6 +52,7 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
+    INITIAL_XOFF = 2     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -228,7 +229,7 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.startpos = self.VIEWPORT_W/self.SCALE/2-2, self.VIEWPORT_H/self.SCALE
+        self.startpos = self.VIEWPORT_W/self.SCALE/2-self.INITIAL_XOFF, self.VIEWPORT_H/self.SCALE
 
         self.lander = self.world.CreateDynamicBody (
 
@@ -348,7 +349,7 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Set motors from demands
         roll = a[1]
-        d.setMotors(np.clip([throttle+roll, throttle-roll, throttle-roll, throttle+roll], 0, 1))
+        d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
 
         # Update dynamics
         d.update(1./self.FPS)
@@ -400,7 +401,7 @@ class LoonieLander(gym.Env, EzPickle):
         d = self.dynamics
         x = d.getState()
         posx,posy = x[d.STATE_Y], -x[d.STATE_Z]
-        angle = x[d.STATE_PHI]
+        angle = -x[d.STATE_PHI]
         #print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, posx, posy, self.lander.angle, x[d.STATE_PHI]))
         ca = np.cos(angle)
         sa = np.sin(angle)
@@ -477,7 +478,7 @@ def heuristic_custom(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    a = a[0] - .56, a[1]
+    a = a[0] - .56, a[1]/100
 
     # XXX
     return a[0], a[1]
