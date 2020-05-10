@@ -197,6 +197,8 @@ class LoonieLander(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
+        self.startpos = None
+
         np.set_printoptions(precision=3)
 
         W = self.VIEWPORT_W/self.SCALE
@@ -226,11 +228,11 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        position = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+        self.startpos = self.VIEWPORT_W/self.SCALE/2-2, self.VIEWPORT_H/self.SCALE
 
         self.lander = self.world.CreateDynamicBody (
 
-            position=position, angle=0.0,
+            position=self.startpos, angle=0.0,
 
             fixtures = [
 
@@ -258,12 +260,10 @@ class LoonieLander(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        pos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
-
         # Initialize custom dynamics
         state = np.zeros(12);
-        state[self.dynamics.STATE_Y] =  pos[0] # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Z] = -pos[1] # 3D copter Z comes from 2D copter Y, negated for NED
+        state[self.dynamics.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
         return self.step_custom(np.array([0, 0]))
