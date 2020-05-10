@@ -17,11 +17,11 @@ on its first attempt. Please see the source code for details.
 
 To see a heuristic landing, run:
 
-python gym/envs/box2d/lunar_lander.py
+posython gym/envs/box2d/lunar_lander.posy
 
 To play yourself, run:
 
-python examples/agents/keyboard_agent.py LunarLander-v2
+posython examples/agents/keyboard_agent.posy LunarLander-v2
 
 Created by Oleg Klimov. Licensed on the same terms as the rest of OpenAI Gym.
 """
@@ -51,7 +51,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 0   # Set 1500 to make game harder
+    INITIAL_RANDOM = 500   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -410,11 +410,12 @@ class LoonieLander(gym.Env, EzPickle):
         pos = self.lander.position
         d = self.dynamics
         x = d.getState()
-        px,py = x[d.STATE_Y], -x[d.STATE_Z]
-        print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, px, py, self.lander.angle, x[d.STATE_PHI]))
-        ca = np.cos(self.lander.angle)
-        sa = np.sin(self.lander.angle)
-        self.viewer.draw_polyline([(pos.x-ca, pos.y-sa), (pos.x+ca,pos.y+sa)], color=(1,0,0), linewidth=8)
+        posx,posy = x[d.STATE_Y], -x[d.STATE_Z]
+        angle = x[d.STATE_PHI]
+        print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, posx, posy, self.lander.angle, x[d.STATE_PHI]))
+        ca = np.cos(angle)
+        sa = np.sin(angle)
+        self.viewer.draw_polyline([(posx-ca, posy-sa), (posx+ca,posy+sa)], color=(1,0,0), linewidth=8)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -487,6 +488,8 @@ def heuristic_custom(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
+    a[1] = 0
+
     a = a[0] - .56, -a[1]
 
     return a
@@ -519,4 +522,5 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 
 if __name__ == '__main__':
-    demo_heuristic_lander(LoonieLander(), render=True)
+
+    demo_heuristic_lander(LoonieLander(), seed=1, render=True)
