@@ -51,7 +51,7 @@ class LoonieLander(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 500   # Set 1500 to make game harder
+    INITIAL_RANDOM = 0   # Set 1500 to make game harder
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -226,11 +226,11 @@ class LoonieLander(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
+        position = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+
         self.lander = self.world.CreateDynamicBody (
 
-            position=(self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE),
-
-            angle=0.0,
+            position=position, angle=0.0,
 
             fixtures = [
 
@@ -241,39 +241,29 @@ class LoonieLander(gym.Env, EzPickle):
                 ]
             )
 
-        perturb = (
-            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM), 
-            self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM) )
+        #perturb = (
+        #    self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM), 
+        #    self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM) )
 
         # Perturb slightly
-        self.lander.ApplyForceToCenter(perturb, True)
-
-        # Step once to implement perturbation, so we can initialize custom dynamics
-        self._world_step()
+        #self.lander.ApplyForceToCenter(perturb, True)
 
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
 
         return self.step(np.array([0, 0]))[0]
 
-    def _world_step(self):
-
-        # Step once in Box2D physics
-        self.world.Step(1.0/self.FPS, 6*30, 2*30)
-
     def reset_custom(self):
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
+        pos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+
         # Initialize custom dynamics
         state = np.zeros(12);
-        state[self.dynamics.STATE_Y]       =  self.lander.position.x # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Y_DOT]   =  self.lander.linearVelocity.x 
-        state[self.dynamics.STATE_Z]       = -self.lander.position.y # 3D copter Z comes from 2D copter Y, negated for NED
-        state[self.dynamics.STATE_Z_DOT]   = -self.lander.linearVelocity.y 
-        state[self.dynamics.STATE_PHI]     =  self.lander.angle
-        state[self.dynamics.STATE_PHI_DOT] =  self.lander.angularVelocity
+        state[self.dynamics.STATE_Y] =  pos[0] # 3D copter Y comes from 2D copter X
+        state[self.dynamics.STATE_Z] = -pos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
         return self.step_custom(np.array([0, 0]))
@@ -311,7 +301,7 @@ class LoonieLander(gym.Env, EzPickle):
                                            impulse_pos,
                                            True)
 
-        self._world_step()
+        self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
@@ -406,13 +396,12 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.show_props = (self.show_props + 1) % 3
 
-        # XXX
         pos = self.lander.position
         d = self.dynamics
         x = d.getState()
         posx,posy = x[d.STATE_Y], -x[d.STATE_Z]
         angle = x[d.STATE_PHI]
-        print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, posx, posy, self.lander.angle, x[d.STATE_PHI]))
+        #print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, posx, posy, self.lander.angle, x[d.STATE_PHI]))
         ca = np.cos(angle)
         sa = np.sin(angle)
         self.viewer.draw_polyline([(posx-ca, posy-sa), (posx+ca,posy+sa)], color=(1,0,0), linewidth=8)
@@ -488,11 +477,10 @@ def heuristic_custom(env, s):
     a = np.array([hover_todo*20 - 1, -angle_todo*20])
     a = np.clip(a, -1, +1)
 
-    a[1] = 0
+    a = a[0] - .56, a[1]
 
-    a = a[0] - .56, -a[1]
-
-    return a
+    # XXX
+    return a[0], a[1]
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
