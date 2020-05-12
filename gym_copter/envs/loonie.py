@@ -52,7 +52,7 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = 2     # XXX for prototyping
+    INITIAL_XOFF = -2     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -326,7 +326,7 @@ class LoonieLander(gym.Env, EzPickle):
 
         # Lose bigly if we go outside window
         if abs(state[0]) >= 1.0:
-            done = True
+            #done = True
             reward = -100
 
         # Win bigly if we're stationary and level inside the flags
@@ -334,7 +334,7 @@ class LoonieLander(gym.Env, EzPickle):
             abs(vel.x) < self.LANDING_VEL_X and
             abs(self.lander.angle) < self.LANDING_ANGLE  and
             self.helipad_x1 < pos.x < self.helipad_x2):
-            done = True
+            #done = True
             reward = +100
 
 
@@ -467,21 +467,18 @@ def heuristic(env, s):
 
 def heuristic_custom(env, s):
 
-    angle_targ = s[0]*0.5 + s[2]*1.0         # angle should point towards center
-    if angle_targ > 0.4: angle_targ = 0.4    # more than 0.4 radians (22 degrees) is bad
-    if angle_targ < -0.4: angle_targ = -0.4
+    A = 0.5
+    B = 1.0
+    C = 0.5
+    D = 1.0
+
+    angle_targ = s[0]*A + s[2]*B         # angle should point towards center
+    angle_todo = ((s[4]-angle_targ) * C + s[5]*D) / 20
+
     hover_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
+    hover_todo = 20 * ((hover_targ - s[1])*0.5 - (s[3])*0.5)
 
-    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
-    hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
-
-    a = np.array([hover_todo*20 - 1, -angle_todo*20])
-    a = np.clip(a, -1, +1)
-
-    a = a[0] - .56, a[1]/100
-
-    # XXX
-    return a[0], a[1]
+    return hover_todo, angle_todo
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
