@@ -52,7 +52,7 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = -2     # XXX for prototyping
+    INITIAL_XOFF = 0     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -166,7 +166,7 @@ class LoonieLander(gym.Env, EzPickle):
         self.seed()
         self.viewer = None
 
-        self.world = Box2D.b2World(gravity=(0,-9.8665))
+        self.world = Box2D.b2World()
         self.ground = None
         self.lander = None
 
