@@ -52,7 +52,7 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = 0     # XXX for prototyping
+    INITIAL_XOFF = -2     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -467,11 +467,18 @@ def heuristic(env, s):
 
 def heuristic_custom(env, s):
 
+    # Angle target
     A = 0.5
-    B = 1.0
+    B = 3 #1.0
+
+    # Angle PID
     C = 0.025
     D = 0.05
+
+    # Vertical target
     E = 0.55
+
+    # Vertical PID
     F = 10
     G = 10
 
