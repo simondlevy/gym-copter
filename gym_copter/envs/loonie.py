@@ -473,7 +473,7 @@ def heuristic_custom(env, s):
     D = 1.0
 
     angle_targ = s[0]*A + s[2]*B         # angle should point towards center
-    angle_todo = ((s[4]-angle_targ) * C + s[5]*D) / 20
+    angle_todo = (s[4]-angle_targ)*C/20 + s[5]*D/20
 
     hover_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
     hover_todo = 20 * ((hover_targ - s[1])*0.5 - (s[3])*0.5)
