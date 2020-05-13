@@ -282,21 +282,11 @@ class LoonieLander(gym.Env, EzPickle):
             # Main engine
             m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
             assert m_power >= 0.5 and m_power <= 1.0
-            ox =  tip[0] * (4/self.SCALE)
-            oy = -tip[1] * (4/self.SCALE)
-            impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            #self.lander.ApplyLinearImpulse((-ox * self.MAIN_ENGINE_POWER * m_power, -oy * self.MAIN_ENGINE_POWER * m_power), impulse_pos, True)
+
         s_power = 0.0
         if np.abs(action[1]) > 0.5:
-            # Orientation engines
-            direction = np.sign(action[1])
             s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
             assert s_power >= 0.5 and s_power <= 1.0
-            ox =  side[0] * (direction * self.SIDE_ENGINE_AWAY/self.SCALE)
-            oy = -side[1] * (direction * self.SIDE_ENGINE_AWAY/self.SCALE)
-            impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/self.SCALE,
-                           self.lander.position[1] + oy + tip[1] * self.SIDE_ENGINE_HEIGHT/self.SCALE)
-            #self.lander.ApplyLinearImpulse((-ox * self.SIDE_ENGINE_POWER * s_power, -oy * self.SIDE_ENGINE_POWER * s_power), impulse_pos, True)
 
         #self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
