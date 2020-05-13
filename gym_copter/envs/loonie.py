@@ -404,21 +404,6 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    angle_targ = s[0]*0.5 + s[2]*1.0         # angle should point towards center
-    if angle_targ > 0.4: angle_targ = 0.4    # more than 0.4 radians (22 degrees) is bad
-    if angle_targ < -0.4: angle_targ = -0.4
-    hover_targ = 0.55*np.abs(s[0])           # target y should be proportional to horizontal offset
-
-    angle_todo = (angle_targ - s[4]) * 0.5 - (s[5])*1.0
-    hover_todo = (hover_targ - s[1])*0.5 - (s[3])*0.5
-
-    a = np.array([hover_todo*20 - 1, -angle_todo*20])
-    a = np.clip(a, -1, +1)
-
-    return a
-
-def heuristic_custom(env, s):
-
     # Angle target
     A = 0.5
     B = 3 #1.0
@@ -450,8 +435,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     steps = 0
     s_custom = env.reset()
     while True:
-        #a = heuristic(env, s)
-        a_custom = heuristic_custom(env,s_custom)
+        a_custom = heuristic(env,s_custom)
         s_custom = env.step(a_custom)
         r, done, info = 0, False, {}
         total_reward += r
