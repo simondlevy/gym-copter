@@ -254,10 +254,6 @@ class LoonieLander(gym.Env, EzPickle):
         # By showing props periodically, we can emulate prop rotation
         self.show_props = 0
 
-        return self.step(np.array([0, 0]))[0]
-
-    def reset_custom(self):
-
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
@@ -491,8 +487,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     total_reward = 0
     steps = 0
-    #s = env.reset()
-    s_custom = env.reset_custom()
+    s_custom = env.reset()
     while True:
         #a = heuristic(env, s)
         a_custom = heuristic_custom(env,s_custom)
