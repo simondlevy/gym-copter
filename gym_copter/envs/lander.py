@@ -281,7 +281,7 @@ class CopterLander(gym.Env, EzPickle):
 
         # Lose bigly if we go outside window
         if abs(state[0]) >= 1.0:
-            #done = True
+            done = True
             reward = -100
 
         # Win bigly if we're stationary and level inside the flags
