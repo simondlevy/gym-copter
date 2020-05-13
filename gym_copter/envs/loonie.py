@@ -52,7 +52,7 @@ class LoonieLander(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = -2     # XXX for prototyping
+    INITIAL_XOFF = -3     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -237,7 +237,7 @@ class LoonieLander(gym.Env, EzPickle):
 
             fixtures = [
 
-                fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=5.0)
+                fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
 
                 for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
                     self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
@@ -285,9 +285,7 @@ class LoonieLander(gym.Env, EzPickle):
             ox =  tip[0] * (4/self.SCALE)
             oy = -tip[1] * (4/self.SCALE)
             impulse_pos = (self.lander.position[0] + ox, self.lander.position[1] + oy)
-            self.lander.ApplyLinearImpulse((-ox * self.MAIN_ENGINE_POWER * m_power, -oy * self.MAIN_ENGINE_POWER * m_power),
-                                           impulse_pos,
-                                           True)
+            #self.lander.ApplyLinearImpulse((-ox * self.MAIN_ENGINE_POWER * m_power, -oy * self.MAIN_ENGINE_POWER * m_power), impulse_pos, True)
         s_power = 0.0
         if np.abs(action[1]) > 0.5:
             # Orientation engines
@@ -298,11 +296,9 @@ class LoonieLander(gym.Env, EzPickle):
             oy = -side[1] * (direction * self.SIDE_ENGINE_AWAY/self.SCALE)
             impulse_pos = (self.lander.position[0] + ox - tip[0] * 17/self.SCALE,
                            self.lander.position[1] + oy + tip[1] * self.SIDE_ENGINE_HEIGHT/self.SCALE)
-            self.lander.ApplyLinearImpulse((-ox * self.SIDE_ENGINE_POWER * s_power, -oy * self.SIDE_ENGINE_POWER * s_power),
-                                           impulse_pos,
-                                           True)
+            #self.lander.ApplyLinearImpulse((-ox * self.SIDE_ENGINE_POWER * s_power, -oy * self.SIDE_ENGINE_POWER * s_power), impulse_pos, True)
 
-        self.world.Step(1.0/self.FPS, 6*30, 2*30)
+        #self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
@@ -354,10 +350,19 @@ class LoonieLander(gym.Env, EzPickle):
         # Update dynamics
         d.update(1./self.FPS)
 
-        x= d.getState()
+        x = d.getState()
 
-        return np.array(self._pose_to_state(
-                x[d.STATE_Y], -x[d.STATE_Z], x[d.STATE_Y_DOT], -x[d.STATE_Z_DOT], x[d.STATE_PHI], x[d.STATE_PHI_DOT]))
+        posx      =  x[d.STATE_Y]
+        posy      = -x[d.STATE_Z] 
+        velx      =  x[d.STATE_Y_DOT]
+        vely      = -x[d.STATE_Z_DOT]
+        angle     = x[d.STATE_PHI]
+        vel_angle = x[d.STATE_PHI_DOT]
+
+        self.lander.position = posx, posy
+        self.lander.angle = -angle
+
+        return np.array(self._pose_to_state(posx, posy, velx, vely, angle, vel_angle))
 
     def render(self, mode='human'):
 
@@ -396,16 +401,6 @@ class LoonieLander(gym.Env, EzPickle):
                                      color=self.FLAG_COLOR)
 
         self.show_props = (self.show_props + 1) % 3
-
-        pos = self.lander.position
-        d = self.dynamics
-        x = d.getState()
-        posx,posy = x[d.STATE_Y], -x[d.STATE_Z]
-        angle = -x[d.STATE_PHI]
-        #print('pos: %6.3f %6.3f | %6.3f %6.3f || phi: %+3.3f | %+3.3f' % (pos.x, pos.y, posx, posy, self.lander.angle, x[d.STATE_PHI]))
-        ca = np.cos(angle)
-        sa = np.sin(angle)
-        self.viewer.draw_polyline([(posx-ca, posy-sa), (posx+ca,posy+sa)], color=(1,0,0), linewidth=8)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
