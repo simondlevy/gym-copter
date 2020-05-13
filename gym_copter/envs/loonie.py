@@ -273,10 +273,6 @@ class LoonieLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
-        # Engines
-        tip  = (math.sin(self.lander.angle), math.cos(self.lander.angle))
-        side = (-tip[1], tip[0])
-
         m_power = 0.0
         if action[0] > 0.0:
             # Main engine
