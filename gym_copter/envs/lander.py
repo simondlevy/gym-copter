@@ -14,7 +14,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class LoonieLander(gym.Env, EzPickle):
+class CopterLander(gym.Env, EzPickle):
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
@@ -426,4 +426,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(LoonieLander(), seed=1, render=True)
+    demo_heuristic_lander(CopterLander(), seed=1, render=True)
