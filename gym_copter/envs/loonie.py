@@ -273,17 +273,6 @@ class LoonieLander(gym.Env, EzPickle):
 
         action = np.clip(action, -1, +1).astype(np.float32)
 
-        m_power = 0.0
-        if action[0] > 0.0:
-            # Main engine
-            m_power = (np.clip(action[0], 0.0,1.0) + 1.0)*0.5   # 0.5..1.0
-            assert m_power >= 0.5 and m_power <= 1.0
-
-        s_power = 0.0
-        if np.abs(action[1]) > 0.5:
-            s_power = np.clip(np.abs(action[1]), 0.5, 1.0)
-            assert s_power >= 0.5 and s_power <= 1.0
-
         #self.world.Step(1.0/self.FPS, 6*30, 2*30)
 
         pos = self.lander.position
@@ -299,9 +288,6 @@ class LoonieLander(gym.Env, EzPickle):
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
-
-        reward -= m_power*0.30  # less fuel spent is better, about -30 for heuristic landing
-        reward -= s_power*0.03
 
         # Assume we're not done yet
         done = False
@@ -348,7 +334,9 @@ class LoonieLander(gym.Env, EzPickle):
         self.lander.position = posx, posy
         self.lander.angle = -angle
 
-        return np.array(self._pose_to_state(posx, posy, velx, vely, angle, vel_angle))
+        state = self._pose_to_state(posx, posy, velx, vely, angle, vel_angle)
+
+        return np.array(state)
 
     def render(self, mode='human'):
 
