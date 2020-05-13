@@ -336,6 +336,31 @@ class LoonieLander(gym.Env, EzPickle):
 
         state = self._pose_to_state(posx, posy, velx, vely, angle, vel_angle)
 
+        reward = 0
+        shaping = 0
+        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
+        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)  # Lose points for distance from X center and horizontal velocity
+                                                                  
+        if self.prev_shaping is not None:
+            reward = shaping - self.prev_shaping
+        self.prev_shaping = shaping
+
+        # Assume we're not done yet
+        done = False
+
+        # Lose bigly if we go outside window
+        if abs(state[0]) >= 1.0:
+            #done = True
+            reward = -100
+
+        # Win bigly if we're stationary and level inside the flags
+        if (posy < self.LANDING_POS_Y and
+            abs(velx) < self.LANDING_VEL_X and
+            abs(self.lander.angle) < self.LANDING_ANGLE  and
+            self.helipad_x1 < posx < self.helipad_x2):
+            done = True
+            reward = +100
+
         return np.array(state)
 
     def render(self, mode='human'):
