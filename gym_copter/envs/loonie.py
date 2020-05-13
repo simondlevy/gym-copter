@@ -263,48 +263,9 @@ class LoonieLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
-        return self.step_custom(np.array([0, 0]))
+        return self.step(np.array([0, 0]))
 
     def step(self, action):
-
-        action = np.clip(action, -1, +1).astype(np.float32)
-
-        #self.world.Step(1.0/self.FPS, 6*30, 2*30)
-
-        pos = self.lander.position
-        vel = self.lander.linearVelocity
-
-        state = self._pose_to_state(pos.x, pos.y, vel.x, vel.y, self.lander.angle, self.lander.angularVelocity)
-
-        reward = 0
-        shaping = 0
-        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)  # Lose points for distance from X center and horizontal velocity
-                                                                  
-        if self.prev_shaping is not None:
-            reward = shaping - self.prev_shaping
-        self.prev_shaping = shaping
-
-        # Assume we're not done yet
-        done = False
-
-        # Lose bigly if we go outside window
-        if abs(state[0]) >= 1.0:
-            #done = True
-            reward = -100
-
-        # Win bigly if we're stationary and level inside the flags
-        if (pos.y < self.LANDING_POS_Y and
-            abs(vel.x) < self.LANDING_VEL_X and
-            abs(self.lander.angle) < self.LANDING_ANGLE  and
-            self.helipad_x1 < pos.x < self.helipad_x2):
-            #done = True
-            reward = +100
-
-
-        return np.array(state, dtype=np.float32), reward, done, {}
-
-    def step_custom(self, action):
 
         # Map throttle demand from [-1,+1] to [0,1]
         throttle = (action[0] + 1) / 2
@@ -491,8 +452,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     while True:
         #a = heuristic(env, s)
         a_custom = heuristic_custom(env,s_custom)
-        #s, r, done, info = env.step(a)
-        s_custom = env.step_custom(a_custom)
+        s_custom = env.step(a_custom)
         r, done, info = 0, False, {}
         total_reward += r
 
