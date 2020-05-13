@@ -422,8 +422,6 @@ def heuristic(env, s):
     angle_targ = s[0]*A + s[2]*B         # angle should point towards center
     angle_todo = (s[4]-angle_targ)*C + s[5]*D
 
-    print('%+3.3f' % angle_targ)
-
     hover_targ = E*np.abs(s[0])           # target y should be proportional to horizontal offset
     hover_todo = (hover_targ - s[1])*F - s[3]*G
 
@@ -433,10 +431,10 @@ def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     total_reward = 0
     steps = 0
-    s_custom = env.reset()
+    s = env.reset()
     while True:
-        a_custom = heuristic(env,s_custom)
-        s_custom = env.step(a_custom)
+        a = heuristic(env,s)
+        s = env.step(a)
         r, done, info = 0, False, {}
         total_reward += r
 
