@@ -340,15 +340,15 @@ class LoonieLander(gym.Env, EzPickle):
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
-    def step_custom(self, a):
+    def step_custom(self, action):
 
         # Map throttle demand from [-1,+1] to [0,1]
-        throttle = (a[0] + 1) / 2
+        throttle = (action[0] + 1) / 2
 
         d = self.dynamics
 
         # Set motors from demands
-        roll = a[1]
+        roll = action[1]
         d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
 
         # Update dynamics
