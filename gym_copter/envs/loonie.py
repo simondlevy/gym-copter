@@ -428,11 +428,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     total_reward = 0
     steps = 0
-    s = env.reset()
+    state = env.reset()
     while True:
-        a = heuristic(env,s)
-        s, r, done, _ = env.step(a)
-        total_reward += r
+        action = heuristic(env,state)
+        state, reward, done, _ = env.step(action)
+        total_reward += reward
 
         if render:
             still_open = env.render()
