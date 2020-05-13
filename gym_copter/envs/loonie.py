@@ -362,6 +362,7 @@ class LoonieLander(gym.Env, EzPickle):
             reward = +100
 
         return np.array(state)
+        #return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
 
@@ -490,13 +491,14 @@ def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     total_reward = 0
     steps = 0
-    s = env.reset()
+    #s = env.reset()
     s_custom = env.reset_custom()
     while True:
-        a = heuristic(env, s)
+        #a = heuristic(env, s)
         a_custom = heuristic_custom(env,s_custom)
-        s, r, done, info = env.step(a)
+        #s, r, done, info = env.step(a)
         s_custom = env.step_custom(a_custom)
+        r, done, info = 0, False, {}
         total_reward += r
 
         if render:
