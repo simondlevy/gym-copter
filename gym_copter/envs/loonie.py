@@ -200,8 +200,6 @@ class LoonieLander(gym.Env, EzPickle):
 
         self.startpos = None
 
-        np.set_printoptions(precision=3)
-
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
 
@@ -263,7 +261,7 @@ class LoonieLander(gym.Env, EzPickle):
         state[self.dynamics.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0]))
+        return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
 
@@ -318,8 +316,7 @@ class LoonieLander(gym.Env, EzPickle):
             done = True
             reward = +100
 
-        return np.array(state)
-        #return np.array(state, dtype=np.float32), reward, done, {}
+        return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
 
@@ -434,8 +431,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     s = env.reset()
     while True:
         a = heuristic(env,s)
-        s = env.step(a)
-        r, done, info = 0, False, {}
+        s, r, done, _ = env.step(a)
         total_reward += r
 
         if render:
