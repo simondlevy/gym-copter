@@ -438,8 +438,8 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
-        if False:#steps % 20 == 0 or done:
-            print("observations:", " ".join(["{:+0.2f}".format(x) for x in s]))
+        if steps % 20 == 0 or done:
+            print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         
         steps += 1
