@@ -244,6 +244,7 @@ class CopterLander2D(gym.Env, EzPickle):
         # Map throttle demand from [-1,+1] to [0,1]
         throttle = (action[0] + 1) / 2
 
+        # Abberviation
         d = self.dynamics
 
         # Set motors from demands
@@ -255,7 +256,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Get new state from dynamics
         x = d.getState()
-
 
         # Parse out state into elements
         posx            =  x[d.STATE_Y]
@@ -279,6 +279,7 @@ class CopterLander2D(gym.Env, EzPickle):
             20.0*angularVelocity/self.FPS
             )
 
+        # Shape the reward
         reward = 0
         shaping = 0
         shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
