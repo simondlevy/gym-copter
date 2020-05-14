@@ -297,9 +297,11 @@ class CopterLander2D(gym.Env, EzPickle):
             done = True
             reward = -100
 
+        '''
         print('posy=%3.3f (%3.3f)\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f) %d' % 
                 (posy, self.LANDING_POS_Y, velx, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE, 
                     self.helipad_x1 < posx < self.helipad_x2))
+        '''
 
         # Win bigly if we're stationary and level inside the flags
         if (posy < self.LANDING_POS_Y and
@@ -420,7 +422,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
         if render:
             still_open = env.render()
-            if still_open == False: break
+            if not still_open: break
 
         '''
         if steps % 20 == 0 or done:
