@@ -29,7 +29,7 @@ class CopterLander2D(gym.Env, EzPickle):
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
-    INITIAL_RANDOM = 0   # Set 1500 to make game harder
+    INITIAL_RANDOM_VELOCITY = 0   # 
     INITIAL_XOFF = 2     # XXX for prototyping
 
     LANDER_POLY =[
@@ -220,23 +220,17 @@ class CopterLander2D(gym.Env, EzPickle):
                 ]
             )
 
-        #perturb = (
-        #    self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM), 
-        #    self.np_random.uniform(-self.INITIAL_RANDOM, self.INITIAL_RANDOM) )
-
-        # Perturb slightly
-        #self.lander.ApplyForceToCenter(perturb, True)
-
         # By showing props periodically, we can emulate prop rotation
         self.props_visible = 0
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Initialize custom dynamics
-        state = np.zeros(12);
-        state[self.dynamics.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
-        state[self.dynamics.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
+        # Initialize custom dynamics with slight velocity perturbation
+        state = np.zeros(12)
+        d = self.dynamics
+        state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
+        state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0]))[0]
@@ -434,11 +428,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
-        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
 
         steps += 1
         if done: break
