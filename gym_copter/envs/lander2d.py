@@ -30,7 +30,7 @@ class CopterLander2D(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = 1     # XXX for prototyping
+    INITIAL_XOFF = 2     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -354,8 +354,9 @@ class CopterLander2D(gym.Env, EzPickle):
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  self.lander.position.y < 4.2 or ((self.props_visible + 1) % 3)
+        self.props_visible =  self._on_ground(0.05) or ((self.props_visible + 1) % 3)
 
+        # Pause briefly to show vehicle on ground
         if self._on_ground():
             sleep(0.5)
 
@@ -366,8 +367,8 @@ class CopterLander2D(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-    def _on_ground(self):
-        return self.lander.position.y < self.LANDING_POS_Y
+    def _on_ground(self, tolerance=0):
+        return self.lander.position.y < (self.LANDING_POS_Y+tolerance)
 
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
