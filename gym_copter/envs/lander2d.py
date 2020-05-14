@@ -30,7 +30,7 @@ class CopterLander2D(gym.Env, EzPickle):
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = 0     # XXX for prototyping
+    INITIAL_XOFF = 1     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -306,7 +306,7 @@ class CopterLander2D(gym.Env, EzPickle):
         '''
 
         # Win bigly if we're stationary and level inside the flags
-        if (posy < self.LANDING_POS_Y and
+        if (self._on_ground() and
             abs(velx) < self.LANDING_VEL_X and
             abs(self.lander.angle) < self.LANDING_ANGLE  and
             self.helipad_x1 < posx < self.helipad_x2):
