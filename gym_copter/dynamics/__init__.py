@@ -104,7 +104,7 @@ class MultirotorDynamics:
         self._Omega = 0  # torque clockwise
 
         # Initialize inertial frame acceleration in NED coordinates
-        self._inertialAccel = MultirotorDynamics._bodyZToInertiall(-self.g, (0,0,0))
+        self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
     def setMotors(self, motorvals):
         '''
@@ -127,16 +127,17 @@ class MultirotorDynamics:
         self._U3 = self._p.l * self._p.b * self.u3(omegas2)
         self._U4 = self._p.d * self.u4(omegas2)
         
-    def update(self, dt):
+    def update(self, dt, clamp=None):
         '''
         Updates state.
-        dt time in seconds since previous update
+        dt    time in seconds since previous update
+        clamp state dimensions to clamp; supports landing
         '''
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
         euler = ( self._x[6], self._x[8], self._x[10] )
-        accelNED = MultirotorDynamics._bodyZToInertiall(-self._U1 / self._p.m, euler)
+        accelNED = MultirotorDynamics._bodyZToInertial(-self._U1 / self._p.m, euler)
 
         # We're airborne once net downward acceleration goes below zero
         netz = accelNED[2] + self.g
@@ -208,7 +209,7 @@ class MultirotorDynamics:
         '''
         return np.array(motorvals) * self._p.maxrpm * np.pi / 30
 
-    def _bodyZToInertiall(bodyZ, rotation):
+    def _bodyZToInertial(bodyZ, rotation):
         '''
         _bodyToInertial method optimized for body X=Y=0
         '''
