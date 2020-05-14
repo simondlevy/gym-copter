@@ -27,7 +27,7 @@ class CopterLander2D(gym.Env, EzPickle):
     LANDING_ANGLE  = 0.05
 
     # Initial velocity perturbation factor
-    INITIAL_RANDOM_VELOCITY = 0
+    INITIAL_RANDOM_VELOCITY = .75
 
     # Vehicle display properties ---------------------------------------------------------
 
@@ -174,8 +174,6 @@ class CopterLander2D(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
-        self.startpos = None
-
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
 
@@ -203,11 +201,11 @@ class CopterLander2D(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+        startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
 
         self.lander = self.world.CreateDynamicBody (
 
-            position=self.startpos, angle=0.0,
+            position=startpos, angle=0.0,
 
             fixtures = [
 
@@ -227,8 +225,8 @@ class CopterLander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
-        state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
+        state[d.STATE_Y] =  startpos[0] # 3D copter Y comes from 2D copter X
+        state[d.STATE_Z] = -startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         self.dynamics.setState(state)
