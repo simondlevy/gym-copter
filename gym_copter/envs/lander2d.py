@@ -298,7 +298,9 @@ class CopterLander2D(gym.Env, EzPickle):
 
             self.on_ground = True
 
-            print('posy=%3.3f (%3.3f)\t vely=%+3.3f, velx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f)' % 
+        if self.on_ground:
+
+            print('posy=%3.3f (%3.3f)\tvely=%+3.3f\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f)' % 
                     (posy, self.LANDING_POS_Y, velx, vely, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE))
 
             if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE  and self.helipad_x1<posx<self.helipad_x2: 
