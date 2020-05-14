@@ -444,4 +444,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander2D(), seed=1, render=True)
+    demo_heuristic_lander(CopterLander2D(), seed=2, render=True)
