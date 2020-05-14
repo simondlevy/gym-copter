@@ -253,19 +253,31 @@ class CopterLander2D(gym.Env, EzPickle):
         # Update dynamics
         d.update(1./self.FPS)
 
+        # Get new state from dynamics
         x = d.getState()
 
-        posx      =  x[d.STATE_Y]
-        posy      = -x[d.STATE_Z] 
-        velx      =  x[d.STATE_Y_DOT]
-        vely      = -x[d.STATE_Z_DOT]
-        angle     = x[d.STATE_PHI]
-        vel_angle = x[d.STATE_PHI_DOT]
 
+        # Parse out state into elements
+        posx            =  x[d.STATE_Y]
+        posy            = -x[d.STATE_Z] 
+        velx            =  x[d.STATE_Y_DOT]
+        vely            = -x[d.STATE_Z_DOT]
+        angle           = x[d.STATE_PHI]
+        angularVelocity = x[d.STATE_PHI_DOT]
+
+        # Set lander pose in display
         self.lander.position = posx, posy
         self.lander.angle = -angle
 
-        state = self._pose_to_state(posx, posy, velx, vely, angle, vel_angle)
+        # Convert state to usable form
+        state = (
+            (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
+            (posy - (self.helipad_y)) / (self.VIEWPORT_H/self.SCALE/2),
+            velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
+            vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
+            angle,
+            20.0*angularVelocity/self.FPS
+            )
 
         reward = 0
         shaping = 0
@@ -339,17 +351,6 @@ class CopterLander2D(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-    def _pose_to_state(self, posx, posy, velx, vely, angle, angularVelocity):
-
-        return [
-            (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
-            (posy - (self.helipad_y)) / (self.VIEWPORT_H/self.SCALE/2),
-            velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
-            vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
-            angle,
-            20.0*angularVelocity/self.FPS
-            ]
-
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
         trans = fixture.body.transform
@@ -414,9 +415,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if still_open == False: break
 
+        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        '''
         
         steps += 1
         if done: break
