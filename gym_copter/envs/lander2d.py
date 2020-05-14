@@ -26,19 +26,15 @@ class CopterLander2D(gym.Env, EzPickle):
     LANDING_VEL_X  = 2.0
     LANDING_ANGLE  = 0.05
 
-    MAIN_ENGINE_POWER = 13.0
-    SIDE_ENGINE_POWER = 0.6
+    # Initial velocity perturbation factor
+    INITIAL_RANDOM_VELOCITY = 0.75
 
-    INITIAL_RANDOM_VELOCITY = 0   # 
-    INITIAL_XOFF = 2     # XXX for prototyping
+    # Vehicle display properties ---------------------------------------------------------
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
         (+17, -10), (+17, 0), (+14, +17)
         ]
-
-    SIDE_ENGINE_HEIGHT = 14.0
-    SIDE_ENGINE_AWAY = 12.0
 
     LEG_X  = 12
     LEG_Y  = -7
@@ -134,6 +130,8 @@ class CopterLander2D(gym.Env, EzPickle):
     PROP_COLOR    = 0.0, 0.0, 0.0
     OUTLINE_COLOR = 0.0, 0.0, 0.0
 
+    # -------------------------------------------------------------------------------------
+
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : FPS
@@ -205,7 +203,7 @@ class CopterLander2D(gym.Env, EzPickle):
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
 
-        self.startpos = self.VIEWPORT_W/self.SCALE/2-self.INITIAL_XOFF, self.VIEWPORT_H/self.SCALE
+        self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
 
         self.lander = self.world.CreateDynamicBody (
 
@@ -231,6 +229,8 @@ class CopterLander2D(gym.Env, EzPickle):
         d = self.dynamics
         state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
         state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
+        state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
+        state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0]))[0]
@@ -299,13 +299,15 @@ class CopterLander2D(gym.Env, EzPickle):
                     self.helipad_x1 < posx < self.helipad_x2))
         '''
 
-        # Win bigly if we're stationary and level inside the flags
-        if (self._on_ground() and
-            abs(velx) < self.LANDING_VEL_X and
-            abs(self.lander.angle) < self.LANDING_ANGLE  and
-            self.helipad_x1 < posx < self.helipad_x2):
+        # It's all over once we're on the ground
+        if self._on_ground():
+
             done = True
-            reward = +100
+
+            landed_safely = abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE  and self.helipad_x1<posx<self.helipad_x2 
+
+            # More reward if we land safely, less otherwise
+            reward = reward + 100 if landed_safely else -50
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
