@@ -174,6 +174,8 @@ class CopterLander2D(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
+        self.on_ground = False
+
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
 
@@ -293,6 +295,8 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # It's all over once we're on the ground
         if self.lander.position.y < self.LANDING_POS_Y:
+
+            self.on_ground = True
 
             print('posy=%3.3f (%3.3f)\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f)' % 
                     (posy, self.LANDING_POS_Y, velx, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE))
