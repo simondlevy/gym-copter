@@ -27,7 +27,7 @@ class CopterLander2D(gym.Env, EzPickle):
     LANDING_ANGLE  = 0.05
 
     # Initial velocity perturbation factor
-    INITIAL_RANDOM_VELOCITY = 0.75
+    INITIAL_RANDOM_VELOCITY = 0
 
     # Vehicle display properties ---------------------------------------------------------
 
@@ -294,17 +294,17 @@ class CopterLander2D(gym.Env, EzPickle):
             reward = -100
 
         # It's all over once we're on the ground
-        if self._on_ground():
-
-            done = True
+        if self.lander.position.y < self.LANDING_POS_Y:
 
             print('posy=%3.3f (%3.3f)\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f)' % 
                     (posy, self.LANDING_POS_Y, velx, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE))
 
-            landed_safely = abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE  and self.helipad_x1<posx<self.helipad_x2 
+            if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE  and self.helipad_x1<posx<self.helipad_x2: 
 
-            # More reward if we land safely, less otherwise
-            reward = reward + 100 if landed_safely else -50
+                done = True
+
+                # Win bigly we land safely
+                reward += 100
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -347,11 +347,12 @@ class CopterLander2D(gym.Env, EzPickle):
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  self._on_ground(0.05) or ((self.props_visible + 1) % 3)
+        #self.props_visible =  self._on_ground(0.05) or ((self.props_visible + 1) % 3)
+        self.props_visible =  ((self.props_visible + 1) % 3)
 
         # Pause briefly to show vehicle on ground
-        if self._on_ground():
-            sleep(0.5)
+        #if self._on_ground():
+        #    sleep(0.5)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
