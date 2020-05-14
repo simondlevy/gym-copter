@@ -418,6 +418,7 @@ def heuristic(env, s):
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
+    np.random.seed(seed)
     total_reward = 0
     steps = 0
     state = env.reset()
