@@ -20,15 +20,15 @@ class CopterLander2D(gym.Env, EzPickle):
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
     # Criteria for a successful landing
-    LANDING_POS_Y  = 4.3
-    LANDING_VEL_X  = 0.05
-    LANDING_ANGLE  = 0.006
+    LANDING_POS_Y  = 4.15
+    LANDING_VEL_X  = 2.0
+    LANDING_ANGLE  = 0.05
 
     MAIN_ENGINE_POWER = 13.0
     SIDE_ENGINE_POWER = 0.6
 
     INITIAL_RANDOM = 0   # Set 1500 to make game harder
-    INITIAL_XOFF = -3     # XXX for prototyping
+    INITIAL_XOFF = 0     # XXX for prototyping
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -297,6 +297,10 @@ class CopterLander2D(gym.Env, EzPickle):
             done = True
             reward = -100
 
+        print('posy=%3.3f (%3.3f)\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f) %d' % 
+                (posy, self.LANDING_POS_Y, velx, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE, 
+                    self.helipad_x1 < posx < self.helipad_x2))
+
         # Win bigly if we're stationary and level inside the flags
         if (posy < self.LANDING_POS_Y and
             abs(velx) < self.LANDING_VEL_X and
@@ -322,9 +326,11 @@ class CopterLander2D(gym.Env, EzPickle):
             (0,self.VIEWPORT_H)], 
             color=self.GROUND_COLOR)
 
+        # Draw sky
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=self.SKY_COLOR)
 
+        # Draw copter
         self._show_fixture(1, self.VEHICLE_COLOR)
         self._show_fixture(2, self.VEHICLE_COLOR)
         self._show_fixture(0, self.VEHICLE_COLOR)
@@ -335,15 +341,15 @@ class CopterLander2D(gym.Env, EzPickle):
         if self.show_props:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
+        self.show_props = (self.show_props + 1) % 3
 
+        # Draw flags
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
             flagy2 = flagy1 + 50/self.SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
-
-        self.show_props = (self.show_props + 1) % 3
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -381,14 +387,14 @@ def heuristic(env, s):
 
     # Angle target
     A = 0.5
-    B = 3 #1.0
+    B = 3
 
     # Angle PID
     C = 0.025
     D = 0.05
 
     # Vertical target
-    E = 0.55
+    E = 0.8 #0.55
 
     # Vertical PID
     F = 10
