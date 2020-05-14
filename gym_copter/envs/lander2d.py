@@ -5,6 +5,8 @@ Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d
 
 import numpy as np
 
+from time import sleep
+
 import Box2D
 from Box2D.b2 import edgeShape, fixtureDef, polygonShape
 
@@ -226,7 +228,7 @@ class CopterLander2D(gym.Env, EzPickle):
         #self.lander.ApplyForceToCenter(perturb, True)
 
         # By showing props periodically, we can emulate prop rotation
-        self.show_props = 0
+        self.props_visible = 0
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
@@ -332,19 +334,6 @@ class CopterLander2D(gym.Env, EzPickle):
         for p in self.sky_polys:
             self.viewer.draw_polygon(p, color=self.SKY_COLOR)
 
-        # Draw copter
-        self._show_fixture(1, self.VEHICLE_COLOR)
-        self._show_fixture(2, self.VEHICLE_COLOR)
-        self._show_fixture(0, self.VEHICLE_COLOR)
-        self._show_fixture(3, self.MOTOR_COLOR)
-        self._show_fixture(4, self.MOTOR_COLOR)
-
-        # Simulate spinning props by alternating show/hide
-        if self.show_props:
-            for k in range(5,9):
-                self._show_fixture(k, self.PROP_COLOR)
-        self.show_props = (self.show_props + 1) % 3
-
         # Draw flags
         for x in [self.helipad_x1, self.helipad_x2]:
             flagy1 = self.helipad_y
@@ -353,12 +342,32 @@ class CopterLander2D(gym.Env, EzPickle):
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
+        # Draw copter
+        self._show_fixture(1, self.VEHICLE_COLOR)
+        self._show_fixture(2, self.VEHICLE_COLOR)
+        self._show_fixture(0, self.VEHICLE_COLOR)
+        self._show_fixture(3, self.MOTOR_COLOR)
+        self._show_fixture(4, self.MOTOR_COLOR)
+
+        # Simulate spinning props by alternating show/hide
+        if self.props_visible:
+            for k in range(5,9):
+                self._show_fixture(k, self.PROP_COLOR)
+
+        self.props_visible =  self.lander.position.y < 4.2 or ((self.props_visible + 1) % 3)
+
+        if self._on_ground():
+            sleep(0.5)
+
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
     def close(self):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
+
+    def _on_ground(self):
+        return self.lander.position.y < self.LANDING_POS_Y
 
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
@@ -429,9 +438,10 @@ def demo_heuristic_lander(env, seed=None, render=False):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
         '''
-        
+
         steps += 1
         if done: break
+
     env.close()
     return total_reward
 
