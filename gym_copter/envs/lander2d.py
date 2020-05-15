@@ -237,13 +237,11 @@ class CopterLander2D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        # Map throttle demand from [-1,+1] to [0,1]
-        throttle = (action[0] + 1) / 2
-
         # Abberviation
         d = self.dynamics
 
-        # Set motors from demands
+        # Set motors from action
+        throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
         roll = action[1]
         d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
 
