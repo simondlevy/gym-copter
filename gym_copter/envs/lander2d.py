@@ -237,13 +237,16 @@ class CopterLander2D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        # Abberviation
+        # Abbreviation
         d = self.dynamics
 
         # Set motors from action
-        throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
-        roll = action[1]
-        d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
+        if self.on_ground:
+            d.setMotors(np.zeros(4))
+        else:
+            throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
+            roll = action[1]
+            d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
 
         # Update dynamics
         d.update(1./self.FPS)
@@ -345,11 +348,10 @@ class CopterLander2D(gym.Env, EzPickle):
         self._show_fixture(4, self.MOTOR_COLOR)
 
         # Simulate spinning props by alternating show/hide
-        if self.props_visible:
+        if self.on_ground or self.props_visible: 
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        #self.props_visible =  self._on_ground(0.05) or ((self.props_visible + 1) % 3)
         self.props_visible =  ((self.props_visible + 1) % 3)
 
         # Pause briefly to show vehicle on ground
