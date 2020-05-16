@@ -5,8 +5,6 @@ Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d
 
 import numpy as np
 
-from time import sleep
-
 import Box2D
 from Box2D.b2 import edgeShape, fixtureDef, polygonShape
 
@@ -24,7 +22,7 @@ class CopterLander2D(gym.Env, EzPickle):
     # Criteria for a successful landing
     LANDING_POS_Y  = 4.15
     LANDING_VEL_X  = 2.0
-    LANDING_ANGLE  = 0.05
+    LANDING_ANGLE  = np.pi/4
 
     # Initial velocity perturbation factor
     INITIAL_RANDOM_VELOCITY = .75
@@ -174,7 +172,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
-        self.on_ground = False
+        self.landed = False
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -240,16 +238,16 @@ class CopterLander2D(gym.Env, EzPickle):
         # Abbreviation
         d = self.dynamics
 
-        # Set motors from action
-        if self.on_ground:
+        # Stop motors after safe landing
+        if self.landed:
             d.setMotors(np.zeros(4))
+
+        # In air, set motors from action
         else:
             throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
             roll = action[1]
             d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
-
-        # Update dynamics
-        d.update(1./self.FPS)
+            d.update(1./self.FPS)
 
         # Get new state from dynamics
         x = d.getState()
@@ -294,22 +292,25 @@ class CopterLander2D(gym.Env, EzPickle):
             done = True
             reward = -100
 
+        # If we've landed safely, do a brief leveling-off of the vehicle for rendering
+        if self.landed:
+
+            print('landed')
+
         # It's all over once we're on the ground
-        if self.lander.position.y < self.LANDING_POS_Y:
+        elif self.lander.position.y < self.LANDING_POS_Y:
 
-            self.on_ground = True
-
-        if self.on_ground:
-
-            print('posy=%3.3f (%3.3f)\tvely=%+3.3f\tvelx=%+3.3f (%3.3f)\tang=%+3.3f (%3.3f)' % 
-                    (posy, self.LANDING_POS_Y, velx, vely, self.LANDING_VEL_X, self.lander.angle, self.LANDING_ANGLE))
-
-            if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE  and self.helipad_x1<posx<self.helipad_x2: 
-
-                done = True
+            if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE and self.helipad_x1<posx<self.helipad_x2: 
 
                 # Win bigly we land safely
                 reward += 100
+
+                self.landed = True
+
+            else:
+                
+                # Crashed!
+                done = True
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -348,15 +349,11 @@ class CopterLander2D(gym.Env, EzPickle):
         self._show_fixture(4, self.MOTOR_COLOR)
 
         # Simulate spinning props by alternating show/hide
-        if self.on_ground or self.props_visible: 
+        if self.props_visible: 
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  ((self.props_visible + 1) % 3)
-
-        # Pause briefly to show vehicle on ground
-        #if self._on_ground():
-        #    sleep(0.5)
+        self.props_visible =  self.landed or ((self.props_visible + 1) % 3)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -433,11 +430,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
-        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
 
         steps += 1
         if done: break
