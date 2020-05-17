@@ -29,7 +29,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
     # Flag/count-down for rendering level-off after successful landing
     LEVELING_STEP = .02
-    RESTING_DURATION = 100
+    RESTING_DURATION = 50
 
     # Vehicle display properties ---------------------------------------------------------
 
