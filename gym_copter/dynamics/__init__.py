@@ -110,6 +110,10 @@ class MultirotorDynamics:
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
+        self._leveling_count = 0
+        self._leveling_incr = 0
+        self._landed = False
+
     def setMotors(self, motorvals):
         '''
         Uses motor values to implement Equation 6.
@@ -137,6 +141,13 @@ class MultirotorDynamics:
         dt    time in seconds since previous update
         clamp state dimensions to clamp; supports landing
         '''
+
+        if self._leveling_count > 0:
+            self._x[self.STATE_PHI] += self.LEVELING_STEP
+            self._x[self.STATE_THETA] += self.LEVELING_STEP
+            self._leveling_count -= 1
+            self._landed = (self._leveling_count == 0)
+            return
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
