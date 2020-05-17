@@ -176,6 +176,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.prev_shaping = None
 
         self.leveling_count = 0
+        self.leveling_incr = 0
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -263,9 +264,10 @@ class CopterLander2D(gym.Env, EzPickle):
         angle           = x[d.STATE_PHI]
         angularVelocity = x[d.STATE_PHI_DOT]
 
-        # Set lander pose in display
-        self.lander.position = posx, posy
-        self.lander.angle = -angle
+        # Set lander pose in display if we haven't landed
+        if not self.leveling_count:
+            self.lander.position = posx, posy
+            self.lander.angle = -angle
 
         # Convert state to usable form
         state = (
@@ -298,7 +300,11 @@ class CopterLander2D(gym.Env, EzPickle):
         # If we've landed safely, do a brief leveling-off of the vehicle for rendering
         if self.leveling_count:
 
-            self.lander.angle += .1
+            print(self.lander.angle, self.leveling_incr, end= ' => ')
+
+            self.lander.angle += self.leveling_incr
+
+            print(self.lander.angle)
 
             self.leveling_count -= 1
 
@@ -314,6 +320,7 @@ class CopterLander2D(gym.Env, EzPickle):
                 reward += 100
 
                 self.leveling_count = self.LEVELING_DURATION
+                self.leveling_incr  = -self.lander.angle / self.LEVELING_DURATION
 
             else:
                 
