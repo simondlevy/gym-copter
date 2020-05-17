@@ -111,7 +111,7 @@ class MultirotorDynamics:
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
         self._leveling_count = 0
-        self._leveling_incr = 0
+        self._leveling_direction = 0
         self._landed = False
 
     def setMotors(self, motorvals):
@@ -144,14 +144,16 @@ class MultirotorDynamics:
 
         # Landed, leveling off
         if self._leveling_count > 0:
-            self._x[self.STATE_PHI] -= self.LEVELING_STEP
+            self._x[self.STATE_PHI] += self.leveling_direction * self.LEVELING_STEP
             self._leveling_count -= 1
             self._landed = (self._leveling_count == 0)
             return
 
         # It's all over once we're on the ground
         elif -self._x[self.STATE_Z] < self.landing_altitude:
-            self._leveling_count = int(abs(self._x[self.STATE_PHI])/self.LEVELING_STEP)
+            phi = self._x[self.STATE_PHI]
+            self._leveling_count = int(abs(phi)/self.LEVELING_STEP)
+            self.leveling_direction = -np.sign(phi)
             self._landed = (self._leveling_count == 0)
             return
 
