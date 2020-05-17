@@ -229,6 +229,9 @@ class CopterLander2D(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
+        # Set its landing altitude
+        self.dynamics.setLandingAltitude(self.LANDING_POS_Y)
+
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
         d = self.dynamics

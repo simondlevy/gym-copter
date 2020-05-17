@@ -45,6 +45,8 @@ class Parameters:
 
         self.maxrpm = maxrpm
 
+        self.landing_altitude = 0
+
 class MultirotorDynamics:
     '''
     Abstract class for multirotor dynamics.  You implementing class should define the following methods:
@@ -77,6 +79,9 @@ class MultirotorDynamics:
 
     # Default to Earth gravity
     G = 9.80665
+
+    # Helps fake-up leveling-off after successful landing
+    LEVELING_STEP    = .02
 
     def __init__(self, params, motorCount, g=G):
         '''
@@ -170,6 +175,10 @@ class MultirotorDynamics:
         '''
         self._x = np.array(state)
         self._airborne = self._x[self.STATE_Z] < 0
+
+    def setLandingAltitude(self, altitude):
+
+        self.landing_altitude = altitude
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
