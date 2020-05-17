@@ -149,6 +149,11 @@ class MultirotorDynamics:
             self._landed = (self._leveling_count == 0)
             return
 
+        # It's all over once we're on the ground
+        elif -self._x[self.STATE_Z] < self.landing_altitude:
+            self._landed = True
+            return
+
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
         euler = ( self._x[6], self._x[8], self._x[10] )
@@ -189,6 +194,10 @@ class MultirotorDynamics:
     def setLandingAltitude(self, altitude):
 
         self.landing_altitude = altitude
+
+    def landed(self):
+
+        return self._landed
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
