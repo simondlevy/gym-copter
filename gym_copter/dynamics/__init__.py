@@ -142,9 +142,9 @@ class MultirotorDynamics:
         clamp state dimensions to clamp; supports landing
         '''
 
+        # Landed, leveling off
         if self._leveling_count > 0:
             self._x[self.STATE_PHI] -= self.LEVELING_STEP
-            print(self._x[self.STATE_PHI])
             self._leveling_count -= 1
             self._landed = (self._leveling_count == 0)
             return

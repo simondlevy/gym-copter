@@ -27,8 +27,7 @@ class CopterLander2D(gym.Env, EzPickle):
     # Initial velocity perturbation factor
     INITIAL_RANDOM_VELOCITY = .75
 
-    # Flag/count-down for rendering level-off after successful landing
-    LEVELING_STEP    = .02
+    # For rendering after successful landing
     RESTING_DURATION = 50
 
     # Vehicle display properties ---------------------------------------------------------
@@ -308,14 +307,15 @@ class CopterLander2D(gym.Env, EzPickle):
             if self.resting_count == 0:
                 done = True
 
-
         # It's all over once we're on the ground
-        if self.dynamics.landed():
+        elif self.dynamics.landed():
 
             if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE and self.helipad_x1<posx<self.helipad_x2: 
 
                 # Win bigly we land safely
                 reward += 100
+
+                self.resting_count = self.RESTING_DURATION
 
             else:
                 
@@ -440,11 +440,9 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
-        '''
-        if steps % 20 == 0 or done:
+        if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-        '''
 
         steps += 1
         if done: break
