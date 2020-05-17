@@ -27,6 +27,9 @@ class CopterLander2D(gym.Env, EzPickle):
     # Initial velocity perturbation factor
     INITIAL_RANDOM_VELOCITY = .75
 
+    # Flag/count-down for rendering level-off after successful landing
+    LEVELING_DURATION = 100
+
     # Vehicle display properties ---------------------------------------------------------
 
     LANDER_POLY =[
@@ -172,7 +175,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
-        self.landed = False
+        self.leveling_count = 0
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -239,7 +242,7 @@ class CopterLander2D(gym.Env, EzPickle):
         d = self.dynamics
 
         # Stop motors after safe landing
-        if self.landed:
+        if self.leveling_count:
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -293,9 +296,12 @@ class CopterLander2D(gym.Env, EzPickle):
             reward = -100
 
         # If we've landed safely, do a brief leveling-off of the vehicle for rendering
-        if self.landed:
+        if self.leveling_count:
 
-            print('landed')
+            self.leveling_count -= 1
+
+            if self.leveling_count == 0:
+                done = True
 
         # It's all over once we're on the ground
         elif self.lander.position.y < self.LANDING_POS_Y:
@@ -305,7 +311,7 @@ class CopterLander2D(gym.Env, EzPickle):
                 # Win bigly we land safely
                 reward += 100
 
-                self.landed = True
+                self.leveling_count = self.LEVELING_DURATION
 
             else:
                 
@@ -353,7 +359,7 @@ class CopterLander2D(gym.Env, EzPickle):
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  self.landed or ((self.props_visible + 1) % 3)
+        self.props_visible =  self.leveling_count or ((self.props_visible + 1) % 3)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -430,7 +436,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
-        if not env.landed and (steps % 20 == 0 or done):
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
