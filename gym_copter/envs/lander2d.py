@@ -28,7 +28,8 @@ class CopterLander2D(gym.Env, EzPickle):
     INITIAL_RANDOM_VELOCITY = .75
 
     # Flag/count-down for rendering level-off after successful landing
-    LEVELING_DURATION = 100
+    LEVELING_STEP = .02
+    RESTING_DURATION = 100
 
     # Vehicle display properties ---------------------------------------------------------
 
@@ -177,6 +178,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
         self.leveling_count = 0
         self.leveling_incr = 0
+        self.resting_count = 0
 
         W = self.VIEWPORT_W/self.SCALE
         H = self.VIEWPORT_H/self.SCALE
@@ -243,7 +245,7 @@ class CopterLander2D(gym.Env, EzPickle):
         d = self.dynamics
 
         # Stop motors after safe landing
-        if self.leveling_count:
+        if self.leveling_count or self.resting_count:
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -265,7 +267,7 @@ class CopterLander2D(gym.Env, EzPickle):
         angularVelocity = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
-        if not self.leveling_count:
+        if not (self.leveling_count or self.resting_count):
             self.lander.position = posx, posy
             self.lander.angle = -angle
 
@@ -297,19 +299,23 @@ class CopterLander2D(gym.Env, EzPickle):
             done = True
             reward = -100
 
+        elif self.resting_count:
+
+            self.resting_count -= 1
+
+            if self.resting_count == 0:
+                done = True
+
+
         # If we've landed safely, do a brief leveling-off of the vehicle for rendering
-        if self.leveling_count:
+        elif self.leveling_count:
 
-            print(self.lander.angle, self.leveling_incr, end= ' => ')
-
-            self.lander.angle += self.leveling_incr
-
-            print(self.lander.angle)
+            self.lander.angle += self.LEVELING_STEP
 
             self.leveling_count -= 1
 
             if self.leveling_count == 0:
-                done = True
+                self.resting_count = self.RESTING_DURATION
 
         # It's all over once we're on the ground
         elif self.lander.position.y < self.LANDING_POS_Y:
@@ -319,8 +325,7 @@ class CopterLander2D(gym.Env, EzPickle):
                 # Win bigly we land safely
                 reward += 100
 
-                self.leveling_count = self.LEVELING_DURATION
-                self.leveling_incr  = -self.lander.angle / self.LEVELING_DURATION
+                self.leveling_count = int(abs(self.lander.angle)/self.LEVELING_STEP)
 
             else:
                 
@@ -368,7 +373,7 @@ class CopterLander2D(gym.Env, EzPickle):
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  self.leveling_count or ((self.props_visible + 1) % 3)
+        self.props_visible =  self.resting_count or self.leveling_count or ((self.props_visible + 1) % 3)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
