@@ -28,7 +28,7 @@ class CopterLander2D(gym.Env, EzPickle):
     INITIAL_RANDOM_VELOCITY = .75
 
     # Flag/count-down for rendering level-off after successful landing
-    LEVELING_STEP = .02
+    LEVELING_STEP    = .02
     RESTING_DURATION = 50
 
     # Vehicle display properties ---------------------------------------------------------
@@ -140,6 +140,7 @@ class CopterLander2D(gym.Env, EzPickle):
     }
 
     def __init__(self):
+
         EzPickle.__init__(self)
         self.seed()
         self.viewer = None
