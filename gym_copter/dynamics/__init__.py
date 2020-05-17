@@ -87,7 +87,6 @@ class MultirotorDynamics:
         '''
         Constructor
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
-        airborne allows us to start on the ground (default) or in the air (e.g., gravity test)
         '''
         self._p = params
         self._motorCount = motorCount
