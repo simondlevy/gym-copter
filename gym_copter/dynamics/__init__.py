@@ -151,7 +151,7 @@ class MultirotorDynamics:
 
         # It's all over once we're on the ground
         elif -self._x[self.STATE_Z] < self.landing_altitude:
-            self._landed = True
+            self.leveling_count = int(max(abs(self._x[self.STATE_PHI]),abs(self._x[STATE_THETA]))/self.LEVELING_STEP)
             return
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
