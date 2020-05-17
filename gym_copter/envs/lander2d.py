@@ -298,6 +298,8 @@ class CopterLander2D(gym.Env, EzPickle):
         # If we've landed safely, do a brief leveling-off of the vehicle for rendering
         if self.leveling_count:
 
+            self.lander.angle += .1
+
             self.leveling_count -= 1
 
             if self.leveling_count == 0:
