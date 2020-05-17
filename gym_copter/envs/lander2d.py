@@ -177,8 +177,6 @@ class CopterLander2D(gym.Env, EzPickle):
         self._destroy()
         self.prev_shaping = None
 
-        self.leveling_count = 0
-        self.leveling_incr = 0
         self.resting_count = 0
 
         W = self.VIEWPORT_W/self.SCALE
@@ -249,7 +247,7 @@ class CopterLander2D(gym.Env, EzPickle):
         d = self.dynamics
 
         # Stop motors after safe landing
-        if self.leveling_count or self.resting_count:
+        if self.dynamics.landed() or self.resting_count:
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -271,7 +269,7 @@ class CopterLander2D(gym.Env, EzPickle):
         angularVelocity = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
-        if not (self.leveling_count or self.resting_count):
+        if not (self.dynamics.landed() or self.resting_count):
             self.lander.position = posx, posy
             self.lander.angle = -angle
 
@@ -311,25 +309,13 @@ class CopterLander2D(gym.Env, EzPickle):
                 done = True
 
 
-        # If we've landed safely, do a brief leveling-off of the vehicle for rendering
-        elif self.leveling_count:
-
-            self.lander.angle += self.LEVELING_STEP
-
-            self.leveling_count -= 1
-
-            if self.leveling_count == 0:
-                self.resting_count = self.RESTING_DURATION
-
         # It's all over once we're on the ground
-        elif self.lander.position.y < self.LANDING_POS_Y:
+        if self.dynamics.landed():
 
             if abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE and self.helipad_x1<posx<self.helipad_x2: 
 
                 # Win bigly we land safely
                 reward += 100
-
-                self.leveling_count = int(abs(self.lander.angle)/self.LEVELING_STEP)
 
             else:
                 
@@ -377,7 +363,7 @@ class CopterLander2D(gym.Env, EzPickle):
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  self.resting_count or self.leveling_count or ((self.props_visible + 1) % 3)
+        self.props_visible =  self.dynamics.landed() or self.resting_count or ((self.props_visible + 1) % 3)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -454,9 +440,11 @@ def demo_heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
+        '''
         if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+        '''
 
         steps += 1
         if done: break
