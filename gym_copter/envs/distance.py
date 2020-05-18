@@ -6,7 +6,7 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.env import CopterEnv
+from gym_copter.envs.copter import CopterEnv
 from gym import spaces
 import numpy as np
 
