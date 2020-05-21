@@ -45,8 +45,6 @@ class Parameters:
 
         self.maxrpm = maxrpm
 
-        self.landing_altitude = 0
-
 class MultirotorDynamics:
     '''
     Abstract class for multirotor dynamics.  You implementing class should define the following methods:
@@ -110,6 +108,8 @@ class MultirotorDynamics:
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
+        # Support landing
+        self.landing_altitude = 0
         self._leveling_count = 0
         self._leveling_direction = 0
         self._landed = False
