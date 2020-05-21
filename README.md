@@ -21,12 +21,11 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 ```
 % pip3 install gym
 % python3 setup.py install
-% python3 examples/takeoff.py --render
+% python3 gym_copter/envs/lander2.py
 ```
 (On Linux you will probably have to run pip3 with <tt>sudo</tt>
 
-You should see a Heads-Up Display (HUD) of the vehicle rising to 10 meters altitude.  If you omit the
-```--render``` you'll get a plot of the altitude, associated reward, vertical velocity, and motor actions.
+You should see the copter land safely.
 
 ## Reinforcement learning
 
