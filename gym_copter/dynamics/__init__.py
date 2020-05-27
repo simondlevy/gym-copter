@@ -78,6 +78,9 @@ class MultirotorDynamics:
     # Default to Earth gravity
     G = 9.80665
 
+    # Accomodate landing gear vertical offset
+    LANDING_GEAR_HEIGHT = 0.85
+
     # Helps fake-up leveling-off after successful landing
     LEVELING_STEP    = .02
 
@@ -196,7 +199,7 @@ class MultirotorDynamics:
 
     def setLandingAltitude(self, altitude):
 
-        self.landing_altitude = altitude
+        self.landing_altitude = altitude + self.LANDING_GEAR_HEIGHT
 
     def landed(self):
 

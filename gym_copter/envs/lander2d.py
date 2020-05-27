@@ -23,7 +23,6 @@ class CopterLander2D(gym.Env, EzPickle):
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
     # Criteria for a successful landing
-    LANDING_POS_Y  = 4.15
     LANDING_VEL_X  = 2.0
     LANDING_ANGLE  = np.pi/4
 
@@ -227,7 +226,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Set its landing altitude
-        self.dynamics.setLandingAltitude(self.LANDING_POS_Y)
+        self.dynamics.setLandingAltitude(self.helipad_y)
 
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
@@ -372,9 +371,6 @@ class CopterLander2D(gym.Env, EzPickle):
             self.viewer.close()
             self.viewer = None
 
-    def _on_ground(self, tolerance=0):
-        return self.lander.position.y < (self.LANDING_POS_Y+tolerance)
-
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
         trans = fixture.body.transform
@@ -411,7 +407,7 @@ def heuristic(env, s):
     D = 0.05
 
     # Vertical target
-    E = 0.8 #0.55
+    E = 0.8 
 
     # Vertical PID
     F = 10
