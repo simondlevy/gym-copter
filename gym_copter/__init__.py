@@ -31,7 +31,7 @@ register(
 )
 
 register(
-    id='CopterLander-v0',
+    id='CopterLander-v1',
     entry_point='gym_copter.envs:CopterLander2D',
     max_episode_steps=10000
 )
