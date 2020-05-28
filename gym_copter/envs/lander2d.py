@@ -5,9 +5,6 @@ Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d
 
 import numpy as np
 
-import Box2D
-from Box2D.b2 import edgeShape, fixtureDef, polygonShape
-
 import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
@@ -139,10 +136,6 @@ class CopterLander2D(gym.Env, EzPickle):
         self.seed()
         self.viewer = None
 
-        self.world = Box2D.b2World()
-        self.ground = None
-        self.lander = None
-
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
@@ -152,6 +145,16 @@ class CopterLander2D(gym.Env, EzPickle):
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
         # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+
+        H = self.VIEWPORT_H/self.SCALE
+        self.helipad_y = H/4
+        self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+
+        # Support for rendering
+        self.ground = None
+        self.lander = None
+        self.position = None
+        self.angle = None
 
         self.reset()
 
@@ -175,51 +178,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
         self.resting_count = 0
 
-        W = self.VIEWPORT_W/self.SCALE
-        H = self.VIEWPORT_H/self.SCALE
-
-        # terrain
-        height = self.np_random.uniform(0, H/2, size=(self.TERRAIN_CHUNKS+1,))
-        chunk_x = [W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
-        self.helipad_x1 = chunk_x[self.TERRAIN_CHUNKS//2-1]
-        self.helipad_x2 = chunk_x[self.TERRAIN_CHUNKS//2+1]
-        self.helipad_y = H/4
-        height[self.TERRAIN_CHUNKS//2-2] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2-1] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+0] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+1] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+2] = self.helipad_y
-        smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
-
-        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
-        self.sky_polys = []
-        for i in range(self.TERRAIN_CHUNKS-1):
-            p1 = (chunk_x[i], smooth_y[i])
-            p2 = (chunk_x[i+1], smooth_y[i+1])
-            self.ground.CreateEdgeFixture(
-                vertices=[p1,p2],
-                density=0,
-                friction=0.1)
-            self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
-
-        startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
-
-        self.lander = self.world.CreateDynamicBody (
-
-            position=startpos, angle=0.0,
-
-            fixtures = [
-
-                fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
-
-                for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
-                    self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
-                ]
-            )
-
-        # By showing props periodically, we can emulate prop rotation
-        self.props_visible = 0
-
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
@@ -229,11 +187,14 @@ class CopterLander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  startpos[0] # 3D copter Y comes from 2D copter X
-        state[d.STATE_Z] = -startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
+        state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
+        state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
         state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         self.dynamics.setState(state)
+
+        # By showing props periodically, we can emulate prop rotation
+        self.props_visible = 0
 
         return self.step(np.array([0, 0]))[0]
 
@@ -266,8 +227,8 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.lander.position = posx, posy
-            self.lander.angle = -angle
+            self.position = posx, posy
+            self.angle = -angle
 
         # Convert state to usable form
         state = (
@@ -323,11 +284,9 @@ class CopterLander2D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        from gym.envs.classic_control import rendering
-
+        # Create viewer and world objects if not done yet
         if self.viewer is None:
-            self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
-            self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
+            self._create_viewer()
 
         # Draw ground as background
         self.viewer.draw_polygon([(0,0), 
@@ -347,6 +306,10 @@ class CopterLander2D(gym.Env, EzPickle):
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
+
+        # Set copter pose to values from step()
+        self.lander.position = self.position
+        self.lander.angle = self.angle
 
         # Draw copter
         self._show_fixture(1, self.VEHICLE_COLOR)
@@ -376,6 +339,56 @@ class CopterLander2D(gym.Env, EzPickle):
         self.viewer.draw_polygon(path, color=color)
         path.append(path[0])
         self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=1)
+
+    def _create_viewer(self):
+
+        from gym.envs.classic_control import rendering
+        import Box2D
+        from Box2D.b2 import edgeShape, fixtureDef, polygonShape
+
+        W = self.VIEWPORT_W/self.SCALE
+        H = self.VIEWPORT_H/self.SCALE
+
+        self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
+        self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
+        self.world = Box2D.b2World()
+
+        # terrain
+        height = self.np_random.uniform(0, H/2, size=(self.TERRAIN_CHUNKS+1,))
+        chunk_x = [W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
+        self.helipad_x1 = chunk_x[self.TERRAIN_CHUNKS//2-1]
+        self.helipad_x2 = chunk_x[self.TERRAIN_CHUNKS//2+1]
+        height[self.TERRAIN_CHUNKS//2-2] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2-1] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+0] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+1] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2+2] = self.helipad_y
+        smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
+
+        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
+        self.sky_polys = []
+        for i in range(self.TERRAIN_CHUNKS-1):
+            p1 = (chunk_x[i], smooth_y[i])
+            p2 = (chunk_x[i+1], smooth_y[i+1])
+            self.ground.CreateEdgeFixture(
+                vertices=[p1,p2],
+                density=0,
+                friction=0.1)
+            self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
+
+        self.lander = self.world.CreateDynamicBody (
+
+        position=self.startpos, angle=0.0,
+
+        fixtures = [
+
+            fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
+
+            for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
+                self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
+            ]
+        )
+
 
 def heuristic(env, s):
     """
