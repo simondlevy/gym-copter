@@ -17,7 +17,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander2D(gym.Env, EzPickle):
 
     # Initial velocity perturbation factor
-    INITIAL_RANDOM_VELOCITY = .5
+    INITIAL_RANDOM_VELOCITY = 0.75
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
