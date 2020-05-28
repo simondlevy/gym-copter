@@ -81,6 +81,10 @@ class MultirotorDynamics:
     # Accomodate landing gear vertical offset
     LANDING_GEAR_HEIGHT = 0.85
 
+    # Landing criteria
+    LANDING_VEL_X  = 2.0
+    LANDING_ANGLE  = np.pi/4
+
     # Helps fake-up leveling-off after successful landing
     LEVELING_STEP    = .02
 

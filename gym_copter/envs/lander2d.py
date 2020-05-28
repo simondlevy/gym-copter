@@ -24,6 +24,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
     # Criteria for a successful landing
     LANDING_VEL_X  = 2.0
+    LANDING_VEL_Y  = 0
     LANDING_ANGLE  = np.pi/4
 
     # For rendering after successful landing
@@ -172,7 +173,9 @@ class CopterLander2D(gym.Env, EzPickle):
         self.lander = None
 
     def reset(self):
+
         self._destroy()
+
         self.prev_shaping = None
 
         self.resting_count = 0
@@ -314,10 +317,12 @@ class CopterLander2D(gym.Env, EzPickle):
                 # Win bigly we land safely
                 reward += 100
 
+                print(vely)
+
                 self.resting_count = self.RESTING_DURATION
 
             else:
-                
+
                 # Crashed!
                 done = True
 
@@ -410,7 +415,7 @@ def heuristic(env, s):
     E = 0.8 
 
     # Vertical PID
-    F = 10
+    F = 7.5#10
     G = 10
 
     angle_targ = s[0]*A + s[2]*B         # angle should point towards center
@@ -429,6 +434,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     state = env.reset()
     while True:
         action = heuristic(env,state)
+        #action = [-1,0]
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
