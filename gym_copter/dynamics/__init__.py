@@ -81,8 +81,9 @@ class MultirotorDynamics:
     # Accomodate landing gear vertical offset
     LANDING_GEAR_HEIGHT = 0.85
 
-    # Landing criteria
+    # Safe landing criteria
     LANDING_VEL_X  = 2.0
+    LANDING_VEL_Y  = 1.0
     LANDING_ANGLE  = np.pi/4
 
     # Helps fake-up leveling-off after successful landing
@@ -120,6 +121,7 @@ class MultirotorDynamics:
         self._leveling_count = 0
         self._leveling_direction = 0
         self._landed = False
+        self._crashed = False
 
     def setMotors(self, motorvals):
         '''
@@ -158,11 +160,17 @@ class MultirotorDynamics:
 
         # It's all over once we're on the ground
         elif -self._x[self.STATE_Z] < self.landing_altitude:
-            phi = self._x[self.STATE_PHI]
+            phi   = self._x[self.STATE_PHI]
+            velx  = self._x[self.STATE_Y_DOT]
+            vely  = self._x[self.STATE_Z_DOT]
             self._leveling_count = int(abs(phi)/self.LEVELING_STEP)
             self.leveling_direction = -np.sign(phi)
-            self._landed = (self._leveling_count == 0)
+            if vely > self.LANDING_VEL_Y or abs(velx)>self.LANDING_VEL_X or abs(phi)>self.LANDING_ANGLE: 
+                self._crashed = True
+            else:
+                self._landed = (self._leveling_count == 0)
             return
+
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
@@ -208,6 +216,10 @@ class MultirotorDynamics:
     def landed(self):
 
         return self._landed
+
+    def crashed(self):
+
+        return self._crashed
 
     def _computeStateDerivative(self, accelNED, netz):
         '''

@@ -17,15 +17,10 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander2D(gym.Env, EzPickle):
 
     # Initial velocity perturbation factor
-    INITIAL_RANDOM_VELOCITY = 0 #.5
+    INITIAL_RANDOM_VELOCITY = .5
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
-
-    # Criteria for a successful landing
-    LANDING_VEL_X  =  2.0
-    LANDING_VEL_Y  = -1.0
-    LANDING_ANGLE  = np.pi/4
 
     # For rendering after successful landing
     RESTING_DURATION = 50
@@ -312,17 +307,17 @@ class CopterLander2D(gym.Env, EzPickle):
         # It's all over once we're on the ground
         elif self.dynamics.landed():
 
-            if vely > self.LANDING_VEL_Y and abs(velx)<self.LANDING_VEL_X and abs(self.lander.angle)<self.LANDING_ANGLE and self.helipad_x1<posx<self.helipad_x2: 
+            # Win bigly we land safely between the flags
+            if self.helipad_x1 < posx < self.helipad_x2: 
 
-                # Win bigly we land safely
                 reward += 100
 
                 self.resting_count = self.RESTING_DURATION
 
-            else:
+        elif self.dynamics.crashed():
 
-                # Crashed!
-                done = True
+            # Crashed!
+            done = True
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -452,4 +447,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander2D(), seed=0, render=True)
+    demo_heuristic_lander(CopterLander2D(), seed=None, render=True)
