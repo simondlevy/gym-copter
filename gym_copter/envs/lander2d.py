@@ -13,8 +13,8 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterLander2D(gym.Env, EzPickle):
 
-    # Initial velocity perturbation factor
-    INITIAL_RANDOM_VELOCITY = 1.0
+    # Perturbation factor for initial horizontal position
+    INITIAL_RANDOM_OFFSET = 1.0
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
@@ -145,11 +145,11 @@ class CopterLander2D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         # Helipad
-        self.W = self.VIEWPORT_W/self.SCALE
         self.helipad_x1 = 8
         self.helipad_x2 = 12
-        self.H = self.VIEWPORT_H/self.SCALE
-        self.ground_y = self.H/4
+
+        # Ground level
+        self.ground_y = self.VIEWPORT_H/self.SCALE/4
 
         # Starting position
         self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
@@ -188,13 +188,16 @@ class CopterLander2D(gym.Env, EzPickle):
         # Set its landing altitude
         self.dynamics.setGroundLevel(self.ground_y)
 
-        # Initialize custom dynamics with slight velocity perturbation
+        # Initial random perturbation of horizontal position
+        xoff = 0
+
+        # Initialize custom dynamics with perturbation
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
         state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
-        state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
-        state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
+        #state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
+        #state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
