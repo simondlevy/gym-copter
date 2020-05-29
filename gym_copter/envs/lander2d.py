@@ -361,16 +361,16 @@ class CopterLander2D(gym.Env, EzPickle):
 
         self.lander = self.world.CreateDynamicBody (
 
-        position=self.startpos, angle=0.0,
+                position=self.startpos, angle=0.0,
 
-        fixtures = [
+                fixtures = [
 
-            fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
+                    fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
 
-            for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
-                self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
-            ]
-        )
+                    for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
+                        self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
+                    ]
+                )
 
 # End of CopterLander2D class ----------------------------------------------------------------
 
