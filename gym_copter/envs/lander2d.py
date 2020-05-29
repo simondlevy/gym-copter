@@ -152,7 +152,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.helipad_x1 = 8
         self.helipad_x2 = 12
         self.H = self.VIEWPORT_H/self.SCALE
-        self.helipad_y = self.H/4
+        self.ground_y = self.H/4
 
         # Starting position
         self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
@@ -189,7 +189,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Set its landing altitude
-        self.dynamics.setGroundLevel(self.helipad_y)
+        self.dynamics.setGroundLevel(self.ground_y)
 
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
@@ -240,7 +240,7 @@ class CopterLander2D(gym.Env, EzPickle):
         # Convert state to usable form
         state = (
             (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
-            (posy - (self.helipad_y)) / (self.VIEWPORT_H/self.SCALE/2),
+            (posy - (self.ground_y)) / (self.VIEWPORT_H/self.SCALE/2),
             velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             angle,
@@ -296,19 +296,24 @@ class CopterLander2D(gym.Env, EzPickle):
             self._create_viewer()
 
         # Draw ground as background
-        self.viewer.draw_polygon([(0,0), 
+        self.viewer.draw_polygon(
+            [(0,0), 
             (self.VIEWPORT_W,0), 
             (self.VIEWPORT_W,self.VIEWPORT_H), 
             (0,self.VIEWPORT_H)], 
             color=self.GROUND_COLOR)
 
         # Draw sky
-        for p in self.sky_polys:
-            self.viewer.draw_polygon(p, color=self.SKY_COLOR)
+        self.viewer.draw_polygon(
+            [(0,self.ground_y), 
+            (self.VIEWPORT_W,self.ground_y), 
+            (self.VIEWPORT_W,self.VIEWPORT_H), 
+            (0,self.VIEWPORT_H)], 
+            color=self.SKY_COLOR)
 
         # Draw flags
         for x in [self.helipad_x1, self.helipad_x2]:
-            flagy1 = self.helipad_y
+            flagy1 = self.ground_y
             flagy2 = flagy1 + 50/self.SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
@@ -359,17 +364,17 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # terrain
         height = self.np_random.uniform(0, self.H/2, size=(self.TERRAIN_CHUNKS+1,))
-        height[self.TERRAIN_CHUNKS//2-2] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2-1] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+0] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+1] = self.helipad_y
-        height[self.TERRAIN_CHUNKS//2+2] = self.helipad_y
+        height[self.TERRAIN_CHUNKS//2-2] = self.ground_y
+        height[self.TERRAIN_CHUNKS//2-1] = self.ground_y
+        height[self.TERRAIN_CHUNKS//2+0] = self.ground_y
+        height[self.TERRAIN_CHUNKS//2+1] = self.ground_y
+        height[self.TERRAIN_CHUNKS//2+2] = self.ground_y
         smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
 
         self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (self.W, 0)]))
 
+        '''
         self.sky_polys = []
-
         for i in range(self.TERRAIN_CHUNKS-1):
             p1 = (self.chunk_x[i], smooth_y[i])
             p2 = (self.chunk_x[i+1], smooth_y[i+1])
@@ -378,6 +383,7 @@ class CopterLander2D(gym.Env, EzPickle):
                 density=0,
                 friction=0.1)
             self.sky_polys.append([p1, p2, (p2[0], self.H), (p1[0], self.H)])
+        '''
 
         self.lander = self.world.CreateDynamicBody (
 
