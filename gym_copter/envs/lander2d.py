@@ -189,7 +189,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Set its landing altitude
-        self.dynamics.setLandingAltitude(self.helipad_y)
+        self.dynamics.setGroundLevel(self.helipad_y)
 
         # Initialize custom dynamics with slight velocity perturbation
         state = np.zeros(12)
