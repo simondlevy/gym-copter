@@ -113,8 +113,6 @@ class CopterLander2D(gym.Env, EzPickle):
     VIEWPORT_W = 600
     VIEWPORT_H = 400
 
-    TERRAIN_CHUNKS = 11
-
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
     FLAG_COLOR    = 0.8, 0.0, 0.0
@@ -148,7 +146,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Helipad
         self.W = self.VIEWPORT_W/self.SCALE
-        self.chunk_x = [self.W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
         self.helipad_x1 = 8
         self.helipad_x2 = 12
         self.H = self.VIEWPORT_H/self.SCALE
@@ -361,29 +358,6 @@ class CopterLander2D(gym.Env, EzPickle):
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
         self.world = Box2D.b2World()
-
-        # terrain
-        height = self.np_random.uniform(0, self.H/2, size=(self.TERRAIN_CHUNKS+1,))
-        height[self.TERRAIN_CHUNKS//2-2] = self.ground_y
-        height[self.TERRAIN_CHUNKS//2-1] = self.ground_y
-        height[self.TERRAIN_CHUNKS//2+0] = self.ground_y
-        height[self.TERRAIN_CHUNKS//2+1] = self.ground_y
-        height[self.TERRAIN_CHUNKS//2+2] = self.ground_y
-        smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
-
-        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (self.W, 0)]))
-
-        '''
-        self.sky_polys = []
-        for i in range(self.TERRAIN_CHUNKS-1):
-            p1 = (self.chunk_x[i], smooth_y[i])
-            p2 = (self.chunk_x[i+1], smooth_y[i+1])
-            self.ground.CreateEdgeFixture(
-                vertices=[p1,p2],
-                density=0,
-                friction=0.1)
-            self.sky_polys.append([p1, p2, (p2[0], self.H), (p1[0], self.H)])
-        '''
 
         self.lander = self.world.CreateDynamicBody (
 
