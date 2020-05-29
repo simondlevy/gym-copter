@@ -146,8 +146,15 @@ class CopterLander2D(gym.Env, EzPickle):
         # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
-        H = self.VIEWPORT_H/self.SCALE
-        self.helipad_y = H/4
+        # Helipad
+        self.W = self.VIEWPORT_W/self.SCALE
+        self.chunk_x = [self.W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
+        self.helipad_x1 = self.chunk_x[self.TERRAIN_CHUNKS//2-1]
+        self.helipad_x2 = self.chunk_x[self.TERRAIN_CHUNKS//2+1]
+        self.H = self.VIEWPORT_H/self.SCALE
+        self.helipad_y = self.H/4
+
+        # Starting position
         self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
 
         # Support for rendering
@@ -346,18 +353,12 @@ class CopterLander2D(gym.Env, EzPickle):
         import Box2D
         from Box2D.b2 import edgeShape, fixtureDef, polygonShape
 
-        W = self.VIEWPORT_W/self.SCALE
-        H = self.VIEWPORT_H/self.SCALE
-
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
         self.world = Box2D.b2World()
 
         # terrain
-        height = self.np_random.uniform(0, H/2, size=(self.TERRAIN_CHUNKS+1,))
-        chunk_x = [W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
-        self.helipad_x1 = chunk_x[self.TERRAIN_CHUNKS//2-1]
-        self.helipad_x2 = chunk_x[self.TERRAIN_CHUNKS//2+1]
+        height = self.np_random.uniform(0, self.H/2, size=(self.TERRAIN_CHUNKS+1,))
         height[self.TERRAIN_CHUNKS//2-2] = self.helipad_y
         height[self.TERRAIN_CHUNKS//2-1] = self.helipad_y
         height[self.TERRAIN_CHUNKS//2+0] = self.helipad_y
@@ -365,16 +366,16 @@ class CopterLander2D(gym.Env, EzPickle):
         height[self.TERRAIN_CHUNKS//2+2] = self.helipad_y
         smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
 
-        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (W, 0)]))
+        self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (self.W, 0)]))
         self.sky_polys = []
         for i in range(self.TERRAIN_CHUNKS-1):
-            p1 = (chunk_x[i], smooth_y[i])
-            p2 = (chunk_x[i+1], smooth_y[i+1])
+            p1 = (self.chunk_x[i], smooth_y[i])
+            p2 = (self.chunk_x[i+1], smooth_y[i+1])
             self.ground.CreateEdgeFixture(
                 vertices=[p1,p2],
                 density=0,
                 friction=0.1)
-            self.sky_polys.append([p1, p2, (p2[0], H), (p1[0], H)])
+            self.sky_polys.append([p1, p2, (p2[0], self.H), (p1[0], self.H)])
 
         self.lander = self.world.CreateDynamicBody (
 
