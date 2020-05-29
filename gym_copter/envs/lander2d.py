@@ -353,7 +353,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
         from gym.envs.classic_control import rendering
         import Box2D
-        from Box2D.b2 import edgeShape, fixtureDef, polygonShape
+        from Box2D.b2 import fixtureDef, polygonShape
 
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
@@ -371,6 +371,8 @@ class CopterLander2D(gym.Env, EzPickle):
                 self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
             ]
         )
+
+# End of CopterLander2D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
