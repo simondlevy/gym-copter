@@ -149,8 +149,8 @@ class CopterLander2D(gym.Env, EzPickle):
         # Helipad
         self.W = self.VIEWPORT_W/self.SCALE
         self.chunk_x = [self.W/(self.TERRAIN_CHUNKS-1)*i for i in range(self.TERRAIN_CHUNKS)]
-        self.helipad_x1 = self.chunk_x[self.TERRAIN_CHUNKS//2-1]
-        self.helipad_x2 = self.chunk_x[self.TERRAIN_CHUNKS//2+1]
+        self.helipad_x1 = 8
+        self.helipad_x2 = 12
         self.H = self.VIEWPORT_H/self.SCALE
         self.helipad_y = self.H/4
 
@@ -367,7 +367,9 @@ class CopterLander2D(gym.Env, EzPickle):
         smooth_y = [0.33*(height[i-1] + height[i+0] + height[i+1]) for i in range(self.TERRAIN_CHUNKS)]
 
         self.ground = self.world.CreateStaticBody(shapes=edgeShape(vertices=[(0, 0), (self.W, 0)]))
+
         self.sky_polys = []
+
         for i in range(self.TERRAIN_CHUNKS-1):
             p1 = (self.chunk_x[i], smooth_y[i])
             p2 = (self.chunk_x[i+1], smooth_y[i+1])
