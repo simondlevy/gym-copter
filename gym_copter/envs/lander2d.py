@@ -19,10 +19,10 @@ class CopterLander2D(gym.Env, EzPickle):
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
-    # For rendering after successful landing
+    # For rendering for a short while after successful landing
     RESTING_DURATION = 50
 
-    # Vehicle display properties ---------------------------------------------------------
+    # Rendering properties ---------------------------------------------------------
 
     LANDER_POLY =[
         (-14, +17), (-17, 0), (-17 ,-10),
@@ -52,21 +52,6 @@ class CopterLander2D(gym.Env, EzPickle):
             (+4, -14),
             (-4, -14),
         ]
-
-    MOTOR1_POLY = [
-            (+MOTOR_X,MOTOR_Y),
-            (+MOTOR_X+MOTOR_W,MOTOR_Y),
-            (+MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
-            (+MOTOR_X,MOTOR_Y-MOTOR_H)
-        ]
-
-    MOTOR2_POLY = [
-            (-MOTOR_X,MOTOR_Y),
-            (-MOTOR_X+MOTOR_W,MOTOR_Y),
-            (-MOTOR_X+MOTOR_W,MOTOR_Y-MOTOR_H),
-            (-MOTOR_X,MOTOR_Y-MOTOR_H)
-        ]
-
 
     VIEWPORT_W = 600
     VIEWPORT_H = 400
@@ -327,7 +312,7 @@ class CopterLander2D(gym.Env, EzPickle):
                     fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
 
                     for poly in [self.HULL_POLY, self._leg_poly(-1), self._leg_poly(+1), 
-                        self.MOTOR1_POLY, self.MOTOR2_POLY,
+                        self._motor_poly(+1), self._motor_poly(-1),
                         self._blade_poly(+1,-1), self._blade_poly(+1,+1), self._blade_poly(-1,-1), self._blade_poly(-1,+1)]
                     ]
                 )
@@ -338,6 +323,14 @@ class CopterLander2D(gym.Env, EzPickle):
             (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y+self.BLADE_H),
             (x*self.BLADE_X+w*self.BLADE_W,self.BLADE_Y),
             (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y-self.BLADE_H),
+        ]
+
+    def _motor_poly(self, x):
+        return [
+            (x*self.MOTOR_X,self.MOTOR_Y),
+            (x*self.MOTOR_X+self.MOTOR_W,self.MOTOR_Y),
+            (x*self.MOTOR_X+self.MOTOR_W,self.MOTOR_Y-self.MOTOR_H),
+            (x*self.MOTOR_X,self.MOTOR_Y-self.MOTOR_H)
         ]
 
     def _leg_poly(self, x):
