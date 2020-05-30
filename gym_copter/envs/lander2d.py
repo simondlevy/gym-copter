@@ -53,20 +53,6 @@ class CopterLander2D(gym.Env, EzPickle):
             (-4, -14),
         ]
 
-    LEG1_POLY = [
-            (-LEG_X,LEG_Y),
-            (-LEG_X+LEG_W,LEG_Y),
-            (-LEG_X+LEG_W,LEG_Y-LEG_H),
-            (-LEG_X,LEG_Y-LEG_H)
-        ]
-
-    LEG2_POLY = [
-            (+LEG_X,LEG_Y),
-            (+LEG_X+LEG_W,LEG_Y),
-            (+LEG_X+LEG_W,LEG_Y-LEG_H),
-            (+LEG_X,LEG_Y-LEG_H)
-        ]
-
     MOTOR1_POLY = [
             (+MOTOR_X,MOTOR_Y),
             (+MOTOR_X+MOTOR_W,MOTOR_Y),
@@ -340,20 +326,28 @@ class CopterLander2D(gym.Env, EzPickle):
 
                     fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
 
-                    for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
+                    for poly in [self.HULL_POLY, self._leg_poly(-1), self._leg_poly(+1), 
+                        self.MOTOR1_POLY, self.MOTOR2_POLY,
                         self._blade_poly(+1,-1), self._blade_poly(+1,+1), self._blade_poly(-1,-1), self._blade_poly(-1,+1)]
                     ]
                 )
 
     def _blade_poly(self, x, w):
-            return [
-                    (x*self.BLADE_X,self.BLADE_Y),
-                    (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y+self.BLADE_H),
-                    (x*self.BLADE_X+w*self.BLADE_W,self.BLADE_Y),
-                    (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y-self.BLADE_H),
-                    ]
+        return [
+            (x*self.BLADE_X,self.BLADE_Y),
+            (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y+self.BLADE_H),
+            (x*self.BLADE_X+w*self.BLADE_W,self.BLADE_Y),
+            (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y-self.BLADE_H),
+        ]
 
-
+    def _leg_poly(self, x):
+        return [
+            (x*self.LEG_X,self.LEG_Y),
+            (x*self.LEG_X+self.LEG_W,self.LEG_Y),
+            (x*self.LEG_X+self.LEG_W,self.LEG_Y-self.LEG_H),
+            (x*self.LEG_X,self.LEG_Y-self.LEG_H)
+        ]
+ 
 # End of CopterLander2D class ----------------------------------------------------------------
 
 
