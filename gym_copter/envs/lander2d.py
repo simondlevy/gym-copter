@@ -189,15 +189,13 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics.setGroundLevel(self.ground_y)
 
         # Initial random perturbation of horizontal position
-        xoff = 0
+        xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
 
         # Initialize custom dynamics with perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.startpos[0] # 3D copter Y comes from 2D copter X
-        state[d.STATE_Z] = -self.startpos[1] # 3D copter Z comes from 2D copter Y, negated for NED
-        #state[d.STATE_Y_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
-        #state[d.STATE_Z_DOT] = self.INITIAL_RANDOM_VELOCITY * np.random.randn()
+        state[d.STATE_Y] =  self.startpos[0] + xoff # 3D copter Y comes from 2D copter X
+        state[d.STATE_Z] = -self.startpos[1]        # 3D copter Z comes from 2D copter Y, negated for NED
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
