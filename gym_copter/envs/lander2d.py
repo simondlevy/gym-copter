@@ -44,34 +44,6 @@ class CopterLander2D(gym.Env, EzPickle):
     BLADE_W = 20
     BLADE_H = 2
 
-    BLADE1L_POLY = [
-            (BLADE_X,BLADE_Y),
-            (BLADE_X-BLADE_W/2,BLADE_Y+BLADE_H),
-            (BLADE_X-BLADE_W,BLADE_Y),
-            (BLADE_X-BLADE_W/2,BLADE_Y+-BLADE_H),
-            ]
-
-    BLADE1R_POLY = [
-            (BLADE_X,BLADE_Y),
-            (BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
-            (BLADE_X+BLADE_W,BLADE_Y),
-            (BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
-            ]
-
-    BLADE2L_POLY = [
-            (-BLADE_X,BLADE_Y),
-            (-(BLADE_X+BLADE_W/2),BLADE_Y+BLADE_H),
-            (-(BLADE_X+BLADE_W),BLADE_Y),
-            (-(BLADE_X+BLADE_W/2),BLADE_Y+-BLADE_H),
-            ]
-
-    BLADE2R_POLY = [
-            (-BLADE_X,BLADE_Y),
-            (-BLADE_X+BLADE_W/2,BLADE_Y+BLADE_H),
-            (-BLADE_X+BLADE_W,BLADE_Y),
-            (-BLADE_X+BLADE_W/2,BLADE_Y+-BLADE_H),
-            ]
-
     HULL_POLY =[
             (-30, 0),
             (-4, +4),
@@ -369,9 +341,18 @@ class CopterLander2D(gym.Env, EzPickle):
                     fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
 
                     for poly in [self.HULL_POLY, self.LEG1_POLY, self.LEG2_POLY, self.MOTOR1_POLY, self.MOTOR2_POLY,
-                        self.BLADE1L_POLY, self.BLADE1R_POLY, self.BLADE2L_POLY, self.BLADE2R_POLY]
+                        self._blade_poly(+1,-1), self._blade_poly(+1,+1), self._blade_poly(-1,-1), self._blade_poly(-1,+1)]
                     ]
                 )
+
+    def _blade_poly(self, x, w):
+            return [
+                    (x*self.BLADE_X,self.BLADE_Y),
+                    (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y+self.BLADE_H),
+                    (x*self.BLADE_X+w*self.BLADE_W,self.BLADE_Y),
+                    (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y-self.BLADE_H),
+                    ]
+
 
 # End of CopterLander2D class ----------------------------------------------------------------
 
