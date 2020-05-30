@@ -19,15 +19,12 @@ class CopterLander2D(gym.Env, EzPickle):
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
+    # Rendering properties ---------------------------------------------------------
+
     # For rendering for a short while after successful landing
     RESTING_DURATION = 50
 
-    # Rendering properties ---------------------------------------------------------
-
-    LANDER_POLY =[
-        (-14, +17), (-17, 0), (-17 ,-10),
-        (+17, -10), (+17, 0), (+14, +17)
-        ]
+    LANDER_POLY =[ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
 
     LEG_X  = 12
     LEG_Y  = -7
@@ -44,14 +41,7 @@ class CopterLander2D(gym.Env, EzPickle):
     BLADE_W = 20
     BLADE_H = 2
 
-    HULL_POLY =[
-            (-30, 0),
-            (-4, +4),
-            (+4, +4),
-            (+30,  0),
-            (+4, -14),
-            (-4, -14),
-        ]
+    HULL_POLY =[ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
 
     VIEWPORT_W = 600
     VIEWPORT_H = 400
