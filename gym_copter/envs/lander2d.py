@@ -14,7 +14,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander2D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 1.0
+    INITIAL_RANDOM_OFFSET = 2.0
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
