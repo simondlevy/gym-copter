@@ -222,115 +222,13 @@ class CopterLander2D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        # Create viewer and world objects if not done yet
-        if self.viewer is None:
-            self._create_viewer()
-
-        # Draw ground as background
-        self.viewer.draw_polygon(
-            [(0,0), 
-            (self.VIEWPORT_W,0), 
-            (self.VIEWPORT_W,self.VIEWPORT_H), 
-            (0,self.VIEWPORT_H)], 
-            color=self.GROUND_COLOR)
-
-        # Draw sky
-        self.viewer.draw_polygon(
-            [(0,self.ground_y), 
-            (self.VIEWPORT_W,self.ground_y), 
-            (self.VIEWPORT_W,self.VIEWPORT_H), 
-            (0,self.VIEWPORT_H)], 
-            color=self.SKY_COLOR)
-
-        # Draw flags
-        for x in [self.helipad_x1, self.helipad_x2]:
-            flagy1 = self.ground_y
-            flagy2 = flagy1 + 50/self.SCALE
-            self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
-            self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
-                                     color=self.FLAG_COLOR)
-
-        # Set copter pose to values from step()
-        self.lander.position = self.position
-        self.lander.angle = self.angle
-
-        # Draw copter
-        self._show_fixture(1, self.VEHICLE_COLOR)
-        self._show_fixture(2, self.VEHICLE_COLOR)
-        self._show_fixture(0, self.VEHICLE_COLOR)
-        self._show_fixture(3, self.MOTOR_COLOR)
-        self._show_fixture(4, self.MOTOR_COLOR)
-
-        # Simulate spinning props by alternating show/hide
-        if self.props_visible: 
-            for k in range(5,9):
-                self._show_fixture(k, self.PROP_COLOR)
-
-        self.props_visible =  self.dynamics.landed() or self.resting_count or ((self.props_visible + 1) % 3)
-
-        return self.viewer.render(return_rgb_array=mode == 'rgb_array')
+        return True
 
     def close(self):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
 
-    def _show_fixture(self, index, color):
-        fixture = self.lander.fixtures[index]
-        trans = fixture.body.transform
-        path = [trans*v for v in fixture.shape.vertices]
-        self.viewer.draw_polygon(path, color=color)
-        path.append(path[0])
-        self.viewer.draw_polyline(path, color=self.OUTLINE_COLOR, linewidth=1)
-
-    def _create_viewer(self):
-
-        from gym.envs.classic_control import rendering
-        import Box2D
-        from Box2D.b2 import fixtureDef, polygonShape
-
-        self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
-        self.viewer.set_bounds(0, self.VIEWPORT_W/self.SCALE, 0, self.VIEWPORT_H/self.SCALE)
-        self.world = Box2D.b2World()
-
-        self.lander = self.world.CreateDynamicBody (
-
-                position=self.startpos, angle=0.0,
-
-                fixtures = [
-
-                    fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
-
-                    for poly in [self.HULL_POLY, self._leg_poly(-1), self._leg_poly(+1), 
-                        self._motor_poly(+1), self._motor_poly(-1),
-                        self._blade_poly(+1,-1), self._blade_poly(+1,+1), self._blade_poly(-1,-1), self._blade_poly(-1,+1)]
-                    ]
-                )
-
-    def _blade_poly(self, x, w):
-        return [
-            (x*self.BLADE_X,self.BLADE_Y),
-            (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y+self.BLADE_H),
-            (x*self.BLADE_X+w*self.BLADE_W,self.BLADE_Y),
-            (x*self.BLADE_X+w*self.BLADE_W/2,self.BLADE_Y-self.BLADE_H),
-        ]
-
-    def _motor_poly(self, x):
-        return [
-            (x*self.MOTOR_X,self.MOTOR_Y),
-            (x*self.MOTOR_X+self.MOTOR_W,self.MOTOR_Y),
-            (x*self.MOTOR_X+self.MOTOR_W,self.MOTOR_Y-self.MOTOR_H),
-            (x*self.MOTOR_X,self.MOTOR_Y-self.MOTOR_H)
-        ]
-
-    def _leg_poly(self, x):
-        return [
-            (x*self.LEG_X,self.LEG_Y),
-            (x*self.LEG_X+self.LEG_W,self.LEG_Y),
-            (x*self.LEG_X+self.LEG_W,self.LEG_Y-self.LEG_H),
-            (x*self.LEG_X,self.LEG_Y-self.LEG_H)
-        ]
- 
 # End of CopterLander2D class ----------------------------------------------------------------
 
 
