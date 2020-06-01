@@ -46,7 +46,7 @@ class _Vehicle:
 
 class TPV:
 
-    def __init__(self, env):
+    def __init__(self, env, label=None):
 
         # Environment will be used to get position
         self.env = env
@@ -64,7 +64,7 @@ class TPV:
         self.ax.set_zlabel('Z (m)')
 
         # Set title to name of environment
-        self.ax.set_title(env.unwrapped.spec.id)
+        self.ax.set_title(env.unwrapped.spec.id if label is None else label)
 
         # Set axis limits
         self.ax.set_xlim((-50, 50))

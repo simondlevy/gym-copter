@@ -11,48 +11,17 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class CopterLander2D(gym.Env, EzPickle):
+class CopterLander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 2.0
 
     FPS = 50
-    SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
 
     # Rendering properties ---------------------------------------------------------
 
     # For rendering for a short while after successful landing
     RESTING_DURATION = 50
-
-    LANDER_POLY =[ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
-
-    LEG_X  = 12
-    LEG_Y  = -7
-    LEG_W  = 3
-    LEG_H  = 20
-
-    MOTOR_X  = 25
-    MOTOR_Y  = 7
-    MOTOR_W  = 4
-    MOTOR_H  = 5
-
-    BLADE_X = 25
-    BLADE_Y = 8
-    BLADE_W = 20
-    BLADE_H = 2
-
-    HULL_POLY =[ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
-
-    VIEWPORT_W = 600
-    VIEWPORT_H = 400
-
-    SKY_COLOR     = 0.5, 0.8, 1.0
-    GROUND_COLOR  = 0.5, 0.7, 0.3
-    FLAG_COLOR    = 0.8, 0.0, 0.0
-    VEHICLE_COLOR = 1.0, 1.0, 1.0
-    MOTOR_COLOR   = 0.5, 0.5, 0.5
-    PROP_COLOR    = 0.0, 0.0, 0.0
-    OUTLINE_COLOR = 0.0, 0.0, 0.0
 
     # -------------------------------------------------------------------------------------
 
@@ -65,7 +34,8 @@ class CopterLander2D(gym.Env, EzPickle):
 
         EzPickle.__init__(self)
         self.seed()
-        self.viewer = None
+
+        self.dt = 1./self.FPS
 
         self.prev_reward = None
 
@@ -81,17 +51,13 @@ class CopterLander2D(gym.Env, EzPickle):
         self.helipad_x1 = 8
         self.helipad_x2 = 12
 
-        # Ground level
-        self.ground_y = self.VIEWPORT_H/self.SCALE/4
-
         # Starting position
-        self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
+        self.startpos = 10, 13.333
 
         # Support for rendering
-        self.ground = None
-        self.lander = None
-        self.position = None
+        self.pose = None
         self.angle = None
+        self.tpv = None
 
         self.reset()
 
@@ -99,17 +65,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def _destroy(self):
-        if not self.ground: return
-        self.world.contactListener = None
-        self.world.DestroyBody(self.ground)
-        self.ground = None
-        self.world.DestroyBody(self.lander)
-        self.lander = None
-
     def reset(self):
-
-        self._destroy()
 
         self.prev_shaping = None
 
@@ -118,17 +74,14 @@ class CopterLander2D(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Set its landing altitude
-        self.dynamics.setGroundLevel(self.ground_y)
-
         # Initial random perturbation of horizontal position
         xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
 
         # Initialize custom dynamics with perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.startpos[0] + xoff # 3D copter Y comes from 2D copter X
-        state[d.STATE_Z] = -self.startpos[1]        # 3D copter Z comes from 2D copter Y, negated for NED
+        state[d.STATE_Y] =  self.startpos[0] + xoff # 3D copter Y comes from 3D copter X
+        state[d.STATE_Z] = -self.startpos[1]        # 3D copter Z comes from 3D copter Y, negated for NED
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
@@ -150,32 +103,34 @@ class CopterLander2D(gym.Env, EzPickle):
             throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
             roll = action[1]
             d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
-            d.update(1./self.FPS)
+            d.update(self.dt)
 
         # Get new state from dynamics
         x = d.getState()
 
         # Parse out state into elements
-        posx            =  x[d.STATE_Y]
-        posy            = -x[d.STATE_Z] 
-        velx            =  x[d.STATE_Y_DOT]
-        vely            = -x[d.STATE_Z_DOT]
+        posx            =  x[d.STATE_X]
+        posy            =  x[d.STATE_Y]
+        posz            = -x[d.STATE_Z] 
+        velx            =  x[d.STATE_X_DOT]
+        vely            =  x[d.STATE_Y_DOT]
+        velz            = -x[d.STATE_Z_DOT]
         angle           = x[d.STATE_PHI]
         angularVelocity = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.position = posx, posy
+            self.pose = posx, posy, posz
             self.angle = -angle
 
         # Convert state to usable form
         state = (
-            (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
-            (posy - (self.ground_y)) / (self.VIEWPORT_H/self.SCALE/2),
-            velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
-            vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
+            (posx - 10) / 10, 
+            posy / 6.67, 
+            velx * 10 * self.dt,
+            velz * 6.67 * self.dt,
             angle,
-            20.0*angularVelocity/self.FPS
+            20.0 * angularVelocity * self.dt
             )
 
         # Shape the reward
@@ -225,11 +180,17 @@ class CopterLander2D(gym.Env, EzPickle):
         return True
 
     def close(self):
-        if self.viewer is not None:
-            self.viewer.close()
-            self.viewer = None
 
-# End of CopterLander2D class ----------------------------------------------------------------
+        return
+
+    def tpvplotter(self):
+
+        from gym_copter.envs.rendering.tpv import TPV
+
+        # Pass title to 3D display
+        return TPV(self, 'Lander')
+
+# End of CopterLander3D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
@@ -274,12 +235,16 @@ def heuristic(env, s):
 
     return hover_todo, angle_todo
 
-def demo_heuristic_lander(env, seed=None, render=False):
+def heuristic_lander(env, seed=None, render=False):
+
+    # Seed random number generators
     env.seed(seed)
     np.random.seed(seed)
+
     total_reward = 0
     steps = 0
     state = env.reset()
+
     while True:
         action = heuristic(env,state)
         state, reward, done, _ = env.step(action)
@@ -299,7 +264,17 @@ def demo_heuristic_lander(env, seed=None, render=False):
     env.close()
     return total_reward
 
-
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander2D(), seed=None, render=True)
+    import threading
+
+    env = CopterLander3D()
+
+    # Run simulation on its own thread
+    plotter = env.tpvplotter()
+    thread = threading.Thread(target=heuristic_lander, args=(env,))
+    thread.daemon = True
+    thread.start()
+
+    # Begin 3D rendering on main thread
+    plotter.start()
