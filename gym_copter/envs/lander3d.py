@@ -19,12 +19,10 @@ class CopterLander3D(gym.Env, EzPickle):
 
     FPS = 50
 
-    # Rendering properties ---------------------------------------------------------
+    RADIUS = 5
 
     # For rendering for a short while after successful landing
     RESTING_DURATION = 50
-
-    # -------------------------------------------------------------------------------------
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -47,10 +45,6 @@ class CopterLander3D(gym.Env, EzPickle):
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
         # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
-
-        # Helipad
-        self.helipad_x1 = 8
-        self.helipad_x2 = 12
 
         # Starting position
         self.startpos = 0, 0, 13.333
@@ -135,8 +129,6 @@ class CopterLander3D(gym.Env, EzPickle):
             20.0 * angularVelocity * self.dt
             )
 
-        print(posx, posy, posz)
-
         # Shape the reward
         reward = 0
         shaping = 0
@@ -165,8 +157,8 @@ class CopterLander3D(gym.Env, EzPickle):
         # It's all over once we're on the ground
         elif self.dynamics.landed():
 
-            # Win bigly we land safely between the flags
-            if self.helipad_x1 < posx < self.helipad_x2: 
+            # Win bigly we land close to the center of the circle
+            if np.sqrt(posx**2 + posy**2) < self.RADIUS:
 
                 reward += 100
 
@@ -263,7 +255,7 @@ def heuristic_lander(env, seed=None, render=False):
             still_open = env.render()
             if not still_open: break
 
-        if False: #not env.resting_count and (steps % 20 == 0 or done):
+        if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
