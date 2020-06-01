@@ -13,11 +13,14 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class _Vehicle:
 
-    def __init__(self, ax, color='b'):
+    def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
         self.line = self._create(ax, '-', color)
         self.pt   = self._create(ax, 'o', color)
+
+        # Support plotting trajectories
+        self.showtraj = showtraj
 
         # Initialize arrays that we will accumulate to plot trajectory
         self.xs = []
@@ -31,9 +34,10 @@ class _Vehicle:
         self.ys.append(y)
         self.zs.append(z)
 
-        # Plot trajectory
-        self.line.set_data(self.xs, self.ys)
-        self.line.set_3d_properties(self.zs)
+        # Plot trajectory if indicated
+        if self.showtraj:
+            self.line.set_data(self.xs, self.ys)
+            self.line.set_3d_properties(self.zs)
 
         # Show vehicle as a dot
         self.pt.set_data(x, y)
@@ -47,7 +51,7 @@ class _Vehicle:
 
 class TPV:
 
-    def __init__(self, env, label=None):
+    def __init__(self, env, label=None, showtraj=False):
 
         # Environment will be used to get position
         self.env = env
@@ -73,7 +77,7 @@ class TPV:
         self.ax.set_zlim((0, 50))
 
         # Create a representation of the copter
-        self.copter = _Vehicle(self.ax)
+        self.copter = _Vehicle(self.ax, showtraj)
 
     def start(self):
 

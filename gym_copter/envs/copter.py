@@ -70,12 +70,12 @@ class CopterEnv(Env):
 
         return self.display.display(mode, self.state, self.dt_realtime*self.tick) if self.display.isOpen() else None
 
-    def tpvplotter(self):
+    def tpvplotter(self, showtraj=False):
 
         from gym_copter.envs.rendering.tpv import TPV
 
         # Pass title to 3D display
-        return TPV(self)
+        return TPV(self, showtraj=showtraj)
 
     def close(self):
 
