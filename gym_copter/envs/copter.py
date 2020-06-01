@@ -41,6 +41,7 @@ class CopterEnv(Env):
         self.dynamics.setMotors(action)
         self.dynamics.update(self.dt_realtime)
         self.state[:12] = self.dynamics.getState()
+        self.pose = self.state[0:6:2]
 
         # Update timestep
         self.tick += 1

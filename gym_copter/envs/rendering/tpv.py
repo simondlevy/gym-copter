@@ -93,8 +93,8 @@ class TPV:
     def _animate(self, _):
 
         # Get vehicle position
-        x,y,z = self.env.state[0:6:2]
-
+        x,y,z = self.env.pose
+        
         # Negate Z to accomodate NED
         z = -z
 
