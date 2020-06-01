@@ -233,7 +233,7 @@ def heuristic(env, s):
 
     return hover_todo, angle_todo
 
-def heuristic_lander(env, seed=None, render=False):
+def heuristic_lander(env, plotter, seed=None, render=False):
 
     # Seed random number generators
     env.seed(seed)
@@ -263,6 +263,7 @@ def heuristic_lander(env, seed=None, render=False):
         if done: break
 
     env.close()
+    plotter.close()
     return total_reward
 
 if __name__ == '__main__':
@@ -273,7 +274,7 @@ if __name__ == '__main__':
 
     # Run simulation on its own thread
     plotter = env.tpvplotter()
-    thread = threading.Thread(target=heuristic_lander, args=(env,))
+    thread = threading.Thread(target=heuristic_lander, args=(env,plotter))
     thread.daemon = True
     thread.start()
 

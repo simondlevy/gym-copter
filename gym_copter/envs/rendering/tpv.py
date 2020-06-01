@@ -6,6 +6,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
+import time
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
@@ -85,6 +86,11 @@ class TPV:
             plt.show()
         except:
             pass
+
+    def close(self):
+
+        time.sleep(1)
+        plt.close(self.fig)
 
     def _handle_close(self, event):
 
