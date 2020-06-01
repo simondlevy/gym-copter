@@ -4,6 +4,7 @@ Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d
 """
 
 import numpy as np
+import time
 
 import gym
 from gym import spaces
@@ -14,7 +15,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 2.0
+    INITIAL_RANDOM_OFFSET = 0.0 
 
     FPS = 50
 
@@ -52,7 +53,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.helipad_x2 = 12
 
         # Starting position
-        self.startpos = 10, 13.333
+        self.startpos = 0, 0, 13.333
 
         # Support for rendering
         self.pose = None
@@ -75,13 +76,14 @@ class CopterLander3D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Initial random perturbation of horizontal position
-        xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        xoff, yoff = self.INITIAL_RANDOM_OFFSET * np.random.randn(2)
 
         # Initialize custom dynamics with perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.startpos[0] + xoff # 3D copter Y comes from 3D copter X
-        state[d.STATE_Z] = -self.startpos[1]        # 3D copter Z comes from 3D copter Y, negated for NED
+        state[d.STATE_X] =  self.startpos[0] + xoff # 3D copter Y comes from 3D copter X
+        state[d.STATE_Y] =  self.startpos[1] + yoff # 3D copter Y comes from 3D copter X
+        state[d.STATE_Z] = -self.startpos[2]        # 3D copter Z comes from 3D copter Y, negated for NED
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
@@ -125,13 +127,15 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Convert state to usable form
         state = (
-            (posx - 10) / 10, 
-            posy / 6.67, 
+            posx / 10, 
+            posz / 6.67, 
             velx * 10 * self.dt,
             velz * 6.67 * self.dt,
             angle,
             20.0 * angularVelocity * self.dt
             )
+
+        print(posx, posy, posz)
 
         # Shape the reward
         reward = 0
@@ -172,6 +176,8 @@ class CopterLander3D(gym.Env, EzPickle):
 
             # Crashed!
             done = True
+
+        time.sleep(self.dt)
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -246,15 +252,18 @@ def heuristic_lander(env, seed=None, render=False):
     state = env.reset()
 
     while True:
+
         action = heuristic(env,state)
+
         state, reward, done, _ = env.step(action)
+
         total_reward += reward
 
         if render:
             still_open = env.render()
             if not still_open: break
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
