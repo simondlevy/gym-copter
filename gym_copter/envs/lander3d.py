@@ -91,7 +91,7 @@ class CopterLander3D(gym.Env, EzPickle):
         d = self.dynamics
 
         # Stop motors after safe landing
-        if self.dynamics.landed() or self.resting_count:
+        if self.dynamics.landed():
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -115,7 +115,7 @@ class CopterLander3D(gym.Env, EzPickle):
         angularVelocity = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
-        if not (self.dynamics.landed() or self.resting_count):
+        if not self.dynamics.landed():
             self.pose = posx, posy, -posz
             self.angle = -angle
 
