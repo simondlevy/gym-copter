@@ -157,7 +157,7 @@ class CopterLander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(state[0]) >= 1.0:
+        if abs(posx) >= 1.0:
             done = True
             reward = -100
 
@@ -206,19 +206,6 @@ class CopterLander3D(gym.Env, EzPickle):
 
 
 def heuristic(env, s):
-    """
-    The heuristic for
-    1. Testing
-    2. Demonstration rollout.
-
-    Args:
-        env: The environment
-        s (list): The state. Attributes:
-                  s[0,1,2] X,Y,Z coordinates
-                  s[3,4,5] first derivatives of X,Y,Z coordinates
-    returns:
-         a: The heuristic to be fed into the step function defined above to determine the next step and reward.
-    """
 
     # Angle target
     A = 0.5
