@@ -39,7 +39,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(7,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
 
         # Action is two floats [main engine, left-right engines].
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
@@ -125,6 +125,7 @@ class CopterLander3D(gym.Env, EzPickle):
             posy / 10,
             posz / 6.67, 
             velx * 10 * self.dt,
+            vely * 10 * self.dt,
             velz * 6.67 * self.dt,
             phi,
             20.0 * velphi * self.dt
@@ -134,7 +135,7 @@ class CopterLander3D(gym.Env, EzPickle):
         reward = 0
         shaping = 0
         shaping -= 100*np.sqrt(state[0]**2 + state[2]**2)  # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[3]**2 + state[4]**2)  # Lose points for distance from X center and horizontal velocity
+        shaping -= 100*np.sqrt(state[3]**2 + state[5]**2)  # Lose points for distance from X center and horizontal velocity
                                                                   
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -227,10 +228,10 @@ def heuristic(env, s):
     G = 10
 
     angle_targ = s[0]*A + s[3]*B         # angle should point towards center
-    angle_todo = (s[5]-angle_targ)*C + s[6]*D
+    angle_todo = (s[6]-angle_targ)*C + s[7]*D
 
     hover_targ = E*np.abs(s[0])           # target y should be proportional to horizontal offset
-    hover_todo = (hover_targ - s[2])*F - s[4]*G
+    hover_todo = (hover_targ - s[2])*F - s[5]*G
 
     return hover_todo, angle_todo
 
