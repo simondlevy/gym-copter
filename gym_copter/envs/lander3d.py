@@ -222,20 +222,22 @@ def heuristic(env, s):
     F = 7.5#10
     G = 10
 
-    posx   = s[0]
-    velx   = s[1]
-    posz   = s[4]
-    velz   = s[5]
-    phi    = s[6]
-    velphi = s[7]
+    posx     = s[0]
+    velx     = s[1]
+    posz     = s[4]
+    velz     = s[5]
+    phi      = s[6]
+    velphi   = s[7]
+    theta    = s[8]
+    veltheta = s[9]
 
-    angle_targ = posx*A + velx*B         
-    angle_todo = (phi-angle_targ)*C + velphi*D
+    phi_targ = posx*A + velx*B         
+    phi_todo = (phi-phi_targ)*C + velphi*D
 
     hover_targ = E*np.abs(posx)
     hover_todo = (hover_targ - posz)*F - velz*G
 
-    return hover_todo, angle_todo
+    return hover_todo, phi_todo
 
 def heuristic_lander(env, plotter, seed=None, render=False):
 
