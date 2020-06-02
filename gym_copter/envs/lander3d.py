@@ -115,9 +115,11 @@ class CopterLander3D(gym.Env, EzPickle):
         theta    = x[d.STATE_THETA]
         veltheta = x[d.STATE_THETA_DOT]
 
+        state = x[:10]
+
         # Set lander pose in display if we haven't landed
         if not self.dynamics.landed():
-            self.pose = posx, posy, posz
+            self.pose = state[0:6:2]
 
         # Convert state to usable form
         posx /= 10
