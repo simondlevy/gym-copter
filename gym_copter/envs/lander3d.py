@@ -105,10 +105,10 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Parse out state into elements
         posx     =  x[d.STATE_X]
-        posy     =  x[d.STATE_Y]
-        posz     = -x[d.STATE_Z] 
         velx     =  x[d.STATE_X_DOT]
+        posy     =  x[d.STATE_Y]
         vely     =  x[d.STATE_Y_DOT]
+        posz     = -x[d.STATE_Z] 
         velz     = -x[d.STATE_Z_DOT]
         phi      =  x[d.STATE_PHI]
         velphi   =  x[d.STATE_PHI_DOT]
@@ -202,12 +202,8 @@ def heuristic(env, s):
     Args:
         env: The environment
         s (list): The state. Attributes:
-                  s[0] is the horizontal coordinate
-                  s[1] is the vertical coordinate
-                  s[2] is the horizontal speed
-                  s[3] is the vertical speed
-                  s[4] is the angle
-                  s[5] is the angular speed
+                  s[0,1,2] X,Y,Z coordinates
+                  s[3,4,5] first derivatives of X,Y,Z coordinates
     returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
