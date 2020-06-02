@@ -128,18 +128,13 @@ class CopterLander3D(gym.Env, EzPickle):
         velz *= 6.67 * self.dt
         velphi *= 20 * self.dt
         veltheta *= 20 * self.dt
+        state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        # Convert state to usable form
-        state = posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta
+        # Reward is a simple penalty for distance and velocity
+        shaping = -100 * np.sqrt(np.sum(state[0:6]**2))
 
-        # Shape the reward
-        reward = 0
-        shaping = 0
-        shaping -= 100*np.sqrt(posx**2 + posy**2 + posz**2)  
-        shaping -= 100*np.sqrt(velx**2 + vely**2 + velz**2)  
+        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
                                                                   
-        if self.prev_shaping is not None:
-            reward = shaping - self.prev_shaping
         self.prev_shaping = shaping
 
         # Assume we're not done yet
