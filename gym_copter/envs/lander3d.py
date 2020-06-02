@@ -130,18 +130,7 @@ class CopterLander3D(gym.Env, EzPickle):
         veltheta *= 20 * self.dt
 
         # Convert state to usable form
-        state = (
-            posx, 
-            velx,
-            posy,
-            vely,
-            posz, 
-            velz,
-            phi,
-            velphi,
-            theta,
-            veltheta
-            )
+        state = posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta
 
         # Shape the reward
         reward = 0
@@ -219,7 +208,7 @@ def heuristic(env, s):
     E = 0.8 
 
     # Vertical PID
-    F = 7.5#10
+    F = 7.5
     G = 10
 
     posx     = s[0]
