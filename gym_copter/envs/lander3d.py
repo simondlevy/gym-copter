@@ -121,20 +121,20 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Convert state to usable form
         posx /= 10
-        posy /= 10
-        posz /= 10
         velx *= 10 * self.dt
+        posy /= 10
         vely *= 10 * self.dt
+        posz /= 10
         velz *= 6.67 * self.dt
         velphi *= 20 * self.dt
 
         # Convert state to usable form
         state = (
             posx, 
-            posy,
-            posz, 
             velx,
+            posy,
             vely,
+            posz, 
             velz,
             phi,
             velphi
@@ -233,8 +233,8 @@ def heuristic(env, s):
     G = 10
 
     posx   = s[0]
-    posz   = s[2]
-    velx   = s[3]
+    velx   = s[1]
+    posz   = s[4]
     velz   = s[5]
     phi    = s[6]
     velphi = s[7]
