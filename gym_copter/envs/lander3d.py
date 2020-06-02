@@ -51,7 +51,6 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Support for rendering
         self.pose = None
-        self.angle = None
         self.tpv = None
 
         self.reset()
@@ -105,19 +104,18 @@ class CopterLander3D(gym.Env, EzPickle):
         x = d.getState()
 
         # Parse out state into elements
-        posx            =  x[d.STATE_X]
-        posy            =  x[d.STATE_Y]
-        posz            = -x[d.STATE_Z] 
-        velx            =  x[d.STATE_X_DOT]
-        vely            =  x[d.STATE_Y_DOT]
-        velz            = -x[d.STATE_Z_DOT]
-        angle           = x[d.STATE_PHI]
-        angularVelocity = x[d.STATE_PHI_DOT]
+        posx  =  x[d.STATE_X]
+        posy  =  x[d.STATE_Y]
+        posz  = -x[d.STATE_Z] 
+        velx  =  x[d.STATE_X_DOT]
+        vely  =  x[d.STATE_Y_DOT]
+        velz  = -x[d.STATE_Z_DOT]
+        phi   =  x[d.STATE_PHI]
+        velphi = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
         if not self.dynamics.landed():
             self.pose = posx, posy, -posz
-            self.angle = -angle
 
         # Convert state to usable form
         state = (
@@ -125,8 +123,8 @@ class CopterLander3D(gym.Env, EzPickle):
             posz / 6.67, 
             velx * 10 * self.dt,
             velz * 6.67 * self.dt,
-            angle,
-            20.0 * angularVelocity * self.dt
+            phi,
+            20.0 * velphi * self.dt
             )
 
         # Shape the reward
