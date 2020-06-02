@@ -135,8 +135,8 @@ class CopterLander3D(gym.Env, EzPickle):
         # Shape the reward
         reward = 0
         shaping = 0
-        shaping -= 100*np.sqrt(posx**2 + posz**2)  
-        shaping -= 100*np.sqrt(velx**2 + velz**2)  
+        shaping -= 100*np.sqrt(posx**2 + posy**2 + posz**2)  
+        shaping -= 100*np.sqrt(velx**2 + vely**2 + velz**2)  
                                                                   
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -213,6 +213,8 @@ def heuristic(env, s):
 
     posx     = s[0]
     velx     = s[1]
+    posy     = s[2]
+    vely     = s[3]
     posz     = s[4]
     velz     = s[5]
     phi      = s[6]
@@ -223,7 +225,10 @@ def heuristic(env, s):
     phi_targ = posx*A + velx*B         
     phi_todo = (phi-phi_targ)*C + velphi*D
 
-    hover_targ = E*np.abs(posx)
+    theta_targ = posy*A + vely*B         
+    theta_todo = (theta-theta_targ)*C + veltheta*D
+
+    hover_targ = E*np.sqrt(posx**2+posy**2)
     hover_todo = (hover_targ - posz)*F - velz*G
 
     return hover_todo, phi_todo
