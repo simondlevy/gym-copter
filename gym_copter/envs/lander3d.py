@@ -120,22 +120,31 @@ class CopterLander3D(gym.Env, EzPickle):
             self.pose = posx, posy, -posz
 
         # Convert state to usable form
+        posx /= 10
+        posy /= 10
+        posz /= 10
+        velx *= 10 * self.dt
+        vely *= 10 * self.dt
+        velz *= 6.67 * self.dt
+        velphi *= 20 * self.dt
+
+        # Convert state to usable form
         state = (
-            posx / 10, 
-            posy / 10,
-            posz / 6.67, 
-            velx * 10 * self.dt,
-            vely * 10 * self.dt,
-            velz * 6.67 * self.dt,
+            posx, 
+            posy,
+            posz, 
+            velx,
+            vely,
+            velz,
             phi,
-            20.0 * velphi * self.dt
+            velphi
             )
 
         # Shape the reward
         reward = 0
         shaping = 0
-        shaping -= 100*np.sqrt(state[0]**2 + state[2]**2)  # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[3]**2 + state[5]**2)  # Lose points for distance from X center and horizontal velocity
+        shaping -= 100*np.sqrt(posx**2 + posz**2)  
+        shaping -= 100*np.sqrt(velx**2 + velz**2)  
                                                                   
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
