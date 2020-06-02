@@ -39,7 +39,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(7,), dtype=np.float32)
 
         # Action is two floats [main engine, left-right engines].
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
@@ -104,14 +104,16 @@ class CopterLander3D(gym.Env, EzPickle):
         x = d.getState()
 
         # Parse out state into elements
-        posx  =  x[d.STATE_X]
-        posy  =  x[d.STATE_Y]
-        posz  = -x[d.STATE_Z] 
-        velx  =  x[d.STATE_X_DOT]
-        vely  =  x[d.STATE_Y_DOT]
-        velz  = -x[d.STATE_Z_DOT]
-        phi   =  x[d.STATE_PHI]
-        velphi = x[d.STATE_PHI_DOT]
+        posx     =  x[d.STATE_X]
+        posy     =  x[d.STATE_Y]
+        posz     = -x[d.STATE_Z] 
+        velx     =  x[d.STATE_X_DOT]
+        vely     =  x[d.STATE_Y_DOT]
+        velz     = -x[d.STATE_Z_DOT]
+        phi      =  x[d.STATE_PHI]
+        velphi   =  x[d.STATE_PHI_DOT]
+        theta    =  x[d.STATE_THETA]
+        veltheta =  x[d.STATE_THETA_DOT]
 
         # Set lander pose in display if we haven't landed
         if not self.dynamics.landed():
@@ -120,6 +122,7 @@ class CopterLander3D(gym.Env, EzPickle):
         # Convert state to usable form
         state = (
             posx / 10, 
+            posy / 10,
             posz / 6.67, 
             velx * 10 * self.dt,
             velz * 6.67 * self.dt,
@@ -130,8 +133,8 @@ class CopterLander3D(gym.Env, EzPickle):
         # Shape the reward
         reward = 0
         shaping = 0
-        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)  # Lose points for distance from X center and horizontal velocity
+        shaping -= 100*np.sqrt(state[0]**2 + state[2]**2)  # Lose points for altitude and vertical drop rate'
+        shaping -= 100*np.sqrt(state[3]**2 + state[4]**2)  # Lose points for distance from X center and horizontal velocity
                                                                   
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
@@ -223,11 +226,11 @@ def heuristic(env, s):
     F = 7.5#10
     G = 10
 
-    angle_targ = s[0]*A + s[2]*B         # angle should point towards center
-    angle_todo = (s[4]-angle_targ)*C + s[5]*D
+    angle_targ = s[0]*A + s[3]*B         # angle should point towards center
+    angle_todo = (s[5]-angle_targ)*C + s[6]*D
 
     hover_targ = E*np.abs(s[0])           # target y should be proportional to horizontal offset
-    hover_todo = (hover_targ - s[1])*F - s[3]*G
+    hover_todo = (hover_targ - s[2])*F - s[4]*G
 
     return hover_todo, angle_todo
 
