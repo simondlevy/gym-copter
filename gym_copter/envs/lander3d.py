@@ -39,7 +39,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
         # Action is two floats [main engine, left-right engines].
         # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
@@ -127,6 +127,7 @@ class CopterLander3D(gym.Env, EzPickle):
         posz /= 10
         velz *= 6.67 * self.dt
         velphi *= 20 * self.dt
+        veltheta *= 20 * self.dt
 
         # Convert state to usable form
         state = (
@@ -137,7 +138,9 @@ class CopterLander3D(gym.Env, EzPickle):
             posz, 
             velz,
             phi,
-            velphi
+            velphi,
+            theta,
+            veltheta
             )
 
         # Shape the reward
