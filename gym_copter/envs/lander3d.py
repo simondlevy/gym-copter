@@ -104,33 +104,33 @@ class CopterLander3D(gym.Env, EzPickle):
         x = d.getState()
 
         # Parse out state into elements
-        posx     =  x[d.STATE_X]
-        velx     =  x[d.STATE_X_DOT]
-        posy     =  x[d.STATE_Y]
-        vely     =  x[d.STATE_Y_DOT]
-        posz     = -x[d.STATE_Z] 
-        velz     = -x[d.STATE_Z_DOT]
-        phi      =  x[d.STATE_PHI]
-        velphi   =  x[d.STATE_PHI_DOT]
-        theta    =  x[d.STATE_THETA]
-        veltheta =  x[d.STATE_THETA_DOT]
+        posx     = x[d.STATE_X]
+        velx     = x[d.STATE_X_DOT]
+        posy     = x[d.STATE_Y]
+        vely     = x[d.STATE_Y_DOT]
+        posz     = x[d.STATE_Z] 
+        velz     = x[d.STATE_Z_DOT]
+        phi      = x[d.STATE_PHI]
+        velphi   = x[d.STATE_PHI_DOT]
+        theta    = x[d.STATE_THETA]
+        veltheta = x[d.STATE_THETA_DOT]
 
         # Set lander pose in display if we haven't landed
         if not self.dynamics.landed():
-            self.pose = posx, posy, -posz
+            self.pose = posx, posy, posz
 
         # Convert state to usable form
         posx /= 10
         velx *= 10 * self.dt
         posy /= 10
         vely *= 10 * self.dt
-        posz /= 10
-        velz *= 6.67 * self.dt
+        posz /= -10
+        velz *= -6.67 * self.dt
         velphi *= 20 * self.dt
         veltheta *= 20 * self.dt
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        # Reward is a simple penalty for distance and velocity
+        # Reward is a simple penalty for overall distance and velocity
         shaping = -100 * np.sqrt(np.sum(state[0:6]**2))
 
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
