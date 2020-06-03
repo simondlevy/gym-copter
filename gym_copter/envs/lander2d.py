@@ -169,14 +169,14 @@ class CopterLander2D(gym.Env, EzPickle):
             self.angle = -phi
 
         # Convert state to usable form
-        state = (
+        state = np.array([
             (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
             (posy - (self.ground_y)) / (self.VIEWPORT_H/self.SCALE/2),
             velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
             20.0*velphi/self.FPS
-            )
+            ])
 
         # Shape the reward
         reward = 0
