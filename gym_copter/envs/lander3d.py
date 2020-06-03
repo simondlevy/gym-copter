@@ -23,8 +23,10 @@ class CopterLander3D(gym.Env, EzPickle):
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 0.0 
 
+    # Update rate
     FPS = 50
 
+    # Radius for landing
     RADIUS = 5
 
     # For rendering for a short while after successful landing
@@ -40,9 +42,8 @@ class CopterLander3D(gym.Env, EzPickle):
         EzPickle.__init__(self)
         self.seed()
 
+        # Compute time constant from update rate
         self.dt = 1./self.FPS
-
-        self.prev_reward = None
 
         # Observation space is dynamics state space without yaw and its derivative.
         # Useful interval is -1 .. +1, but spikes can be higher.
