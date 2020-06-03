@@ -14,6 +14,9 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterLander3D(gym.Env, EzPickle):
 
+    # World size in meters
+    SIZE = 10
+
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 0.0 
 
@@ -41,9 +44,6 @@ class CopterLander3D(gym.Env, EzPickle):
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
-        # Action is two floats [main engine, left-right engines].
-        # Main engine: -1..0 off, 0..+1 throttle from 50% to 100% power. Engine can't work with less than 50% power.
-        # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         # Starting position
@@ -108,11 +108,11 @@ class CopterLander3D(gym.Env, EzPickle):
             self.pose = posx, posy, posz
 
         # Convert state to usable form
-        posx /= 10
-        velx *= 10 * self.dt
-        posy /= 10
-        vely *= 10 * self.dt
-        posz /= -10
+        posx /= self.SIZE
+        velx *= self.SIZE * self.dt
+        posy /= self.SIZE
+        vely *= self.SIZE * self.dt
+        posz /= -self.SIZE
         velz *= -6.67 * self.dt
         velphi *= 20 * self.dt
         veltheta *= 20 * self.dt
