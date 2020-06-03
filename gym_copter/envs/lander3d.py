@@ -44,10 +44,12 @@ class CopterLander3D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # useful range is -1 .. +1, but spikes can be higher
+        # Observation space is dynamics state space without yaw and its derivative.
+        # Useful interval is -1 .. +1, but spikes can be higher.
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        # Action space is throttle, roll, pitch demands
+        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
 
         # Starting position
         self.startpos = 0, 0, 13.333
@@ -85,7 +87,7 @@ class CopterLander3D(gym.Env, EzPickle):
         # By showing props periodically, we can emulate prop rotation
         self.props_visible = 0
 
-        return self.step(np.array([0, 0]))[0]
+        return self.step(np.array([0, 0, 0]))[0]
 
     def step(self, action):
 
@@ -98,9 +100,9 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
-            roll = action[1]
-            d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
+            # map throttle demand from [-1,+1] to [0,1]            
+            t, r, p = (action[0]+1)/2, action[1], action[2] 
+            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
             d.update(self.dt)
 
         # Get new state from dynamics
@@ -208,7 +210,7 @@ def heuristic(env, s):
     hover_targ = E*np.sqrt(posx**2+posy**2)
     hover_todo = (hover_targ - posz)*F - velz*G
 
-    return hover_todo, phi_todo
+    return hover_todo, phi_todo, theta_todo
 
 def heuristic_lander(env, plotter, seed=None, render=False):
 
