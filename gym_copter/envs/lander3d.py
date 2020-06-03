@@ -17,6 +17,9 @@ class CopterLander3D(gym.Env, EzPickle):
     # World size in meters
     SIZE = 10
 
+    # Scaling factor for angular velocities
+    ANGLE_VEL_SCALE = 20
+
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 0.0 
 
@@ -113,9 +116,9 @@ class CopterLander3D(gym.Env, EzPickle):
         posy /= self.SIZE
         vely *= self.SIZE * self.dt
         posz /= -self.SIZE
-        velz *= -6.67 * self.dt
-        velphi *= 20 * self.dt
-        veltheta *= 20 * self.dt
+        velz *= -self.SIZE * self.dt
+        velphi *= self.ANGLE_VEL_SCALE * self.dt
+        veltheta *= self.ANGLE_VEL_SCALE * self.dt
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and velocity
