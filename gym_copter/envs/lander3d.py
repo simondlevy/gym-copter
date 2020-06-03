@@ -143,7 +143,7 @@ class CopterLander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(posx) >= 1.0:
+        if abs(posx) or abs(posy) >= 1.0:
             done = True
             reward = -100
 
@@ -208,16 +208,7 @@ def heuristic(env, s):
     F = 7.5
     G = 10
 
-    posx     = s[0]
-    velx     = s[1]
-    posy     = s[2]
-    vely     = s[3]
-    posz     = s[4]
-    velz     = s[5]
-    phi      = s[6]
-    velphi   = s[7]
-    theta    = s[8]
-    veltheta = s[9]
+    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
     phi_targ = posx*A + velx*B         
     phi_todo = (phi-phi_targ)*C + velphi*D
