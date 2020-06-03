@@ -180,9 +180,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Shape the reward
         reward = 0
-        shaping = 0
-        shaping -= 100*np.sqrt(state[0]**2 + state[1]**2)  # Lose points for altitude and vertical drop rate'
-        shaping -= 100*np.sqrt(state[2]**2 + state[3]**2)  # Lose points for distance from X center and horizontal velocity
+        shaping = -100 * np.sqrt(np.sum(state[0:4]**2))
                                                                   
         if self.prev_shaping is not None:
             reward = shaping - self.prev_shaping
