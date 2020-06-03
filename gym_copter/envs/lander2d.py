@@ -14,7 +14,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander2D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 2.0
+    INITIAL_RANDOM_OFFSET = 1.0
 
     FPS = 50
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
@@ -156,17 +156,17 @@ class CopterLander2D(gym.Env, EzPickle):
         x = d.getState()
 
         # Parse out state into elements
-        posx            =  x[d.STATE_Y]
-        posy            = -x[d.STATE_Z] 
-        velx            =  x[d.STATE_Y_DOT]
-        vely            = -x[d.STATE_Z_DOT]
-        angle           = x[d.STATE_PHI]
-        angularVelocity = x[d.STATE_PHI_DOT]
+        posx  =  x[d.STATE_Y]
+        velx  =  x[d.STATE_Y_DOT]
+        posy  = -x[d.STATE_Z] 
+        vely  = -x[d.STATE_Z_DOT]
+        phi   =  x[d.STATE_PHI]
+        velphi = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
             self.position = posx, posy
-            self.angle = -angle
+            self.angle = -phi
 
         # Convert state to usable form
         state = (
@@ -174,8 +174,8 @@ class CopterLander2D(gym.Env, EzPickle):
             (posy - (self.ground_y)) / (self.VIEWPORT_H/self.SCALE/2),
             velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
-            angle,
-            20.0*angularVelocity/self.FPS
+            phi,
+            20.0*velphi/self.FPS
             )
 
         # Shape the reward

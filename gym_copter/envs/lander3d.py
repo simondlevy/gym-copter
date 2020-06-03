@@ -21,7 +21,7 @@ class CopterLander3D(gym.Env, EzPickle):
     ANGLE_VEL_SCALE = 20
 
     # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 0.0 
+    INITIAL_RANDOM_OFFSET = 0 
 
     # Update rate
     FPS = 50
@@ -47,10 +47,12 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Observation space is dynamics state space without yaw and its derivative.
         # Useful interval is -1 .. +1, but spikes can be higher.
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
+        #self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
         # Action space is throttle, roll, pitch demands
-        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
+        #self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
+        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         # Starting position
         self.startpos = 0, 0, 13.333
@@ -75,7 +77,8 @@ class CopterLander3D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Initial random perturbation of horizontal position
-        xoff, yoff = self.INITIAL_RANDOM_OFFSET * np.random.randn(2)
+        xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        yoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
 
         # Initialize custom dynamics with perturbation
         state = np.zeros(12)
@@ -88,7 +91,8 @@ class CopterLander3D(gym.Env, EzPickle):
         # By showing props periodically, we can emulate prop rotation
         self.props_visible = 0
 
-        return self.step(np.array([0, 0, 0]))[0]
+        #return self.step(np.array([0, 0, 0]))[0]
+        return self.step(np.array([0, 0]))[0]
 
     def step(self, action):
 
@@ -109,19 +113,21 @@ class CopterLander3D(gym.Env, EzPickle):
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
 
+        print('%+3.3f  %+3.3f' % (posx, posy))
+
         # Set lander pose in display if we haven't landed
         if not self.dynamics.landed():
             self.pose = posx, posy, posz
 
         # Convert state to usable form
-        posx /= self.SIZE
-        velx *= self.SIZE * self.dt
-        posy /= self.SIZE
-        vely *= self.SIZE * self.dt
-        posz /= -self.SIZE
-        velz *= -self.SIZE * self.dt
-        velphi *= self.ANGLE_VEL_SCALE * self.dt
-        veltheta *= self.ANGLE_VEL_SCALE * self.dt
+        posx     /=  self.SIZE
+        velx     *=  self.SIZE * self.dt
+        posy     /=  self.SIZE
+        vely     *=  self.SIZE * self.dt
+        posz     /= -self.SIZE
+        velz     *= -self.SIZE * self.dt
+        velphi   *=  self.ANGLE_VEL_SCALE * self.dt
+        veltheta *=  self.ANGLE_VEL_SCALE * self.dt
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and velocity
@@ -213,7 +219,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo
 
-def heuristic_lander(env, plotter, seed=None, render=False):
+def heuristic_lander(env, plotter, seed=None):
 
     # Seed random number generators
     env.seed(seed)
@@ -231,11 +237,7 @@ def heuristic_lander(env, plotter, seed=None, render=False):
 
         total_reward += reward
 
-        if render:
-            still_open = env.render()
-            if not still_open: break
-
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
@@ -254,7 +256,7 @@ if __name__ == '__main__':
 
     # Run simulation on its own thread
     plotter = env.tpvplotter()
-    thread = threading.Thread(target=heuristic_lander, args=(env,plotter))
+    thread = threading.Thread(target=heuristic_lander, args=(env,plotter,0))
     thread.daemon = True
     thread.start()
 
