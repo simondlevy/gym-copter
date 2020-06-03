@@ -147,9 +147,8 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            throttle = (action[0] + 1) / 2  # map throttle demand from [-1,+1] to [0,1]
-            roll = action[1]
-            d.setMotors(np.clip([throttle-roll, throttle+roll, throttle+roll, throttle-roll], 0, 1))
+            t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
+            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
             d.update(1./self.FPS)
 
         # Get new state from dynamics
