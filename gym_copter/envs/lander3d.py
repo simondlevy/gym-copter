@@ -135,7 +135,7 @@ class CopterLander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(posx) or abs(posy) >= 1.0:
+        if abs(posx) >= 1.0 or abs(posy) >= 1.0:
             done = True
             reward = -100
 
