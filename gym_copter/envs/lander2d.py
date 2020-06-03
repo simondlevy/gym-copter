@@ -152,15 +152,10 @@ class CopterLander2D(gym.Env, EzPickle):
             d.update(1./self.FPS)
 
         # Get new state from dynamics
-        x = d.getState()
+        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
 
-        # Parse out state into elements
-        posy  =  x[d.STATE_Y]
-        vely  =  x[d.STATE_Y_DOT]
-        posz  = -x[d.STATE_Z] 
-        velz  = -x[d.STATE_Z_DOT]
-        phi   =  x[d.STATE_PHI]
-        velphi = x[d.STATE_PHI_DOT]
+        posz  = -posz
+        velz  = -velz
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
