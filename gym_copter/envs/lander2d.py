@@ -82,7 +82,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.helipad_x2 = 12
 
         # Ground level
-        self.ground_y = self.VIEWPORT_H/self.SCALE/4
+        self.ground_z = self.VIEWPORT_H/self.SCALE/4
 
         # Starting position
         self.startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
@@ -119,7 +119,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Set its landing altitude
-        self.dynamics.setGroundLevel(self.ground_y)
+        self.dynamics.setGroundLevel(self.ground_z)
 
         # Initial random perturbation of horizontal position
         xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
@@ -157,22 +157,22 @@ class CopterLander2D(gym.Env, EzPickle):
         # Parse out state into elements
         posx  =  x[d.STATE_Y]
         velx  =  x[d.STATE_Y_DOT]
-        posy  = -x[d.STATE_Z] 
-        vely  = -x[d.STATE_Z_DOT]
+        posz  = -x[d.STATE_Z] 
+        velz  = -x[d.STATE_Z_DOT]
         phi   =  x[d.STATE_PHI]
         velphi = x[d.STATE_PHI_DOT]
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.position = posx, posy
+            self.position = posx, posz
             self.angle = -phi
 
         # Convert state to usable form
         state = np.array([
             (posx - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
-            (posy - (self.ground_y)) / (self.VIEWPORT_H/self.SCALE/2),
+            (posz - (self.ground_z)) / (self.VIEWPORT_H/self.SCALE/2),
             velx*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
-            vely*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
+            velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
             20.0*velphi/self.FPS
             ])
@@ -232,15 +232,15 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Draw sky
         self.viewer.draw_polygon(
-            [(0,self.ground_y), 
-            (self.VIEWPORT_W,self.ground_y), 
+            [(0,self.ground_z), 
+            (self.VIEWPORT_W,self.ground_z), 
             (self.VIEWPORT_W,self.VIEWPORT_H), 
             (0,self.VIEWPORT_H)], 
             color=self.SKY_COLOR)
 
         # Draw flags
         for x in [self.helipad_x1, self.helipad_x2]:
-            flagy1 = self.ground_y
+            flagy1 = self.ground_z
             flagy2 = flagy1 + 50/self.SCALE
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
