@@ -139,7 +139,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Convert state to usable form
         #state = np.array([ posy / 10, vely*10/self.FPS, posz / 6.67, velz*6.67/self.FPS, phi, 20.0*velphi/self.FPS ])
-        state = np.array([ posy, vely, posz, velz*6.67/self.FPS, phi, 20.0*velphi/self.FPS ])
+        state = np.array([ posy, vely, posz, velz, phi, 20.0*velphi/self.FPS ])
 
         # Reward is a simple penalty for overall distance and velocity
         shaping = -10 * np.sqrt(np.sum(state[0:4]**2))
@@ -325,7 +325,7 @@ def heuristic(env, s):
 
     # Vertical PID
     F = 7.5
-    G = 10
+    G = 1.33
 
     posy, vely, posz, velz, phi, velphi = s
 
