@@ -53,9 +53,6 @@ class CopterLander3D(gym.Env, EzPickle):
         # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
-        # Ground level
-        self.ground_z = 0
-
         # Support for rendering
         self.angle = None
 
@@ -115,7 +112,7 @@ class CopterLander3D(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([
             posy / (self.VIEWPORT_W/self.SCALE/2),
-            (posz - (self.ground_z)) / (self.VIEWPORT_H/self.SCALE/2),
+            (posz - 0) / (self.VIEWPORT_H/self.SCALE/2),
             vely*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
