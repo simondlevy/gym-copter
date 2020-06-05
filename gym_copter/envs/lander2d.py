@@ -39,6 +39,8 @@ class CopterLander2D(gym.Env, EzPickle):
 
     VIEWPORT_W, VIEWPORT_H = 600, 400
 
+    GROUND_Z = 3.33
+
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
     FLAG_COLOR    = 0.8, 0.0, 0.0
@@ -67,9 +69,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Action is two floats [throttle, roll]
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
-
-        # Ground level
-        self.ground_z = 3.33
 
         # Support for rendering
         self.ground = None
@@ -101,7 +100,7 @@ class CopterLander2D(gym.Env, EzPickle):
         self.dynamics = DJIPhantomDynamics()
 
         # Set its landing altitude
-        self.dynamics.setGroundLevel(self.ground_z)
+        self.dynamics.setGroundLevel(self.GROUND_Z)
 
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
@@ -145,7 +144,7 @@ class CopterLander2D(gym.Env, EzPickle):
         state = np.array([
             posy / 10,
             vely*10/self.FPS,
-            (posz - self.ground_z) / 6.67,
+            (posz - self.GROUND_Z) / 6.67,
             velz*6.67/self.FPS,
             phi,
             20.0*velphi/self.FPS
@@ -206,15 +205,15 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Draw sky
         self.viewer.draw_polygon(
-            [(0,self.ground_z), 
-            (self.VIEWPORT_W,self.ground_z), 
+            [(0,self.GROUND_Z), 
+            (self.VIEWPORT_W,self.GROUND_Z), 
             (self.VIEWPORT_W,self.VIEWPORT_H), 
             (0,self.VIEWPORT_H)], 
             color=self.SKY_COLOR)
 
         # Draw flags
         for d in [-1,+1]:
-            flagy1 = self.ground_z
+            flagy1 = self.GROUND_Z
             flagy2 = flagy1 + 50/self.SCALE
             x = d*self.LANDING_RADIUS + self.VIEWPORT_W/self.SCALE/2
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
