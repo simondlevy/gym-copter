@@ -286,8 +286,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
         self.lander = self.world.CreateDynamicBody (
 
-                position=self.startpos, angle=0.0,
-
                 fixtures = [
 
                     fixtureDef(shape=polygonShape(vertices=[(x/self.SCALE, y/self.SCALE) for x, y in poly]), density=0.0)
