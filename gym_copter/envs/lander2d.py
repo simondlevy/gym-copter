@@ -17,7 +17,10 @@ class CopterLander2D(gym.Env, EzPickle):
     INITIAL_RANDOM_OFFSET = 1.5
 
     FPS = 50
+
     SCALE = 30.0   # affects how fast-paced the game is, forces should be adjusted as well
+
+    LANDING_RADIUS = 2
 
     # Rendering properties ---------------------------------------------------------
 
@@ -68,10 +71,6 @@ class CopterLander2D(gym.Env, EzPickle):
         # Left-right:  -1.0..-0.5 fire left engine, +0.5..+1.0 fire right engine, -0.5..0.5 off
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
-        # Helipad
-        self.helipad_x1 = 8
-        self.helipad_x2 = 12
-
         # Ground level
         self.ground_z = self.VIEWPORT_H/self.SCALE/4
 
@@ -112,10 +111,9 @@ class CopterLander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.VIEWPORT_W/self.SCALE/2 + self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
         state[d.STATE_Z] = -self.VIEWPORT_H/self.SCALE
         self.dynamics.setState(state)
-
 
         # By showing props periodically, we can emulate prop rotation
         self.props_visible = 0
@@ -150,7 +148,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
         # Convert state to usable form
         state = np.array([
-            (posy - self.VIEWPORT_W/self.SCALE/2) / (self.VIEWPORT_W/self.SCALE/2),
+            posy / (self.VIEWPORT_W/self.SCALE/2),
             (posz - (self.ground_z)) / (self.VIEWPORT_H/self.SCALE/2),
             vely*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
@@ -184,7 +182,7 @@ class CopterLander2D(gym.Env, EzPickle):
         elif self.dynamics.landed():
 
             # Win bigly we land safely between the flags
-            if self.helipad_x1 < posy < self.helipad_x2: 
+            if abs(posy) < self.LANDING_RADIUS: 
 
                 reward += 100
 
@@ -220,15 +218,16 @@ class CopterLander2D(gym.Env, EzPickle):
             color=self.SKY_COLOR)
 
         # Draw flags
-        for x in [self.helipad_x1, self.helipad_x2]:
+        for d in [-1,+1]:
             flagy1 = self.ground_z
             flagy2 = flagy1 + 50/self.SCALE
+            x = d*self.LANDING_RADIUS + self.VIEWPORT_W/self.SCALE/2
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
         # Set copter pose to values from step()
-        self.lander.position = self.pose[:2]
+        self.lander.position = self.pose[0] + self.VIEWPORT_W/self.SCALE/2, self.pose[1]
         self.lander.angle = self.pose[2]
 
         # Draw copter

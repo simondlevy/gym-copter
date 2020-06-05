@@ -27,7 +27,7 @@ class CopterLander3D(gym.Env, EzPickle):
     FPS = 50
 
     # Radius for landing
-    RADIUS = 5
+    LANDING_RADIUS = 5
 
     # For rendering for a short while after successful landing
     RESTING_DURATION = 50
@@ -156,7 +156,7 @@ class CopterLander3D(gym.Env, EzPickle):
         elif self.dynamics.landed():
 
             # Win bigly we land close to the center of the circle
-            if np.sqrt(posx**2 + posy**2) < self.RADIUS:
+            if np.sqrt(posx**2 + posy**2) < self.LANDING_RADIUS:
 
                 reward += 100
 
