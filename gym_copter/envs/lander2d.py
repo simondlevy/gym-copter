@@ -146,7 +146,7 @@ class CopterLander2D(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([
             posy / (self.VIEWPORT_W/self.SCALE/2),
-            (posz - (self.ground_z)) / (self.VIEWPORT_H/self.SCALE/2),
+            (posz - self.ground_z) / (self.VIEWPORT_H/self.SCALE/2),
             vely*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
             velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
