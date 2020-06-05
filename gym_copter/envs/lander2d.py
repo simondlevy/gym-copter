@@ -26,20 +26,11 @@ class CopterLander2D(gym.Env, EzPickle):
 
     LANDER_POLY =[ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
 
-    LEG_X  = 12
-    LEG_Y  = -7
-    LEG_W  = 3
-    LEG_H  = 20
+    LEG_X, LEG_Y, LEG_W, LEG_H  = 12, -7, 3, 20
 
-    MOTOR_X  = 25
-    MOTOR_Y  = 7
-    MOTOR_W  = 4
-    MOTOR_H  = 5
+    MOTOR_X, MOTOR_Y, MOTOR_W, MOTOR_H  = 25, 7, 4, 5
 
-    BLADE_X = 25
-    BLADE_Y = 8
-    BLADE_W = 20
-    BLADE_H = 2
+    BLADE_X, BLADE_Y, BLADE_W, BLADE_H = 25, 8, 20, 2
 
     HULL_POLY =[ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
 
