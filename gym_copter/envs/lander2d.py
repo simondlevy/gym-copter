@@ -127,7 +127,7 @@ class CopterLander2D(gym.Env, EzPickle):
             d.update(1./self.FPS)
 
         # Get new state from dynamics
-        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
+        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
         # Negate for NED => ENU
         posz  = -posz
