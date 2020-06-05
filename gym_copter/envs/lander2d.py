@@ -109,13 +109,10 @@ class CopterLander2D(gym.Env, EzPickle):
         # Set its landing altitude
         self.dynamics.setGroundLevel(self.ground_z)
 
-        # Initial random perturbation of horizontal position
-        xoff = self.INITIAL_RANDOM_OFFSET * np.random.randn()
-
-        # Initialize custom dynamics with perturbation
+        # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.VIEWPORT_W/self.SCALE/2 + xoff 
+        state[d.STATE_Y] =  self.VIEWPORT_W/self.SCALE/2 + self.INITIAL_RANDOM_OFFSET * np.random.randn()
         state[d.STATE_Z] = -self.VIEWPORT_H/self.SCALE
         self.dynamics.setState(state)
 
