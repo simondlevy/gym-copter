@@ -107,7 +107,7 @@ class CopterLander2D(gym.Env, EzPickle):
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -self.VIEWPORT_H/self.SCALE
+        state[d.STATE_Z] = -13.3
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
