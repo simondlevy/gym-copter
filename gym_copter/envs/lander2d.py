@@ -138,7 +138,6 @@ class CopterLander2D(gym.Env, EzPickle):
             self.pose = posy, posz, -phi
 
         # Convert state to usable form
-        #state = np.array([ posy / 10, vely*10/self.FPS, posz / 6.67, velz*6.67/self.FPS, phi, 20.0*velphi/self.FPS ])
         state = np.array([ posy, vely, posz, velz, phi, 20.0*velphi/self.FPS ])
 
         # Reward is a simple penalty for overall distance and velocity
@@ -330,7 +329,7 @@ def heuristic(env, s):
     posy, vely, posz, velz, phi, velphi = s
 
     angle_targ = posy*A + vely*B         # angle should point towards center
-    angle_todo = (phi-angle_targ)*C + phi*D
+    angle_todo = (phi-angle_targ)*C + phi*D - velphi
 
     hover_targ = E*np.abs(posy)           # target y should be proportional to horizontal offset
     hover_todo = (hover_targ - posz/6.67)*F - velz*G
