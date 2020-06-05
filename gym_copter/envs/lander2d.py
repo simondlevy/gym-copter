@@ -115,9 +115,8 @@ class CopterLander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with perturbation
         state = np.zeros(12)
         d = self.dynamics
-        startpos = self.VIEWPORT_W/self.SCALE/2, self.VIEWPORT_H/self.SCALE
-        state[d.STATE_Y] =  startpos[0] + xoff # 3D copter Y comes from 2D copter X
-        state[d.STATE_Z] = -startpos[1]        # 3D copter Z comes from 2D copter Y, negated for NED
+        state[d.STATE_Y] =  self.VIEWPORT_W/self.SCALE/2 + xoff 
+        state[d.STATE_Z] = -self.VIEWPORT_H/self.SCALE
         self.dynamics.setState(state)
 
 
