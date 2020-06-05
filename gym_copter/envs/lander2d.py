@@ -78,7 +78,7 @@ class CopterLander2D(gym.Env, EzPickle):
         # Support for rendering
         self.ground = None
         self.lander = None
-        self.position = None
+        self.pose = None
         self.angle = None
 
         self.reset()
@@ -144,13 +144,13 @@ class CopterLander2D(gym.Env, EzPickle):
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
 
+        # Negate for NED => ENU
         posz  = -posz
         velz  = -velz
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.position = posy, posz
-            self.angle = -phi
+            self.pose = posy, posz, -phi
 
         # Convert state to usable form
         state = np.array([
@@ -232,8 +232,8 @@ class CopterLander2D(gym.Env, EzPickle):
                                      color=self.FLAG_COLOR)
 
         # Set copter pose to values from step()
-        self.lander.position = self.position
-        self.lander.angle = self.angle
+        self.lander.position = self.pose[:2]
+        self.lander.angle = self.pose[2]
 
         # Draw copter
         self._show_fixture(1, self.VEHICLE_COLOR)
