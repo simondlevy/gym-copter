@@ -37,8 +37,7 @@ class CopterLander2D(gym.Env, EzPickle):
 
     HULL_POLY =[ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
 
-    VIEWPORT_W = 600
-    VIEWPORT_H = 400
+    VIEWPORT_W, VIEWPORT_H = 600, 400
 
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
