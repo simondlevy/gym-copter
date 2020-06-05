@@ -117,7 +117,7 @@ class MultirotorDynamics:
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
         # Support landing
-        self.ground_level = 0
+        self.ground_level = self.LANDING_GEAR_HEIGHT
         self._leveling_count = 0
         self._leveling_direction = 0
         self._landed = False

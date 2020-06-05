@@ -71,9 +71,6 @@ class CopterLander3D(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Set its landing altitude
-        self.dynamics.setGroundLevel(0)
-
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
