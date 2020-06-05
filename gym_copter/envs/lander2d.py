@@ -88,7 +88,6 @@ class CopterLander2D(gym.Env, EzPickle):
 
     def _destroy(self):
         if not self.ground: return
-        self.world.contactListener = None
         self.world.DestroyBody(self.ground)
         self.ground = None
         self.world.DestroyBody(self.lander)
