@@ -146,8 +146,8 @@ class CopterLander2D(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([
             posy / (self.VIEWPORT_W/self.SCALE/2),
-            (posz - self.ground_z) / (self.VIEWPORT_H/self.SCALE/2),
             vely*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
+            (posz - self.ground_z) / (self.VIEWPORT_H/self.SCALE/2),
             velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
             20.0*velphi/self.FPS
@@ -315,8 +315,8 @@ def heuristic(env, s):
         env: The environment
         s (list): The state. Attributes:
                   s[0] is the horizontal coordinate
-                  s[1] is the vertical coordinate
-                  s[2] is the horizontal speed
+                  s[1] is the horizontal speed
+                  s[2] is the vertical coordinate
                   s[3] is the vertical speed
                   s[4] is the angle
                   s[5] is the angular speed
@@ -339,7 +339,7 @@ def heuristic(env, s):
     F = 7.5#10
     G = 10
 
-    posy, posz, vely, velz, phi, velphi = s
+    posy, vely, posz, velz, phi, velphi = s
 
     angle_targ = posy*A + vely*B         # angle should point towards center
     angle_todo = (phi-angle_targ)*C + phi*D
