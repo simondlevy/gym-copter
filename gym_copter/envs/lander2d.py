@@ -141,10 +141,13 @@ class CopterLander2D(gym.Env, EzPickle):
         if not (self.dynamics.landed() or self.resting_count):
             self.pose = posy, posz, -phi
 
+        #print((self.VIEWPORT_W/self.SCALE/2))
+        #exit(0)
+
         # Convert state to usable form
         state = np.array([
-            posy / (self.VIEWPORT_W/self.SCALE/2),
-            vely*(self.VIEWPORT_W/self.SCALE/2)/self.FPS,
+            posy / 10,
+            vely*10/self.FPS,
             (posz - self.ground_z) / (self.VIEWPORT_H/self.SCALE/2),
             velz*(self.VIEWPORT_H/self.SCALE/2)/self.FPS,
             phi,
