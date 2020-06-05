@@ -117,7 +117,6 @@ class MultirotorDynamics:
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
         # Support landing
-        self.ground_level = self.LANDING_GEAR_HEIGHT
         self._leveling_count = 0
         self._leveling_direction = 0
         self._landed = False
@@ -159,7 +158,7 @@ class MultirotorDynamics:
             return
 
         # It's all over once we're on the ground
-        elif -self._x[self.STATE_Z] < self.ground_level:
+        elif -self._x[self.STATE_Z] <= self.LANDING_GEAR_HEIGHT:
             phi   = self._x[self.STATE_PHI]
             velx  = self._x[self.STATE_Y_DOT]
             vely  = self._x[self.STATE_Z_DOT]
@@ -208,10 +207,6 @@ class MultirotorDynamics:
         '''
         self._x = np.array(state)
         self._airborne = self._x[self.STATE_Z] < 0
-
-    def setGroundLevel(self, level):
-
-        self.ground_level = level + self.LANDING_GEAR_HEIGHT
 
     def landed(self):
 

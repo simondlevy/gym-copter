@@ -99,14 +99,11 @@ class CopterLander2D(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
-        # Set its landing altitude
-        self.dynamics.setGroundLevel(self.GROUND_Z)
-
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -13.3
+        state[d.STATE_Z] = -10
         self.dynamics.setState(state)
 
         # By showing props periodically, we can emulate prop rotation
@@ -144,7 +141,7 @@ class CopterLander2D(gym.Env, EzPickle):
         state = np.array([
             posy / 10,
             vely*10/self.FPS,
-            (posz - self.GROUND_Z) / 6.67,
+            posz / 6.67,
             velz*6.67/self.FPS,
             phi,
             20.0*velphi/self.FPS
@@ -221,7 +218,7 @@ class CopterLander2D(gym.Env, EzPickle):
                                      color=self.FLAG_COLOR)
 
         # Set copter pose to values from step()
-        self.lander.position = self.pose[0] + self.VIEWPORT_W/self.SCALE/2, self.pose[1]
+        self.lander.position = self.pose[0] + self.VIEWPORT_W/self.SCALE/2, self.pose[1] + self.GROUND_Z
         self.lander.angle = self.pose[2]
 
         # Draw copter
