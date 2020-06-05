@@ -76,7 +76,6 @@ class CopterLander2D(gym.Env, EzPickle):
         self.ground = None
         self.lander = None
         self.pose = None
-        self.angle = None
 
         self.reset()
 
