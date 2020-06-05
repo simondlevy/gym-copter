@@ -54,7 +54,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         # Ground level
-        self.ground_z = self.VIEWPORT_H/self.SCALE/4
+        self.ground_z = 0
 
         # Support for rendering
         self.angle = None
