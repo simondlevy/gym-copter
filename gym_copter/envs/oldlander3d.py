@@ -175,10 +175,6 @@ class CopterLander3D(gym.Env, EzPickle):
 
         return True
 
-    def close(self):
-
-        return
-
     def tpvplotter(self):
 
         from gym_copter.envs.rendering.tpv import TPV

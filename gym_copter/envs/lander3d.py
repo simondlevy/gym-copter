@@ -163,7 +163,14 @@ class CopterLander3D(gym.Env, EzPickle):
             self.renderer.close()
             self.renderer = None
 
-# End of CopterLander3D class ----------------------------------------------------------------
+    def tpvplotter(self):
+
+        from gym_copter.envs.rendering.tpv import TPV
+
+        # Pass title to 3D display
+        return TPV(self, 'Lander')
+
+## End of CopterLander3D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
@@ -218,7 +225,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo
 
-def demo_heuristic_lander(env, seed=None, render=False):
+def heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
     np.random.seed(seed)
     total_reward = 0
@@ -246,4 +253,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander3D(), seed=None, render=True)
+    heuristic_lander(CopterLander3D(), seed=None, render=True)
