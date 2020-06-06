@@ -41,10 +41,10 @@ class CopterLander3D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
-        # Action is two floats [throttle, roll]
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        # Action is three floats [throttle, roll, pitch]
+        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
 
         # Support for rendering
         self.renderer = None
@@ -74,11 +74,12 @@ class CopterLander3D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
+        state[d.STATE_X] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
         state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
         state[d.STATE_Z] = -10
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0]))[0]
+        return self.step(np.array([0, 0, 0]))[0]
 
     def step(self, action):
 
@@ -91,12 +92,12 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
+            t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
             d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
             d.update(1./self.FPS)
 
         # Get new state from dynamics
-        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
+        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
 
         # Negate for NED => ENU
         posz  = -posz
@@ -104,13 +105,13 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.pose = posy, posz, -phi
+            self.pose = posx, posy, posz, -phi, theta
 
         # Convert state to usable form
-        state = np.array([posy, vely, posz, velz, phi, velphi])
+        state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and velocity
-        shaping = -10 * np.sqrt(np.sum(state[0:4]**2))
+        shaping = -10 * np.sqrt(np.sum(state[0:6]**2))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
@@ -174,13 +175,17 @@ def heuristic(env, s):
     Args:
         env: The environment
         s (list): The state. Attributes:
-                  s[0] is the horizontal coordinate
-                  s[1] is the horizontal speed
-                  s[2] is the vertical coordinate
-                  s[3] is the vertical speed
-                  s[4] is the angle
-                  s[5] is the angular speed
-    returns:
+                  s[0] is the X coordinate
+                  s[1] is the X speed
+                  s[2] is the Y coordinate
+                  s[3] is the Y speed
+                  s[4] is the vertical coordinate
+                  s[5] is the vertical speed
+                  s[6] is the roll angle
+                  s[7] is the roll angular speed
+                  s[8] is the roll angle
+                  s[9] is the roll angular speed
+     returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
@@ -200,15 +205,15 @@ def heuristic(env, s):
     G = 7.5
     H = 1.33
 
-    posy, vely, posz, velz, phi, velphi = s
+    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    angle_targ = posy*A + vely*B         # angle should point towards center
-    angle_todo = (phi-angle_targ)*C + phi*D - velphi*E
+    phi_targ = posy*A + vely*B         # angle should point towards center
+    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
     hover_targ = F*np.abs(posy)           # target y should be proportional to horizontal offset
     hover_todo = (hover_targ - posz/6.67)*G - velz*H
 
-    return hover_todo, angle_todo
+    return hover_todo, phi_todo, 0
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
