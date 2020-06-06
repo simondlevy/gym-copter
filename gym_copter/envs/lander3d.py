@@ -210,7 +210,10 @@ def heuristic(env, s):
     phi_targ = posy*A + vely*B         # angle should point towards center
     phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
-    hover_targ = F*np.abs(posy)           # target y should be proportional to horizontal offset
+    theta_targ = posy*A + vely*B         # angle should point towards center
+    theta_todo = (theta-theta_targ)*C + theta*D - veltheta*E
+
+    hover_targ = F*np.sqrt(posy**2) # target Z should be proportional to horizontal offset
     hover_todo = (hover_targ - posz/6.67)*G - velz*H
 
     return hover_todo, phi_todo, 0
