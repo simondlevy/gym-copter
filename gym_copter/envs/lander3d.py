@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-2D Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
+3D Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class CopterLander2D(gym.Env, EzPickle):
+class CopterLander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 1.5
@@ -162,7 +162,7 @@ class CopterLander2D(gym.Env, EzPickle):
             self.renderer.close()
             self.renderer = None
 
-# End of CopterLander2D class ----------------------------------------------------------------
+# End of CopterLander3D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
@@ -238,4 +238,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander2D(), seed=None, render=True)
+    demo_heuristic_lander(CopterLander3D(), seed=None, render=True)
