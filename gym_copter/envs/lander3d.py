@@ -105,7 +105,7 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.pose = posx, posy, posz, -phi, theta
+            self.pose = posx, posy, posz, phi, theta
 
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
