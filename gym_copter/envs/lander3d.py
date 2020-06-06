@@ -18,7 +18,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class CopterLander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 1.5
+    INITIAL_RANDOM_OFFSET = 0.5
 
     FPS = 50
 
@@ -93,7 +93,7 @@ class CopterLander3D(gym.Env, EzPickle):
         # In air, set motors from action
         else:
             t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
+            d.setMotors(np.clip([t-r-p, t+r+p, t+r+p, t-r-p], 0, 1))
             d.update(1./self.FPS)
 
         # Get new state from dynamics
@@ -213,10 +213,10 @@ def heuristic(env, s):
     theta_targ = posy*A + vely*B         # angle should point towards center
     theta_todo = (theta-theta_targ)*C + theta*D - veltheta*E
 
-    hover_targ = F*np.sqrt(posy**2) # target Z should be proportional to horizontal offset
+    hover_targ = F*np.sqrt(posx**2+posy**2) # target Z should be proportional to horizontal offset
     hover_todo = (hover_targ - posz/6.67)*G - velz*H
 
-    return hover_todo, phi_todo, 0
+    return hover_todo, phi_todo, theta_todo
 
 def demo_heuristic_lander(env, seed=None, render=False):
     env.seed(seed)
