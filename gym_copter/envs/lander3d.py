@@ -151,11 +151,11 @@ class CopterLander3D(gym.Env, EzPickle):
     def render(self, mode='human'):
 
         # Create viewer and world objects if not done yet
-        if self.renderer is None:
-            from rendering.twod import TwoDRender
-            self.renderer = TwoDRender()
+        #if self.renderer is None:
+        #    from rendering.twod import TwoDRender
+        #    self.renderer = TwoDRender()
 
-        return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.resting_count)
+        return True #self.renderer.render(mode, self.pose, self.dynamics.landed(), self.resting_count)
 
     def close(self):
         if self.renderer is not None:
