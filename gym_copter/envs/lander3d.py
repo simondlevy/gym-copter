@@ -225,7 +225,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo
 
-def heuristic_lander(env, seed=None, render=False):
+def heuristic_lander(env, seed=None, plotter=None):
     env.seed(seed)
     np.random.seed(seed)
     total_reward = 0
@@ -235,10 +235,6 @@ def heuristic_lander(env, seed=None, render=False):
         action = heuristic(env,state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
-
-        if render:
-            still_open = env.render()
-            if not still_open: break
 
         if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
@@ -253,4 +249,17 @@ def heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    heuristic_lander(CopterLander3D(), seed=None, render=True)
+    import threading
+
+    env = CopterLander3D()
+
+    plotter = env.tpvplotter()
+
+    #thread = threading.Thread(target=heuristic_lander, args=(env,plotter,0))
+    #thread.daemon = True
+    #thread.start()
+
+    # Begin 3D rendering on main thread
+    #plotter.start()    
+    
+    heuristic_lander(env, seed=None, plotter=plotter)

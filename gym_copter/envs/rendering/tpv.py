@@ -82,7 +82,7 @@ class TPV:
     def start(self):
 
         # Instantiate the animator
-        anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000*self.env.dt), blit=False)
+        anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000/self.env.FPS), blit=False)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
@@ -103,7 +103,7 @@ class TPV:
     def _animate(self, _):
 
         # Get vehicle position
-        x,y,z = self.env.pose
+        x,y,z,_,_ = self.env.pose
         
         # Negate Z to accomodate NED
         z = -z
