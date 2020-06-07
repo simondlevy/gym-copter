@@ -64,8 +64,6 @@ class CopterLander3D(gym.Env, EzPickle):
 
         self._destroy()
 
-        self.running = True
-
         self.prev_shaping = None
 
         self.resting_count = 0
@@ -164,7 +162,6 @@ class CopterLander3D(gym.Env, EzPickle):
         if self.renderer is not None:
             self.renderer.close()
             self.renderer = None
-        self.running = False
 
     def tpvplotter(self):
 
@@ -172,10 +169,6 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Pass title to 3D display
         return TPV(self, 'Lander')
-
-    def is_running(self):
-
-        return self.running
 
 ## End of CopterLander3D class ----------------------------------------------------------------
 
@@ -250,7 +243,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 

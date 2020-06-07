@@ -105,9 +105,6 @@ class TPV:
         # Get vehicle position
         x,y,z,_,_ = self.env.pose
         
-        # Negate Z to accomodate NED
-        #z = -z
-
         # Update the copter animation
         self.copter.update(x, y, z)
 
