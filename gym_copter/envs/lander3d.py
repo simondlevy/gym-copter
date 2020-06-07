@@ -234,6 +234,8 @@ def heuristic(env, s):
 
 def heuristic_lander(env, plotter=None, seed=None):
 
+    import time
+
     if seed is not None:
         env.seed(seed)
         np.random.seed(seed)
@@ -241,7 +243,9 @@ def heuristic_lander(env, plotter=None, seed=None):
     total_reward = 0
     steps = 0
     state = env.reset()
+
     while True:
+
         action = heuristic(env,state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
@@ -251,7 +255,11 @@ def heuristic_lander(env, plotter=None, seed=None):
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
         steps += 1
+
         if done: break
+
+        if not plotter is None:
+            time.sleep(1./env.FPS)
 
     env.close()
     return total_reward
@@ -263,16 +271,11 @@ if __name__ == '__main__':
 
     env = CopterLander3D()
 
-    #plotter = env.tpvplotter()
+    plotter = env.tpvplotter()
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, None, 2))
+    thread = threading.Thread(target=heuristic_lander, args=(env, plotter, 2))
     thread.daemon = True
     thread.start()
 
-    while env.is_running():
-        pass
-
     # Begin 3D rendering on main thread
-    #plotter.start()    
-    
-    #heuristic_lander(env, plotter=plotter, seed=2)
+    plotter.start()    

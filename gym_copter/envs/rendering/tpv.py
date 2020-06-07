@@ -106,7 +106,7 @@ class TPV:
         x,y,z,_,_ = self.env.pose
         
         # Negate Z to accomodate NED
-        z = -z
+        #z = -z
 
         # Update the copter animation
         self.copter.update(x, y, z)
