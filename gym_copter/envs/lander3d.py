@@ -64,6 +64,8 @@ class CopterLander3D(gym.Env, EzPickle):
 
         self._destroy()
 
+        self.running = True
+
         self.prev_shaping = None
 
         self.resting_count = 0
@@ -162,6 +164,7 @@ class CopterLander3D(gym.Env, EzPickle):
         if self.renderer is not None:
             self.renderer.close()
             self.renderer = None
+        self.running = False
 
     def tpvplotter(self):
 
@@ -169,6 +172,10 @@ class CopterLander3D(gym.Env, EzPickle):
 
         # Pass title to 3D display
         return TPV(self, 'Lander')
+
+    def is_running(self):
+
+        return self.running
 
 ## End of CopterLander3D class ----------------------------------------------------------------
 
@@ -256,13 +263,16 @@ if __name__ == '__main__':
 
     env = CopterLander3D()
 
-    plotter = env.tpvplotter()
+    #plotter = env.tpvplotter()
 
-    #thread = threading.Thread(target=heuristic_lander, args=(env, plotter, 0))
-    #thread.daemon = True
-    #thread.start()
+    thread = threading.Thread(target=heuristic_lander, args=(env, None, 2))
+    thread.daemon = True
+    thread.start()
+
+    while env.is_running():
+        pass
 
     # Begin 3D rendering on main thread
     #plotter.start()    
     
-    heuristic_lander(env, plotter=plotter, seed=2)
+    #heuristic_lander(env, plotter=plotter, seed=2)
