@@ -226,8 +226,11 @@ def heuristic(env, s):
     return hover_todo, phi_todo, theta_todo
 
 def heuristic_lander(env, plotter=None, seed=None):
-    env.seed(seed)
-    np.random.seed(seed)
+
+    if seed is not None:
+        env.seed(seed)
+        np.random.seed(seed)
+
     total_reward = 0
     steps = 0
     state = env.reset()
@@ -255,7 +258,7 @@ if __name__ == '__main__':
 
     plotter = env.tpvplotter()
 
-    #thread = threading.Thread(target=heuristic_lander, args=(env,plotter,0))
+    #thread = threading.Thread(target=heuristic_lander, args=(env, plotter, 0))
     #thread.daemon = True
     #thread.start()
 
