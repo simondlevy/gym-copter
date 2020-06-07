@@ -265,4 +265,4 @@ if __name__ == '__main__':
     # Begin 3D rendering on main thread
     #plotter.start()    
     
-    heuristic_lander(env, plotter=plotter, seed=None)
+    heuristic_lander(env, plotter=plotter, seed=2)
