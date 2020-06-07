@@ -225,7 +225,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo
 
-def heuristic_lander(env, seed=None, plotter=None):
+def heuristic_lander(env, plotter=None, seed=None):
     env.seed(seed)
     np.random.seed(seed)
     total_reward = 0
@@ -262,4 +262,4 @@ if __name__ == '__main__':
     # Begin 3D rendering on main thread
     #plotter.start()    
     
-    heuristic_lander(env, seed=None, plotter=plotter)
+    heuristic_lander(env, plotter=plotter, seed=None)
