@@ -30,8 +30,8 @@ You should see the copter land safely.
 
 
 To get started, I recommend cloning this
-[repository](https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-On-Second-Edition)
-of the code from the excellent
+[fork](https://github.com/simondlevy/Deep-Reinforcement-Learning-Hands-On-Second-Edition) 
+of the code repository from the excellent
 [Deep Reinforcement Learning Hands-On, Second Edition](https://www.amazon.com/Deep-Reinforcement-Learning-Hands-Q-networks-ebook/dp/B076H9VQH6) book.  Once you've done that (and installed whatever additional
 packages you need), you can try out the code from Chapter 19 of the book:
 
