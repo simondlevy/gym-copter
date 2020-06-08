@@ -47,7 +47,6 @@ class CopterLander3D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
 
         # Support for rendering
-        self.renderer = None
         self.pose = None
 
         self.reset()
@@ -56,13 +55,7 @@ class CopterLander3D(gym.Env, EzPickle):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def _destroy(self):
-        if self.renderer is not None:
-            self.renderer.close()
-
     def reset(self):
-
-        self._destroy()
 
         self.prev_shaping = None
 
@@ -151,17 +144,11 @@ class CopterLander3D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        # Create viewer and world objects if not done yet
-        #if self.renderer is None:
-        #    from rendering.twod import TwoDRender
-        #    self.renderer = TwoDRender()
-
-        return True #self.renderer.render(mode, self.pose, self.dynamics.landed(), self.resting_count)
+        return True
 
     def close(self):
-        if self.renderer is not None:
-            self.renderer.close()
-            self.renderer = None
+
+        return
 
     def tpvplotter(self):
 
@@ -243,7 +230,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if False: #not env.resting_count and (steps % 20 == 0 or done):
+        if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
