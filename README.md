@@ -20,7 +20,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 ```
 % pip3 install gym
 % python3 setup.py install
-% python3 gym_copter/envs/lander2.py
+% python3 gym_copter/envs/lander2d.py
 ```
 (On Linux you will probably have to run pip3 with <tt>sudo</tt>
 
