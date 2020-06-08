@@ -10,7 +10,7 @@ from gym_copter.envs.rendering.threed import ThreeD, create
 
 class ThreeDLander(ThreeD):
 
-    def __init__(self, env, title):
+    def __init__(self, env, title, radius):
 
         ThreeD.__init__(self, env, title)
 
@@ -18,7 +18,7 @@ class ThreeDLander(ThreeD):
 
     def _animate(self, _):
 
-       ThreeD._animate(self, _)
+        ThreeD._animate(self, _)
 
-       self.circle.set_data([0, 10], [0, 10])
-       self.circle.set_3d_properties([0,0])
+        self.circle.set_data([0, 10], [0, 10])
+        self.circle.set_3d_properties([0,0])
