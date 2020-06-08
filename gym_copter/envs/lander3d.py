@@ -151,12 +151,12 @@ class CopterLander3D(gym.Env, EzPickle):
 
         return
 
-    def threedplotter(self):
+    def plotter(self):
 
-        from gym_copter.envs.rendering.threed import ThreeD
+        from gym_copter.envs.rendering.threed_lander import ThreeDLander
 
         # Pass title to 3D display
-        return ThreeD(self, 'Lander')
+        return ThreeDLander(self, 'Lander')
 
 ## End of CopterLander3D class ----------------------------------------------------------------
 
@@ -252,7 +252,7 @@ if __name__ == '__main__':
 
     env = CopterLander3D()
 
-    plotter = env.threedplotter()
+    plotter = env.plotter()
 
     thread = threading.Thread(target=heuristic_lander, args=(env, plotter, 2))
     thread.daemon = True
