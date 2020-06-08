@@ -14,6 +14,8 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class CopterEnv(Env):
 
+    FPS = 50
+
     metadata = {
         'render.modes' : ['human', 'rgb_array'],
         'video.frames_per_second' : 30
@@ -70,12 +72,12 @@ class CopterEnv(Env):
 
         return self.display.display(mode, self.state, self.dt_realtime*self.tick) if self.display.isOpen() else None
 
-    def tpvplotter(self, showtraj=False):
+    def plotter(self, showtraj=False):
 
-        from gym_copter.envs.rendering.tpv import TPV
+        from gym_copter.envs.rendering.threed import ThreeD
 
         # Pass title to 3D display
-        return TPV(self, showtraj=showtraj)
+        return ThreeD(self, showtraj=showtraj)
 
     def close(self):
 

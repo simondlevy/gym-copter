@@ -6,9 +6,9 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.rendering.tpv import ThreeD, _Vehicle
+from gym_copter.envs.rendering.threed import ThreeD, _Vehicle
 
-class TpvTarget(ThreeD):
+class ThreeDTarget(ThreeD):
 
     def __init__(self, env):
 

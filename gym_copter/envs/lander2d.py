@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class CopterLander2D(gym.Env, EzPickle):
+class Lander2D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 1.5
@@ -162,7 +162,7 @@ class CopterLander2D(gym.Env, EzPickle):
             self.renderer.close()
             self.renderer = None
 
-# End of CopterLander2D class ----------------------------------------------------------------
+# End of Lander2D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
@@ -238,4 +238,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(CopterLander2D(), seed=None, render=True)
+    demo_heuristic_lander(Lander2D(), seed=None, render=True)

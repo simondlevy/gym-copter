@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class CopterLander3D(gym.Env, EzPickle):
+class Lander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 1.0
@@ -158,7 +158,7 @@ class CopterLander3D(gym.Env, EzPickle):
         # Pass title to 3D display
         return ThreeDLander(self, 'Lander')
 
-## End of CopterLander3D class ----------------------------------------------------------------
+## End of Lander3D class ----------------------------------------------------------------
 
 
 def heuristic(env, s):
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
     import threading
 
-    env = CopterLander3D()
+    env = Lander3D()
 
     plotter = env.plotter()
 

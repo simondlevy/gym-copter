@@ -1,4 +1,3 @@
-<img src="media/hud.gif" height=300 align="left">
 <img src="media/lander1d.gif" width=400 align="top">
 
 <p>
@@ -38,46 +37,29 @@ packages you need), you can try out the code from Chapter 19 of the book:
 
 ```
 % cd Deep-Reinforcement-Learning-Hands-On-Second-Edition/Chapter19
-% python3 03_train_trpo.py -e gym_copter:Copter-v0 -n takeoff
+% python3 04_train_ppo.py -e gym_copter:Lander-v2 -n lander
 ```
 
-This will use a [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477) agent on a model
-that is rewarded for reaching an altitude of 10 meters.  After a few hundred
-thousand iterations or so, the program should should report saving the current
-best agent to a file.  
+This will use a [Proximal Policy Optimization](https://arxiv.org/abs/1707.06347) agent on a 2D quadcopter model
+that is rewarded for landing successfully between two flags.  In my experience this can take a few hundred thousand
+episodes (20-30 minutes).
 
 To play back this best agent (and subsequent ones), you can use the <tt>02\_play.py</tt> script in
 the Chapter 19 folder:
 
 ```
-% python3 02_play.py -e gym_copter:Copter-v0 -m saves/trpo-altitude/best_-<REWARD>_<ITER>.dat -r copter-v0
+% python3 02_play.py -e gym_copter:Lander-v2 -m saves/ppo-lander/best_-<REWARD>_<ITER>.dat -r lander-v2
 ```
 
 where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
 (It is easiest to do this through tab completion.) You should see brief animation of the vehicle rising to
 10 meters altitude.  A new folder <tt>copter-v0</tt> will contain an mp4 copy of the animation.
 
-You can also try to learn a second task, covering the maximum distance, by doing:
-
-```
-% python3 trpo.py -e Copter-v1 -n distance
-```
 In addition to TRPO, the <tt>Chapter19</tt> folder has programs to try other learning agents, including
 [A2C](https://arxiv.org/abs/1506.02438), 
+[TRPO](https://arxiv.org/abs/1502.05477), 
 [ACKTR](https://arxiv.org/abs/1708.05144), 
-[PPO](https://arxiv.org/abs/1707.06347), 
 and [SAC](https://arxiv.org/abs/1801.01290).
-
-## Third-person (3D) view
-
-Gym-copter also supports a third-person (3D) view for rendering.  To try it out:
-
-```
-% python3 examples/leap.py
-```
-
-This simulation runs the motors at full speed until the vehicle reaches an altitude of 10 meters, after which the front motors
-are reduced to half speed, causing the vehicle to fly forward into a dive.
 
 ## Similar projects
 

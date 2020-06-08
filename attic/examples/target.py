@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # Create environment
     env = gym.make('gym_copter:CopterTarget-v0')
 
-    plotter = env.tpvplotter()
+    plotter = env.plotter()
 
     # Run simulation on its own thread
     thread = threading.Thread(target=update, args=(env,))

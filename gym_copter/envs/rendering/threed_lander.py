@@ -6,7 +6,7 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.rendering.threed import ThreeD
+from gym_copter.envs.rendering.threed import ThreeD, _Vehicle
 
 class ThreeDLander(ThreeD):
 
@@ -14,6 +14,11 @@ class ThreeDLander(ThreeD):
 
         ThreeD.__init__(self, env, title)
 
+        self.circle = _Vehicle._create(self.ax, '-', 'r')
+
     def _animate(self, _):
 
        ThreeD._animate(self, _)
+
+       self.circle.set_data([0, 0], [10, 10])
+       self.circle.set_3d_properties([0,0])

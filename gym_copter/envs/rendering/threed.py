@@ -16,8 +16,8 @@ class _Vehicle:
     def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
-        self.line = self._create(ax, '-', color)
-        self.pt   = self._create(ax, 'o', color)
+        self.line = _Vehicle._create(ax, '-', color)
+        self.pt   = _Vehicle._create(ax, 'o', color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -43,7 +43,7 @@ class _Vehicle:
         self.pt.set_data(x, y)
         self.pt.set_3d_properties(z)
 
-    def _create(self, ax, symbol, color):
+    def _create(ax, symbol, color):
         obj = ax.plot([], [], [], symbol, c=color)[0]
         obj.set_data([], [])
         obj.set_3d_properties([])

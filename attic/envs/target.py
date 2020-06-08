@@ -56,12 +56,12 @@ class CopterTarget(CopterEnv):
         self._init()
         return self.state
 
-    def tpvplotter(self):
+    def plotter(self):
 
-        from gym_copter.envs.rendering.tpv_target import TpvTarget
+        from gym_copter.envs.rendering.threed_target import ThreeDTarget
 
         # Pass title to 3D display
-        return TpvTarget(self)
+        return ThreeDTarget(self)
 
     def _init(self):
         self.state[14] = 10 # target altitude (m)
