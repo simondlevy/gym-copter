@@ -41,11 +41,12 @@ packages you need), you can try out the code from Chapter 19 of the book:
 ```
 
 This will use a [Proximal Policy Optimization](https://arxiv.org/abs/1707.06347) agent on a 2D quadcopter model
-that is rewarded for landing successfully between two flags.  In my experience this can take a few hundred thousand
-episodes (20-30 minutes).
+that is rewarded for landing successfully between two flags (a reward slightly
+over 200).  In my experience this can take a several thousand episodes (10-30
+minutes, depending on the speed of your computer).  After that
 
-To play back this best agent (and subsequent ones), you can use the <tt>02\_play.py</tt> script in
-the Chapter 19 folder:
+To play back the best agent at any given step, you can use the
+<tt>02\_play.py</tt> script in the Chapter 19 folder:
 
 ```
 % python3 02_play.py -e gym_copter:Lander-v2 -m saves/ppo-lander/best_-<REWARD>_<ITER>.dat -r lander-v2
