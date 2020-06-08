@@ -20,5 +20,5 @@ class ThreeDLander(ThreeD):
 
        ThreeD._animate(self, _)
 
-       self.circle.set_data([0, 0], [10, 10])
+       self.circle.set_data([0, 10], [0, 10])
        self.circle.set_3d_properties([0,0])
