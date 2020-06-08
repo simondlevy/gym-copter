@@ -15,6 +15,33 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+from gym_copter.envs.rendering.twod import TwoDRender
+
+class _TwoDRenderLander(TwoDRender):
+
+    FLAG_COLOR    = 0.8, 0.0, 0.0
+
+    def __init__(self, landing_radius):
+
+        TwoDRender.__init__(self)
+
+        self.landing_radius = landing_radius
+
+    def render(self, mode, pose, landed, resting_count):
+
+        TwoDRender.render(self, pose, landed, resting_count)
+
+        # Draw flags
+        for d in [-1,+1]:
+            flagy1 = self.GROUND_Z
+            flagy2 = flagy1 + 50/self.SCALE
+            x = d*self.landing_radius + self.VIEWPORT_W/self.SCALE/2
+            self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
+            self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
+                                     color=self.FLAG_COLOR)
+
+        return TwoDRender.complete(self, mode)
+
 class Lander2D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
@@ -152,8 +179,7 @@ class Lander2D(gym.Env, EzPickle):
 
         # Create viewer and world objects if not done yet
         if self.renderer is None:
-            from gym_copter.envs.rendering.twod import TwoDRender
-            self.renderer = TwoDRender()
+            self.renderer = _TwoDRenderLander(self.LANDING_RADIUS)
 
         return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.resting_count)
 
