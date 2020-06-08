@@ -55,7 +55,7 @@ To play back the best agent at any given step, you can use the
 where ```<REWARD>``` is the amount of reward and ```<ITERATION>``` is the number of iterations at which it was saved.
 (It is easiest to do this through tab completion.) You should see brief animation of the vehicle landing safely 
 (or failing to land safely, if you didn't train to a reward of at least 200).  In the process of creating the movie,
-the program will also produce a lot of .png (image) files, which you can delete.
+the program will also create an <b>images</b. folder containing a lot of .png (image) files, which you can delete.
 
 In addition to TRPO, the <tt>Chapter19</tt> folder has programs to try other learning agents, including
 [A2C](https://arxiv.org/abs/1506.02438), 

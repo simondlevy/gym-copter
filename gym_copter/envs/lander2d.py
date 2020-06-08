@@ -211,6 +211,7 @@ def heuristic(env, s):
     return hover_todo, angle_todo
 
 def demo_heuristic_lander(env, seed=None, render=False):
+
     env.seed(seed)
     np.random.seed(seed)
     total_reward = 0
@@ -222,10 +223,13 @@ def demo_heuristic_lander(env, seed=None, render=False):
         total_reward += reward
 
         if render:
-            still_open = env.render()
-            if not still_open: break
+            frame = env.render('rgb_array')
+            if frame is None: break
+            #img = Image.fromarray(frame)
+            #img.save("img_%05d.png" % total_steps)
+            #print(frame)
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
