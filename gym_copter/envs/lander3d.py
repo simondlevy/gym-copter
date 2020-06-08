@@ -15,6 +15,26 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+from gym_copter.envs.rendering.threed import ThreeD, create
+
+class _ThreeDLander(ThreeD):
+
+    def __init__(self, env, radius=2):
+
+        ThreeD.__init__(self, env, lim=20, label='Lander', viewangles=[60,135])
+
+        self.circle = create(self.ax, '-', 'r')
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        self.circle_x = radius * np.sin(pts)
+        self.circle_y = radius * np.cos(pts)
+        self.circle_z = np.zeros(self.circle_x.shape)
+
+    def _animate(self, _):
+
+        ThreeD._animate(self, _)
+
+        self.circle.set_data(self.circle_x, self.circle_y)
+        self.circle.set_3d_properties(self.circle_z)
 class Lander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
@@ -153,10 +173,8 @@ class Lander3D(gym.Env, EzPickle):
 
     def plotter(self):
 
-        from gym_copter.envs.rendering.threed_lander import ThreeDLander
-
         # Pass title to 3D display
-        return ThreeDLander(self)
+        return _ThreeDLander(self)
 
 ## End of Lander3D class ----------------------------------------------------------------
 
