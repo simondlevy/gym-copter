@@ -11,13 +11,19 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
+def create(ax, symbol, color):
+    obj = ax.plot([], [], [], symbol, c=color)[0]
+    obj.set_data([], [])
+    obj.set_3d_properties([])
+    return obj
+
 class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
-        self.line = _Vehicle._create(ax, '-', color)
-        self.pt   = _Vehicle._create(ax, 'o', color)
+        self.line = create(ax, '-', color)
+        self.pt   = create(ax, 'o', color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -42,12 +48,6 @@ class _Vehicle:
         # Show vehicle as a dot
         self.pt.set_data(x, y)
         self.pt.set_3d_properties(z)
-
-    def _create(ax, symbol, color):
-        obj = ax.plot([], [], [], symbol, c=color)[0]
-        obj.set_data([], [])
-        obj.set_3d_properties([])
-        return obj
 
 class ThreeD:
 

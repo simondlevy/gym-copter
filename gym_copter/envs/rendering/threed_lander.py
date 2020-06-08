@@ -6,7 +6,7 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.rendering.threed import ThreeD, _Vehicle
+from gym_copter.envs.rendering.threed import ThreeD, create
 
 class ThreeDLander(ThreeD):
 
@@ -14,7 +14,7 @@ class ThreeDLander(ThreeD):
 
         ThreeD.__init__(self, env, title)
 
-        self.circle = _Vehicle._create(self.ax, '-', 'r')
+        self.circle = create(self.ax, '-', 'r')
 
     def _animate(self, _):
 
