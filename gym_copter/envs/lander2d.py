@@ -110,7 +110,7 @@ class CopterLander2D(gym.Env, EzPickle):
         state = np.array([posy, vely, posz, velz, phi, velphi])
 
         # Reward is a simple penalty for overall distance and velocity
-        shaping = -10 * np.sqrt(np.sum(state[0:4]**2))
+        shaping = -12 * np.sqrt(np.sum(state[0:4]**2))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
