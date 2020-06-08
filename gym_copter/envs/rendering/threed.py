@@ -49,7 +49,7 @@ class _Vehicle:
         obj.set_3d_properties([])
         return obj
 
-class TPV:
+class ThreeD:
 
     def __init__(self, env, label=None, showtraj=False):
 
