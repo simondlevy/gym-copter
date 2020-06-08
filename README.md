@@ -1,4 +1,4 @@
-<img src="media/lander1d.gif" width=400 align="top">
+<img src="media/lander2d.gif" width=400 align="top">
 
 <p>
 
