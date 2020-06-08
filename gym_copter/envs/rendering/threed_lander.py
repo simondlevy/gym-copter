@@ -11,9 +11,9 @@ import numpy as np
 
 class ThreeDLander(ThreeD):
 
-    def __init__(self, env, title, radius):
+    def __init__(self, env, radius=2):
 
-        ThreeD.__init__(self, env, title)
+        ThreeD.__init__(self, env, lim=20, label='Lander', viewangles=[60,135])
 
         self.circle = create(self.ax, '-', 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)

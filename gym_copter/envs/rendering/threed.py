@@ -51,7 +51,7 @@ class _Vehicle:
 
 class ThreeD:
 
-    def __init__(self, env, label=None, showtraj=False):
+    def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
 
         # Environment will be used to get position
         self.env = env
@@ -68,13 +68,16 @@ class ThreeD:
         self.ax.set_ylabel('Y (m)')
         self.ax.set_zlabel('Z (m)')
 
+        if viewangles is not None:
+            self.ax.view_init(*viewangles)
+
         # Set title to name of environment
         self.ax.set_title(env.unwrapped.spec.id if label is None else label)
 
         # Set axis limits
-        self.ax.set_xlim((-50, 50))
-        self.ax.set_ylim((-50, 50))
-        self.ax.set_zlim((0, 50))
+        self.ax.set_xlim((-lim, lim))
+        self.ax.set_ylim((-lim, lim))
+        self.ax.set_zlim((0, lim))
 
         # Create a representation of the copter
         self.copter = _Vehicle(self.ax, showtraj)

@@ -156,7 +156,7 @@ class Lander3D(gym.Env, EzPickle):
         from gym_copter.envs.rendering.threed_lander import ThreeDLander
 
         # Pass title to 3D display
-        return ThreeDLander(self, 'Lander', self.LANDING_RADIUS)
+        return ThreeDLander(self)
 
 ## End of Lander3D class ----------------------------------------------------------------
 
