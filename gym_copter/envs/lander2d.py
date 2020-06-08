@@ -152,7 +152,7 @@ class Lander2D(gym.Env, EzPickle):
 
         # Create viewer and world objects if not done yet
         if self.renderer is None:
-            from rendering.twod import TwoDRender
+            from gym_copter.envs.rendering.twod import TwoDRender
             self.renderer = TwoDRender()
 
         return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.resting_count)

@@ -49,12 +49,13 @@ To play back the best agent at any given step, you can use the
 <tt>02\_play.py</tt> script in the Chapter 19 folder:
 
 ```
-% python3 02_play.py -e gym_copter:Lander-v2 -m saves/ppo-lander/best_-<REWARD>_<ITER>.dat -r lander-v2
+% python3 02_play.py -e gym_copter:Lander-v2 -s 1 -m saves/ppo-lander/best_<REWARD>_<ITERATION>.dat
 ```
 
-where ```<REWARD>``` is the amount of reward and ```<ITER>``` is the number of iterations at which it was saved.
-(It is easiest to do this through tab completion.) You should see brief animation of the vehicle rising to
-10 meters altitude.  A new folder <tt>copter-v0</tt> will contain an mp4 copy of the animation.
+where ```<REWARD>``` is the amount of reward and ```<ITERATION>``` is the number of iterations at which it was saved.
+(It is easiest to do this through tab completion.) You should see brief animation of the vehicle landing safely 
+(or failing to land safely, if you didn't train to a reward of at least 200).  In the process of creating the movie,
+the program will also produce a lot of .png (image) files, which you can delete.
 
 In addition to TRPO, the <tt>Chapter19</tt> folder has programs to try other learning agents, including
 [A2C](https://arxiv.org/abs/1506.02438), 
