@@ -22,8 +22,8 @@ class _Vehicle:
     def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
-        self.traj = create(ax, '-', color)
-        self.quad   = create(ax, 'o', color)
+        self.ax_traj = create(ax, '-', color)
+        self.ax_quad   = create(ax, 'o', color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -42,12 +42,12 @@ class _Vehicle:
 
         # Plot trajectory if indicated
         if self.showtraj:
-            self.traj.set_data(self.xs, self.ys)
-            self.traj.set_3d_properties(self.zs)
+            self.ax_traj.set_data(self.xs, self.ys)
+            self.ax_traj.set_3d_properties(self.zs)
 
         # Show vehicle as a dot
-        self.quad.set_data(x, y)
-        self.quad.set_3d_properties(z)
+        self.ax_quad.set_data(x, y)
+        self.ax_quad.set_3d_properties(z)
 
     VEHICLE_SIZE      = 3
     PROPELLER_RADIUS  = 0.5
