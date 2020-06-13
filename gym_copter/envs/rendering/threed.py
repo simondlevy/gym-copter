@@ -57,15 +57,16 @@ class _Vehicle:
 
         # Show vehicle
         d = self.VEHICLE_SIZE / 2
-        xs = x + np.linspace(-d, +d)
-        ys = y + np.linspace(-d, +d)
-        zs = z * np.ones(xs.shape)
-        self.ax_arm1.set_data(xs, ys)
+        s = np.linspace(-d, +d)
+        zs = z * np.ones(s.shape)
+        self.ax_arm1.set_data((x+s), (y+s))
         self.ax_arm1.set_3d_properties(zs)
-        self.ax_arm2.set_data(xs, -ys)
+        self.ax_arm2.set_data((x+s), -(y+s))
         self.ax_arm2.set_3d_properties(zs)
+
         xs = x + d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
         ys = y + d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+
         self.ax_prop1.set_data(xs, ys)
         self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
 
