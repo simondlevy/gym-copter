@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-from gym_copter.envs.rendering.threed import ThreeD, create
+from gym_copter.envs.rendering.threed import ThreeD, create_axis
 
 class _ThreeDLander(ThreeD):
 
@@ -23,7 +23,7 @@ class _ThreeDLander(ThreeD):
 
         ThreeD.__init__(self, env, lim=20, label='Lander', viewangles=[60,135])
 
-        self.circle = create(self.ax, '-', 'r')
+        self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
         self.circle_x = radius * np.sin(pts)
         self.circle_y = radius * np.cos(pts)
@@ -35,6 +35,7 @@ class _ThreeDLander(ThreeD):
 
         self.circle.set_data(self.circle_x, self.circle_y)
         self.circle.set_3d_properties(self.circle_z)
+
 class Lander3D(gym.Env, EzPickle):
 
     # Perturbation factor for initial horizontal position
@@ -249,7 +250,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 

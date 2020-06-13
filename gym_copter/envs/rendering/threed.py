@@ -7,23 +7,28 @@ MIT License
 '''
 
 import time
+import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
-def create(ax, symbol, color):
-    obj = ax.plot([], [], [], symbol, c=color)[0]
+def create_axis(ax, color):
+    obj = ax.plot([], [], [], '-', c=color)[0]
     obj.set_data([], [])
     obj.set_3d_properties([])
     return obj
 
 class _Vehicle:
 
+    VEHICLE_SIZE      = 3
+    PROPELLER_RADIUS  = 0.5
+    PROPELLER_OFFSET  = 0.1
+
     def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
-        self.ax_traj = create(ax, '-', color)
-        self.ax_quad   = create(ax, 'o', color)
+        self.ax_traj = create_axis(ax, color)
+        self.ax_quad = create_axis(ax, color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -46,12 +51,12 @@ class _Vehicle:
             self.ax_traj.set_3d_properties(self.zs)
 
         # Show vehicle as a dot
-        self.ax_quad.set_data(x, y)
-        self.ax_quad.set_3d_properties(z)
-
-    VEHICLE_SIZE      = 3
-    PROPELLER_RADIUS  = 0.5
-    PROPELLER_OFFSET  = 0.1
+        print(x,y,z)
+        xs = np.linspace(-1,+1)
+        ys = np.linspace(-1,+1)
+        zs = z * np.ones(xs.shape)
+        self.ax_quad.set_data(xs, ys)
+        self.ax_quad.set_3d_properties(zs)
 
 class ThreeD:
 
