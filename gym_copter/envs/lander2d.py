@@ -236,7 +236,7 @@ def heuristic(env, s):
 
     return hover_todo, angle_todo
 
-def demo_heuristic_lander(env, seed=None, render=False):
+def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
     env.seed(seed)
     np.random.seed(seed)
@@ -251,8 +251,10 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             frame = env.render('rgb_array')
             if frame is None: break
-            #img = Image.fromarray(frame)
-            #img.save("img_%05d.png" % total_steps)
+            if save:
+                from PIL import Image
+                img = Image.fromarray(frame)
+                img.save("img_%05d.png" % steps)
 
         if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
@@ -267,4 +269,4 @@ def demo_heuristic_lander(env, seed=None, render=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(Lander2D(), seed=None, render=True)
+    demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)
