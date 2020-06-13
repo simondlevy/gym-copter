@@ -41,9 +41,9 @@ class Lander3D(gym.Env, EzPickle):
     # Parameters to adjust  
     INITIAL_RANDOM_OFFSET = 1.0 # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
-    FPS                   = 50
     LANDING_RADIUS        = 2
-    RESTING_DURATION      = 50 # for rendering for a short while after successful landing
+    RESTING_DURATION      = 1.0 # for rendering for a short while after successful landing
+    FPS                   = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -152,7 +152,7 @@ class Lander3D(gym.Env, EzPickle):
 
                 reward += 100
 
-                self.resting_count = self.RESTING_DURATION
+                self.resting_count = int(self.RESTING_DURATION * self.FPS)
 
         elif self.dynamics.crashed():
 
