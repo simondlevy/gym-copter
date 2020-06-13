@@ -43,11 +43,11 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
     RESTING_DURATION      = 1.0 # for rendering for a short while after successful landing
-    FPS                   = 50
+    FRAMES_PER_SECOND     = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : FPS
+        'video.frames_per_second' : FRAMES_PER_SECOND
     }
 
     def __init__(self):
@@ -105,7 +105,7 @@ class Lander3D(gym.Env, EzPickle):
         else:
             t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
             d.setMotors(np.clip([t-r-p, t+r+p, t+r+p, t-r-p], 0, 1))
-            d.update(1./self.FPS)
+            d.update(1./self.FRAMES_PER_SECOND)
 
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
@@ -152,7 +152,7 @@ class Lander3D(gym.Env, EzPickle):
 
                 reward += 100
 
-                self.resting_count = int(self.RESTING_DURATION * self.FPS)
+                self.resting_count = int(self.RESTING_DURATION * self.FRAMES_PER_SECOND)
 
         elif self.dynamics.crashed():
 
@@ -256,7 +256,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         if done: break
 
         if not plotter is None:
-            time.sleep(1./env.FPS)
+            time.sleep(1./env.FRAMES_PER_SECOND)
 
     env.close()
     return total_reward

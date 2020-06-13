@@ -110,7 +110,7 @@ class ThreeD:
     def start(self):
 
         # Instantiate the animator
-        anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000/self.env.FPS), blit=False)
+        anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000/self.env.FRAMES_PER_SECOND), blit=False)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
