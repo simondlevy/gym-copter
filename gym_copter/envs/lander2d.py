@@ -47,7 +47,7 @@ class Lander2D(gym.Env, EzPickle):
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 1.5
 
-    FPS = 50
+    FRAMES_PER_SECOND = 50
 
     LANDING_RADIUS = 2
 
@@ -56,7 +56,7 @@ class Lander2D(gym.Env, EzPickle):
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : FPS
+        'video.frames_per_second' : FRAMES_PER_SECOND
     }
 
     def __init__(self):
@@ -120,7 +120,7 @@ class Lander2D(gym.Env, EzPickle):
         else:
             t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
             d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
-            d.update(1./self.FPS)
+            d.update(1./self.FRAMES_PER_SECOND)
 
         # Get new state from dynamics
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
@@ -253,9 +253,8 @@ def demo_heuristic_lander(env, seed=None, render=False):
             if frame is None: break
             #img = Image.fromarray(frame)
             #img.save("img_%05d.png" % total_steps)
-            #print(frame)
 
-        if False: #not env.resting_count and (steps % 20 == 0 or done):
+        if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
