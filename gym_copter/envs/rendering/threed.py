@@ -28,12 +28,8 @@ class _Vehicle:
 
         self.ax_traj  = create_axis(ax, color)
 
-        self.ax_arms  = [create_axis(ax, color) for j in range(4)]
-
-        self.ax_prop1 = create_axis(ax, color)
-        self.ax_prop2 = create_axis(ax, color)
-        self.ax_prop3 = create_axis(ax, color)
-        self.ax_prop4 = create_axis(ax, color)
+        self.ax_arms   = [create_axis(ax, color) for j in range(4)]
+        self.ax_props  = [create_axis(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -59,11 +55,13 @@ class _Vehicle:
             self.ax_traj.set_3d_properties(self.zs)
 
         # Create points for arms
-        rs = np.linspace(0, self.VEHICLE_SIZE / 2)
+        v2 = self.VEHICLE_SIZE / 2
+        rs = np.linspace(0, v2)
         zs = z * np.ones(len(rs))
 
-        #s = d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
-        #c = d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+        # Create points for propellers
+        px = self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
+        py = self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
 
         # Loop over arms and propellers
         for j in range(4):
@@ -74,18 +72,8 @@ class _Vehicle:
             self.ax_arms[j].set_data(x+dx*rs, y+dy*rs)
             self.ax_arms[j].set_3d_properties(zs)
 
-
-        #self.ax_prop1.set_data(x+c, y+s)
-        #self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
-
-        #self.ax_prop2.set_data(x-c, y-s)
-        #self.ax_prop2.set_3d_properties(zs+self.PROPELLER_OFFSET)
-
-        #self.ax_prop3.set_data(x+c, y-s)
-        #self.ax_prop3.set_3d_properties(zs+self.PROPELLER_OFFSET)
-
-        #self.ax_prop4.set_data(x-c, y+s)
-        #self.ax_prop4.set_3d_properties(zs+self.PROPELLER_OFFSET)
+            self.ax_props[j].set_data(x+dx*v2+px, y+dy*v2+py)
+            self.ax_props[j].set_3d_properties(zs+self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
 
