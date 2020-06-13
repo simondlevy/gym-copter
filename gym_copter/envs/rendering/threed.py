@@ -26,10 +26,13 @@ class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
-        # Set up line and point
         self.ax_traj  = create_axis(ax, color)
+
         self.ax_arm1  = create_axis(ax, color)
         self.ax_arm2  = create_axis(ax, color)
+        self.ax_arm3  = create_axis(ax, color)
+        self.ax_arm4  = create_axis(ax, color)
+
         self.ax_prop1 = create_axis(ax, color)
         self.ax_prop2 = create_axis(ax, color)
         self.ax_prop3 = create_axis(ax, color)
@@ -45,6 +48,9 @@ class _Vehicle:
 
     def update(self, x, y, z):
 
+        # XXX for debugging
+        x,y = 1,0
+
         # Append position to arrays for plotting trajectory
         self.xs.append(x)
         self.ys.append(y)
@@ -55,24 +61,47 @@ class _Vehicle:
             self.ax_traj.set_data(self.xs, self.ys)
             self.ax_traj.set_3d_properties(self.zs)
 
-        # Show vehicle
         d = self.VEHICLE_SIZE / 2
-        s = np.linspace(-d, +d)
-        zs = z * np.ones(s.shape)
-        self.ax_arm1.set_data((x+s), (y+s))
+
+        s = np.linspace(0, d)
+        zs = z * np.ones(len(s))
+
+        self.ax_arm1.set_data(x+s, y-s)
         self.ax_arm1.set_3d_properties(zs)
-        self.ax_arm2.set_data((x+s), -(y+s))
+
+        self.ax_arm2.set_data(x-s, y+s)
         self.ax_arm2.set_3d_properties(zs)
 
-        xs = x + d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
-        ys = y + d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+        self.ax_arm3.set_data(x-s, y-s)
+        self.ax_arm3.set_3d_properties(zs)
 
-        self.ax_prop1.set_data(xs, ys)
-        self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
+        self.ax_arm4.set_data(x+s, y+s)
+        self.ax_arm4.set_3d_properties(zs)
+
+        s = d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
+        c = d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+
+        #self.ax_prop1.set_data(x+c, y+s)
+        #self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
+
+        #self.ax_prop2.set_data(x-c, y-s)
+        #self.ax_prop2.set_3d_properties(zs+self.PROPELLER_OFFSET)
+
+        #self.ax_prop3.set_data(x+c, y-s)
+        #self.ax_prop3.set_3d_properties(zs+self.PROPELLER_OFFSET)
+
+        #self.ax_prop4.set_data(x-c, y+s)
+        #self.ax_prop4.set_3d_properties(zs+self.PROPELLER_OFFSET)
+
+        plt.gca().set_aspect('equal')
 
 class ThreeD:
 
     def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
+
+        # XXX for debugging
+        viewangles = 90,180
+        lim = 2.5
 
         # Environment will be used to get position
         self.env = env
@@ -96,7 +125,6 @@ class ThreeD:
         self.ax.set_title(env.unwrapped.spec.id if label is None else label)
 
         # Set axis limits
-        lim = 5
         self.ax.set_xlim((-lim, lim))
         self.ax.set_ylim((-lim, lim))
         self.ax.set_zlim((0, lim))
