@@ -21,15 +21,19 @@ def create_axis(ax, color):
 class _Vehicle:
 
     VEHICLE_SIZE      = 0.5
-    PROPELLER_RADIUS  = 0.15
+    PROPELLER_RADIUS  = 0.2
     PROPELLER_OFFSET  = 0.01
 
     def __init__(self, ax, showtraj, color='b'):
 
         # Set up line and point
-        self.ax_traj = create_axis(ax, color)
-        self.ax_arm1 = create_axis(ax, color)
-        self.ax_arm2 = create_axis(ax, color)
+        self.ax_traj  = create_axis(ax, color)
+        self.ax_arm1  = create_axis(ax, color)
+        self.ax_arm2  = create_axis(ax, color)
+        self.ax_prop1 = create_axis(ax, color)
+        self.ax_prop2 = create_axis(ax, color)
+        self.ax_prop3 = create_axis(ax, color)
+        self.ax_prop4 = create_axis(ax, color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -52,14 +56,18 @@ class _Vehicle:
             self.ax_traj.set_3d_properties(self.zs)
 
         # Show vehicle
-        xs = x + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
-        ys = y + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
+        d = self.VEHICLE_SIZE / 2
+        xs = x + np.linspace(-d, +d)
+        ys = y + np.linspace(-d, +d)
         zs = z * np.ones(xs.shape)
         self.ax_arm1.set_data(xs, ys)
         self.ax_arm1.set_3d_properties(zs)
         self.ax_arm2.set_data(xs, -ys)
         self.ax_arm2.set_3d_properties(zs)
-
+        xs = x + d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
+        ys = y + d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+        self.ax_prop1.set_data(xs, ys)
+        self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
 
 class ThreeD:
 
@@ -87,6 +95,7 @@ class ThreeD:
         self.ax.set_title(env.unwrapped.spec.id if label is None else label)
 
         # Set axis limits
+        lim = 5
         self.ax.set_xlim((-lim, lim))
         self.ax.set_ylim((-lim, lim))
         self.ax.set_zlim((0, lim))
