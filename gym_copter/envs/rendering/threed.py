@@ -28,7 +28,8 @@ class _Vehicle:
 
         # Set up line and point
         self.ax_traj = create_axis(ax, color)
-        self.ax_quad = create_axis(ax, color)
+        self.ax_arm1 = create_axis(ax, color)
+        self.ax_arm2 = create_axis(ax, color)
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -50,12 +51,15 @@ class _Vehicle:
             self.ax_traj.set_data(self.xs, self.ys)
             self.ax_traj.set_3d_properties(self.zs)
 
-        # Show vehicle as a dot
+        # Show vehicle
         xs = x + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
         ys = y + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
         zs = z * np.ones(xs.shape)
-        self.ax_quad.set_data(xs, ys)
-        self.ax_quad.set_3d_properties(zs)
+        self.ax_arm1.set_data(xs, ys)
+        self.ax_arm1.set_3d_properties(zs)
+        self.ax_arm2.set_data(xs, -ys)
+        self.ax_arm2.set_3d_properties(zs)
+
 
 class ThreeD:
 
