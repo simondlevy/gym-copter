@@ -41,6 +41,8 @@ class Lander3D(gym.Env, EzPickle):
     # Perturbation factor for initial horizontal position
     INITIAL_RANDOM_OFFSET = 1.0
 
+    INITIAL_ALTITUDE = 5
+
     FPS = 50
 
     LANDING_RADIUS = 2
@@ -90,7 +92,7 @@ class Lander3D(gym.Env, EzPickle):
         d = self.dynamics
         state[d.STATE_X] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
         state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -10
+        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0, 0]))[0]
