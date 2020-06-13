@@ -38,17 +38,12 @@ class _ThreeDLander(ThreeD):
 
 class Lander3D(gym.Env, EzPickle):
 
-    # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 1.0
-
-    INITIAL_ALTITUDE = 5
-
-    FPS = 50
-
-    LANDING_RADIUS = 2
-
-    # For rendering for a short while after successful landing
-    RESTING_DURATION = 50
+    # Parameters to adjust  
+    INITIAL_RANDOM_OFFSET = 1.0 # perturbation factor for initial horizontal position
+    INITIAL_ALTITUDE      = 5
+    FPS                   = 50
+    LANDING_RADIUS        = 2
+    RESTING_DURATION      = 50 # for rendering for a short while after successful landing
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
