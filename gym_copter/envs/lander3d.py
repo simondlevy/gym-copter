@@ -21,7 +21,7 @@ class _ThreeDLander(ThreeD):
 
     def __init__(self, env, radius=2):
 
-        ThreeD.__init__(self, env, lim=20, label='Lander', viewangles=[60,135])
+        ThreeD.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)

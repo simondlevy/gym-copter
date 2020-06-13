@@ -41,9 +41,6 @@ class _Vehicle:
 
     def update(self, x, y, z):
 
-        # XXX for debugging
-        x,y = 1,0
-
         # Append position to arrays for plotting trajectory
         self.xs.append(x)
         self.ys.append(y)
@@ -80,10 +77,6 @@ class _Vehicle:
 class ThreeD:
 
     def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
-
-        # XXX for debugging
-        viewangles = 90,180
-        lim = 2.5
 
         # Environment will be used to get position
         self.env = env
