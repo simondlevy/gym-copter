@@ -58,19 +58,22 @@ class _Vehicle:
             self.ax_traj.set_data(self.xs, self.ys)
             self.ax_traj.set_3d_properties(self.zs)
 
-        d = self.VEHICLE_SIZE / 2
-
-        s = np.linspace(0, d)
-        zs = z * np.ones(len(s))
-
-        for j in range(4):
-            dx = 2 * (j // 2) - 1
-            dy = 2 * (j %  2) - 1
-            self.ax_arms[j].set_data(x+dx*s, y+dy*s)
-            self.ax_arms[j].set_3d_properties(zs)
+        # Create points for arms
+        rs = np.linspace(0, self.VEHICLE_SIZE / 2)
+        zs = z * np.ones(len(rs))
 
         #s = d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
         #c = d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+
+        # Loop over arms and propellers
+        for j in range(4):
+
+            dx = 2 * (j // 2) - 1
+            dy = 2 * (j %  2) - 1
+
+            self.ax_arms[j].set_data(x+dx*rs, y+dy*rs)
+            self.ax_arms[j].set_3d_properties(zs)
+
 
         #self.ax_prop1.set_data(x+c, y+s)
         #self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
