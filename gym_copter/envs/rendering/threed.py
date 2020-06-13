@@ -51,9 +51,8 @@ class _Vehicle:
             self.ax_traj.set_3d_properties(self.zs)
 
         # Show vehicle as a dot
-        print(x,y,z)
-        xs = np.linspace(-1,+1)
-        ys = np.linspace(-1,+1)
+        xs = x + np.linspace(-1,+1)
+        ys = y + np.linspace(-1,+1)
         zs = z * np.ones(xs.shape)
         self.ax_quad.set_data(xs, ys)
         self.ax_quad.set_3d_properties(zs)
