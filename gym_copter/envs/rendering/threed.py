@@ -28,10 +28,7 @@ class _Vehicle:
 
         self.ax_traj  = create_axis(ax, color)
 
-        self.ax_arm1  = create_axis(ax, color)
-        self.ax_arm2  = create_axis(ax, color)
-        self.ax_arm3  = create_axis(ax, color)
-        self.ax_arm4  = create_axis(ax, color)
+        self.ax_arms  = [create_axis(ax, color) for j in range(4)]
 
         self.ax_prop1 = create_axis(ax, color)
         self.ax_prop2 = create_axis(ax, color)
@@ -66,20 +63,14 @@ class _Vehicle:
         s = np.linspace(0, d)
         zs = z * np.ones(len(s))
 
-        self.ax_arm1.set_data(x+s, y-s)
-        self.ax_arm1.set_3d_properties(zs)
+        for j in range(4):
+            dx = 2 * (j // 2) - 1
+            dy = 2 * (j %  2) - 1
+            self.ax_arms[j].set_data(x+dx*s, y+dy*s)
+            self.ax_arms[j].set_3d_properties(zs)
 
-        self.ax_arm2.set_data(x-s, y+s)
-        self.ax_arm2.set_3d_properties(zs)
-
-        self.ax_arm3.set_data(x-s, y-s)
-        self.ax_arm3.set_3d_properties(zs)
-
-        self.ax_arm4.set_data(x+s, y+s)
-        self.ax_arm4.set_3d_properties(zs)
-
-        s = d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
-        c = d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
+        #s = d + self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
+        #c = d + self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
 
         #self.ax_prop1.set_data(x+c, y+s)
         #self.ax_prop1.set_3d_properties(zs+self.PROPELLER_OFFSET)
