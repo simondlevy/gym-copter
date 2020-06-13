@@ -20,9 +20,9 @@ def create_axis(ax, color):
 
 class _Vehicle:
 
-    VEHICLE_SIZE      = 3
-    PROPELLER_RADIUS  = 0.5
-    PROPELLER_OFFSET  = 0.1
+    VEHICLE_SIZE      = 0.5
+    PROPELLER_RADIUS  = 0.15
+    PROPELLER_OFFSET  = 0.01
 
     def __init__(self, ax, showtraj, color='b'):
 
@@ -51,8 +51,8 @@ class _Vehicle:
             self.ax_traj.set_3d_properties(self.zs)
 
         # Show vehicle as a dot
-        xs = x + np.linspace(-1,+1)
-        ys = y + np.linspace(-1,+1)
+        xs = x + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
+        ys = y + np.linspace(-self.VEHICLE_SIZE,+self.VEHICLE_SIZE)
         zs = z * np.ones(xs.shape)
         self.ax_quad.set_data(xs, ys)
         self.ax_quad.set_3d_properties(zs)
