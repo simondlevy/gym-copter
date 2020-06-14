@@ -71,7 +71,9 @@ class _Vehicle:
             self.ax_arms[j].set_data(x+armx, y+army)
             self.ax_arms[j].set_3d_properties(zs)
 
-            self.ax_props[j].set_data(x+dx*v2+px, y+dy*v2+py)
+            propx, propy = dx*v2+px, dy*v2+py
+
+            self.ax_props[j].set_data(x+propx, y+propy)
             self.ax_props[j].set_3d_properties(zs+self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
