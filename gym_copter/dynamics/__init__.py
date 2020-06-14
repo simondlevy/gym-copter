@@ -78,9 +78,6 @@ class MultirotorDynamics:
     # Default to Earth gravity
     G = 9.80665
 
-    # Accomodate landing gear vertical offset
-    LANDING_GEAR_HEIGHT = 0.85
-
     # Safe landing criteria
     LANDING_VEL_X  = 2.0
     LANDING_VEL_Y  = 1.0
@@ -158,7 +155,7 @@ class MultirotorDynamics:
             return
 
         # It's all over once we're on the ground
-        elif -self._x[self.STATE_Z] <= self.LANDING_GEAR_HEIGHT:
+        elif -self._x[self.STATE_Z] <= 0:
             phi   = self._x[self.STATE_PHI]
             velx  = self._x[self.STATE_Y_DOT]
             vely  = self._x[self.STATE_Z_DOT]

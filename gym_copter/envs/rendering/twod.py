@@ -14,10 +14,9 @@ class TwoDRender:
 
     SCALE = 30.0
 
-    # For rendering for a short while after successful landing
-    RESTING_DURATION = 50
-
     LANDER_POLY =[ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
+
+    GEAR_HEIGHT = 0.85
 
     LEG_X, LEG_Y, LEG_W, LEG_H  = 12, -7, 3, 20
 
@@ -83,7 +82,7 @@ class TwoDRender:
             color=self.SKY_COLOR)
 
         # Set copter pose to values from step()
-        self.lander.position = pose[0] + self.VIEWPORT_W/self.SCALE/2, pose[1] + self.GROUND_Z
+        self.lander.position = pose[0] + self.VIEWPORT_W/self.SCALE/2, pose[1] + self.GROUND_Z + self.GEAR_HEIGHT
         self.lander.angle = -pose[2]
 
         # Draw copter
