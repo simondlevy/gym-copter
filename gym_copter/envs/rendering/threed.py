@@ -66,7 +66,9 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j %  2) - 1
 
-            self.ax_arms[j].set_data(x+dx*rs, y+dy*rs)
+            armx, army = dx*rs, dy*rs
+
+            self.ax_arms[j].set_data(x+armx, y+army)
             self.ax_arms[j].set_3d_properties(zs)
 
             self.ax_props[j].set_data(x+dx*v2+px, y+dy*v2+py)
