@@ -39,7 +39,7 @@ class _ThreeDLander(ThreeD):
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 1.0 # perturbation factor for initial horizontal position
+    INITIAL_RANDOM_OFFSET = 1.5 # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
     RESTING_DURATION      = 1.0 # for rendering for a short while after successful landing
@@ -242,7 +242,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if False: #not env.resting_count and (steps % 20 == 0 or done):
+        if not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
@@ -265,7 +265,7 @@ if __name__ == '__main__':
 
     plotter = env.plotter()
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, plotter, 2))
+    thread = threading.Thread(target=heuristic_lander, args=(env, plotter))
     thread.daemon = True
     thread.start()
 
