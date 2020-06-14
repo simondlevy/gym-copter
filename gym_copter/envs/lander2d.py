@@ -220,7 +220,7 @@ def heuristic(env, s):
     E = 0.4
 
     # Vertical PID
-    F = 7.5
+    F = 1.15
     G = 1.33
 
     posy, vely, posz, velz, phi, velphi = s
@@ -228,7 +228,7 @@ def heuristic(env, s):
     angle_targ = posy*A + vely*B         # angle should point towards center
     angle_todo = (phi-angle_targ)*C + phi*D - velphi*E
 
-    hover_todo = -posz/6.67*F - velz*G
+    hover_todo = -(posz*F + velz*G)
 
     return hover_todo, angle_todo
 
