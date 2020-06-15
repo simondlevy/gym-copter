@@ -103,6 +103,8 @@ class ThreeD:
 
     def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
 
+        viewangles = 0,90
+
         # Environment will be used to get position
         self.env = env
 
