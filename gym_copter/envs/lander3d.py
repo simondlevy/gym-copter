@@ -39,15 +39,15 @@ class _ThreeDLander(ThreeD):
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 0    #1.5 # perturbation factor for initial horizontal position
+    INITIAL_RANDOM_OFFSET = 1.5 # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
-    RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
-    FRAMES_PER_SECOND     = 50
     PENALTY_FACTOR        = 20.5 # designed so that maximal penalty is around 100
     BOUNDS                = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
+    RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
+    FRAMES_PER_SECOND     = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -136,7 +136,7 @@ class Lander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go out of bounds
-        if abs(posy) >= self.BOUNDARY:
+        if abs(posy) >= self.BOUNDS:
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
