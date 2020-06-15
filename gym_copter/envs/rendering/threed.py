@@ -54,7 +54,6 @@ class _Vehicle:
         # Create points for arms
         v2 = self.VEHICLE_SIZE / 2
         rs = np.linspace(0, v2)
-        zs = z * np.ones(len(rs))
 
         # Create points for propellers
         px = self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
@@ -66,13 +65,15 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j %  2) - 1
 
-            self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, zs, 0)
+            self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, 0)
 
-            self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, zs, self.PROPELLER_OFFSET)
+            self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
 
-    def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, zs, dz):
+    def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
+
+        zs = z * np.ones(len(xs))
 
         # Build rotation matrix (https://mathworld.wolfram.com/EulerAngles.html)
         cph = np.cos(phi)
