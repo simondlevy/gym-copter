@@ -73,7 +73,7 @@ class _Vehicle:
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
-        zs = z * np.ones(len(xs))
+        zs = np.zeros(len(xs))
 
         # Build rotation matrix (https://mathworld.wolfram.com/EulerAngles.html)
         cph = np.cos(phi)
@@ -88,7 +88,7 @@ class _Vehicle:
         a22 = -sps*sph + cth*cph*cps
 
         axis.set_data(x+xs, y+ys)
-        axis.set_3d_properties(zs+dz)
+        axis.set_3d_properties(z+zs+dz)
 
 class ThreeD:
 
