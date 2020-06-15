@@ -74,8 +74,8 @@ class _Vehicle:
 
     def _set_axis(self, xoff, yoff, axis, xs, ys, zs):
 
-            axis.set_data(xoff+xs, yoff+ys)
-            axis.set_3d_properties(zs)
+        axis.set_data(xoff+xs, yoff+ys)
+        axis.set_3d_properties(zs)
 
 class ThreeD:
 
