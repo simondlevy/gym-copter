@@ -41,6 +41,10 @@ class _Vehicle:
 
     def update(self, x, y, z, phi, theta, psi):
 
+        # Adjust coordinate frame
+        x = -x
+        z = -z
+
         # Append position to arrays for plotting trajectory
         self.xs.append(x)
         self.ys.append(y)
