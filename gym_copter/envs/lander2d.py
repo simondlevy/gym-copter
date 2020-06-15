@@ -53,7 +53,7 @@ class Lander2D(gym.Env, EzPickle):
     BOUNDS                = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
-    RESTING_DURATION      = 50  # for rendering for a short while after successful landing
+    RESTING_DURATION      = 1.0 # for rendering for a short while after successful landing
     FRAMES_PER_SECOND     = 50
 
     metadata = {
@@ -168,7 +168,7 @@ class Lander2D(gym.Env, EzPickle):
 
                 reward += self.INSIDE_RADIUS_BONUS
 
-                self.resting_count = self.RESTING_DURATION
+                self.resting_count = int(self.RESTING_DURATION * self.FRAMES_PER_SECOND)
 
         elif self.dynamics.crashed():
 
