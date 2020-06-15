@@ -112,7 +112,7 @@ class Lander3D(gym.Env, EzPickle):
             d.update(1./self.FRAMES_PER_SECOND)
 
         # Get new state from dynamics
-        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = d.getState()[:10]
+        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
         # Negate for NED => ENU
         posz  = -posz
