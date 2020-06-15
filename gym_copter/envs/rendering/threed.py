@@ -1,5 +1,5 @@
 '''
-Third-Person (3D) view using matplotlib
+3D quadcopter rendering using matplotlib
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -66,17 +66,16 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j %  2) - 1
 
-            armx, army = dx*rs, dy*rs
+            self._set_axis(x, y, self.ax_arms[j], dx*rs, dy*rs, zs)
 
-            self.ax_arms[j].set_data(x+armx, y+army)
-            self.ax_arms[j].set_3d_properties(zs)
-
-            propx, propy = dx*v2+px, dy*v2+py
-
-            self.ax_props[j].set_data(x+propx, y+propy)
-            self.ax_props[j].set_3d_properties(zs+self.PROPELLER_OFFSET)
+            self._set_axis(x, y, self.ax_props[j], dx*v2+px, dy*v2+py, zs+self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
+
+    def _set_axis(self, xoff, yoff, axis, xs, ys, zs):
+
+            axis.set_data(xoff+xs, yoff+ys)
+            axis.set_3d_properties(zs)
 
 class ThreeD:
 
