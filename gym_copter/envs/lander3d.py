@@ -114,13 +114,9 @@ class Lander3D(gym.Env, EzPickle):
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
-        # Negate for NED => ENU
-        posz  = -posz
-        velz  = -velz
-
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.pose = posx, posy, posz, phi, theta, psi
+            self.pose = -posx, posy, -posz, phi, theta, psi
 
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
@@ -218,13 +214,13 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    phi_targ = posx*A + velx*B              # angle should point towards center
+    phi_targ = posy*A + vely*B              # angle should point towards center
     phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
-    theta_targ = posy*A + vely*B            # angle should point towards center
-    theta_todo = (theta-theta_targ)*C + theta*D - veltheta*E
+    theta_targ = posx*A + velx*B         # angle should point towards center
+    theta_todo = -(theta+theta_targ)*C - theta*D  + veltheta*E
 
-    hover_todo = -(posz*F + velz*G)
+    hover_todo = posz*F + velz*G
 
     return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
 
