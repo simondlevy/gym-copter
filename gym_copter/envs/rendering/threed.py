@@ -73,20 +73,31 @@ class _Vehicle:
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
-        # Build rotation matrix (https://mathworld.wolfram.com/EulerAngles.html)
+        # Make convenient abbreviations for functions of Euler angles
         cph = np.cos(phi)
         sph = np.sin(phi)
         cth = np.cos(theta)
         sth = np.sin(theta)
         cps = np.cos(psi)
         sps = np.sin(psi)
-        a11 =  cps*cph - cth*sph*sps
-        a12 =  cps*sph + cth*cph*sps
-        a21 = -sps*cph - cth*sph*cps
-        a22 = -sps*sph + cth*cph*cps
 
-        axis.set_data(x+xs, y+ys)
-        axis.set_3d_properties(z+np.zeros(len(xs))+dz)
+        # Build rotation matrix: 
+        # see http://www.kwon3d.com/theory/euler/euler_angles.html, Eqn. 2
+        a11 =  cth*cps
+        a12 =  sph*sth*cps + cph*sps
+        a21 = -cth*sps 
+        a22 = -sph*sth*sps + cph*cps
+        a31 =  sth
+        a32 = -sph*cth
+
+        # Rotate coordinates
+        xx = a11 * xs + a12 * ys 
+        yy = a21 * xs + a22 * ys
+        zz = a31 * xs + a32 * ys
+
+        # Set axis points
+        axis.set_data(x+xx, y+yy)
+        axis.set_3d_properties(z+zz+dz)
 
 class ThreeD:
 
