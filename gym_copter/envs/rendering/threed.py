@@ -66,13 +66,13 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j %  2) - 1
 
-            self._set_axis(x, y, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, zs, 0)
+            self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, zs, 0)
 
-            self._set_axis(x, y, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, zs, self.PROPELLER_OFFSET)
+            self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, zs, self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
 
-    def _set_axis(self, x, y, phi, theta, psi, axis, xs, ys, zs, dz):
+    def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, zs, dz):
 
         # Build rotation matrix (https://mathworld.wolfram.com/EulerAngles.html)
         cph = np.cos(phi)
