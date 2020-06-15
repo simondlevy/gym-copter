@@ -81,8 +81,8 @@ class TwoDRender:
             (0,self.VIEWPORT_H)], 
             color=self.SKY_COLOR)
 
-        # Set copter pose to values from step()
-        self.lander.position = pose[0] + self.VIEWPORT_W/self.SCALE/2, pose[1] + self.GROUND_Z + self.GEAR_HEIGHT
+        # Set copter pose to values from Lander2D.step(), negating for coordinate conversion
+        self.lander.position = pose[0] + self.VIEWPORT_W/self.SCALE/2, -pose[1] + self.GROUND_Z + self.GEAR_HEIGHT
         self.lander.angle = -pose[2]
 
         # Draw copter
