@@ -74,6 +74,14 @@ class _Vehicle:
 
     def _set_axis(self, x, y, phi, theta, psi, axis, xs, ys, zs):
 
+        # Build rotation matrix
+        cph = np.cos(phi)
+        sph = np.sin(phi)
+        cth = np.cos(theta)
+        sth = np.sin(theta)
+        cps = np.cos(psi)
+        sps = np.sin(psi)
+
         axis.set_data(x+xs, y+ys)
         axis.set_3d_properties(zs)
 
