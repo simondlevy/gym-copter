@@ -134,7 +134,7 @@ class ThreeD:
     def _animate(self, _):
 
         # Get vehicle position
-        x,y,z,_,_ = self.env.pose
+        x,y,z,_,_,_ = self.env.pose
         
         # Update the copter animation
         self.copter.update(x, y, z)
