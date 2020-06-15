@@ -44,15 +44,17 @@ class _TwoDRenderLander(TwoDRender):
 
 class Lander2D(gym.Env, EzPickle):
 
-    # Perturbation factor for initial horizontal position
-    INITIAL_RANDOM_OFFSET = 1.5
-
-    FRAMES_PER_SECOND = 50
-
-    LANDING_RADIUS = 2
-
-    # For rendering for a short while after successful landing
-    RESTING_DURATION = 50
+    
+    # Parameters to adjust
+    INITIAL_RANDOM_OFFSET = 1.5 # perturbation factor for initial horizontal position
+    INITIAL_ALTITUDE      = 10
+    LANDING_RADIUS        = 2
+    PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
+    BOUNDS                = 10
+    OUT_OF_BOUNDS_PENALTY = 100
+    INSIDE_RADIUS_BONUS   = 100
+    RESTING_DURATION      = 50  # for rendering for a short while after successful landing
+    FRAMES_PER_SECOND     = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -102,7 +104,7 @@ class Lander2D(gym.Env, EzPickle):
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -10
+        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0]))[0]
@@ -137,7 +139,7 @@ class Lander2D(gym.Env, EzPickle):
         state = np.array([posy, vely, posz, velz, phi, velphi])
 
         # Reward is a simple penalty for overall distance and velocity
-        shaping = -12 * np.sqrt(np.sum(state[0:4]**2))
+        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
@@ -147,9 +149,9 @@ class Lander2D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(posy) >= 10:
+        if abs(posy) >= self.BOUNDS:
             done = True
-            reward = -100
+            reward = -self.OUT_OF_BOUNDS_PENALTY
 
         elif self.resting_count:
 
@@ -164,7 +166,7 @@ class Lander2D(gym.Env, EzPickle):
             # Win bigly we land safely between the flags
             if abs(posy) < self.LANDING_RADIUS: 
 
-                reward += 100
+                reward += self.INSIDE_RADIUS_BONUS
 
                 self.resting_count = self.RESTING_DURATION
 
