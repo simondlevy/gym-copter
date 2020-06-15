@@ -66,15 +66,15 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j %  2) - 1
 
-            self._set_axis(x, y, self.ax_arms[j], dx*rs, dy*rs, zs)
+            self._set_axis(x, y, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, zs)
 
-            self._set_axis(x, y, self.ax_props[j], dx*v2+px, dy*v2+py, zs+self.PROPELLER_OFFSET)
+            self._set_axis(x, y, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, zs+self.PROPELLER_OFFSET)
 
         plt.gca().set_aspect('equal')
 
-    def _set_axis(self, xoff, yoff, axis, xs, ys, zs):
+    def _set_axis(self, x, y, phi, theta, psi, axis, xs, ys, zs):
 
-        axis.set_data(xoff+xs, yoff+ys)
+        axis.set_data(x+xs, y+ys)
         axis.set_3d_properties(zs)
 
 class ThreeD:
