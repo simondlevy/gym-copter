@@ -108,7 +108,7 @@ class Lander3D(gym.Env, EzPickle):
         # In air, set motors from action
         else:
             t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r-p, t+r+p, t+r+p, t-r-p], 0, 1))
+            d.setMotors(np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1)) # use mixer to set motors
             d.update(1./self.FRAMES_PER_SECOND)
 
         # Get new state from dynamics
@@ -197,8 +197,8 @@ def heuristic(env, s):
                   s[5] is the vertical speed
                   s[6] is the roll angle
                   s[7] is the roll angular speed
-                  s[8] is the roll angle
-                  s[9] is the roll angular speed
+                  s[8] is the pitch angle
+                  s[9] is the pitch angular speed
      returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
@@ -218,7 +218,7 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    phi_targ = posy*A + vely*B              # angle should point towards center
+    phi_targ = posx*A + velx*B              # angle should point towards center
     phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
     theta_targ = posy*A + vely*B            # angle should point towards center
@@ -226,7 +226,7 @@ def heuristic(env, s):
 
     hover_todo = -(posz*F + velz*G)
 
-    return hover_todo, phi_todo, theta_todo
+    return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
 
 def heuristic_lander(env, plotter=None, seed=None):
 
@@ -246,7 +246,7 @@ def heuristic_lander(env, plotter=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if False: #not env.resting_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
