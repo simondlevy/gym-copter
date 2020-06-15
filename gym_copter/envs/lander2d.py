@@ -127,13 +127,9 @@ class Lander2D(gym.Env, EzPickle):
         # Get new state from dynamics
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
-        # Negate for NED => ENU
-        posz  = -posz
-        velz  = -velz
-
         # Set lander pose in display if we haven't landed
         if not (self.dynamics.landed() or self.resting_count):
-            self.pose = posy, posz, phi
+            self.pose = posy, -posz, phi # NED=>END
 
         # Convert state to usable form
         state = np.array([posy, vely, posz, velz, phi, velphi])
@@ -230,7 +226,7 @@ def heuristic(env, s):
     angle_targ = posy*A + vely*B         # angle should point towards center
     angle_todo = (phi-angle_targ)*C + phi*D - velphi*E
 
-    hover_todo = -(posz*F + velz*G)
+    hover_todo = posz*F + velz*G
 
     return hover_todo, angle_todo
 

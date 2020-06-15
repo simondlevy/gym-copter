@@ -226,7 +226,7 @@ def heuristic(env, s):
     angle_targ = posx*A + velx*B         # angle should point towards center
     angle_todo = -(theta+angle_targ)*C -theta*D  + veltheta*E
 
-    hover_todo = (posz*F + velz*G)
+    hover_todo = posz*F + velz*G
 
     return hover_todo, angle_todo
 
