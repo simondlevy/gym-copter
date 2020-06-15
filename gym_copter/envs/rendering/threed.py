@@ -39,7 +39,7 @@ class _Vehicle:
         self.ys = []
         self.zs = []
 
-    def update(self, x, y, z):
+    def update(self, x, y, z, phi, theta, psi):
 
         # Append position to arrays for plotting trajectory
         self.xs.append(x)
@@ -133,11 +133,8 @@ class ThreeD:
         
     def _animate(self, _):
 
-        # Get vehicle position
-        x,y,z,_,_,_ = self.env.pose
-        
-        # Update the copter animation
-        self.copter.update(x, y, z)
+        # Update the copter animation with vehicle pose
+        self.copter.update(*self.env.pose)
 
         # Draw everything
         self.fig.canvas.draw()
