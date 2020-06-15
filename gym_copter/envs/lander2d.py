@@ -223,12 +223,12 @@ def heuristic(env, s):
 
     posy, vely, posz, velz, phi, velphi = s
 
-    angle_targ = posy*A + vely*B         # angle should point towards center
-    angle_todo = (phi-angle_targ)*C + phi*D - velphi*E
+    phi_targ = posy*A + vely*B         # angle should point towards center
+    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
     hover_todo = posz*F + velz*G
 
-    return hover_todo, angle_todo
+    return hover_todo, phi_todo
 
 def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
