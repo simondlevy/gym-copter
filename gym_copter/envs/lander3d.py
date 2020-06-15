@@ -39,11 +39,15 @@ class _ThreeDLander(ThreeD):
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 1.5 # perturbation factor for initial horizontal position
+    INITIAL_RANDOM_OFFSET = 0    #1.5 # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
-    RESTING_DURATION      = 1.0 # for rendering for a short while after successful landing
+    RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
     FRAMES_PER_SECOND     = 50
+    PENALTY_FACTOR        = 20.5 # designed so that maximal penalty is around 100
+    BOUNDS                = 10
+    OUT_OF_BOUNDS_PENALTY = 100
+    INSIDE_RADIUS_BONUS   = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -122,7 +126,7 @@ class Lander3D(gym.Env, EzPickle):
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and velocity
-        shaping = -12 * np.sqrt(np.sum(state[0:6]**2))
+        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
@@ -131,10 +135,10 @@ class Lander3D(gym.Env, EzPickle):
         # Assume we're not done yet
         done = False
 
-        # Lose bigly if we go outside window
-        if abs(posy) >= 10:
+        # Lose bigly if we go out of bounds
+        if abs(posy) >= self.BOUNDARY:
             done = True
-            reward = -100
+            reward = -self.OUT_OF_BOUNDS_PENALTY
 
         elif self.resting_count:
 
@@ -149,7 +153,7 @@ class Lander3D(gym.Env, EzPickle):
             # Win bigly we land safely between the flags
             if abs(posy) < self.LANDING_RADIUS: 
 
-                reward += 100
+                reward += self.INSIDE_RADIUS_BONUS
 
                 self.resting_count = int(self.RESTING_DURATION * self.FRAMES_PER_SECOND)
 
