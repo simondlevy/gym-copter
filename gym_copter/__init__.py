@@ -11,3 +11,9 @@ register(
     entry_point='gym_copter.envs:Lander2D',
     max_episode_steps=10000
 )
+
+register(
+    id='Lander-v3',
+    entry_point='gym_copter.envs:Lander3D',
+    max_episode_steps=10000
+)
