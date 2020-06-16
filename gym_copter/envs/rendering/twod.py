@@ -10,7 +10,7 @@ from gym.envs.classic_control import rendering
 import Box2D
 from Box2D.b2 import fixtureDef, polygonShape
 
-class TwoDRender:
+class TwoDRenderer:
 
     SCALE = 30.0
 

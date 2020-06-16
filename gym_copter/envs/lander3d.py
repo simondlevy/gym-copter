@@ -15,13 +15,13 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-from gym_copter.envs.rendering.threed import ThreeD, create_axis
+from gym_copter.envs.rendering.threed import ThreeDRenderer, create_axis
 
-class _ThreeDLander(ThreeD):
+class _ThreeDLanderRenderer(ThreeDRenderer):
 
     def __init__(self, env, radius=2):
 
-        ThreeD.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
+        ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
@@ -31,7 +31,7 @@ class _ThreeDLander(ThreeD):
 
     def _animate(self, _):
 
-        ThreeD._animate(self, _)
+        ThreeDRenderer._animate(self, _)
 
         self.circle.set_data(self.circle_x, self.circle_y)
         self.circle.set_3d_properties(self.circle_z)
@@ -68,6 +68,7 @@ class Lander3D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
 
         # Support for rendering
+        self.renderer = None
         self.pose = None
 
         self.reset()
@@ -161,16 +162,15 @@ class Lander3D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
+        # Create renderer if not done yet
+        if self.renderer is None:
+            self.renderer = _TwoDRenderLander(self.LANDING_RADIUS)
+
         return np.zeros((500,500,3), dtype='uint8')
 
     def close(self):
 
         return
-
-    def plotter(self):
-
-        # Pass title to 3D display
-        return _ThreeDLander(self)
 
 ## End of Lander3D class ----------------------------------------------------------------
 
@@ -223,7 +223,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
 
-def heuristic_lander(env, plotter=None, seed=None):
+def heuristic_lander(env, renderer=None, seed=None):
 
     import time
 
@@ -249,7 +249,7 @@ def heuristic_lander(env, plotter=None, seed=None):
 
         if done: break
 
-        if not plotter is None:
+        if not renderer is None:
             time.sleep(1./env.FRAMES_PER_SECOND)
 
     env.close()
@@ -262,11 +262,11 @@ if __name__ == '__main__':
 
     env = Lander3D()
 
-    plotter = env.plotter()
+    renderer = _ThreeDLanderRenderer(env)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, plotter))
+    thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
-    plotter.start()    
+    renderer.start()    

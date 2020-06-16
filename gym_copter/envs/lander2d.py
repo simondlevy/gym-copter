@@ -15,21 +15,21 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-from gym_copter.envs.rendering.twod import TwoDRender
+from gym_copter.envs.rendering.twod import TwoDRenderer
 
-class _TwoDRenderLander(TwoDRender):
+class _TwoDLanderRenderer(TwoDRenderer):
 
     FLAG_COLOR = 0.8, 0.0, 0.0
 
     def __init__(self, landing_radius):
 
-        TwoDRender.__init__(self)
+        TwoDRenderer.__init__(self)
 
         self.landing_radius = landing_radius
 
     def render(self, mode, pose, landed, leveling_count):
 
-        TwoDRender.render(self, pose, landed, leveling_count)
+        TwoDRenderer.render(self, pose, landed, leveling_count)
 
         # Draw flags
         for d in [-1,+1]:
@@ -40,7 +40,7 @@ class _TwoDRenderLander(TwoDRender):
             self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
-        return TwoDRender.complete(self, mode)
+        return TwoDRenderer.complete(self, mode)
 
 class Lander2D(gym.Env, EzPickle):
     
@@ -177,9 +177,9 @@ class Lander2D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        # Create viewer and world objects if not done yet
+        # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = _TwoDRenderLander(self.LANDING_RADIUS)
+            self.renderer = _TwoDLanderRenderer(self.LANDING_RADIUS)
 
         return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.leveling_count)
 
@@ -246,7 +246,6 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
         if render:
             frame = env.render('rgb_array')
-            print(type(frame[0,0,0]))
             if frame is None: break
             if save:
                 from PIL import Image

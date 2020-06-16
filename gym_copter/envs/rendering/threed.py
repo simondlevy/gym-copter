@@ -103,7 +103,7 @@ class _Vehicle:
         axis.set_data(x+xx, y+yy)
         axis.set_3d_properties(z+zz+dz)
 
-class ThreeD:
+class ThreeDRenderer:
 
     def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
 
