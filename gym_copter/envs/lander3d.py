@@ -29,6 +29,12 @@ class _ThreeDLanderRenderer(ThreeDRenderer):
         self.circle_y = radius * np.cos(pts)
         self.circle_z = np.zeros(self.circle_x.shape)
 
+    def render(self):
+
+        ThreeDRenderer.render(self)
+
+        return ThreeDRenderer.complete(self)
+
     def _animate(self, _):
 
         ThreeDRenderer._animate(self, _)
@@ -164,9 +170,9 @@ class Lander3D(gym.Env, EzPickle):
 
         # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = _TwoDRenderLander(self.LANDING_RADIUS)
+            self.renderer = _ThreeDLanderRenderer(self.LANDING_RADIUS)
 
-        return np.zeros((500,500,3), dtype='uint8')
+        return self.renderer.render()
 
     def close(self):
 

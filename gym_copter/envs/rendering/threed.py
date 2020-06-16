@@ -153,6 +153,15 @@ class ThreeDRenderer:
         time.sleep(1)
         plt.close(self.fig)
 
+    def render(self):
+
+        return
+
+    def complete(self):
+
+        # XXX
+        return np.zeros((500,500,3), dtype='uint8')
+
     def _handle_close(self, event):
 
         self.is_open = False
