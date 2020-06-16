@@ -246,6 +246,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
         if render:
             frame = env.render('rgb_array')
+            print(type(frame[0,0,0]))
             if frame is None: break
             if save:
                 from PIL import Image

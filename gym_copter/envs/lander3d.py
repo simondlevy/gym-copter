@@ -161,7 +161,7 @@ class Lander3D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        return True
+        return np.zeros((500,500,3), dtype='uint8')
 
     def close(self):
 
