@@ -58,7 +58,6 @@ class Lander3D(gym.Env, EzPickle):
 
         EzPickle.__init__(self)
         self.seed()
-        self.viewer = None
 
         self.prev_reward = None
 
