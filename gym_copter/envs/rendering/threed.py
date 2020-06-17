@@ -176,7 +176,7 @@ class ThreeDRenderer:
     def _animate(self, _):
 
         # Update the copter animation with vehicle pose
-        self.copter.update(*self.env.pose)
+        self.render()
 
         # Draw everything
         self.fig.canvas.draw()
