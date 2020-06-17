@@ -170,7 +170,7 @@ class Lander3D(gym.Env, EzPickle):
 
         # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = _ThreeDLanderRenderer(self.LANDING_RADIUS)
+            self.renderer = _ThreeDLanderRenderer(self, self.LANDING_RADIUS)
 
         return self.renderer.render()
 

@@ -74,7 +74,6 @@ class _Vehicle:
             dy = 2 * (j %  2) - 1
 
             self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, 0)
-
             self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
@@ -159,12 +158,7 @@ class ThreeDRenderer:
 
     def render(self):
 
-        theta = np.linspace(-4 * np.pi, 4 * np.pi, 100)
-        z = np.linspace(-2, 2, 100)
-        r = z**2 + 1
-        x = r * np.sin(theta)
-        y = r * np.cos(theta)
-        self.ax.plot(x, y, z, label='parametric curve')
+        self.copter.update(*self.env.pose)
 
     def complete(self):
 
