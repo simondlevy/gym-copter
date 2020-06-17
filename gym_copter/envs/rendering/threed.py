@@ -77,8 +77,6 @@ class _Vehicle:
 
             self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
-        plt.gca().set_aspect('equal')
-
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
         # Make convenient abbreviations for functions of Euler angles
@@ -137,6 +135,8 @@ class ThreeDRenderer:
         self.ax.set_ylim((-lim, lim))
         self.ax.set_zlim((0, lim))
 
+        self.ax.set_aspect('equal')
+
         # Create a representation of the copter
         self.copter = _Vehicle(self.ax, showtraj)
 
@@ -159,8 +159,6 @@ class ThreeDRenderer:
 
     def render(self):
 
-        # XXX mock-up 3D plot for now
-        #ax = self.fig.gca(projection='3d')
         theta = np.linspace(-4 * np.pi, 4 * np.pi, 100)
         z = np.linspace(-2, 2, 100)
         r = z**2 + 1
@@ -174,6 +172,7 @@ class ThreeDRenderer:
         buf = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8)
         w,h = self.fig.canvas.get_width_height()
         buf.shape = w, h, 3
+
         return np.array(Image.frombytes("RGB", (w ,h), buf.tostring()))
 
     def _handle_close(self, event):
