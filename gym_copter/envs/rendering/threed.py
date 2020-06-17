@@ -11,6 +11,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image
 
 def create_axis(ax, color):
     obj = ax.plot([], [], [], '-', c=color)[0]
@@ -38,6 +39,9 @@ class _Vehicle:
         self.xs = []
         self.ys = []
         self.zs = []
+
+        # For render() support
+        self.fig = None
 
     def update(self, x, y, z, phi, theta, psi):
 
@@ -155,12 +159,22 @@ class ThreeDRenderer:
 
     def render(self):
 
-        return
+        # XXX mock-up 3D plot for now
+        ax = self.fig.gca(projection='3d')
+        theta = np.linspace(-4 * np.pi, 4 * np.pi, 100)
+        z = np.linspace(-2, 2, 100)
+        r = z**2 + 1
+        x = r * np.sin(theta)
+        y = r * np.cos(theta)
+        ax.plot(x, y, z, label='parametric curve')
 
     def complete(self):
 
-        # XXX
-        return np.zeros((500,500,3), dtype='uint8')
+        self.fig.canvas.draw()
+        buf = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8)
+        w,h = self.fig.canvas.get_width_height()
+        buf.shape = w, h, 3
+        return np.array(Image.frombytes("RGB", (w ,h), buf.tostring()))
 
     def _handle_close(self, event):
 
