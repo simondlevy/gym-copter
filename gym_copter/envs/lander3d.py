@@ -22,7 +22,6 @@ class _ThreeDLanderRenderer(ThreeDRenderer):
     def __init__(self, env, radius=2):
 
         ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
-        #ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[90,90])
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
@@ -147,7 +146,7 @@ class Lander3D(gym.Env, EzPickle):
             done = True
 
             # Win bigly we land safely between the flags
-            if abs(posy) < self.LANDING_RADIUS: 
+            if posx**2+posy**2 < self.LANDING_RADIUS**2: 
 
                 reward += self.INSIDE_RADIUS_BONUS
 
@@ -197,13 +196,13 @@ def heuristic(env, s):
     """
 
     # Angle target
-    A = 0#0.05
-    B = 0#0.06
+    A = 0.05
+    B = 0.06
 
     # Angle PID
-    C = 0#0.025
-    D = 0#0.05
-    E = 0#0.4
+    C = 0.025
+    D = 0.05
+    E = 0.4
 
     # Vertical PID
     F = 1.15
