@@ -45,16 +45,17 @@ class _ThreeDLanderRenderer(ThreeDRenderer):
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 3.0 # perturbation factor for initial horizontal position
+    INITIAL_RANDOM_OFFSET = 3.0  # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
-    PENALTY_FACTOR        = 20.5 # designed so that maximal penalty is around 100
+    XY_PENALTY_FACTOR     = 20.5 # designed so that maximal penalty is around 100
     BOUNDS                = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
     RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
     FRAMES_PER_SECOND     = 50
     MAX_ANGLE             = 45   # big penalty if roll or pitch angles go beyond this
+    EXCESS_ANGLE_PENALTY  = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -77,6 +78,9 @@ class Lander3D(gym.Env, EzPickle):
         # Support for rendering
         self.renderer = None
         self.pose = None
+
+        # Pre-convert max-angle degrees to radian
+        self.max_angle = np.radians(self.MAX_ANGLE)
 
         self.reset()
 
@@ -127,7 +131,7 @@ class Lander3D(gym.Env, EzPickle):
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and velocity
-        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2))
+        shaping = -self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
@@ -141,8 +145,13 @@ class Lander3D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
+        # Lose bigly for excess roll or pitch 
+        if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
+            done = True
+            reward = -self.OUT_OF_BOUNDS_PENALTY
+
         # It's all over once we're on the ground
-        elif self.dynamics.landed():
+        if self.dynamics.landed():
 
             done = True
 
@@ -151,7 +160,7 @@ class Lander3D(gym.Env, EzPickle):
 
                 reward += self.INSIDE_RADIUS_BONUS
 
-        elif self.dynamics.crashed():
+        if self.dynamics.crashed():
 
             # Crashed!
             done = True
@@ -240,8 +249,8 @@ def heuristic_lander(env, renderer=None, seed=None):
         total_reward += reward
 
         if steps % 20 == 0 or done:
-            print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
-            print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+           print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
+           print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
         steps += 1
 
