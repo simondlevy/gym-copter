@@ -54,6 +54,7 @@ class Lander3D(gym.Env, EzPickle):
     INSIDE_RADIUS_BONUS   = 100
     RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
     FRAMES_PER_SECOND     = 50
+    MAX_ANGLE             = 45   # big penalty if roll or pitch angles go beyond this
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -136,7 +137,7 @@ class Lander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go out of bounds
-        if abs(posy) >= self.BOUNDS:
+        if abs(posx) >= self.BOUNDS or abs(posy) >= self.BOUNDS:
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
