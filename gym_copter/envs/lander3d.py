@@ -22,6 +22,7 @@ class _ThreeDLanderRenderer(ThreeDRenderer):
     def __init__(self, env, radius=2):
 
         ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
+        #ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[90,90])
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
@@ -87,8 +88,6 @@ class Lander3D(gym.Env, EzPickle):
 
         self.prev_shaping = None
 
-        self.resting_count = 0
-
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
 
@@ -108,7 +107,7 @@ class Lander3D(gym.Env, EzPickle):
         d = self.dynamics
 
         # Stop motors after safe landing
-        if self.dynamics.landed() or self.resting_count:
+        if self.dynamics.landed():
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -121,7 +120,7 @@ class Lander3D(gym.Env, EzPickle):
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
         # Set lander pose in display if we haven't landed
-        if not (self.dynamics.landed() or self.resting_count):
+        if not self.dynamics.landed():
             self.pose = posx, posy, posz, phi, theta, psi
 
         # Convert state to usable form
@@ -142,22 +141,15 @@ class Lander3D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        elif self.resting_count:
-
-            self.resting_count -= 1
-
-            if self.resting_count == 0:
-                done = True
-
         # It's all over once we're on the ground
         elif self.dynamics.landed():
+
+            done = True
 
             # Win bigly we land safely between the flags
             if abs(posy) < self.LANDING_RADIUS: 
 
                 reward += self.INSIDE_RADIUS_BONUS
-
-                self.resting_count = int(self.RESTING_DURATION * self.FRAMES_PER_SECOND)
 
         elif self.dynamics.crashed():
 
@@ -205,13 +197,13 @@ def heuristic(env, s):
     """
 
     # Angle target
-    A = 0.05
-    B = 0.06
+    A = 0#0.05
+    B = 0#0.06
 
     # Angle PID
-    C = 0.025
-    D = 0.05
-    E = 0.4
+    C = 0#0.025
+    D = 0#0.05
+    E = 0#0.4
 
     # Vertical PID
     F = 1.15
@@ -247,7 +239,7 @@ def heuristic_lander(env, renderer=None, seed=None):
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        if not env.resting_count and (steps % 20 == 0 or done):
+        if steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
