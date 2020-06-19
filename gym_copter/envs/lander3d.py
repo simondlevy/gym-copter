@@ -33,14 +33,20 @@ class _ThreeDLanderRenderer(ThreeDRenderer):
 
         ThreeDRenderer.render(self)
 
+        self._update()
+
         return ThreeDRenderer.complete(self)
+
+    def _update(self):
+
+        self.circle.set_data(self.circle_x, self.circle_y)
+        self.circle.set_3d_properties(self.circle_z)
 
     def _animate(self, _):
 
         ThreeDRenderer._animate(self, _)
 
-        self.circle.set_data(self.circle_x, self.circle_y)
-        self.circle.set_3d_properties(self.circle_z)
+        self._update()
 
 class Lander3D(gym.Env, EzPickle):
 
