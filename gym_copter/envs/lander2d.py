@@ -53,7 +53,7 @@ class Lander2D(gym.Env, EzPickle):
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
     FRAMES_PER_SECOND     = 50
-    LEVELING_DURATION     = 1.0 # helps fake-up leveling-off after successful landing
+    LEVELING_DURATION     = 0.1 # helps fake-up leveling-off after successful landing
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -84,10 +84,6 @@ class Lander2D(gym.Env, EzPickle):
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
-
-    def _destroy(self):
-        if self.renderer is not None:
-            self.renderer.close()
 
     def reset(self):
 
@@ -188,6 +184,10 @@ class Lander2D(gym.Env, EzPickle):
             self.renderer.close()
             self.renderer = None
 
+    def _destroy(self):
+        if self.renderer is not None:
+            self.renderer.close()
+
 # End of Lander2D class ----------------------------------------------------------------
 
 
@@ -234,6 +234,8 @@ def heuristic(env, s):
 
 def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
+    from time import sleep
+
     env.seed(seed)
     np.random.seed(seed)
     total_reward = 0
@@ -259,6 +261,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
         steps += 1
         if done: break
 
+    sleep(1)
     env.close()
     return total_reward
 
