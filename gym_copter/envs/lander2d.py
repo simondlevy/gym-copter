@@ -53,7 +53,6 @@ class Lander2D(gym.Env, EzPickle):
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
     FRAMES_PER_SECOND     = 50
-    LEVELING_DURATION     = 0.1 # helps fake-up leveling-off after successful landing
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -147,7 +146,7 @@ class Lander2D(gym.Env, EzPickle):
 
         elif self.leveling_count:
 
-            self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+            self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
 
             self.leveling_count -= 1
 
@@ -162,7 +161,7 @@ class Lander2D(gym.Env, EzPickle):
 
                 reward += self.INSIDE_RADIUS_BONUS
 
-                self.leveling_count = int(self.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+                self.leveling_count = int(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
 
         elif d.crashed():
 

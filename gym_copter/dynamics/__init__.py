@@ -83,6 +83,9 @@ class MultirotorDynamics:
     LANDING_VEL_Y  = 1.0
     LANDING_ANGLE  = np.pi/4
 
+    # Helps fake-up leveling-off after successful landing
+    LEVELING_DURATION     = 0.1 
+
     def __init__(self, params, motorCount, g=G):
         '''
         Constructor
