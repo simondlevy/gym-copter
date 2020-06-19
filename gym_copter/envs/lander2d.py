@@ -105,9 +105,10 @@ class Lander2D(gym.Env, EzPickle):
 
         # Abbreviation
         d = self.dynamics
+        status = d.getStatus()
 
         # Stop motors after safe landing
-        if d.landed():
+        if status == d.STATUS_LANDED:
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -120,7 +121,7 @@ class Lander2D(gym.Env, EzPickle):
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
         # Set lander pose in display if we haven't landed
-        if not (d.landed() or self.dynamics.leveling_count):
+        if not (status == d.STATUS_LANDED or d.leveling_count):
             self.pose = posy, posz, phi
 
         # Convert state to usable form
@@ -151,7 +152,7 @@ class Lander2D(gym.Env, EzPickle):
                 done = True
 
         # It's all over once we're on the ground
-        elif d.landed():
+        elif d.getStatus() == d.STATUS_LANDED:
 
             # Win bigly we land safely between the flags
             if abs(posy) < self.LANDING_RADIUS: 
@@ -160,7 +161,7 @@ class Lander2D(gym.Env, EzPickle):
 
                 self.dynamics.leveling_count = int(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
 
-        elif d.crashed():
+        elif d.getStatus() == d.STATUS_CRASHED:
 
             # Crashed!
             done = True
@@ -173,7 +174,9 @@ class Lander2D(gym.Env, EzPickle):
         if self.renderer is None:
             self.renderer = _TwoDLanderRenderer(self.LANDING_RADIUS)
 
-        return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.dynamics.leveling_count)
+        d = self.dynamics
+
+        return self.renderer.render(mode, self.pose, d.getStatus()==d.STATUS_LANDED, self.dynamics.leveling_count)
 
     def close(self):
         if self.renderer is not None:

@@ -75,6 +75,14 @@ class MultirotorDynamics:
     STATE_PSI       = 10
     STATE_PSI_DOT   = 11
 
+    '''
+    Flight status
+    '''
+    STATUS_CRASHED  = 0
+    STATUS_LEVELING = 1
+    STATUS_LANDED   = 2
+    STATUS_AIRBORNE = 3
+
     # Default to Earth gravity
     G = 9.80665
 
@@ -101,7 +109,8 @@ class MultirotorDynamics:
         self._x    = np.zeros(12)
         self._dxdt = np.zeros(12)
 
-        self._airborne = False
+        # Start on ground
+        self._status = self.STATUS_LANDED
 
         # Values computed in Equation 6
         self._U1 = 0     # total thrust
@@ -114,8 +123,6 @@ class MultirotorDynamics:
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
         # Support landing
-        self._landed = False
-        self._crashed = False
         self.leveling_count = 0
 
     def setMotors(self, motorvals):
@@ -152,9 +159,9 @@ class MultirotorDynamics:
             velx  = self._x[self.STATE_Y_DOT]
             vely  = self._x[self.STATE_Z_DOT]
             if vely > self.LANDING_VEL_Y or abs(velx)>self.LANDING_VEL_X or abs(phi)>self.LANDING_ANGLE: 
-                self._crashed = True
+                self._status = self.STATUS_CRASHED
             else:
-                self._landed = True 
+                self._status = self.STATUS_LANDED
             return
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
@@ -162,15 +169,15 @@ class MultirotorDynamics:
         euler = ( self._x[6], self._x[8], self._x[10] )
         accelNED = MultirotorDynamics._bodyZToInertial(-self._U1 / self._p.m, euler)
 
-        # We're airborne once net downward acceleration goes below zero
+        # Compute net vertical acceleration by subtracting gravity
         netz = accelNED[2] + self.g
 
         # If we're not airborne, we become airborne when downward acceleration has become negative
-        if not self._airborne:
-            self._airborne = netz < 0
+        if self._status == self.STATUS_LANDED and netz < 0:
+            self._status = self.STATUS_AIRBORNE
 
         # Once airborne, we can update dynamics
-        if self._airborne:
+        if self._status == self.STATUS_AIRBORNE:
 
             # Compute the state derivatives using Equation 12
             self._computeStateDerivative(accelNED, netz)
@@ -192,15 +199,11 @@ class MultirotorDynamics:
         Sets the state to the values specified in a sequence
         '''
         self._x = np.array(state)
-        self._airborne = self._x[self.STATE_Z] < 0
+        self._status = self.STATUS_AIRBORNE if self._x[self.STATE_Z] < 0 else self.STATUS_LANDED
 
-    def landed(self):
+    def getStatus(self):
 
-        return self._landed
-
-    def crashed(self):
-
-        return self._crashed
+        return self._status
 
     def _computeStateDerivative(self, accelNED, netz):
         '''

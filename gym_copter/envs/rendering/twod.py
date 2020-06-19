@@ -57,7 +57,7 @@ class TwoDRenderer:
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def render(self, pose, landed, resting_count):
+    def render(self, pose, landed, leveling_count):
 
         # Draw ground as background
         self.viewer.draw_polygon(
@@ -91,7 +91,7 @@ class TwoDRenderer:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  landed or resting_count or ((self.props_visible + 1) % 3)
+        self.props_visible =  landed or leveling_count or ((self.props_visible + 1) % 3)
 
     def complete(self, mode):
 
