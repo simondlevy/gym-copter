@@ -12,23 +12,17 @@ from Box2D.b2 import fixtureDef, polygonShape
 
 class TwoDRenderer:
 
-    SCALE = 30.0
-
-    LANDER_POLY =[ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
-
-    GEAR_HEIGHT = 0.85
-
-    LEG_X, LEG_Y, LEG_W, LEG_H  = 12, -7, 3, 20
-
-    MOTOR_X, MOTOR_Y, MOTOR_W, MOTOR_H  = 25, 7, 4, 5
-
-    BLADE_X, BLADE_Y, BLADE_W, BLADE_H = 25, 8, 20, 2
-
-    HULL_POLY =[ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
-
     VIEWPORT_W, VIEWPORT_H = 600, 400
+    SCALE                  = 30.0
+    GROUND_Z               = 3.33
+    GEAR_HEIGHT            = 0.85
 
-    GROUND_Z = 3.33
+    LANDER_POLY = [ (-14, +17), (-17, 0), (-17 ,-10), (+17, -10), (+17, 0), (+14, +17) ]
+    HULL_POLY   = [ (-30, 0), (-4, +4), (+4, +4), (+30,  0), (+4, -14), (-4, -14), ]
+
+    LEG_X, LEG_Y, LEG_W, LEG_H         = 12, -7, 3, 20
+    MOTOR_X, MOTOR_Y, MOTOR_W, MOTOR_H = 25, 7, 4, 5
+    BLADE_X, BLADE_Y, BLADE_W, BLADE_H = 25, 8, 20, 2
 
     SKY_COLOR     = 0.5, 0.8, 1.0
     GROUND_COLOR  = 0.5, 0.7, 0.3
