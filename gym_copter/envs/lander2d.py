@@ -76,7 +76,6 @@ class Lander2D(gym.Env, EzPickle):
         # Support for rendering
         self.renderer = None
         self.pose = None
-        self._leveling_count = 0
 
         self.reset()
 
@@ -89,8 +88,6 @@ class Lander2D(gym.Env, EzPickle):
         self._destroy()
 
         self.prev_shaping = None
-
-        self.leveling_count = 0
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics()
@@ -123,7 +120,7 @@ class Lander2D(gym.Env, EzPickle):
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
         # Set lander pose in display if we haven't landed
-        if not (d.landed() or self.leveling_count):
+        if not (d.landed() or self.dynamics.leveling_count):
             self.pose = posy, posz, phi
 
         # Convert state to usable form
@@ -144,13 +141,13 @@ class Lander2D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        elif self.leveling_count:
+        elif self.dynamics.leveling_count:
 
             self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
 
-            self.leveling_count -= 1
+            self.dynamics.leveling_count -= 1
 
-            if self.leveling_count == 0:
+            if self.dynamics.leveling_count == 0:
                 done = True
 
         # It's all over once we're on the ground
@@ -161,7 +158,7 @@ class Lander2D(gym.Env, EzPickle):
 
                 reward += self.INSIDE_RADIUS_BONUS
 
-                self.leveling_count = int(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+                self.dynamics.leveling_count = int(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
 
         elif d.crashed():
 
@@ -176,7 +173,7 @@ class Lander2D(gym.Env, EzPickle):
         if self.renderer is None:
             self.renderer = _TwoDLanderRenderer(self.LANDING_RADIUS)
 
-        return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.leveling_count)
+        return self.renderer.render(mode, self.pose, self.dynamics.landed(), self.dynamics.leveling_count)
 
     def close(self):
         if self.renderer is not None:
@@ -253,7 +250,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
                 img = Image.fromarray(frame)
                 img.save("img_%05d.png" % steps)
 
-        if not env.leveling_count and (steps % 20 == 0 or done):
+        if not env.dynamics.leveling_count and (steps % 20 == 0 or done):
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 

@@ -116,6 +116,7 @@ class MultirotorDynamics:
         # Support landing
         self._landed = False
         self._crashed = False
+        self.leveling_count = 0
 
     def setMotors(self, motorvals):
         '''
