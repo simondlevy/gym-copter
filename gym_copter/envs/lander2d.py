@@ -143,9 +143,6 @@ class Lander2D(gym.Env, EzPickle):
 
         else:
 
-            d = self.dynamics
-            status = d.getStatus()
-
             # It's all over once we're on the ground
             if status == d.STATUS_LANDED:
 

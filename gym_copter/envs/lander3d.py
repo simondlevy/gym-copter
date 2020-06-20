@@ -99,7 +99,7 @@ class Lander3D(gym.Env, EzPickle):
         self.prev_shaping = None
 
         # Create cusom dynamics model
-        self.dynamics = DJIPhantomDynamics()
+        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
@@ -115,9 +115,10 @@ class Lander3D(gym.Env, EzPickle):
 
         # Abbreviation
         d = self.dynamics
+        status = d.getStatus()
 
         # Stop motors after safe landing
-        if self.dynamics.landed():
+        if status == d.STATUS_LANDED:
             d.setMotors(np.zeros(4))
 
         # In air, set motors from action
@@ -129,9 +130,8 @@ class Lander3D(gym.Env, EzPickle):
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
-        # Set lander pose in display if we haven't landed
-        if not self.dynamics.landed():
-            self.pose = posx, posy, posz, phi, theta, psi
+        # Set lander pose in display
+        self.pose = posx, posy, posz, phi, theta, psi
 
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])

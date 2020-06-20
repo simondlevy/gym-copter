@@ -163,7 +163,7 @@ class MultirotorDynamics:
         if self._status == self.STATUS_LEVELING:
 
                 self._x[self.STATE_PHI] = 0
-
+                self._x[self.STATE_THETA] = 0
                 self._status = self.STATUS_LANDED
 
         # Once airborne, we can update dynamics
