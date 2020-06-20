@@ -45,6 +45,9 @@ class _Vehicle:
 
     def update(self, x, y, z, phi, theta, psi):
 
+        # Adjust for X axis orientation
+        theta = -theta
+
         # Adjust coordinate frame
         x = -x
         z = -z
