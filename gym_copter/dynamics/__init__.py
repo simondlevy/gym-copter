@@ -120,10 +120,6 @@ class MultirotorDynamics:
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
-        # Support leveling on touchdown
-        self.leveling_count = 0
-        self.leveling_dphi = 0
-
     def setMotors(self, motorvals):
         '''
         Uses motor values to implement Equation 6.
@@ -166,7 +162,7 @@ class MultirotorDynamics:
         # Leveling mode: change roll, pitch angles for  rendering
         if self._status == self.STATUS_LEVELING:
 
-                self._x[self.STATE_PHI] -= self.leveling_dphi
+                self._x[self.STATE_PHI] = 0
 
                 self._status = self.STATUS_LANDED
 
@@ -181,7 +177,6 @@ class MultirotorDynamics:
                     self._status = self.STATUS_CRASHED
                 else:
                     self._status = self.STATUS_LEVELING
-                    self.leveling_dphi = phi 
                 return
 
             # Compute the state derivatives using Equation 12
