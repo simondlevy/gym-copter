@@ -146,12 +146,8 @@ class Lander2D(gym.Env, EzPickle):
             d = self.dynamics
             status = d.getStatus()
 
-            if status == d.STATUS_LEVELING:
-
-                self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
-
             # It's all over once we're on the ground
-            elif status == d.STATUS_LANDED:
+            if status == d.STATUS_LANDED:
 
                 done = True
 

@@ -91,9 +91,6 @@ class MultirotorDynamics:
     LANDING_VEL_Y  = 1.0
     LANDING_ANGLE  = np.pi/4
 
-    # Helps fake-up leveling-off after successful landing
-    LEVELING_DURATION = 10
-
     def __init__(self, params, motorCount, framesPerSecond, g=G):
         '''
         Constructor
@@ -171,10 +168,7 @@ class MultirotorDynamics:
 
                 self._x[self.STATE_PHI] -= self.leveling_dphi
 
-                self.leveling_count -= 1
-
-                if self.leveling_count == 0:
-                    self._status = self.STATUS_LANDED
+                self._status = self.STATUS_LANDED
 
         # Once airborne, we can update dynamics
         elif self._status == self.STATUS_AIRBORNE:
@@ -187,8 +181,7 @@ class MultirotorDynamics:
                     self._status = self.STATUS_CRASHED
                 else:
                     self._status = self.STATUS_LEVELING
-                    self.leveling_count = self.LEVELING_DURATION
-                    self.leveling_dphi = phi / self.LEVELING_DURATION
+                    self.leveling_dphi = phi 
                 return
 
             # Compute the state derivatives using Equation 12
