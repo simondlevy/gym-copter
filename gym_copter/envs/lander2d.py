@@ -120,9 +120,8 @@ class Lander2D(gym.Env, EzPickle):
         # Get new state from dynamics
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
-        # Set lander pose in display if we haven't landed
-        if not status in [d.STATUS_LANDED, d.STATUS_LEVELING]:
-            self.pose = posy, posz, phi
+        # Set lander pose for renderer
+        self.pose = posy, posz, phi
 
         # Convert state to usable form
         state = np.array([posy, vely, posz, velz, phi, velphi])
@@ -267,4 +266,4 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(Lander2D(), seed=0, render=True, save=False)
+    demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)

@@ -92,7 +92,7 @@ class MultirotorDynamics:
     LANDING_ANGLE  = np.pi/4
 
     # Helps fake-up leveling-off after successful landing
-    LEVELING_DURATION = 100
+    LEVELING_DURATION = 10
 
     def __init__(self, params, motorCount, framesPerSecond, g=G):
         '''
@@ -123,8 +123,9 @@ class MultirotorDynamics:
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
-        # Support landing
+        # Support leveling on touchdown
         self.leveling_count = 0
+        self.leveling_dphi = 0
 
     def setMotors(self, motorvals):
         '''
@@ -161,12 +162,14 @@ class MultirotorDynamics:
         netz = accelNED[2] + self.g
 
         # If we're not airborne, we become airborne when downward acceleration has become negative
-        if self._status == self.STATUS_LANDED and netz < 0:
-            self._status = self.STATUS_AIRBORNE
+        if self._status == self.STATUS_LANDED:
+            if netz < 0:
+                self._status = self.STATUS_AIRBORNE
 
+        # Leveling mode: change roll, pitch angles for  rendering
         if self._status == self.STATUS_LEVELING:
 
-                #self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+                self._x[self.STATE_PHI] -= self.leveling_dphi
 
                 self.leveling_count -= 1
 
@@ -185,6 +188,7 @@ class MultirotorDynamics:
                 else:
                     self._status = self.STATUS_LEVELING
                     self.leveling_count = self.LEVELING_DURATION
+                    self.leveling_dphi = phi / self.LEVELING_DURATION
                 return
 
             # Compute the state derivatives using Equation 12
