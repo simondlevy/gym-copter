@@ -54,7 +54,8 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_RANDOM_OFFSET = 3.0  # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
-    POSE_PENALTY_FACTOR   = 25   # designed so that maximal penalty is around 100
+    XY_PENALTY_FACTOR   = 25   # designed so that maximal penalty is around 100
+    ANGLE_PENALTY_FACTOR   = 250   
     BOUNDS                = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
@@ -137,7 +138,8 @@ class Lander3D(gym.Env, EzPickle):
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
         # Reward is a simple penalty for overall distance and angle and their first derivatives
-        shaping = -self.POSE_PENALTY_FACTOR * np.sqrt(np.sum(state[0:10]**2))
+        shaping = -(self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
+                self.ANGLE_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)))
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
