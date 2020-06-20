@@ -166,6 +166,8 @@ class MultirotorDynamics:
 
         if self._status == self.STATUS_LEVELING:
 
+                #self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+
                 self.leveling_count -= 1
 
                 if self.leveling_count == 0:

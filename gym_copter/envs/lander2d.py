@@ -253,7 +253,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
                 img = Image.fromarray(frame)
                 img.save("img_%05d.png" % steps)
 
-        if not steps % 20 == 0 or done:
+        if (steps % 20 == 0) or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
@@ -267,4 +267,4 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)
+    demo_heuristic_lander(Lander2D(), seed=0, render=True, save=False)
