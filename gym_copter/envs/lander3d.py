@@ -157,7 +157,7 @@ class Lander3D(gym.Env, EzPickle):
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
         # It's all over once we're on the ground
-        if self.dynamics.landed():
+        if status == d.STATUS_LANDED:
 
             done = True
 
@@ -166,7 +166,7 @@ class Lander3D(gym.Env, EzPickle):
 
                 reward += self.INSIDE_RADIUS_BONUS
 
-        if self.dynamics.crashed():
+        elif status == d.STATUS_CRASHED:
 
             # Crashed!
             done = True
