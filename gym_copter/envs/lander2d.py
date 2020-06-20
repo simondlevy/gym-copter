@@ -27,9 +27,9 @@ class _TwoDLanderRenderer(TwoDRenderer):
 
         self.landing_radius = landing_radius
 
-    def render(self, mode, pose, landed, leveling_count):
+    def render(self, mode, pose, status):
 
-        TwoDRenderer.render(self, pose, landed, leveling_count)
+        TwoDRenderer.render(self, pose, status)
 
         # Draw flags
         for d in [-1,+1]:
@@ -90,7 +90,7 @@ class Lander2D(gym.Env, EzPickle):
         self.prev_shaping = None
 
         # Create cusom dynamics model
-        self.dynamics = DJIPhantomDynamics()
+        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
@@ -115,13 +115,13 @@ class Lander2D(gym.Env, EzPickle):
         else:
             t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
             d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
-            d.update(1./self.FRAMES_PER_SECOND)
+            d.update()
 
         # Get new state from dynamics
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
         # Set lander pose in display if we haven't landed
-        if not (status == d.STATUS_LANDED or d.leveling_count):
+        if not status in [d.STATUS_LANDED, d.STATUS_LEVELING]:
             self.pose = posy, posz, phi
 
         # Convert state to usable form
@@ -142,29 +142,29 @@ class Lander2D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        elif self.dynamics.leveling_count:
+        else:
 
-            self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+            d = self.dynamics
+            status = d.getStatus()
 
-            self.dynamics.leveling_count -= 1
+            if status == d.STATUS_LEVELING:
 
-            if self.dynamics.leveling_count == 0:
+                self.pose = self.pose[0], self.pose[1], self.pose[2]-phi/(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
+
+            # It's all over once we're on the ground
+            elif status == d.STATUS_LANDED:
+
                 done = True
 
-        # It's all over once we're on the ground
-        elif d.getStatus() == d.STATUS_LANDED:
+                # Win bigly we land safely between the flags
+                if abs(posy) < self.LANDING_RADIUS: 
 
-            # Win bigly we land safely between the flags
-            if abs(posy) < self.LANDING_RADIUS: 
+                    reward += self.INSIDE_RADIUS_BONUS
 
-                reward += self.INSIDE_RADIUS_BONUS
+            elif status == d.STATUS_CRASHED:
 
-                self.dynamics.leveling_count = int(self.dynamics.LEVELING_DURATION * self.FRAMES_PER_SECOND)
-
-        elif d.getStatus() == d.STATUS_CRASHED:
-
-            # Crashed!
-            done = True
+                # Crashed!
+                done = True
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -176,7 +176,7 @@ class Lander2D(gym.Env, EzPickle):
 
         d = self.dynamics
 
-        return self.renderer.render(mode, self.pose, d.getStatus()==d.STATUS_LANDED, self.dynamics.leveling_count)
+        return self.renderer.render(mode, self.pose, d.getStatus())
 
     def close(self):
         if self.renderer is not None:
@@ -253,7 +253,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
                 img = Image.fromarray(frame)
                 img.save("img_%05d.png" % steps)
 
-        if not env.dynamics.leveling_count and (steps % 20 == 0 or done):
+        if not steps % 20 == 0 or done:
             print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 

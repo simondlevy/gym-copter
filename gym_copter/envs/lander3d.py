@@ -124,7 +124,7 @@ class Lander3D(gym.Env, EzPickle):
         else:
             t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
             d.setMotors(np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1)) # use mixer to set motors
-            d.update(1./self.FRAMES_PER_SECOND)
+            d.update()
 
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()

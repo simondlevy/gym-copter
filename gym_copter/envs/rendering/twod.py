@@ -9,6 +9,7 @@ MIT License
 from gym.envs.classic_control import rendering
 import Box2D
 from Box2D.b2 import fixtureDef, polygonShape
+from gym_copter.dynamics import MultirotorDynamics as dynamics
 
 class TwoDRenderer:
 
@@ -57,7 +58,7 @@ class TwoDRenderer:
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def render(self, pose, landed, leveling_count):
+    def render(self, pose, status):
 
         # Draw ground as background
         self.viewer.draw_polygon(
@@ -91,7 +92,7 @@ class TwoDRenderer:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  landed or leveling_count or ((self.props_visible + 1) % 3)
+        self.props_visible =  (status in [dynamics.STATUS_LEVELING, dynamics.STATUS_LANDED]) or ((self.props_visible + 1) % 3)
 
     def complete(self, mode):
 

@@ -76,11 +76,11 @@ class MultirotorDynamics:
     STATE_PSI_DOT   = 11
 
     '''
-    Flight status
+    Flight status: LANDED -> AIRBORNE -> CRASHED or LANDED -> AIRBORNE -> LEVELING -> LANDED 
     '''
     STATUS_CRASHED  = 0
-    STATUS_LEVELING = 1
-    STATUS_LANDED   = 2
+    STATUS_LANDED   = 1
+    STATUS_LEVELING = 2
     STATUS_AIRBORNE = 3
 
     # Default to Earth gravity
@@ -92,15 +92,16 @@ class MultirotorDynamics:
     LANDING_ANGLE  = np.pi/4
 
     # Helps fake-up leveling-off after successful landing
-    LEVELING_DURATION     = 0.1 
+    LEVELING_DURATION = 100
 
-    def __init__(self, params, motorCount, g=G):
+    def __init__(self, params, motorCount, framesPerSecond, g=G):
         '''
         Constructor
         Initializes kinematic pose, with flag for whether we're airbone (helps with testing gravity).
         '''
         self._p = params
         self._motorCount = motorCount
+        self._fps = framesPerSecond
         self.g = g
 
         self._omegas  = np.zeros(motorCount)
@@ -146,23 +147,10 @@ class MultirotorDynamics:
         self._U3 = self._p.l * self._p.b * self.u3(omegas2)
         self._U4 = self._p.d * self.u4(omegas2)
         
-    def update(self, dt, clamp=None):
+    def update(self):
         '''
         Updates state.
-        dt    time in seconds since previous update
-        clamp state dimensions to clamp; supports landing
         '''
-
-        # It's all over once we're on the ground
-        if -self._x[self.STATE_Z] <= 0:
-            phi   = self._x[self.STATE_PHI]
-            velx  = self._x[self.STATE_Y_DOT]
-            vely  = self._x[self.STATE_Z_DOT]
-            if vely > self.LANDING_VEL_Y or abs(velx)>self.LANDING_VEL_X or abs(phi)>self.LANDING_ANGLE: 
-                self._status = self.STATUS_CRASHED
-            else:
-                self._status = self.STATUS_LANDED
-            return
 
         # Use the current Euler angles to rotate the orthogonal thrust vector into the inertial frame.
         # Negate to use NED.
@@ -176,14 +164,32 @@ class MultirotorDynamics:
         if self._status == self.STATUS_LANDED and netz < 0:
             self._status = self.STATUS_AIRBORNE
 
+        if self._status == self.STATUS_LEVELING:
+
+                self.leveling_count -= 1
+
+                if self.leveling_count == 0:
+                    self._status = self.STATUS_LANDED
+
         # Once airborne, we can update dynamics
-        if self._status == self.STATUS_AIRBORNE:
+        elif self._status == self.STATUS_AIRBORNE:
+
+            if -self._x[self.STATE_Z] <= 0:
+                phi   = self._x[self.STATE_PHI]
+                velx  = self._x[self.STATE_Y_DOT]
+                vely  = self._x[self.STATE_Z_DOT]
+                if vely > self.LANDING_VEL_Y or abs(velx)>self.LANDING_VEL_X or abs(phi)>self.LANDING_ANGLE: 
+                    self._status = self.STATUS_CRASHED
+                else:
+                    self._status = self.STATUS_LEVELING
+                    self.leveling_count = self.LEVELING_DURATION
+                return
 
             # Compute the state derivatives using Equation 12
             self._computeStateDerivative(accelNED, netz)
 
             # Compute state as first temporal integral of first temporal derivative
-            self._x += dt * self._dxdt
+            self._x += 1./self._fps * self._dxdt
 
             # Once airborne, inertial-frame acceleration is same as NED acceleration
             self._inertialAccel = accelNED.copy()
