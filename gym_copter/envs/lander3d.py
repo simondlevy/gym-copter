@@ -15,39 +15,6 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-from gym_copter.envs.rendering.threed import ThreeDRenderer, create_axis
-
-class _ThreeDLanderRenderer(ThreeDRenderer):
-
-    def __init__(self, env, radius=2):
-
-        ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
-
-        self.circle = create_axis(self.ax, 'r')
-        pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = radius * np.sin(pts)
-        self.circle_y = radius * np.cos(pts)
-        self.circle_z = np.zeros(self.circle_x.shape)
-
-    def render(self):
-
-        ThreeDRenderer.render(self)
-
-        self._update()
-
-        return ThreeDRenderer.complete(self)
-
-    def _update(self):
-
-        self.circle.set_data(self.circle_x, self.circle_y)
-        self.circle.set_3d_properties(self.circle_z)
-
-    def _animate(self, _):
-
-        ThreeDRenderer._animate(self, _)
-
-        self._update()
-
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
@@ -177,9 +144,11 @@ class Lander3D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
+        from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
+
         # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = _ThreeDLanderRenderer(self, self.LANDING_RADIUS)
+            self.renderer = ThreeDLanderRenderer(self, self.LANDING_RADIUS)
 
         return self.renderer.render()
 
@@ -273,11 +242,12 @@ def heuristic_lander(env, renderer=None, seed=None):
 
 if __name__ == '__main__':
 
+    from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
     import threading
 
     env = Lander3D()
 
-    renderer = _ThreeDLanderRenderer(env)
+    renderer = ThreeDLanderRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True
