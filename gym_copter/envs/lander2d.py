@@ -135,36 +135,11 @@ class Lander2D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        from gym_copter.envs.rendering.twod import TwoDRenderer
-
-        class _TwoDLanderRenderer(TwoDRenderer):
-
-            FLAG_COLOR = 0.8, 0.0, 0.0
-
-            def __init__(self, landing_radius):
-
-                TwoDRenderer.__init__(self)
-
-                self.landing_radius = landing_radius
-
-            def render(self, mode, pose, status):
-
-                TwoDRenderer.render(self, pose, status)
-
-                # Draw flags
-                for d in [-1,+1]:
-                    flagy1 = self.GROUND_Z
-                    flagy2 = flagy1 + 50/self.SCALE
-                    x = d*self.landing_radius + self.VIEWPORT_W/self.SCALE/2
-                    self.viewer.draw_polyline([(x, flagy1), (x, flagy2)], color=(1, 1, 1))
-                    self.viewer.draw_polygon([(x, flagy2), (x, flagy2-10/self.SCALE), (x + 25/self.SCALE, flagy2 - 5/self.SCALE)],
-                                             color=self.FLAG_COLOR)
-
-                return TwoDRenderer.complete(self, mode)
+        from gym_copter.envs.rendering.twod import TwoDLanderRenderer
 
         # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = _TwoDLanderRenderer(self.LANDING_RADIUS)
+            self.renderer = TwoDLanderRenderer(self.LANDING_RADIUS)
 
         d = self.dynamics
 
