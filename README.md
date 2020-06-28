@@ -1,4 +1,4 @@
-<img src="media/lander3d.gif" height=200 align="left">
+<img src="media/lander3d.gif" height=300 align="left">
 <img src="media/lander2d.gif" height=200 align="top">
 
 <p>
