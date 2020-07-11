@@ -98,7 +98,7 @@ class Distance(gym.Env, EzPickle):
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
-        # Set lander pose in display
+        # Set distance pose in display
         self.pose = posx, posy, posz, phi, theta, psi
 
         # Convert state to usable form
@@ -206,7 +206,7 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
 
-def heuristic_lander(env, renderer=None, seed=None):
+def heuristic_distance(env, renderer=None, seed=None):
 
     import time
 
@@ -248,7 +248,7 @@ if __name__ == '__main__':
 
     renderer = ThreeDDistanceRenderer(env)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
+    thread = threading.Thread(target=heuristic_distance, args=(env, renderer))
     thread.daemon = True
     thread.start()
 
