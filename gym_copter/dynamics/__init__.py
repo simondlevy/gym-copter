@@ -169,14 +169,20 @@ class MultirotorDynamics:
         # Once airborne, we can update dynamics
         elif self._status == self.STATUS_AIRBORNE:
 
-            if -self._x[self.STATE_Z] <= 0:
+            # If we've descended to the ground
+            if self._x[self.STATE_Z] > 0 and self._x[self.STATE_Z_DOT] > 0:
+
+                # Big angles indicate a crash
                 phi   = self._x[self.STATE_PHI]
                 velx  = self._x[self.STATE_Y_DOT]
                 vely  = self._x[self.STATE_Z_DOT]
                 if vely > self.LANDING_VEL_Y or abs(velx)>self.LANDING_VEL_X or abs(phi)>self.LANDING_ANGLE: 
                     self._status = self.STATUS_CRASHED
+
+                # Small angles indicate leveling
                 else:
                     self._status = self.STATUS_LEVELING
+
                 return
 
             # Compute the state derivatives using Equation 12
@@ -301,5 +307,3 @@ class MultirotorDynamics:
         sps = np.sin(psi)
 
         return cph, cth, cps, sph, sth, sps
-
-

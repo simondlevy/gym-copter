@@ -54,7 +54,6 @@ class Distance(gym.Env, EzPickle):
 
         # Initialize custom dynamics
         state = np.zeros(12)
-        d = self.dynamics
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0, 0, 0]))[0]
@@ -125,7 +124,7 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    return np.zeros(4)
+    return np.ones(4)
 
 def heuristic_distance(env, renderer=None, seed=None):
 
