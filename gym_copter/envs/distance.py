@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
+3D distance-maximizing environment
 
-Copyright (C) 2019 Simon D. Levy
+Copyright (C) 2020 Simon D. Levy
 
 MIT License
 '''
@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class Lander3D(gym.Env, EzPickle):
+class Distance(gym.Env, EzPickle):
 
     # Parameters to adjust  
     INITIAL_RANDOM_OFFSET = 3.0  # perturbation factor for initial horizontal position
@@ -156,7 +156,7 @@ class Lander3D(gym.Env, EzPickle):
 
         return
 
-## End of Lander3D class ----------------------------------------------------------------
+## End of Distance class ----------------------------------------------------------------
 
 def heuristic(env, s):
     """
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = Lander3D()
+    env = Distance()
 
     renderer = ThreeDLanderRenderer(env)
 
