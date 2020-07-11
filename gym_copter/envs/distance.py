@@ -144,7 +144,7 @@ class Distance(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
+        from gym_copter.rendering.threed import ThreeDLanderRenderer
 
         # Create renderer if not done yet
         if self.renderer is None:

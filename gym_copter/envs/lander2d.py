@@ -135,7 +135,7 @@ class Lander2D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        from gym_copter.envs.rendering.twod import TwoDLanderRenderer
+        from gym_copter.rendering.twod import TwoDLanderRenderer
 
         # Create renderer if not done yet
         if self.renderer is None:
