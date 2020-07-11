@@ -214,3 +214,34 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer._animate(self, _)
 
         self._update()
+
+class ThreeDDistanceRenderer(ThreeDRenderer):
+
+    def __init__(self, env, radius=2):
+
+        ThreeDRenderer.__init__(self, env, lim=5, label='Distance', viewangles=[30,120])
+
+        self.circle = create_axis(self.ax, 'r')
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        self.circle_x = radius * np.sin(pts)
+        self.circle_y = radius * np.cos(pts)
+        self.circle_z = np.zeros(self.circle_x.shape)
+
+    def render(self):
+
+        ThreeDRenderer.render(self)
+
+        self._update()
+
+        return ThreeDRenderer.complete(self)
+
+    def _update(self):
+
+        self.circle.set_data(self.circle_x, self.circle_y)
+        self.circle.set_3d_properties(self.circle_z)
+
+    def _animate(self, _):
+
+        ThreeDRenderer._animate(self, _)
+
+        self._update()

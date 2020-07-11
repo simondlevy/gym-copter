@@ -144,11 +144,11 @@ class Distance(gym.Env, EzPickle):
 
     def render(self, mode='human'):
 
-        from gym_copter.rendering.threed import ThreeDLanderRenderer
+        from gym_copter.rendering.threed import ThreeDDistanceRenderer
 
         # Create renderer if not done yet
         if self.renderer is None:
-            self.renderer = ThreeDLanderRenderer(self, self.LANDING_RADIUS)
+            self.renderer = ThreeDDistanceRenderer(self, self.LANDING_RADIUS)
 
         return self.renderer.render()
 
@@ -241,12 +241,12 @@ def heuristic_lander(env, renderer=None, seed=None):
 
 if __name__ == '__main__':
 
-    from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
+    from gym_copter.rendering.threed import ThreeDDistanceRenderer
     import threading
 
     env = Distance()
 
-    renderer = ThreeDLanderRenderer(env)
+    renderer = ThreeDDistanceRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True
