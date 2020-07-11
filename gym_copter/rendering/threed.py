@@ -227,8 +227,6 @@ class ThreeDDistanceRenderer(ThreeDRenderer):
 
         ThreeDRenderer.render(self)
 
-        self._update()
-
         return ThreeDRenderer.complete(self)
 
     def _update(self):
