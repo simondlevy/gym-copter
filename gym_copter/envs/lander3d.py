@@ -21,8 +21,8 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_RANDOM_OFFSET = 3.0  # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 5
     LANDING_RADIUS        = 2
-    XY_PENALTY_FACTOR   = 25   # designed so that maximal penalty is around 100
-    ANGLE_PENALTY_FACTOR   = 250   
+    XY_PENALTY_FACTOR     = 25   # designed so that maximal penalty is around 100
+    ANGLE_PENALTY_FACTOR  = 250   
     BOUNDS                = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS   = 100
@@ -43,7 +43,7 @@ class Lander3D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # useful range is -1 .. +1, but spikes can be higher
+        # Observation is all state values except yaw and its derivative
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
         # Action is three floats [throttle, roll, pitch]

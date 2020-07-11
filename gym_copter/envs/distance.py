@@ -17,19 +17,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class Distance(gym.Env, EzPickle):
 
-    # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 3.0  # perturbation factor for initial horizontal position
-    INITIAL_ALTITUDE      = 5
-    LANDING_RADIUS        = 2
-    XY_PENALTY_FACTOR   = 25   # designed so that maximal penalty is around 100
-    ANGLE_PENALTY_FACTOR   = 250   
-    BOUNDS                = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    INSIDE_RADIUS_BONUS   = 100
-    RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
-    FRAMES_PER_SECOND     = 50
-    MAX_ANGLE             = 45   # big penalty if roll or pitch angles go beyond this
-    EXCESS_ANGLE_PENALTY  = 100
+    FRAMES_PER_SECOND = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -43,18 +31,15 @@ class Distance(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # useful range is -1 .. +1, but spikes can be higher
+        # Observation is all state values except yaw and its derivative
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
-        # Action is three floats [throttle, roll, pitch]
-        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
+        # Action is motor values
+        self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
 
         # Support for rendering
         self.renderer = None
         self.pose = None
-
-        # Pre-convert max-angle degrees to radian
-        self.max_angle = np.radians(self.MAX_ANGLE)
 
         self.reset()
 
@@ -64,20 +49,15 @@ class Distance(gym.Env, EzPickle):
 
     def reset(self):
 
-        self.prev_shaping = None
-
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
-        # Initialize custom dynamics with random perturbation
+        # Initialize custom dynamics
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0, 0]))[0]
+        return self.step(np.array([0, 0, 0, 0]))[0]
 
     def step(self, action):
 
@@ -85,60 +65,22 @@ class Distance(gym.Env, EzPickle):
         d = self.dynamics
         status = d.getStatus()
 
-        # Stop motors after safe landing
-        if status == d.STATUS_LANDED:
-            d.setMotors(np.zeros(4))
-
-        # In air, set motors from action
-        else:
-            t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1)) # use mixer to set motors
-            d.update()
+        d.setMotors(action)
+        d.update()
 
         # Get new state from dynamics
         posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
 
-        # Set distance pose in display
+        # Set pose in display
         self.pose = posx, posy, posz, phi, theta, psi
 
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        # Reward is a simple penalty for overall distance and angle and their first derivatives
-        shaping = -(self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
-                self.ANGLE_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)))
-                                                                  
-        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
-
-        self.prev_shaping = shaping
+        reward = 0
 
         # Assume we're not done yet
         done = False
-
-        # Lose bigly if we go out of bounds
-        if abs(posx) >= self.BOUNDS or abs(posy) >= self.BOUNDS:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # Lose bigly for excess roll or pitch 
-        if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # It's all over once we're on the ground
-        if status == d.STATUS_LANDED:
-
-            done = True
-
-            # Win bigly we land safely between the flags
-            if posx**2+posy**2 < self.LANDING_RADIUS**2: 
-
-                reward += self.INSIDE_RADIUS_BONUS
-
-        elif status == d.STATUS_CRASHED:
-
-            # Crashed!
-            done = True
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -181,30 +123,9 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    # Angle target
-    A = 0.05
-    B = 0.06
-
-    # Angle PID
-    C = 0.025
-    D = 0.05
-    E = 0.4
-
-    # Vertical PID
-    F = 1.15
-    G = 1.33
-
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    phi_targ = posy*A + vely*B              # angle should point towards center
-    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
-
-    theta_targ = posx*A + velx*B         # angle should point towards center
-    theta_todo = -(theta+theta_targ)*C - theta*D  + veltheta*E
-
-    hover_todo = posz*F + velz*G
-
-    return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
+    return np.zeros(4)
 
 def heuristic_distance(env, renderer=None, seed=None):
 
