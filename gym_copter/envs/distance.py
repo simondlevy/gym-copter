@@ -29,8 +29,6 @@ class Distance(gym.Env, EzPickle):
         EzPickle.__init__(self)
         self.seed()
 
-        self.prev_reward = None
-
         # Observation is all state values except yaw and its derivative
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
@@ -75,11 +73,9 @@ class Distance(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        # Reward is X,Y distance from origin
         reward = np.sqrt(posx**2 + posy**2)
 
-        # We're done if we've crashed or landed
-        done = d._status in [d.STATUS_LANDED, d.STATUS_CRASHED]
+        done = False
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
