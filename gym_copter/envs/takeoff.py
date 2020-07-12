@@ -76,8 +76,11 @@ class Takeoff(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        # Reward is a simple penalty for overall takeoff and velocity
-        shaping = np.sqrt(posx**2 + posy**2) 
+        # Negate Z position to get ENU altitude from NED
+        altitude = -posz
+
+        # Reward is negated distance from target altitude
+        shaping = -abs(altitude - self.TARGET_ALTITUDE)
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
