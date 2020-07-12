@@ -6,3 +6,4 @@ MIT License
 
 from gym_copter.envs.lander2d  import Lander2D
 from gym_copter.envs.lander3d  import Lander3D
+from gym_copter.envs.distance  import Distance

@@ -17,3 +17,9 @@ register(
     entry_point='gym_copter.envs:Lander3D',
     max_episode_steps=10000
 )
+
+register(
+    id='Distance-v0',
+    entry_point='gym_copter.envs:Distance',
+    max_episode_steps=10000
+)
