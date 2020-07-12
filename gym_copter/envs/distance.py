@@ -76,9 +76,10 @@ class Distance(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        reward = 0
+        # Reward is X,Y distance from origin
+        reward = np.sqrt(posx**2 + posy**2)
 
-        # Assume we're not done yet
+        # There is no final state
         done = False
 
         return np.array(state, dtype=np.float32), reward, done, {}
@@ -124,7 +125,7 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    return np.ones(4)
+    return 0.5625 * np.ones(4) if -posz < 2 else np.array([.6, .5, .6, .5])
 
 def heuristic_distance(env, renderer=None, seed=None):
 

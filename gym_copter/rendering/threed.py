@@ -219,7 +219,7 @@ class ThreeDDistanceRenderer(ThreeDRenderer):
 
     def __init__(self, env, radius=2):
 
-        ThreeDRenderer.__init__(self, env, lim=5, label='Distance', viewangles=[30,120])
+        ThreeDRenderer.__init__(self, env, lim=20, label='Distance', viewangles=[30,120])
 
         pts = np.linspace(-np.pi, +np.pi, 1000)
 
