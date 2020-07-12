@@ -79,8 +79,8 @@ class Distance(gym.Env, EzPickle):
         # Reward is X,Y distance from origin
         reward = np.sqrt(posx**2 + posy**2)
 
-        # There is no final state
-        done = False
+        # We're done if we've crashed or landed
+        done = d._status in [d.STATUS_LANDED, d.STATUS_CRASHED]
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -125,7 +125,11 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    return 0.5625 * np.ones(4) if -posz < 2 else np.array([.6, .5, .6, .5])
+    # Simple heuristic: liftoff then pitch forward
+    return (0.5625 * np.ones(4) if -posz < 2 
+            else (np.array([.5625, .5, .5625, .5]) if theta < np.pi/4
+            else .25 * np.ones(4)
+            ))
 
 def heuristic_distance(env, renderer=None, seed=None):
 
