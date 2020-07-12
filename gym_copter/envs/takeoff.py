@@ -17,6 +17,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class Takeoff(gym.Env, EzPickle):
 
+    TARGET_ALTITUDE   = 5
     FRAMES_PER_SECOND = 50
 
     metadata = {
@@ -111,8 +112,6 @@ def heuristic(env, s, lastError):
     # Extract altitude, vertical velocity from state, negating for NED => ENU
     posz, velz = -s[4:6]
 
-    TARGET = 5
-
     # PID params
     ALT_P = 1.0
     VEL_P = 1.0
@@ -121,7 +120,7 @@ def heuristic(env, s, lastError):
     dt = 1. / env.FRAMES_PER_SECOND
 
     # Compute v setpoint and error
-    velTarget = (TARGET - posz) * ALT_P
+    velTarget = (env.TARGET_ALTITUDE - posz) * ALT_P
     velError = velTarget - velz
 
     # Update error integral and error derivative
