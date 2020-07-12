@@ -106,7 +106,7 @@ def constrain_abs(x, lim):
 
     return -lim if x < -lim else (+lim if x > +lim else x)
 
-def heuristic(env, s, integralError, lastError):
+def heuristic(env, s, lastError):
 
     # Extract altitude, vertical velocity from state, negating for NED => ENU
     posz, velz = -s[4:6]
@@ -116,9 +116,7 @@ def heuristic(env, s, integralError, lastError):
     # PID params
     ALT_P = 1.0
     VEL_P = 1.0
-    VEL_I = 0
     VEL_D = 0
-    WINDUP_MAX = 10
 
     dt = 1. / env.FRAMES_PER_SECOND
 
@@ -127,17 +125,15 @@ def heuristic(env, s, integralError, lastError):
     velError = velTarget - velz
 
     # Update error integral and error derivative
-    integralError +=  velError * dt
-    integralError = constrain_abs(integralError + velError * dt, WINDUP_MAX)
     deltaError = (velError - lastError) / dt if abs(lastError) > 0 else 0
     lastError = velError
 
     # Compute control u
-    u = VEL_P * velError + VEL_D * deltaError + VEL_I * integralError
+    u = VEL_P * velError + VEL_D * deltaError
 
     u = np.clip(u, -1, +1)
 
-    return u, integralError, lastError
+    return u, lastError
 
 def heuristic_takeoff(env, renderer=None, seed=None):
 
@@ -151,12 +147,11 @@ def heuristic_takeoff(env, renderer=None, seed=None):
     steps = 0
     state = env.reset()
 
-    integralError = 0
     lastError = 0
 
     while True:
 
-        u, integralError, lastError = heuristic(env, state, integralError, lastError)
+        u, lastError = heuristic(env, state, lastError)
         action = u * np.ones(4)
         state, reward, done, _ = env.step(action)
         total_reward += reward
