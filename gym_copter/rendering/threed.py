@@ -238,3 +238,27 @@ class ThreeDDistanceRenderer(ThreeDRenderer):
         ThreeDRenderer._animate(self, _)
 
         self._update()
+        
+class ThreeDTakeoffRenderer(ThreeDRenderer):
+
+    def __init__(self, env, radius=2):
+
+        ThreeDRenderer.__init__(self, env, lim=10, label='Takeoff', viewangles=[30,120])
+
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+
+    def render(self):
+
+        ThreeDRenderer.render(self)
+
+        return ThreeDRenderer.complete(self)
+
+    def _update(self):
+
+        return
+
+    def _animate(self, _):
+
+        ThreeDRenderer._animate(self, _)
+
+        self._update()

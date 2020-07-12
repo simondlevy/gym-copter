@@ -23,3 +23,9 @@ register(
     entry_point='gym_copter.envs:Distance',
     max_episode_steps=1000
 )
+
+register(
+    id='Takeoff-v0',
+    entry_point='gym_copter.envs:Takeoff',
+    max_episode_steps=1000
+)
