@@ -21,5 +21,5 @@ register(
 register(
     id='Distance-v0',
     entry_point='gym_copter.envs:Distance',
-    max_episode_steps=200
+    max_episode_steps=1000
 )

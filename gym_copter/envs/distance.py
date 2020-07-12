@@ -47,6 +47,8 @@ class Distance(gym.Env, EzPickle):
 
     def reset(self):
 
+        self.prev_shaping = None
+
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
@@ -73,7 +75,12 @@ class Distance(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
 
-        reward = np.sqrt(posx**2 + posy**2)
+        # Reward is a simple penalty for overall distance and velocity
+        shaping = np.sqrt(posx**2 + posy**2) 
+                                                                  
+        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
+
+        self.prev_shaping = shaping
 
         done = False
 
@@ -118,7 +125,7 @@ def heuristic(env, s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
+    _, _, _, _, posz, _, _, _, theta, _ = s
 
 
     action = np.zeros(4)
