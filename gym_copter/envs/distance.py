@@ -62,7 +62,6 @@ class Distance(gym.Env, EzPickle):
 
         # Abbreviation
         d = self.dynamics
-        status = d.getStatus()
 
         d.setMotors(action)
         d.update()
