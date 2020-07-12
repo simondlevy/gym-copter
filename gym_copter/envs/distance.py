@@ -125,11 +125,17 @@ def heuristic(env, s):
 
     posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
 
-    # Simple heuristic: liftoff then pitch forward
-    return (0.5625 * np.ones(4) if -posz < 2 
-            else (np.array([.5625, .5, .5625, .5]) if theta < np.pi/4
-            else .25 * np.ones(4)
-            ))
+
+    action = np.zeros(4)
+
+    if posz > -3:
+        action = 0.6 * np.ones(4) # below 2m, takeoff
+    elif theta < np.pi/8:            
+        action = np.array([.505, .5, .505, .5]) # shallow pitch; pitch forward
+    else:
+        action = 0.55*np.ones(4)
+
+    return action
 
 def heuristic_distance(env, renderer=None, seed=None):
 
