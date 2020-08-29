@@ -9,7 +9,7 @@ from gym.envs.registration import register
 register(
     id='Lander-v1',
     entry_point='gym_copter.envs:Lander1D',
-    max_episode_steps=10000
+    max_episode_steps=1000
 )
 
 register(
