@@ -65,7 +65,7 @@ class Lander1D(gym.Env, EzPickle):
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0]))[0]
+        return self.step(np.array([0]))[0]
 
     def step(self, action):
 
@@ -84,13 +84,13 @@ class Lander1D(gym.Env, EzPickle):
             d.update()
 
         # Get new state from dynamics
-        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
+        _, _, posy, _, posz, velz, phi, _ = d.getState()[:8]
 
         # Set lander pose for renderer
         self.pose = posy, posz, phi
 
         # Convert state to usable form
-        state = np.array([posy, vely, posz, velz, phi, velphi])
+        state = np.array([posz, velz])
 
         # Reward is a simple penalty for overall distance and velocity
         shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
@@ -178,14 +178,11 @@ def heuristic(env, s):
     F = 1.15
     G = 1.33
 
-    posy, vely, posz, velz, phi, velphi = s
-
-    phi_targ = posy*A + vely*B         # angle should point towards center
-    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
+    posz, velz = s
 
     hover_todo = posz*F + velz*G
 
-    return hover_todo, phi_todo
+    return [hover_todo]
 
 def demo_heuristic_lander(env, render=False, save=False):
 
