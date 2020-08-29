@@ -18,7 +18,6 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander1D(gym.Env, EzPickle):
     
     # Parameters to adjust
-    INITIAL_RANDOM_OFFSET = 1.5 # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE      = 10
     LANDING_RADIUS        = 2
     PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
@@ -35,7 +34,6 @@ class Lander1D(gym.Env, EzPickle):
     def __init__(self):
 
         EzPickle.__init__(self)
-        self.seed()
         self.viewer = None
 
         self.prev_reward = None
@@ -52,10 +50,6 @@ class Lander1D(gym.Env, EzPickle):
 
         self.reset()
 
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
     def reset(self):
 
         self._destroy()
@@ -68,7 +62,7 @@ class Lander1D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_Y] =  0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
@@ -198,12 +192,10 @@ def heuristic(env, s):
 
     return hover_todo, phi_todo
 
-def demo_heuristic_lander(env, seed=None, render=False, save=False):
+def demo_heuristic_lander(env, render=False, save=False):
 
     from time import sleep
 
-    env.seed(seed)
-    np.random.seed(seed)
     total_reward = 0
     steps = 0
     state = env.reset()
@@ -234,4 +226,4 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(Lander1D(), seed=None, render=True, save=False)
+    demo_heuristic_lander(Lander1D(), render=True, save=False)
