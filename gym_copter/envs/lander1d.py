@@ -19,11 +19,10 @@ class Lander1D(gym.Env, EzPickle):
     
     # Parameters to adjust
     INITIAL_ALTITUDE      = 10
-    LANDING_RADIUS        = 2
+    LANDING_RADIUS        = 2   # for display purposes only
     PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
     BOUNDS                = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    INSIDE_RADIUS_BONUS   = 100
+    SAFE_LANDING_BONUS    = 100
     FRAMES_PER_SECOND     = 50
 
     metadata = {
@@ -41,8 +40,8 @@ class Lander1D(gym.Env, EzPickle):
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
-        # Action is two floats [throttle, roll]
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
+        # Action is one float [throttle]
+        self.action_space = spaces.Box(-1, +1, (1,), dtype=np.float32)
 
         # Support for rendering
         self.renderer = None
@@ -80,8 +79,8 @@ class Lander1D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
+            t = (action[0]+1)/2  # map throttle demand from [-1,+1] to [0,1]
+            d.setMotors(np.clip([t, t, t, t], 0, 1))
             d.update()
 
         # Get new state from dynamics
@@ -106,7 +105,6 @@ class Lander1D(gym.Env, EzPickle):
         # Lose bigly if we go outside window
         if abs(posy) >= self.BOUNDS:
             done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
 
         else:
 
@@ -115,10 +113,7 @@ class Lander1D(gym.Env, EzPickle):
 
                 done = True
 
-                # Win bigly we land safely between the flags
-                if abs(posy) < self.LANDING_RADIUS: 
-
-                    reward += self.INSIDE_RADIUS_BONUS
+                reward += self.SAFE_LANDING_BONUS
 
             elif status == d.STATUS_CRASHED:
 
