@@ -37,10 +37,10 @@ class Lander1D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
+        # Observation is altitude and its rate of change
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(2,), dtype=np.float32)
 
-        # Action is one float [throttle]
+        # Action is one value [throttle]
         self.action_space = spaces.Box(-1, +1, (1,), dtype=np.float32)
 
         # Support for rendering
