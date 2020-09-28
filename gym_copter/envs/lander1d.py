@@ -146,14 +146,13 @@ class Lander1D(gym.Env, EzPickle):
 # End of Lander1D class ----------------------------------------------------------------
 
 
-def heuristic(env, s):
+def heuristic(s):
     """
     The heuristic for
     1. Testing
     2. Demonstration rollout.
 
     Args:
-        env: The environment
         s (list): The state. Attributes:
                   s[0] is the horizontal coordinate
                   s[1] is the horizontal speed
@@ -192,7 +191,7 @@ def demo_heuristic_lander(env, render=False, save=False):
     steps = 0
     state = env.reset()
     while True:
-        action = heuristic(env,state)
+        action = heuristic(state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
