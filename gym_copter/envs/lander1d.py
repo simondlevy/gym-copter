@@ -160,15 +160,6 @@ def heuristic(s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    # Angle target
-    A = 0.05
-    B = 0.06
-
-    # Angle PID
-    C = 0.025
-    D = 0.05
-    E = 0.4
-
     # Vertical PID
     F = 1.15
     G = 1.33
