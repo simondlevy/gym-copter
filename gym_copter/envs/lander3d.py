@@ -157,14 +157,13 @@ class Lander3D(gym.Env, EzPickle):
 
 ## End of Lander3D class ----------------------------------------------------------------
 
-def heuristic(env, s):
+def heuristic(s):
     """
     The heuristic for
     1. Testing
     2. Demonstration rollout.
 
     Args:
-        env: The environment
         s (list): The state. Attributes:
                   s[0] is the X coordinate
                   s[1] is the X speed
@@ -219,7 +218,7 @@ def heuristic_lander(env, renderer=None, seed=None):
 
     while True:
 
-        action = heuristic(env,state)
+        action = heuristic(state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
@@ -240,7 +239,7 @@ def heuristic_lander(env, renderer=None, seed=None):
 
 if __name__ == '__main__':
 
-    from gym_copter.envs.rendering.threed import ThreeDLanderRenderer
+    from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
     env = Lander3D()
