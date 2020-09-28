@@ -154,12 +154,8 @@ def heuristic(s):
 
     Args:
         s (list): The state. Attributes:
-                  s[0] is the horizontal coordinate
-                  s[1] is the horizontal speed
-                  s[2] is the vertical coordinate
-                  s[3] is the vertical speed
-                  s[4] is the angle
-                  s[5] is the angular speed
+                  s[0] is the vertical coordinate
+                  s[1] is the vertical speed
     returns:
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
