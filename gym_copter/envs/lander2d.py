@@ -76,62 +76,9 @@ class Lander2D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        # Abbreviation
-        d = self.dynamics
-        status = d.getStatus()
+        state, reward, done, info = self.step_mo(action)
 
-        # Stop motors after safe landing
-        if status == d.STATUS_LANDED:
-            d.setMotors(np.zeros(4))
-
-        # In air, set motors from action
-        else:
-            t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
-            d.update()
-
-        # Get new state from dynamics
-        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
-
-        # Set lander pose for renderer
-        self.pose = posy, posz, phi
-
-        # Convert state to usable form
-        state = np.array([posy, vely, posz, velz, phi, velphi])
-
-        # Reward is a simple penalty for overall distance and velocity
-        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
-                                                                  
-        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
-
-        self.prev_shaping = shaping
-
-        # Assume we're not done yet
-        done = False
-
-        # Lose bigly if we go outside window
-        if abs(posy) >= self.BOUNDS:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        else:
-
-            # It's all over once we're on the ground
-            if status == d.STATUS_LANDED:
-
-                done = True
-
-                # Win bigly we land safely between the flags
-                if abs(posy) < self.LANDING_RADIUS: 
-
-                    reward += self.INSIDE_RADIUS_BONUS
-
-            elif status == d.STATUS_CRASHED:
-
-                # Crashed!
-                done = True
-
-        return np.array(state, dtype=np.float32), reward, done, {}
+        return state, np.sum(reward), done, info
 
     def step_mo(self, action):
         '''
@@ -292,39 +239,6 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
     sleep(1)
     env.close()
     return total_reward
-
-def demo_heuristic_lander_mo(env, seed=None, render=False, save=False):
-
-    from time import sleep
-
-    env.seed(seed)
-    np.random.seed(seed)
-    total_reward = np.zeros(3)
-    steps = 0
-    state = env.reset()
-    while True:
-        action = heuristic(state)
-        state, reward, done, _ = env.step_mo(action)
-        total_reward += reward
-
-        if render:
-            frame = env.render('rgb_array')
-            if frame is None: break
-            if save:
-                from PIL import Image
-                img = Image.fromarray(frame)
-                img.save("img_%05d.png" % steps)
-
-        if (steps % 20 == 0) or done:
-            print("step %d total_reward %f %f %f" % (steps, *total_reward))
-
-        steps += 1
-        if done: break
-
-    sleep(1)
-    env.close()
-    return total_reward
-
 
 if __name__ == '__main__':
 
