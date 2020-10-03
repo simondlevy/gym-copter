@@ -135,7 +135,6 @@ class Lander2D(gym.Env, EzPickle):
                 # Win bigly we land safely between the flags
                 if abs(posy) < self.LANDING_RADIUS: 
 
-                    None
                     reward[1] += self.INSIDE_RADIUS_BONUS
 
             elif status == d.STATUS_CRASHED:
