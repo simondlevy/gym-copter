@@ -136,7 +136,7 @@ class Lander2D(gym.Env, EzPickle):
                 if abs(posy) < self.LANDING_RADIUS: 
 
                     None
-                    #reward[2] = self.INSIDE_RADIUS_BONUS
+                    reward[1] += self.INSIDE_RADIUS_BONUS
 
             elif status == d.STATUS_CRASHED:
 
