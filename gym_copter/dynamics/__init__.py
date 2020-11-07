@@ -120,6 +120,9 @@ class MultirotorDynamics:
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = MultirotorDynamics._bodyZToInertial(-self.g, (0,0,0))
 
+        # No perturbation yet
+        self._perturb = np.zeros(6)
+
     def setMotors(self, motorvals):
         '''
         Uses motor values to implement Equation 6.
@@ -188,11 +191,17 @@ class MultirotorDynamics:
             # Compute the state derivatives using Equation 12
             self._computeStateDerivative(accelNED, netz)
 
+            # Add instantaneous perturbation
+            self._dxdt[1::2] += self._perturb
+
             # Compute state as first temporal integral of first temporal derivative
             self._x += 1./self._fps * self._dxdt
 
             # Once airborne, inertial-frame acceleration is same as NED acceleration
             self._inertialAccel = accelNED.copy()
+
+        # Reset instantaneous perturbation
+        self._perturb = np.zeros(6)
 
     def getState(self):
         '''
@@ -211,17 +220,18 @@ class MultirotorDynamics:
 
         return self._status
 
+    def perturb(self, force):
+
+        self._perturb = force / self._p.m
+
     def _computeStateDerivative(self, accelNED, netz):
         '''
         Implements Equation 12 computing temporal first derivative of state.
         Should fill _dxdx[0..11] with appropriate values.
         accelNED acceleration in NED inertial frame
         netz accelNED[2] with gravitational constant added in
-        phidot rotational acceleration in roll axis
-        thedot rotational acceleration in pitch axis
-        psidot rotational acceleration in yaw axis
         '''
- 
+
         phidot = self._x[self.STATE_PHI_DOT]
         thedot = self._x[self.STATE_THETA_DOT]
         psidot = self._x[self.STATE_PSI_DOT]
@@ -231,7 +241,7 @@ class MultirotorDynamics:
         self._dxdt[self.STATE_X]         = self._x[self.STATE_X_DOT]
         self._dxdt[self.STATE_X_DOT]     = accelNED[0]         
         self._dxdt[self.STATE_Y]         = self._x[self.STATE_Y_DOT]
-        self._dxdt[self.STATE_Y_DOT]     = accelNED[1]         
+        self._dxdt[self.STATE_Y_DOT]     = accelNED[1] + self._perturb[1]
         self._dxdt[self.STATE_Z]         = self._x[self.STATE_Z_DOT]
         self._dxdt[self.STATE_Z_DOT]     = netz                
         self._dxdt[self.STATE_PHI]       = phidot                                                                               

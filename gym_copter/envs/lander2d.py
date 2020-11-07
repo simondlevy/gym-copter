@@ -18,7 +18,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander2D(gym.Env, EzPickle):
     
     # Parameters to adjust
-    INITIAL_RANDOM_OFFSET = 2.5 # perturbation factor for initial horizontal position
+    INITIAL_RANDOM_FORCE  = 10 # perturbation for initial position
     INITIAL_ALTITUDE      = 10
     LANDING_RADIUS        = 2
     PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
@@ -68,9 +68,10 @@ class Lander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_Y] =  0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
+        self.dynamics.perturb(np.array([0, np.random.uniform(-self.INITIAL_RANDOM_FORCE, +self.INITIAL_RANDOM_FORCE), 0, 0, 0, 0]))
 
         return self.step(np.array([0, 0]))[0]
 
