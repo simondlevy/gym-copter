@@ -78,15 +78,6 @@ class Lander2D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        state, reward, done, info = self.step_mo(action)
-
-        return state, np.sum(reward), done, info
-
-    def step_mo(self, action):
-        '''
-        Step with multi-objective reward
-        '''
-
         # Abbreviation
         d = self.dynamics
         status = d.getStatus()
@@ -116,9 +107,7 @@ class Lander2D(gym.Env, EzPickle):
         # A simple penalty for overall distance and velocity
         shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
 
-        reward = np.zeros(2)
-
-        reward[0] = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
+        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
 
         self.prev_shaping = shaping
 
@@ -128,7 +117,7 @@ class Lander2D(gym.Env, EzPickle):
         # Lose bigly if we go outside window
         if abs(posy) >= self.BOUNDS:
             done = True
-            reward[1] = -self.OUT_OF_BOUNDS_PENALTY
+            reward -= self.OUT_OF_BOUNDS_PENALTY
 
         else:
 
@@ -141,7 +130,7 @@ class Lander2D(gym.Env, EzPickle):
                 # Win bigly we land safely between the flags
                 if abs(posy) < self.LANDING_RADIUS: 
 
-                    reward[1] += self.INSIDE_RADIUS_BONUS
+                    reward += self.INSIDE_RADIUS_BONUS
 
             elif status == d.STATUS_CRASHED:
 
