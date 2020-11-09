@@ -137,7 +137,7 @@ class Lander1D(gym.Env, EzPickle):
 
         d = self.dynamics
 
-        return self.renderer.render(mode, self.pose, self.spinning, d.getStatus())
+        return self.renderer.render(mode, self.pose, self.spinning)
 
     def close(self):
         if self.renderer is not None:
@@ -166,8 +166,8 @@ def heuristic(s):
     """
 
     # Vertical PID
-    F = 1.15
-    G = 1.33
+    F = 0#1.15
+    G = 0#1.33
 
     posz, velz = s
 

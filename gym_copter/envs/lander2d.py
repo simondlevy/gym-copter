@@ -49,6 +49,7 @@ class Lander2D(gym.Env, EzPickle):
         # Support for rendering
         self.renderer = None
         self.pose = None
+        self.spinning = False
 
         self.reset()
 
@@ -93,11 +94,14 @@ class Lander2D(gym.Env, EzPickle):
         # Stop motors after safe landing
         if status == d.STATUS_LANDED:
             d.setMotors(np.zeros(4))
+            self.spinning = False
 
         # In air, set motors from action
         else:
-            t,r = (action[0]+1)/2, action[1]  # map throttle demand from [-1,+1] to [0,1]
+            t = np.clip(action[0], 0, 1)    # keep throttle in interval [0,1]
+            r = action[1]  
             d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
+            self.spinning = t > 0
             d.update()
 
         # Get new state from dynamics
@@ -132,6 +136,7 @@ class Lander2D(gym.Env, EzPickle):
             if status == d.STATUS_LANDED:
 
                 done = True
+                self.spinning = False
 
                 # Win bigly we land safely between the flags
                 if abs(posy) < self.LANDING_RADIUS: 
@@ -155,7 +160,7 @@ class Lander2D(gym.Env, EzPickle):
 
         d = self.dynamics
 
-        return self.renderer.render(mode, self.pose, d.getStatus())
+        return self.renderer.render(mode, self.pose, self.spinning)
 
     def close(self):
         if self.renderer is not None:
@@ -223,8 +228,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
     steps = 0
     state = env.reset()
     while True:
-        #action = heuristic(state)
-        action = 0,0
+        action = heuristic(state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
