@@ -46,6 +46,7 @@ class Lander1D(gym.Env, EzPickle):
         # Support for rendering
         self.renderer = None
         self.pose = None
+        self.spinning = False
 
         self.reset()
 
@@ -76,11 +77,15 @@ class Lander1D(gym.Env, EzPickle):
         # Stop motors after safe landing
         if status == d.STATUS_LANDED:
             d.setMotors(np.zeros(4))
+            self.spinning = False
 
         # In air, set motors from action
         else:
-            t = (action[0]+1)/2  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t, t, t, t], 0, 1))
+
+            # Keep action in interval [0,1]
+            t = np.clip(action[0], 0, 1)
+            d.setMotors([t, t, t, t])
+            self.spinning = t > 0
             d.update()
 
         # Get new state from dynamics
@@ -132,7 +137,7 @@ class Lander1D(gym.Env, EzPickle):
 
         d = self.dynamics
 
-        return self.renderer.render(mode, self.pose, d.getStatus())
+        return self.renderer.render(mode, self.pose, self.spinning, d.getStatus())
 
     def close(self):
         if self.renderer is not None:

@@ -58,7 +58,7 @@ class TwoDRenderer:
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def render(self, pose, status):
+    def render(self, pose, spinning, status):
 
         # Draw ground as background
         self.viewer.draw_polygon(
@@ -92,7 +92,7 @@ class TwoDRenderer:
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 
-        self.props_visible =  (status in [dynamics.STATUS_LEVELING, dynamics.STATUS_LANDED]) or ((self.props_visible + 1) % 3)
+        self.props_visible =  (not spinning or status in [dynamics.STATUS_LEVELING, dynamics.STATUS_LANDED]) or ((self.props_visible + 1) % 3)
 
     def complete(self, mode):
 
@@ -141,9 +141,9 @@ class TwoDLanderRenderer(TwoDRenderer):
 
         self.landing_radius = landing_radius
 
-    def render(self, mode, pose, status):
+    def render(self, mode, pose, spinning, status):
 
-        TwoDRenderer.render(self, pose, status)
+        TwoDRenderer.render(self, pose, spinning, status)
 
         # Draw flags
         for d in [-1,+1]:
