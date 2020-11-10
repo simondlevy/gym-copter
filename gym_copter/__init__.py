@@ -15,7 +15,7 @@ register(
 register(
     id='Lander-v2',
     entry_point='gym_copter.envs:Lander2D',
-    max_episode_steps=10000
+    max_episode_steps=2000
 )
 
 register(
