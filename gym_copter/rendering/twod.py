@@ -88,7 +88,7 @@ class TwoDRenderer:
         self._show_fixture(4, self.MOTOR_COLOR)
 
         # Simulate spinning props by alternating show/hide
-        if self.props_visible: 
+        if not spinning or self.props_visible: 
             for k in range(5,9):
                 self._show_fixture(k, self.PROP_COLOR)
 

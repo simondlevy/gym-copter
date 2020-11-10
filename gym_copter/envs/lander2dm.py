@@ -2,6 +2,8 @@
 '''
 2D Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
 
+This version controls each motor separately
+
 Copyright (C) 2019 Simon D. Levy
 
 MIT License
@@ -15,7 +17,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class Lander2D(gym.Env, EzPickle):
+class Lander2DM(gym.Env, EzPickle):
     
     # Parameters to adjust
     INITIAL_RANDOM_FORCE  = 10 # perturbation for initial position
@@ -89,10 +91,9 @@ class Lander2D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            t = np.clip(action[0], 0, 1)    # keep throttle in interval [0,1]
-            r = action[1]  
-            d.setMotors(np.clip([t-r, t+r, t+r, t-r], 0, 1))
-            self.spinning = t > 0
+            m = np.clip(action, 0, 1)    # keep motors in interval [0,1]
+            d.setMotors([m[0], m[1], m[0], m[1]])
+            self.spinning = sum(m) > 0
             d.update()
 
         # Get new state from dynamics
@@ -136,6 +137,7 @@ class Lander2D(gym.Env, EzPickle):
 
                 # Crashed!
                 done = True
+                self.spinning = False
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
@@ -162,7 +164,7 @@ class Lander2D(gym.Env, EzPickle):
         if self.renderer is not None:
             self.renderer.close()
 
-# End of Lander2D class ----------------------------------------------------------------
+# End of Lander2DM class ----------------------------------------------------------------
 
 
 def heuristic(s):
@@ -239,4 +241,4 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
 if __name__ == '__main__':
 
-    demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)
+    demo_heuristic_lander(Lander2DM(), seed=None, render=True, save=False)
