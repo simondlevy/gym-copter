@@ -205,7 +205,7 @@ def heuristic(s):
 
     hover_todo = posz*F + velz*G
 
-    return hover_todo, phi_todo
+    return hover_todo-phi_todo, hover_todo+phi_todo
 
 def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
