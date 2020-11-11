@@ -92,7 +92,7 @@ class Lander2DM(gym.Env, EzPickle):
         # In air, set motors from action
         else:
             m = np.clip(action, 0, 1)    # keep motors in interval [0,1]
-            d.setMotors([m[0], m[1], m[0], m[1]])
+            d.setMotors([m[0], m[1], m[1], m[0]])
             self.spinning = sum(m) > 0
             d.update()
 
