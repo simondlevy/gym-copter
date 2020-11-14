@@ -20,7 +20,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander2D(gym.Env, EzPickle):
     
     # Parameters to adjust
-    INITIAL_RANDOM_FORCE  = 10 # perturbation for initial position
+    INITIAL_RANDOM_FORCE  = 30 # perturbation for initial position
     INITIAL_ALTITUDE      = 10
     LANDING_RADIUS        = 2
     PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
@@ -186,11 +186,11 @@ def heuristic(s):
     """
 
     # Angle target
-    A = 0.05
-    B = 0.06
+    A = 0.1#0.05
+    B = 0.1#0.06
 
     # Angle PID
-    C = 0.025
+    C = 0.1 #0.025
     D = 0.05
     E = 0.4
 
