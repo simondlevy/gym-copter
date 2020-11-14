@@ -14,6 +14,7 @@ import neat
 import pickle
 import argparse
 import random
+import numpy as np
 
 from common import eval_genome, CopterConfig
 
@@ -27,13 +28,14 @@ def main(config_file='config.txt', save_dir='nets'):
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--ngen', type=int, required=False, help='Number of generations to run')
     parser.add_argument('-r', '--reps', type=int, default=10, required=False, help='Number of repetitions per genome')
-    parser.add_argument('-s', '--seed', required=False, help='Seed for random-number generator')
+    parser.add_argument('-s', '--seed', type=int, required=False, help='Seed for random-number generator')
     parser.add_argument('-v', '--viz', dest='visualize', action='store_true')
     args = parser.parse_args()
 
     # Set random seed if indicated
     if args.seed is not None:
         random.seed(args.seed)
+        np.random.seed(args.seed)
 
     # Make directory for pickling nets, if it doesn't already exist
     _makedir(save_dir)

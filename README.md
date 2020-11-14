@@ -35,7 +35,17 @@ Lee undergraduate student Coletta Fuller) focuses on applying the
 [NEAT](https://www.cse.unr.edu/~sushil/class/gas/papers/NEAT.pdf) algorithm to
 solve tasks in the GymCopter environment.
 
-To try this out for yourself, you should install [neat-python](https://github.com/CodeReclaimers/neat-python).
+To try this out for yourself, you should install [neat-python](https://github.com/CodeReclaimers/neat-python).  Then 
+do the following in the gym-copter repository:
+
+```
+% cd neat
+% python3 learn.py
+```
+
+This will run neat-python using the
+[parallel fitness evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),
+so you can take advantage of all the cores on your computer.
 
 ## Similar projects
 

@@ -27,6 +27,8 @@ def eval_genome(genome, config, render=False):
 
     fitness = 0
 
+    config.env.seed(0)
+
     for _ in range(config.reps):
 
         state = config.env.reset()
