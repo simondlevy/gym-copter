@@ -55,6 +55,11 @@ Once evolution finishes, you can test out your evolved network by doing:
 
 where ```<fitness>``` is the fitness of your evolved network.
 
+To see what other options are available for these two scripts, you can do
+
+% python3 evolve.py -h
+% python3 test.py -h
+
 ## Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
