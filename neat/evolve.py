@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Learning script for NEAT CopterLanderV2
+Training script for NEAT CopterLanderV2
 
 Copyright (C) 2020 Simon D. Levy
 

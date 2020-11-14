@@ -40,21 +40,20 @@ do the following in the gym-copter repository:
 
 ```
 % cd neat
-% python3 learn.py
+% python3 evolve.py
 ```
-
-Once learn.py finishes, you can test out your evolved network by doing:
-
-```
-% cd neat
-% python3 test.py nets/
-```
-
-
-
 This will run neat-python using the
 [parallel fitness evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),
 so you can take advantage of all the cores on your computer.
+
+Once evolution finishes, you can test out your evolved network by doing:
+
+```
+% cd neat
+% python3 test.py -i nets/<fitness>.dat
+```
+
+where ```<fitness>``` is the fitness of your evolved network.
 
 ## Similar projects
 
