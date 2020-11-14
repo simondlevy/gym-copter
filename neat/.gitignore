@@ -1,0 +1,4 @@
+nets/
+__pycache__
+*.svg
+Digraph.gv
