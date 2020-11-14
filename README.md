@@ -49,7 +49,6 @@ so you can take advantage of all the cores on your computer.
 Once evolution finishes, you can test out your evolved network by doing:
 
 ```
-% cd neat
 % python3 test.py -i nets/<fitness>.dat
 ```
 
