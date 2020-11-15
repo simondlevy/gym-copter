@@ -25,13 +25,10 @@ if __name__ == '__main__':
     # Load genome and configuration from pickled file
     genome, config = pickle.load(open(args.input, 'rb'))
 
-    # Training uses multiple repetitions, testing only one
-    config.reps = 1
-
-    # Evaluate the genome (runs the episode) and print fitness result
-    print('%6.6f' % eval_genome(genome, config, True))
-
-    # Visualize the network if indicated
     if args.viz:
         node_names = {-1:'x', -2:'dx', -3:'y', -4:'dy', -5:'phi', -6:'dphi', 0:'mr', 1:'ml'}
         visualize.draw_net(config, genome, True, node_names = node_names)
+
+    else:
+        config.reps = 1 # Training uses multiple repetitions, testing only one
+        print('%6.6f' % eval_genome(genome, config, True))
