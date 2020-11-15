@@ -27,19 +27,20 @@ def eval_genome(genome, config, render=False):
 
     fitness = 0
 
-    config.env.seed(0)
-
     for _ in range(config.reps):
 
         state = config.env.reset()
         rewards = 0
+        steps = 0
 
         while True:
             action = np.clip(net.activate(state), -1, +1)
             state, reward, done, _ = config.env.step(action)
+            break
             if render:
                 config.env.render()
             rewards += reward
+            steps += 1
             if done:
                 break
 
