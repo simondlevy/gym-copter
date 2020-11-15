@@ -7,20 +7,12 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import pickle
-import argparse
-
-from common import eval_genome
+from common import read_file, eval_genome
 
 if __name__ == '__main__':
 
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filename', metavar='FILENAME', help='input file')
-    args = parser.parse_args()
-
      # Load genome and configuration from pickled file
-    genome, config = pickle.load(open(args.filename, 'rb'))
+    genome, config = read_file()
 
     # Training uses multiple repetitions, testing only one
     config.reps = 1 

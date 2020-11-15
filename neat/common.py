@@ -9,6 +9,8 @@ MIT License
 import neat
 import gym
 import numpy as np
+import argparse
+import pickle
 
 class CopterConfig(neat.Config):
 
@@ -48,3 +50,15 @@ def eval_genome(genome, config, render=False):
     config.env.close()
 
     return fitness / config.reps
+
+def read_file():
+
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', metavar='FILENAME', help='input file')
+    args = parser.parse_args()
+
+    # Load genome and configuration from pickled file
+    return pickle.load(open(args.filename, 'rb'))
+
+
