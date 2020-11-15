@@ -36,7 +36,6 @@ def eval_genome(genome, config, render=False):
         while True:
             action = np.clip(net.activate(state), -1, +1)
             state, reward, done, _ = config.env.step(action)
-            break
             if render:
                 config.env.render()
             rewards += reward

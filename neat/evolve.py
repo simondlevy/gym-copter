@@ -34,7 +34,7 @@ def main():
     parser.add_argument('-d', '--savedir', required=False, default='nets', help='Directory for saving evolved nets')
     args = parser.parse_args()
 
-    # Set random seed if indicated
+    # Set random seed (including None)
     random.seed(args.seed)
 
     # Make directory for pickling nets, if it doesn't already exist
