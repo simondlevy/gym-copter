@@ -22,7 +22,7 @@ def _makedir(name):
     if not os.path.exists(name):
         os.makedirs(name)
 
-def main(config_file='config.txt', save_dir='nets'):
+def main():
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
@@ -30,16 +30,18 @@ def main(config_file='config.txt', save_dir='nets'):
     parser.add_argument('-r', '--reps', type=int, default=10, required=False, help='Number of repetitions per genome')
     parser.add_argument('-v', '--viz', dest='visualize', action='store_true')
     parser.add_argument('-s', '--seed', type=int, required=False, help='Seed for random number generator')
+    parser.add_argument('-c', '--config', required=False, default='config.txt', help='Configuration file')
+    parser.add_argument('-d', '--savedir', required=False, default='nets', help='Directory for saving evolved nets')
     args = parser.parse_args()
 
     # Set random seed if indicated
     random.seed(args.seed)
 
     # Make directory for pickling nets, if it doesn't already exist
-    _makedir(save_dir)
+    _makedir(args.savedir)
 
     # Load configuration.
-    config = CopterConfig(config_file, args.reps)
+    config = CopterConfig(args.config, args.reps)
 
     # Create the population, which is the top-level object for a NEAT run.
     p = neat.Population(config)
@@ -56,7 +58,7 @@ def main(config_file='config.txt', save_dir='nets'):
     winner = p.run(pe.evaluate) if args.ngen is None else p.run(pe.evaluate, args.ngen) 
 
     # Pickle the winner 
-    filename = '%s/%f.dat' % (save_dir, winner.fitness)
+    filename = '%s/%f.dat' % (args.savedir, winner.fitness)
     print('Saving %s' % filename)
     pickle.dump((winner, config), open(filename, 'wb'))
 
