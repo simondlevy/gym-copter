@@ -14,12 +14,12 @@ import pickle
 
 class CopterConfig(neat.Config):
 
-    def __init__(self, config_file, reps):
+    def __init__(self, env_name, config_file, reps):
 
         neat.Config.__init__(self, neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation, config_file)
 
-        self.env = gym.make('gym_copter:Lander-v2')
+        self.env = gym.make(env_name)
 
         self.reps = reps
 

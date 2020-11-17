@@ -14,7 +14,6 @@ import neat
 import pickle
 import argparse
 import random
-import numpy as np
 
 from common import eval_genome, CopterConfig
 
@@ -26,6 +25,7 @@ def main():
 
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
+    parser.add_argument('environment', metavar='ENVIRONMENT', help='environment (e.g. gym_copter:Lander-v2')
     parser.add_argument('-g', '--ngen', type=int, required=False, help='Number of generations to run')
     parser.add_argument('-r', '--reps', type=int, default=10, required=False, help='Number of repetitions per genome')
     parser.add_argument('-v', '--viz', dest='visualize', action='store_true')
@@ -41,7 +41,7 @@ def main():
     _makedir(args.savedir)
 
     # Load configuration.
-    config = CopterConfig(args.config, args.reps)
+    config = CopterConfig(args.environment, args.config, args.reps)
 
     # Create the population, which is the top-level object for a NEAT run.
     p = neat.Population(config)
