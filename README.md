@@ -49,16 +49,16 @@ so you can take advantage of all the cores on your computer.
 Once evolution finishes, you can test out your evolved network by doing:
 
 ```
-% python3 test.py -i nets/<fitness>.dat
+% python3 test.py nets/<fitness>.dat
 ```
 
 where ```<fitness>``` is the fitness of your evolved network.
 
-To see what other options are available for these two scripts, you can do
+To visualize the evolved network you should first install graphviz (```pip3 install graphviz```) and then
+run the *show* script:
 
 ```
-% python3 evolve.py -h
-% python3 test.py -h
+% python3 show.py nets/<fitness>.dat
 ```
 
 ## Similar projects
