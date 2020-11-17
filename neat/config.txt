@@ -10,7 +10,7 @@
 fitness_criterion     = max
 reset_on_extinction   = 1
 
-# Actual values are set in learn.py
+# Actual values are set in evolve.py
 fitness_threshold     = 200
 pop_size              = 96
 
