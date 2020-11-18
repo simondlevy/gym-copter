@@ -1,5 +1,5 @@
 '''
-Common code for NEAT CopterLanderv2
+Common code for using NEAT with OpenAI Gym environments Test script for using NEAT with OpenAI Gym environments
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -12,7 +12,7 @@ import numpy as np
 import argparse
 import pickle
 
-class CopterConfig(neat.Config):
+class GymConfig(neat.Config):
 
     def __init__(self, env_name, reps):
         '''
@@ -20,7 +20,7 @@ class CopterConfig(neat.Config):
         '''
 
         neat.Config.__init__(self, neat.DefaultGenome, neat.DefaultReproduction,
-                         neat.DefaultSpeciesSet, neat.DefaultStagnation, env_name)
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation, env_name+'.cfg')
 
         self.env = gym.make(env_name)
 

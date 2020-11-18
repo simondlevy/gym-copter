@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Test script for NEAT CopterLanderV2
+Network-display script for Lander-v2
 
 Copyright (C) 2020 Simon D. Levy
 

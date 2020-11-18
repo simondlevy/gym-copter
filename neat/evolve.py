@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Training script for NEAT CopterLanderV2
+Evolver script for OpenAI Gym environemnts
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -15,7 +15,7 @@ import pickle
 import argparse
 import random
 
-from common import eval_genome, CopterConfig
+from common import eval_genome, GymConfig
 
 def _makedir(name):
     if not os.path.exists(name):
@@ -40,7 +40,7 @@ def main():
     _makedir(args.savedir)
 
     # Load configuration.
-    config = CopterConfig(args.environment, args.reps)
+    config = GymConfig(args.environment, args.reps)
 
     # Create the population, which is the top-level object for a NEAT run.
     p = neat.Population(config)

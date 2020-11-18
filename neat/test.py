@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Test script for NEAT CopterLanderV2
+Test script for using NEAT with OpenAI Gym environments
 
 Copyright (C) 2020 Simon D. Levy
 
