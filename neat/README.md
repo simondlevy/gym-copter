@@ -1,3 +1,5 @@
+<img src="neat.png">
+
 # Evolving a neural controller
 
 Like some other [researchers](https://openai.com/blog/evolution-strategies/), I have switched focus recently
