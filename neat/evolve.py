@@ -30,7 +30,6 @@ def main():
     parser.add_argument('-r', '--reps', type=int, default=10, required=False, help='Number of repetitions per genome')
     parser.add_argument('-v', '--viz', dest='visualize', action='store_true')
     parser.add_argument('-s', '--seed', type=int, required=False, help='Seed for random number generator')
-    parser.add_argument('-c', '--config', required=False, default='config.txt', help='Configuration file')
     parser.add_argument('-d', '--savedir', required=False, default='nets', help='Directory for saving evolved nets')
     args = parser.parse_args()
 
@@ -41,7 +40,7 @@ def main():
     _makedir(args.savedir)
 
     # Load configuration.
-    config = CopterConfig(args.environment, args.config, args.reps)
+    config = CopterConfig(args.environment, args.reps)
 
     # Create the population, which is the top-level object for a NEAT run.
     p = neat.Population(config)
