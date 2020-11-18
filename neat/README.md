@@ -14,7 +14,7 @@ To try this out for yourself, you should do the following:
 
 3. Copy <b>gym_copter:Lander-v2.cfg</b> into the NEAT-Gym repository.
 
-4. Do ```python3 neat-gym-evolve.py``` gym_copter:Lander-v2```
+4. Run ```python3 neat-gym-evolve.py gym_copter:Lander-v2```
 
 This will run neat-python using the [parallel fitness
 evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),
