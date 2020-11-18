@@ -30,14 +30,13 @@ def main():
     parser.add_argument('-r', '--reps', type=int, default=10, required=False, help='Number of repetitions per genome')
     parser.add_argument('-v', '--viz', dest='visualize', action='store_true')
     parser.add_argument('-s', '--seed', type=int, required=False, help='Seed for random number generator')
-    parser.add_argument('-d', '--savedir', required=False, default='nets', help='Directory for saving evolved nets')
     args = parser.parse_args()
 
     # Set random seed (including None)
     random.seed(args.seed)
 
     # Make directory for pickling nets, if it doesn't already exist
-    _makedir(args.savedir)
+    _makedir(args.environment)
 
     # Load configuration.
     config = GymConfig(args.environment, args.reps)
@@ -57,7 +56,7 @@ def main():
     winner = p.run(pe.evaluate) if args.ngen is None else p.run(pe.evaluate, args.ngen) 
 
     # Pickle the winner 
-    filename = '%s/%f.dat' % (args.savedir, winner.fitness)
+    filename = '%s/%f.dat' % (args.environment, winner.fitness)
     print('Saving %s' % filename)
     pickle.dump((winner, config), open(filename, 'wb'))
 

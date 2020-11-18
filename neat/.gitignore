@@ -1,4 +1,4 @@
-nets/
+gym_copter:Lander-v2/
 __pycache__
 *.svg
 Digraph.gv

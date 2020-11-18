@@ -2,4 +2,4 @@ evolve:
 	./evolve.py
 
 clean:
-	rm -rf nets/ *.svg Digraph.gv* __pycache__/
+	rm -rf gym_copter:Lander-v2/ *.svg Digraph.gv* __pycache__/
