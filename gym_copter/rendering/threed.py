@@ -16,7 +16,6 @@ from PIL import Image
 def create_axis(ax, color):
     obj = ax.plot([], [], [], '-', c=color)[0]
     obj.set_data([], [])
-    obj.set_3d_properties([])
     return obj
 
 class _Vehicle:
@@ -136,8 +135,6 @@ class ThreeDRenderer:
         self.ax.set_xlim((-lim, lim))
         self.ax.set_ylim((-lim, lim))
         self.ax.set_zlim((0, lim))
-
-        self.ax.set_aspect('equal')
 
         # Create a representation of the copter
         self.copter = _Vehicle(self.ax, showtraj)
