@@ -1,8 +1,8 @@
 # Evolving a neural controller
 
 Like some other [researchers](https://openai.com/blog/evolution-strategies/), I have switched focus recently
-from Deep Reinforcement Learning (DRL) to Evolution Strategies (ES).  Current work (with Washington and 
-Lee undergraduate student Coletta Fuller) focuses on applying the
+from Deep Reinforcement Learning (DRL) to Evolution Strategies (ES).  Current work, with Washington and 
+Lee undergraduate student Coletta Fuller, focuses on applying the
 [NEAT](https://www.cse.unr.edu/~sushil/class/gas/papers/NEAT.pdf) algorithm to
 solve tasks in the GymCopter environment.
 
