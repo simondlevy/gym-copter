@@ -95,13 +95,13 @@ class Lander3D(gym.Env, EzPickle):
             d.update()
 
         # Get new state from dynamics
-        posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta, psi, _ = d.getState()
+        state = np.array(d.getState())
+
+        # Extract pose from state
+        x, y, z, phi, theta, psi = state[0::2]
 
         # Set lander pose in display
-        self.pose = posx, posy, posz, phi, theta, psi
-
-        # Convert state to usable form
-        state = np.array([posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta])
+        self.pose = x, y, z, phi, theta, psi
 
         # Reward is a simple penalty for overall distance and angle and their first derivatives
         shaping = -(self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
@@ -114,7 +114,7 @@ class Lander3D(gym.Env, EzPickle):
         done = False
 
         # Lose bigly if we go out of bounds
-        if abs(posx) >= self.BOUNDS or abs(posy) >= self.BOUNDS:
+        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
@@ -129,7 +129,7 @@ class Lander3D(gym.Env, EzPickle):
             done = True
 
             # Win bigly we land safely between the flags
-            if posx**2+posy**2 < self.LANDING_RADIUS**2: 
+            if x**2+y**2 < self.LANDING_RADIUS**2: 
 
                 reward += self.INSIDE_RADIUS_BONUS
 
@@ -191,15 +191,15 @@ def heuristic(s):
     F = 1.15
     G = 1.33
 
-    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
+    x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
-    phi_targ = posy*A + vely*B              # angle should point towards center
-    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
+    phi_targ = y*A + dy*B              # angle should point towards center
+    phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
 
-    theta_targ = posx*A + velx*B         # angle should point towards center
-    theta_todo = -(theta+theta_targ)*C - theta*D  + veltheta*E
+    theta_targ = x*A + dx*B         # angle should point towards center
+    theta_todo = -(theta+theta_targ)*C - theta*D  + dtheta*E
 
-    hover_todo = posz*F + velz*G
+    hover_todo = z*F + dz*G
 
     t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
     return np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1) # use mixer to set motors
