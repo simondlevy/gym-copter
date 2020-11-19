@@ -43,11 +43,11 @@ class Lander3D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # Observation is all state values except yaw and its derivative
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
+        # Observation is all state values
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32)
 
-        # Action is three floats [throttle, roll, pitch]
-        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
+        # Action is four floats [throttle, roll, pitch, yaw]
+        self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
 
         # Support for rendering
         self.renderer = None
