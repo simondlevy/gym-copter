@@ -78,6 +78,7 @@ class _Vehicle:
             self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, 0)
             self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
+
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
         # Make convenient abbreviations for functions of Euler angles
@@ -163,6 +164,7 @@ class ThreeDRenderer:
     def complete(self):
 
         self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
         buf = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8)
         w,h = self.fig.canvas.get_width_height()
         buf.shape = w, h, 3

@@ -1,4 +1,5 @@
 gym_copter:Lander-v2/
+gym_copter:Lander-v3/
 __pycache__
 *.svg
 Digraph.gv
