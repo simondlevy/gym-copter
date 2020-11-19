@@ -91,7 +91,8 @@ class Lander3D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
+            #d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
+            d.setMotors([0.5]*4)
             d.update()
 
         # Get new state from dynamics

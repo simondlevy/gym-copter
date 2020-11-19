@@ -29,7 +29,7 @@ def neat_action(s):
     F = 1.15
     G = 1.33
 
-    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s
+    posx, velx, posy, vely, posz, velz, phi, velphi, theta, veltheta = s[:10]
 
     phi_targ = posy*A + vely*B              # angle should point towards center
     phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
