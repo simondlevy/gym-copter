@@ -46,7 +46,7 @@ class Lander3D(gym.Env, EzPickle):
         # Observation is all state values
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32)
 
-        # Action is four floats [throttle, roll, pitch, yaw]
+        # Action is four floats (one per motor)
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
 
         # Support for rendering
@@ -77,7 +77,7 @@ class Lander3D(gym.Env, EzPickle):
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0, 0]))[0]
+        return self.step(np.array([0, 0, 0, 0]))[0]
 
     def step(self, action):
 
@@ -91,8 +91,7 @@ class Lander3D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            t,r,p = (action[0]+1)/2, action[1], action[2]  # map throttle demand from [-1,+1] to [0,1]
-            d.setMotors(np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1)) # use mixer to set motors
+            d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
             d.update()
 
         # Get new state from dynamics
@@ -202,7 +201,8 @@ def heuristic(s):
 
     hover_todo = posz*F + velz*G
 
-    return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
+    t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
+    return np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1) # use mixer to set motors
 
 def heuristic_lander(env, renderer=None, seed=None):
 
