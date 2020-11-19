@@ -12,28 +12,9 @@ from neat_gym import read_file, eval_net
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 import threading
 import numpy as np
+import time
 
-def heuristic(s):
-    """
-    The heuristic for
-    1. Testing
-    2. Demonstration rollout.
-
-    Args:
-        s (list): The state. Attributes:
-                  s[0] is the X coordinate
-                  s[1] is the X speed
-                  s[2] is the Y coordinate
-                  s[3] is the Y speed
-                  s[4] is the vertical coordinate
-                  s[5] is the vertical speed
-                  s[6] is the roll angle
-                  s[7] is the roll angular speed
-                  s[8] is the pitch angle
-                  s[9] is the pitch angular speed
-     returns:
-         a: The heuristic to be fed into the step function defined above to determine the next step and reward.
-    """
+def neat_action(s):
 
     # Angle target
     A = 0.05
@@ -60,13 +41,7 @@ def heuristic(s):
 
     return hover_todo, phi_todo, theta_todo # phi affects Y; theta affects X
 
-def heuristic_lander(env, renderer=None, seed=None):
-
-    import time
-
-    if seed is not None:
-        env.seed(seed)
-        np.random.seed(seed)
+def neat_lander(net, env):
 
     total_reward = 0
     steps = 0
@@ -74,7 +49,7 @@ def heuristic_lander(env, renderer=None, seed=None):
 
     while True:
 
-        action = heuristic(state)
+        action = neat_action(state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
@@ -86,12 +61,10 @@ def heuristic_lander(env, renderer=None, seed=None):
 
         if done: break
 
-        if not renderer is None:
-            time.sleep(1./env.FRAMES_PER_SECOND)
+        time.sleep(1./env.FRAMES_PER_SECOND)
 
     env.close()
     return total_reward
-
 
 
 if __name__ == '__main__':
@@ -103,11 +76,12 @@ if __name__ == '__main__':
 
     renderer = ThreeDLanderRenderer(config.env)
 
-    thread = threading.Thread(target=heuristic_lander, args=(config.env, renderer))
+    thread = threading.Thread(target=neat_lander, args=(net, config.env))
     thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
     renderer.start() 
+
     # Run the network
     #print('%6.6f' % eval_net(net, config.env, render=True))
