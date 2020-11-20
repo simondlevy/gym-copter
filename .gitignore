@@ -1,4 +1,5 @@
 *.pkl
+*.dat
 *.swp
 __pycache__/
 build/

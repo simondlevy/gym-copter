@@ -18,18 +18,19 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET = 2.5  # perturbation factor for initial horizontal position
-    INITIAL_ALTITUDE      = 5
-    LANDING_RADIUS        = 2
-    XY_PENALTY_FACTOR     = 25   # designed so that maximal penalty is around 100
-    ANGLE_PENALTY_FACTOR  = 250   
-    BOUNDS                = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    INSIDE_RADIUS_BONUS   = 100
-    RESTING_DURATION      = 1.0  # for rendering for a short while after successful landing
-    FRAMES_PER_SECOND     = 50
-    MAX_ANGLE             = 45   # big penalty if roll or pitch angles go beyond this
-    EXCESS_ANGLE_PENALTY  = 100
+    INITIAL_RANDOM_OFFSET      = 2.5  # perturbation factor for initial horizontal position
+    INITIAL_ALTITUDE           = 5
+    LANDING_RADIUS             = 2
+    XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
+    PITCH_ROLL_PENALTY_FACTOR  = 250   
+    YAW_PENALTY_FACTOR         = 50   
+    BOUNDS                     = 10
+    OUT_OF_BOUNDS_PENALTY      = 100
+    INSIDE_RADIUS_BONUS        = 100
+    RESTING_DURATION           = 1.0  # for rendering for a short while after successful landing
+    FRAMES_PER_SECOND          = 50
+    MAX_ANGLE                  = 45   # big penalty if roll or pitch angles go beyond this
+    EXCESS_ANGLE_PENALTY       = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -104,8 +105,11 @@ class Lander3D(gym.Env, EzPickle):
         self.pose = x, y, z, phi, theta, psi
 
         # Reward is a simple penalty for overall distance and angle and their first derivatives
-        shaping = -(self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
-                self.ANGLE_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)))
+        shaping = -(
+                self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
+                self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)) +
+                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2))
+                )
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
         self.prev_shaping = shaping
