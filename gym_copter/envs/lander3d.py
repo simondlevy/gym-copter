@@ -91,8 +91,7 @@ class Lander3D(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            #d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
-            d.setMotors([0.5]*4)
+            d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
             d.update()
 
         # Get new state from dynamics
@@ -203,7 +202,6 @@ def heuristic(s):
     hover_todo = z*F + dz*G
 
     t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
-    #return np.clip([t-r-p, t+r+p, t+r-p, t-r+p], 0, 1) # use mixer to set motors
     return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
 
 def heuristic_lander(env, renderer=None, seed=None):
