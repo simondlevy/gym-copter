@@ -12,6 +12,10 @@ from neat_gym import read_file, eval_net
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 import threading
 
+def _eval_net(net, env):
+
+    print(eval_net(net, env, render=True))
+
 if __name__ == '__main__':
 
     # Load genome and configuration from pickled file
@@ -24,7 +28,7 @@ if __name__ == '__main__':
     renderer = ThreeDLanderRenderer(config.env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=eval_net, args=(net, config.env, True))
+    thread = threading.Thread(target=_eval_net, args=(net, config.env))
     thread.daemon = True
     thread.start()
 
