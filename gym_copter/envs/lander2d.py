@@ -10,6 +10,7 @@ MIT License
 '''
 
 import numpy as np
+import time
 
 import gym
 from gym import spaces
@@ -223,6 +224,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
         if render:
             frame = env.render('rgb_array')
+            time.sleep(1./env.FRAMES_PER_SECOND)
             if frame is None: break
             if save:
                 from PIL import Image
