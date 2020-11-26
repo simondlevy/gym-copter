@@ -11,7 +11,7 @@ from neat_gym import read_file, visualize
 
 if __name__ == '__main__':
 
-    genome, config = read_file()
+    genome, config, _ = read_file()
 
     node_names = {-1:'x', -2:'dx', -3:'y', -4:'dy', -5:'z', -6:'dz', 
             -7:'phi', -8:'dphi', -9:'theta', -10:'dtheta', -11:'psi', -12:'dpsi', 
