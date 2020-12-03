@@ -16,7 +16,7 @@ To try this out for yourself, you should do the following:
 
 3. Copy <b>gym_copter:Lander-v2.cfg</b> into the NEAT-Gym repository.
 
-4. Run ```python3 neat-gym-evolve.py gym_copter:Lander-v2```
+4. Run ```python3 evolve.py gym_copter:Lander-v2```
 
 This will run neat-python using the [parallel fitness
 evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),
@@ -25,14 +25,14 @@ so you can take advantage of all the cores on your computer.
 Once evolution finishes, you can test out your evolved network by doing:
 
 ```
-% python3 neat-gym-test.py gym_copter:Lander-v2/<fitness>.dat
+% python3 test.py models/gym_copter:Lander-v2/<fitness>.dat
 ```
 
 where ```<fitness>``` is the fitness of your evolved network.
 
 To visualize the evolved network you should first install graphviz (```pip3 install graphviz```) and then
-run the *neat-gym-show* script:
+run the *2dshow* script:
 
 ```
-% python3 net-gym-show.py gym_copter:Lander-v2/<fitness>.dat
+% python3 2dshow.py models/gym_copter:Lander-v2/<fitness>.dat
 ```
