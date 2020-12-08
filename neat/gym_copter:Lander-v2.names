@@ -1,0 +1,9 @@
+# Node names configuration for gym_copter:Lander-v2
+#
+# Copyright (C) 2020 Simon D. Levy
+#
+# MIT License
+
+[Names]
+input  = ['x', 'dx', 'y', 'dy', 'phi', 'dphi']
+output = ['m1', 'm2']
