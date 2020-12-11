@@ -31,8 +31,8 @@ Once evolution finishes, you can test out your evolved network by doing:
 where ```<fitness>``` is the fitness of your evolved network.
 
 To visualize the evolved network you should first install graphviz (```pip3 install graphviz```) and then
-run the *2dshow* script:
+run the visualizxation escript:
 
 ```
-% python3 2dshow.py models/gym_copter:Lander-v2/<fitness>.dat
+% python3 visualize.py models/gym_copter:Lander-v2/<fitness>.dat
 ```
