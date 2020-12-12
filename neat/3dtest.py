@@ -19,13 +19,10 @@ def _eval_net(net, env):
 if __name__ == '__main__':
 
     # Load genome and configuration from pickled file
-    genome, config = read_file()
-
-    # Make network from genome and configuration
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
+    net, config = read_file()
 
     # Create a three-D renderer
-    renderer = ThreeDLanderRenderer(config.env)
+    renderer = ThreeDLanderRenderer(config.env_name)
 
     # Start the network-evaluation episode on a separate thread
     thread = threading.Thread(target=_eval_net, args=(net, config.env))

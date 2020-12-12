@@ -23,7 +23,7 @@ num_outputs             = 1
 # node activation options
 activation_default      = tanh
 activation_mutate_rate  = 0.5
-activation_options      = tanh relu
+activation_options      = tanh
 
 # node aggregation options
 aggregation_default     = sum
@@ -87,3 +87,12 @@ species_elitism      = 10
 [DefaultReproduction]
 elitism            = 10
 survival_threshold = 0.2
+
+[Names]
+input  = ['x', 'dx', 'y', 'dy', 'phi', 'dphi']
+output = ['m1', 'm2']
+
+[Substrate]
+input  = [(-1, -1), (-.6,-1), (-.2, -1), (+.2,-1), (+.6,-1), (+1,-1)]
+output = [(-1, +1), (+1,+1)]
+function = tanh
