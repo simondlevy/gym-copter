@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander with full dynamics (12 state values)
+3D Copter-Lander with simplified state 
 
-Copyright (C) 2019 Simon D. Levy
+Copyright (C) 2020 Simon D. Levy
 
 MIT License
 '''
@@ -15,7 +15,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-class Lander3D(gym.Env, EzPickle):
+class Lander3DSimple(gym.Env, EzPickle):
 
     # Parameters to adjust  
     INITIAL_RANDOM_OFFSET      = 2.5  # perturbation factor for initial horizontal position
