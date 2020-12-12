@@ -94,11 +94,11 @@ class Lander3DSimple(gym.Env, EzPickle):
             d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
             d.update()
 
-        # Get new state from dynamics
-        state = np.array(d.getState())
+        # Get new state from dynamics, removing yaw
+        state = np.array(d.getState())[:10]
 
         # Extract pose from state
-        x, y, z, phi, theta = state[0:10:2]
+        x, y, z, phi, theta = state[0::2]
 
         # Set lander pose in display (with zero for yaw)
         self.pose = x, y, z, phi, theta, 0
