@@ -23,7 +23,6 @@ class Lander3DSimple(gym.Env, EzPickle):
     LANDING_RADIUS             = 2
     XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR  = 250   
-    YAW_PENALTY_FACTOR         = 50   
     BOUNDS                     = 10
     OUT_OF_BOUNDS_PENALTY      = 100
     INSIDE_RADIUS_BONUS        = 100
@@ -45,7 +44,7 @@ class Lander3DSimple(gym.Env, EzPickle):
         self.prev_reward = None
 
         # Observation is all state values
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
         # Action is four floats (one per motor)
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
@@ -99,16 +98,15 @@ class Lander3DSimple(gym.Env, EzPickle):
         state = np.array(d.getState())
 
         # Extract pose from state
-        x, y, z, phi, theta, psi = state[0::2]
+        x, y, z, phi, theta = state[0:10:2]
 
-        # Set lander pose in display
-        self.pose = x, y, z, phi, theta, psi
+        # Set lander pose in display (with zero for yaw)
+        self.pose = x, y, z, phi, theta, 0
 
         # Reward is a simple penalty for overall distance and angle and their first derivatives
         shaping = -(
                 self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
-                self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2))
+                self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2))
                 )
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
@@ -246,7 +244,7 @@ if __name__ == '__main__':
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = Lander3D()
+    env = Lander3DSimple()
 
     renderer = ThreeDLanderRenderer(env)
 
