@@ -15,15 +15,17 @@ reset_on_extinction   = False
 
 [DefaultGenome]
 
-# network parameters
-num_inputs              = 5
+# must always be 5 for PUREPLES HyperNEAT implementation
+num_inputs              = 5 
+
+# uset-settable
 num_hidden              = 0
-num_outputs             = 1
+num_outputs             = 10
 
 # node activation options
 activation_default      = tanh
 activation_mutate_rate  = 0.5
-activation_options      = tanh
+activation_options      = gauss sin tanh
 
 # node aggregation options
 aggregation_default     = sum
@@ -89,10 +91,10 @@ elitism            = 10
 survival_threshold = 0.2
 
 [Names]
-input  = ['x', 'dx', 'y', 'dy', 'z', 'dz', 'phi', 'dphi', 'theta', 'dtheta', 'psi', 'dpsi']
+input  = ['x', 'dx', 'y', 'dy', 'z', 'dz', 'phi', 'dphi', 'theta', 'dtheta']
 output = ['m1', 'm2', 'm3', 'm4']
 
 [Substrate]
-input  = [(0, -1.0), (0, -0.8), (0, -0.6), (0, -0.4), (0, -0.2), (0, -0.1), (0, 0.1), (0, 0.2), (0, 0.4), (0, 0.6), (0, 0.), (0, 1.0)]
+input  = [(0, -0.8), (0, -0.6), (0, -0.4), (0, -0.2), (0, -0.1), (0, 0.1), (0, 0.2), (0, 0.4), (0, 0.6), (0, 0.)]
 output = [(-1, -1), (+1,-1), (+1,+1), (-1,+1)]
 function = tanh
