@@ -7,7 +7,7 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import neat
+import gym
 from neat_gym import read_file, eval_net
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 import threading
@@ -19,13 +19,15 @@ def _eval_net(net, env):
 if __name__ == '__main__':
 
     # Load genome and configuration from pickled file
-    net, config = read_file()
+    net, env_name, _ = read_file()
+
+    env = gym.make(env_name)
 
     # Create a three-D renderer
-    renderer = ThreeDLanderRenderer(config.env_name)
+    renderer = ThreeDLanderRenderer(env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=_eval_net, args=(net, config.env))
+    thread = threading.Thread(target=_eval_net, args=(net, env))
     thread.daemon = True
     thread.start()
 
