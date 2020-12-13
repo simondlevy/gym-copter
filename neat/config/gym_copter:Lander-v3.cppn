@@ -92,7 +92,7 @@ survival_threshold = 0.2
 
 [Names]
 input  = ['x', 'dx', 'y', 'dy', 'z', 'dz', 'phi', 'dphi', 'theta', 'dtheta']
-output = ['m1', 'm2', 'm3', 'm4']
+output = ['thr', 'rol', 'pit']
 
 [Substrate]
 input  = [(0, -0.8), (0, -0.6), (0, -0.4), (0, -0.2), (0, -0.1), (0, 0.1), (0, 0.2), (0, 0.4), (0, 0.6), (0, 0.)]
