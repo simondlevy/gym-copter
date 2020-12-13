@@ -82,7 +82,7 @@ class Lander3DSimple(gym.Env, EzPickle):
     def step(self, action):
 
         # Use mixer to convert demands into motor values
-        t = (action[0]+1) / 2 # map throttle demand from [-1,+1] to [0,1]
+        t = np.clip(action[0], 0, 1) # truncate throttle below 0
         r = action[1]
         p = action[2]
         motors = [t-r-p, t+r+p, t+r-p, t-r+p] 
@@ -209,8 +209,7 @@ def heuristic(s):
 
     hover_todo = z*F + dz*G
 
-    #return (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
-    return hover_todo, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
+    return hover_todo+.5, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
 
 def heuristic_lander(env, renderer=None, seed=None):
 
