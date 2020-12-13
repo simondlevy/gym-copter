@@ -9,7 +9,7 @@
 
 [NEAT]
 fitness_criterion     = max
-fitness_threshold     = 200
+fitness_threshold     = 100
 pop_size              = 64
 reset_on_extinction   = False
 
@@ -92,7 +92,7 @@ survival_threshold = 0.2
 
 [Names]
 input  = ['x', 'dx', 'y', 'dy', 'z', 'dz', 'phi', 'dphi', 'theta', 'dtheta']
-output = ['thr', 'rol', 'pit']
+output = ['throttle', 'roll', 'pitch']
 
 [Substrate]
 input  = [(-.8, -1), (-.6, -1), (-.4, -1), (-.2, -1), (-.1, -1), (+.1, -1), (+.2, -1), (+.4, -1), (+.6, -1), (+.8, -1)]
