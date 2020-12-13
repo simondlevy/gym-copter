@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander with simplified state 
+3D Copter-Lander with simplified state and demands
 
 Copyright (C) 2020 Simon D. Levy
 
@@ -46,8 +46,8 @@ class Lander3DSimple(gym.Env, EzPickle):
         # Observation is all state values
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(10,), dtype=np.float32)
 
-        # Action is four floats (one per motor)
-        self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
+        # Action is three floats (throttle, roll, pitch)
+        self.action_space = spaces.Box(-1, +1, (3,), dtype=np.float32)
 
         # Support for rendering
         self.renderer = None
@@ -77,9 +77,13 @@ class Lander3DSimple(gym.Env, EzPickle):
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
-        return self.step(np.array([0, 0, 0, 0]))[0]
+        return self.step(np.array([0, 0, 0]))[0]
 
     def step(self, action):
+
+        # Use mixer to convert demands into motor values
+        t, r, p = action
+        motors = [t-r-p, t+r+p, t+r-p, t-r+p] 
 
         # Abbreviation
         d = self.dynamics
@@ -91,7 +95,7 @@ class Lander3DSimple(gym.Env, EzPickle):
 
         # In air, set motors from action
         else:
-            d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
+            d.setMotors(np.clip(motors, 0, 1))    # keep motors in interval [0,1]
             d.update()
 
         # Get new state from dynamics, removing yaw
@@ -203,8 +207,7 @@ def heuristic(s):
 
     hover_todo = z*F + dz*G
 
-    t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
-    return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
+    return (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
 
 def heuristic_lander(env, renderer=None, seed=None):
 
