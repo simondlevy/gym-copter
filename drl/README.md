@@ -9,6 +9,10 @@ To try this out for yourself, you should do the following:
 
 2. Run ```python3 [DIR]/td3-learn.py --env gym_copter:Lander-v2```
 
+where ```[DIR``` is the directory in which you put AC-Gym; for example:
+
+```python3 /home/levy/td3-learn.py --env gym_copter:Lander-v2```
+
 This will run the [TD3](https://arxiv.org/pdf/1802.09477.pdf) algorithm on the 2D landing task.
 
 Once learning finishes, you can test out your evolved network by doing:
