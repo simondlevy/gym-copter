@@ -57,24 +57,30 @@ def run_other(parts, env, nhid, record):
 
 def main():
 
+    # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', metavar='FILENAME', help='input file')
     parser.add_argument('--record', default=None, help='If specified, sets the recording dir')
     parser.add_argument('--seed', default=None, type=int, help='Sets Gym, PyTorch and Numpy seeds')
     args = parser.parse_args()
 
+    # Load network, environment name, and number of hidden units from pickled file
     parts, env_name, nhid = torch.load(open(args.filename, 'rb'))
 
+    # Make a gym environment from the name
     env = gym.make(env_name)
 
+    # Set random seed if indicated
     if args.seed is not None:
         env.seed(args.seed)
         torch.manual_seed(args.seed)
         np.random.seed(args.seed)
 
+    # Support recordinga  movie
     if args.record:
         env = wrappers.Monitor(env, args.record, force=True)
 
+    # We use a different evaluator functions for TD3 vs. other algorithms
     fun = run_td3 if 'td3' in args.filename else run_other
 
     # Create a three-D renderer
