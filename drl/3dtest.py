@@ -48,9 +48,6 @@ def run_other(parts, env, nhid, record):
         if np.isscalar(action): 
             action = [action]
         obs, reward, done, _ = env.step(action)
-        if record is None:
-            env.render('rgb_array')
-            time.sleep(.02)
         total_reward += reward
         total_steps += 1
         if done:
