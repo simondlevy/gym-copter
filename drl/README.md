@@ -1,5 +1,3 @@
-<img src="neat.png">
-
 # Learning a neural controller
 
 The code in this directory allows you to try out various Deep Reinforcement Learning (DRL) algorithms
