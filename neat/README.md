@@ -18,7 +18,7 @@ To try this out for yourself, you should do the following:
 
 where ```[DIR``` is the directory in which you put NEAT-Gym; for example:
 
-```python3 /home/levy/neat-evolve.py --env gym_copter:Lander-v2```
+```python3 /home/levy/NEAT-Gym/neat-evolve.py --env gym_copter:Lander-v2```
 
 This will run neat-python using the [parallel fitness
 evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),

@@ -11,7 +11,7 @@ To try this out for yourself, you should do the following:
 
 where ```[DIR``` is the directory in which you put AC-Gym; for example:
 
-```python3 /home/levy/td3-learn.py --env gym_copter:Lander-v2```
+```python3 /home/levy/AC-Gym/td3-learn.py --env gym_copter:Lander-v2```
 
 This will run the [TD3](https://arxiv.org/pdf/1802.09477.pdf) algorithm on the 2D landing task.
 
