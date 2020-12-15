@@ -14,6 +14,10 @@ from ac_gym.td3 import TD3, eval_policy
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 
+def report(reward, steps):
+
+    print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
+
 def run_td3(parts, env, nhid, record):
 
     policy = TD3(
@@ -24,7 +28,7 @@ def run_td3(parts, env, nhid, record):
 
     policy.set(parts)
 
-    return eval_policy(policy, env, render=(not record), eval_episodes=1)
+    report(*eval_policy(policy, env, render=(not record), eval_episodes=1))
 
 def run_other(parts, env, nhid, record):
 
@@ -52,7 +56,7 @@ def run_other(parts, env, nhid, record):
         if done:
             break
 
-    return total_reward, total_steps
+    report(total_reward, total_steps)
 
 
 def main():
