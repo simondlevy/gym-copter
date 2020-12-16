@@ -14,7 +14,7 @@ import threading
 
 def _eval_net(net, env):
 
-    print(eval_net(net, env, render=True))
+    print('Reward = %+03.f' % eval_net(net, env, render=True))
 
 if __name__ == '__main__':
 
