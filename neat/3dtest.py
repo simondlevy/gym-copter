@@ -19,7 +19,7 @@ def _eval_net(net, env):
 if __name__ == '__main__':
 
     # Load genome and configuration from pickled file
-    net, env_name, _ = read_file()
+    net, env_name, _, _ = read_file()
 
     env = gym.make(env_name)
 
