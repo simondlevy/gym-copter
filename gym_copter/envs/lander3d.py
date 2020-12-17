@@ -22,7 +22,7 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_ALTITUDE           = 5
     LANDING_RADIUS             = 2
     XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
-    PITCH_ROLL_PENALTY_FACTOR  = 250   
+    PITCH_ROLL_PENALTY_FACTOR  = 0 #250   
     YAW_PENALTY_FACTOR         = 50   
     BOUNDS                     = 10
     OUT_OF_BOUNDS_PENALTY      = 100
