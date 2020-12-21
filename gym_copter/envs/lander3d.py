@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 3D Copter-Lander with full dynamics (12 state values)
 
@@ -75,8 +74,8 @@ class Lander3D(gym.Env, EzPickle):
         d = self.dynamics
         state[d.STATE_X]      =  self.initial_random_offset * np.random.randn()
         state[d.STATE_Y]      =  self.initial_random_offset * np.random.randn()
-        state[d.STATE_PHI]    =  self.initial_random_tilt * np.random.randn()
-        state[d.STATE_THETA]  =  self.initial_random_tilt * np.random.randn()
+        state[d.STATE_PHI]    =  np.radians(self.initial_random_tilt * np.random.randn())
+        state[d.STATE_THETA]  =  np.radians(self.initial_random_tilt * np.random.randn())
         state[d.STATE_Z]      = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
@@ -125,9 +124,9 @@ class Lander3D(gym.Env, EzPickle):
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
         # Lose bigly for excess roll or pitch 
-        if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
+        #if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
+        #    done = True
+        #    reward = -self.OUT_OF_BOUNDS_PENALTY
 
         # It's all over once we're on the ground
         if status == d.STATUS_LANDED:
@@ -240,20 +239,3 @@ def heuristic_lander(env, renderer=None, seed=None):
 
     env.close()
     return total_reward
-
-
-if __name__ == '__main__':
-
-    from gym_copter.rendering.threed import ThreeDLanderRenderer
-    import threading
-
-    env = Lander3D()
-
-    renderer = ThreeDLanderRenderer(env)
-
-    thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
-    thread.daemon = True
-    thread.start()
-
-    # Begin 3D rendering on main thread
-    renderer.start()    

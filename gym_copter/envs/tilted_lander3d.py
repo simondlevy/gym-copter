@@ -11,19 +11,13 @@ import numpy as np
 
 from gym_copter.envs.lander3d import Lander3D
 
-class TargetedLander3D(Lander3D):
+class TiltedLander3D(Lander3D):
 
-    INITIAL_RANDOM_OFFSET = 2.5
-    LANDING_RADIUS        = 2
-    INSIDE_RADIUS_BONUS   = 100
+    INITIAL_RANDOM_TILT = 15 # degrees
 
     def __init__(self):
 
-        Lander3D.__init__(self, initial_random_offset=self.INITIAL_RANDOM_OFFSET)
-
-    def _get_bonus(self, x, y):
-
-        return self.INSIDE_RADIUS_BONUS if x**2+y**2 < self.LANDING_RADIUS**2 else 0
+        Lander3D.__init__(self, initial_random_tilt=self.INITIAL_RANDOM_TILT)
 
 def heuristic(s):
     """
@@ -106,14 +100,14 @@ def heuristic_lander(env, renderer=None, seed=None):
     return total_reward
 
 
-def main():
+if __name__ == '__main__':
 
-    from gym_copter.rendering.threed import TargetedThreeDLanderRenderer
+    from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = TargetedLander3D()
+    env = TiltedLander3D()
 
-    renderer = TargetedThreeDLanderRenderer(env)
+    renderer = ThreeDLanderRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True
@@ -121,6 +115,3 @@ def main():
 
     # Begin 3D rendering on main thread
     renderer.start()    
-
-if __name__ == '__main__':
-    main()

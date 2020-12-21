@@ -241,6 +241,9 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
     env.close()
     return total_reward
 
-if __name__ == '__main__':
+def main():
 
     demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)
+
+if __name__ == '__main__':
+    main()
