@@ -253,12 +253,12 @@ def heuristic_lander(env, renderer=None, seed=None):
 
 if __name__ == '__main__':
 
-    from gym_copter.rendering.threed import ThreeDLanderRenderer
+    from gym_copter.rendering.threed import TargetedThreeDLanderRenderer
     import threading
 
     env = TargetedLander3D()
 
-    renderer = ThreeDLanderRenderer(env)
+    renderer = TargetedThreeDLanderRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True

@@ -10,7 +10,7 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D # not explicitly used, but necessary
 from PIL import Image
 
 def create_axis(ax, color):
@@ -142,7 +142,8 @@ class ThreeDRenderer:
 
     def start(self):
 
-        # Instantiate the animator
+        # Instantiate the animator.  Although we don't use the resulting value (anim), the code will not work
+        # without the assignment.
         anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000/self.env.FRAMES_PER_SECOND), blit=False)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
@@ -189,12 +190,6 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
 
-        self.circle = create_axis(self.ax, 'r')
-        pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = radius * np.sin(pts)
-        self.circle_y = radius * np.cos(pts)
-        self.circle_z = np.zeros(self.circle_x.shape)
-
     def render(self):
 
         ThreeDRenderer.render(self)
@@ -205,8 +200,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
     def _update(self):
 
-        self.circle.set_data(self.circle_x, self.circle_y)
-        self.circle.set_3d_properties(self.circle_z)
+        return
 
     def _animate(self, _):
 
@@ -214,13 +208,28 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self._update()
 
+class TargetedThreeDLanderRenderer(ThreeDLanderRenderer):
+
+    def __init__(self, env, radius=2):
+
+        ThreeDLanderRenderer.__init__(self, env)
+
+        self.circle = create_axis(self.ax, 'r')
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        self.circle_x = radius * np.sin(pts)
+        self.circle_y = radius * np.cos(pts)
+        self.circle_z = np.zeros(self.circle_x.shape)
+
+    def _update(self):
+
+        self.circle.set_data(self.circle_x, self.circle_y)
+        self.circle.set_3d_properties(self.circle_z)
+
 class ThreeDDistanceRenderer(ThreeDRenderer):
 
     def __init__(self, env, radius=2):
 
         ThreeDRenderer.__init__(self, env, lim=20, label='Distance', viewangles=[30,120])
-
-        pts = np.linspace(-np.pi, +np.pi, 1000)
 
     def render(self):
 
@@ -243,8 +252,6 @@ class ThreeDTakeoffRenderer(ThreeDRenderer):
     def __init__(self, env, radius=2):
 
         ThreeDRenderer.__init__(self, env, lim=10, label='Takeoff', viewangles=[30,120])
-
-        pts = np.linspace(-np.pi, +np.pi, 1000)
 
     def render(self):
 
