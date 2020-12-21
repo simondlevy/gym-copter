@@ -20,13 +20,11 @@ class Lander3D(gym.Env, EzPickle):
     # Parameters to adjust  
     INITIAL_RANDOM_OFFSET      = 2.5  # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE           = 5
-    LANDING_RADIUS             = 2
     XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR  = 0 #250   
     YAW_PENALTY_FACTOR         = 50   
     BOUNDS                     = 10
     OUT_OF_BOUNDS_PENALTY      = 100
-    INSIDE_RADIUS_BONUS        = 100
     RESTING_DURATION           = 1.0  # for rendering for a short while after successful landing
     FRAMES_PER_SECOND          = 50
     MAX_ANGLE                  = 45   # big penalty if roll or pitch angles go beyond this
@@ -132,10 +130,8 @@ class Lander3D(gym.Env, EzPickle):
 
             done = True
 
-            # Win bigly we land safely between the flags
-            if x**2+y**2 < self.LANDING_RADIUS**2: 
-
-                reward += self.INSIDE_RADIUS_BONUS
+            # Targeted3D subclass adds a bonus for landing within radius
+            reward += self._get_bonus(x, y)
 
         elif status == d.STATUS_CRASHED:
 
@@ -158,11 +154,22 @@ class Lander3D(gym.Env, EzPickle):
 
         return
 
+    def _get_bonus(self, x, y):
+
+        return 0
+
 class TargetedLander3D(Lander3D):
+
+    LANDING_RADIUS             = 2
+    INSIDE_RADIUS_BONUS        = 100
 
     def __init__(self):
 
         Lander3D.__init__(self)
+
+    def _get_bonus(self, x, y):
+
+        return self.INSIDE_RADIUS_BONUS if x**2+y**2 < self.LANDING_RADIUS**2 else 0
 
 ## End of Lander3D classes ----------------------------------------------------------------
 
