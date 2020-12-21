@@ -19,7 +19,7 @@ register(
 )
 
 register(
-    id='Lander3D-v1',
-    entry_point='gym_copter.envs:TargetedLander3D',
+    id='Lander3DHardCore-v0',
+    entry_point='gym_copter.envs:Lander3DHardCore',
     max_episode_steps=2000
 )

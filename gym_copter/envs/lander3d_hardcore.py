@@ -13,13 +13,12 @@ from gym_copter.envs.lander3d import Lander3D, heuristic_lander
 
 class TargetedLander3D(Lander3D):
 
-    INITIAL_RANDOM_OFFSET = 2.5
     LANDING_RADIUS        = 2
     INSIDE_RADIUS_BONUS   = 100
 
     def __init__(self):
 
-        Lander3D.__init__(self, initial_random_offset=self.INITIAL_RANDOM_OFFSET)
+        Lander3D.__init__(self)
 
     def _get_bonus(self, x, y):
 
