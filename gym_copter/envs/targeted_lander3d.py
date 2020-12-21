@@ -9,7 +9,7 @@ MIT License
 
 import numpy as np
 
-from gym_copter.envs.lander3d import Lander3D
+from gym_copter.envs.lander3d import Lander3D, heuristic_lander
 
 class TargetedLander3D(Lander3D):
 
@@ -73,39 +73,6 @@ def heuristic(s):
     t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
     return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
 
-def heuristic_lander(env, renderer=None, seed=None):
-
-    import time
-
-    if seed is not None:
-        env.seed(seed)
-        np.random.seed(seed)
-
-    total_reward = 0
-    steps = 0
-    state = env.reset()
-
-    while True:
-
-        action = heuristic(state)
-        state, reward, done, _ = env.step(action)
-        total_reward += reward
-
-        if steps % 20 == 0 or done:
-           print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
-           print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-
-        steps += 1
-
-        if done: break
-
-        if not renderer is None:
-            time.sleep(1./env.FRAMES_PER_SECOND)
-
-    env.close()
-    return total_reward
-
-
 def main():
 
     from gym_copter.rendering.threed import TargetedThreeDLanderRenderer
@@ -115,7 +82,7 @@ def main():
 
     renderer = TargetedThreeDLanderRenderer(env)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
+    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer))
     thread.daemon = True
     thread.start()
 
