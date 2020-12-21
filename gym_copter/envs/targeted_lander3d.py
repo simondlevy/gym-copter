@@ -9,17 +9,13 @@ MIT License
 
 import numpy as np
 
-import gym
-from gym import spaces
-from gym.utils import seeding, EzPickle
-
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.envs.lander3d import Lander3D
 
 class TargetedLander3D(Lander3D):
 
-    LANDING_RADIUS             = 2
-    INSIDE_RADIUS_BONUS        = 100
+    INITIAL_RANDOM_OFFSET = 2.5
+    LANDING_RADIUS        = 2
+    INSIDE_RADIUS_BONUS   = 100
 
     def __init__(self):
 

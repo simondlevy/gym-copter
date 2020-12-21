@@ -18,7 +18,6 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust  
-    INITIAL_RANDOM_OFFSET      = 2.5  # perturbation factor for initial horizontal position
     INITIAL_ALTITUDE           = 5
     XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR  = 0 #250   
@@ -35,10 +34,13 @@ class Lander3D(gym.Env, EzPickle):
         'video.frames_per_second' : FRAMES_PER_SECOND
     }
 
-    def __init__(self):
+    def __init__(self, initial_random_offset=0, initial_random_tilt=0):
 
         EzPickle.__init__(self)
         self.seed()
+
+        self.initial_random_offset = initial_random_offset
+        self.initial_random_tilt = initial_random_tilt
 
         self.prev_reward = None
 
@@ -68,12 +70,14 @@ class Lander3D(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
-        # Initialize custom dynamics with random perturbation
+        # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Y] =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
+        state[d.STATE_X]      =  self.initial_random_offset * np.random.randn()
+        state[d.STATE_Y]      =  self.initial_random_offset * np.random.randn()
+        state[d.STATE_PHI]    =  self.initial_random_tilt * np.random.randn()
+        state[d.STATE_THETA]  =  self.initial_random_tilt * np.random.randn()
+        state[d.STATE_Z]      = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0, 0, 0]))[0]
