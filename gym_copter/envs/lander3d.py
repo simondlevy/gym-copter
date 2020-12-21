@@ -252,7 +252,7 @@ if __name__ == '__main__':
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = Lander3D()
+    env = TargetedLander3D()
 
     renderer = ThreeDLanderRenderer(env)
 
