@@ -130,7 +130,7 @@ class Lander3D(gym.Env, EzPickle):
 
             done = True
 
-            # Targeted3D subclass adds a bonus for landing within radius
+            # 3D subclass adds a bonus for landing within radius
             reward += self._get_bonus(x, y)
 
         elif status == d.STATUS_CRASHED:
@@ -154,19 +154,6 @@ class Lander3D(gym.Env, EzPickle):
     def _get_bonus(self, x, y):
 
         return 0
-
-class TargetedLander3D(Lander3D):
-
-    LANDING_RADIUS             = 2
-    INSIDE_RADIUS_BONUS        = 100
-
-    def __init__(self):
-
-        Lander3D.__init__(self)
-
-    def _get_bonus(self, x, y):
-
-        return self.INSIDE_RADIUS_BONUS if x**2+y**2 < self.LANDING_RADIUS**2 else 0
 
 ## End of Lander3D classes ----------------------------------------------------------------
 
@@ -253,12 +240,12 @@ def heuristic_lander(env, renderer=None, seed=None):
 
 if __name__ == '__main__':
 
-    from gym_copter.rendering.threed import TargetedThreeDLanderRenderer
+    from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = TargetedLander3D()
+    env = Lander3D()
 
-    renderer = TargetedThreeDLanderRenderer(env)
+    renderer = ThreeDLanderRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, renderer))
     thread.daemon = True

@@ -29,7 +29,7 @@ class TargetedLander3D(Lander3D):
 
         return self.INSIDE_RADIUS_BONUS if x**2+y**2 < self.LANDING_RADIUS**2 else 0
 
-## End of Lander3D classes ----------------------------------------------------------------
+## End of TargetedLander3D class ----------------------------------------------------------------
 
 def heuristic(s):
     """
