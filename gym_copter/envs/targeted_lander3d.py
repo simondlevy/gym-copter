@@ -19,7 +19,7 @@ class TargetedLander3D(Lander3D):
 
     def __init__(self):
 
-        Lander3D.__init__(self)
+        Lander3D.__init__(self, initial_random_offset=self.INITIAL_RANDOM_OFFSET)
 
     def _get_bonus(self, x, y):
 
