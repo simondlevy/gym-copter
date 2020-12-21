@@ -41,28 +41,21 @@ def heuristic(s):
          a: The heuristic to be fed into the step function defined above to determine the next step and reward.
     """
 
-    # Angle target
-    A = 0.05
-    B = 0.06
-
     # Angle PID
-    C = 0.025
-    D = 0.05
-    E = 0.4
+    A = 0.3
+    B = 0.05
 
     # Vertical PID
-    F = 1.15
-    G = 1.33
+    C = 1.15
+    D = 1.33
 
-    x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
+    _, _, _, _, z, dz, phi, dphi, theta, dtheta = s[:10]
 
-    phi_targ = y*A + dy*B              # angle should point towards center
-    phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
+    phi_todo = -phi*A - dphi*B
 
-    theta_targ = x*A + dx*B         # angle should point towards center
-    theta_todo = -(theta+theta_targ)*C - theta*D  + dtheta*E
+    theta_todo = -theta*A + dtheta*B
 
-    hover_todo = z*F + dz*G
+    hover_todo = z*C + dz*D
 
     t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
     return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
@@ -76,7 +69,7 @@ if __name__ == '__main__':
 
     renderer = ThreeDLanderRenderer(env)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer))
+    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer, 0))
     thread.daemon = True
     thread.start()
 

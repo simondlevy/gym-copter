@@ -75,7 +75,7 @@ class Lander3D(gym.Env, EzPickle):
         state[d.STATE_X]      =  self.initial_random_offset * np.random.randn()
         state[d.STATE_Y]      =  self.initial_random_offset * np.random.randn()
         state[d.STATE_PHI]    =  np.radians(self.initial_random_tilt * np.random.randn())
-        state[d.STATE_THETA]  =  np.radians(self.initial_random_tilt * np.random.randn())
+        state[d.STATE_THETA]  =  0#np.radians(self.initial_random_tilt * np.random.randn())
         state[d.STATE_Z]      = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
