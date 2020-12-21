@@ -141,14 +141,11 @@ class Lander3D(gym.Env, EzPickle):
         return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
+        '''
+        Returns None because we run renderer on a separate thread
+        '''
 
-        from gym_copter.rendering.threed import ThreeDLanderRenderer
-
-        # Create renderer if not done yet
-        if self.renderer is None:
-            self.renderer = ThreeDLanderRenderer(self, self.LANDING_RADIUS)
-
-        return self.renderer.render()
+        return None
 
     def close(self):
 
