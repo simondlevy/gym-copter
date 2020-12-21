@@ -33,6 +33,14 @@ The [NEAT](https://github.com/simondlevy/gym-copter/tree/master/neat)
 sub-folder of this repository shows how you can use the NEAT algorithm to
 evolve a neural controller for your copter.
 
+## Supported environments
+
+* **Lander-v0** 2D [LunarLander](https://gym.openai.com/envs/LunarLander-v2/)-style challenge
+
+* **Lander3D-v0** 2D 3D lander without target
+
+* **Lander3D-v1** 2D 3D lander with target
+
 ## Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
