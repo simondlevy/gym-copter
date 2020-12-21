@@ -158,7 +158,13 @@ class Lander3D(gym.Env, EzPickle):
 
         return
 
-## End of Lander3D class ----------------------------------------------------------------
+class TargetedLander3D(Lander3D):
+
+    def __init__(self):
+
+        Lander3D.__init__(self)
+
+## End of Lander3D classes ----------------------------------------------------------------
 
 def heuristic(s):
     """

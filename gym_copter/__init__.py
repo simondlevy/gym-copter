@@ -7,26 +7,20 @@ MIT License
 from gym.envs.registration import register
 
 register(
-    id='Lander-v1',
-    entry_point='gym_copter.envs:Lander1D',
-    max_episode_steps=1000
-)
-
-register(
-    id='Lander-v2',
+    id='Lander-v0',
     entry_point='gym_copter.envs:Lander2D',
     max_episode_steps=2000
 )
 
 register(
-    id='Lander-v3',
+    id='Lander3D-v0',
     entry_point='gym_copter.envs:Lander3D',
     max_episode_steps=2000
 )
 
 register(
-    id='Lander-v4',
-    entry_point='gym_copter.envs:Lander3DSimple',
+    id='Lander3D-v1',
+    entry_point='gym_copter.envs:TargetedLander3D',
     max_episode_steps=2000
 )
 
