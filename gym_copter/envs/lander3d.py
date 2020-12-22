@@ -238,14 +238,12 @@ def heuristic(s):
     t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
     return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
 
-def main():
+def run(env, radius):
 
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    env = Lander3D()
-
-    renderer = ThreeDLanderRenderer(env)
+    renderer = ThreeDLanderRenderer(env, radius)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer))
     thread.daemon = True
@@ -254,6 +252,8 @@ def main():
     # Begin 3D rendering on main thread
     renderer.start()    
 
+
 if __name__ == '__main__':
-    main()
+
+    run(Lander3D(), .1)
 
