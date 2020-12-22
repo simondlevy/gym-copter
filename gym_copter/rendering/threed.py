@@ -186,9 +186,15 @@ class ThreeDRenderer:
         
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env, radius=2):
+    def __init__(self, env, radius=.01):
 
         ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
+
+        self.circle = create_axis(self.ax, 'r')
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        self.circle_x = radius * np.sin(pts)
+        self.circle_y = radius * np.cos(pts)
+        self.circle_z = np.zeros(self.circle_x.shape)
 
     def render(self):
 
@@ -200,7 +206,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
     def _update(self):
 
-        return
+        self.circle.set_data(self.circle_x, self.circle_y)
+        self.circle.set_3d_properties(self.circle_z)
 
     def _animate(self, _):
 
@@ -212,17 +219,5 @@ class HardcoreThreeDLanderRenderer(ThreeDLanderRenderer):
 
     def __init__(self, env, radius=2):
 
-        ThreeDLanderRenderer.__init__(self, env)
-
-        self.circle = create_axis(self.ax, 'r')
-        pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = radius * np.sin(pts)
-        self.circle_y = radius * np.cos(pts)
-        self.circle_z = np.zeros(self.circle_x.shape)
-
-    def _update(self):
-
-        self.circle.set_data(self.circle_x, self.circle_y)
-        self.circle.set_3d_properties(self.circle_z)
-
+        ThreeDLanderRenderer.__init__(self, env, radius)
 
