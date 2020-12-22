@@ -19,23 +19,17 @@ def _eval_net(net, env):
 if __name__ == '__main__':
 
     # Load genome and configuration from pickled file
-    net, env_name, _, nodisplay = read_file()
+    net, env_name, _, _ = read_file()
 
     env = gym.make(env_name)
 
-    if nodisplay:
+    # Create a three-D renderer
+    renderer = ThreeDLanderRenderer(env)
 
-        print('Reward = %f ' % eval_net(net, env))
+    # Start the network-evaluation episode on a separate thread
+    thread = threading.Thread(target=_eval_net, args=(net, env))
+    thread.daemon = True
+    thread.start()
 
-    else:
-
-        # Create a three-D renderer
-        renderer = ThreeDLanderRenderer(env)
-
-        # Start the network-evaluation episode on a separate thread
-        thread = threading.Thread(target=_eval_net, args=(net, env))
-        thread.daemon = True
-        thread.start()
-
-        # Begin 3D rendering on main thread
-        renderer.start() 
+    # Begin 3D rendering on main thread
+    renderer.start() 
