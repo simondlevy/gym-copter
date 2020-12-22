@@ -153,7 +153,8 @@ class Lander3D(gym.Env, EzPickle):
 
     def _get_bonus(self, x, y):
 
-        return 0
+        # Bonus is proximity to center
+        return self.BOUNDS - np.sqrt(x**2+y**2)
 
 ## End of Lander3D classes ----------------------------------------------------------------
 
