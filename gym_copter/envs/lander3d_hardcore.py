@@ -24,12 +24,12 @@ class Lander3DHardcore(Lander3D):
 
 def main():
 
-    from gym_copter.rendering.threed import HardcoreThreeDLanderRenderer
+    from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
     env = Lander3DHardcore()
 
-    renderer = HardcoreThreeDLanderRenderer(env)
+    renderer = ThreeDLanderRenderer(env, radius=2)
 
     thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer))
     thread.daemon = True

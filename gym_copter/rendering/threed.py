@@ -186,7 +186,7 @@ class ThreeDRenderer:
         
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env, radius=.01):
+    def __init__(self, env, radius=.1):
 
         ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
 
@@ -214,10 +214,3 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer._animate(self, _)
 
         self._update()
-
-class HardcoreThreeDLanderRenderer(ThreeDLanderRenderer):
-
-    def __init__(self, env, radius=2):
-
-        ThreeDLanderRenderer.__init__(self, env, radius)
-
