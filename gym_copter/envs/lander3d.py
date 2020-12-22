@@ -23,6 +23,7 @@ class Lander3D(gym.Env, EzPickle):
     XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR  = 0 #250   
     YAW_PENALTY_FACTOR         = 50   
+    MOTOR_PENALTY_FACTOR       = 0.03
     BOUNDS                     = 10
     OUT_OF_BOUNDS_PENALTY      = 100
     RESTING_DURATION           = 1.0  # for rendering for a short while after successful landing
@@ -84,13 +85,12 @@ class Lander3D(gym.Env, EzPickle):
         d = self.dynamics
         status = d.getStatus()
 
-        # Stop motors after safe landing
-        if status == d.STATUS_LANDED:
-            d.setMotors(np.zeros(4))
+        motors = np.zeros(4) if status == d.STATUS_LANDED else np.clip(action, 0, 1) # keep motors in interval [0,1]
 
-        # In air, set motors from action
-        else:
-            d.setMotors(np.clip(action, 0, 1))    # keep motors in interval [0,1]
+        d.setMotors(motors)
+
+        # Update dynamics if airborne
+        if status != d.STATUS_LANDED:
             d.update()
 
         # Get new state from dynamics
@@ -102,7 +102,8 @@ class Lander3D(gym.Env, EzPickle):
         # Set lander pose in display
         self.pose = x, y, z, phi, theta, psi
 
-        # Reward is a simple penalty for overall distance and angle and their first derivatives
+        # Reward is a simple penalty for overall distance and angle and their first derivatives, plus
+        # a bit more for running motors (discourage endless hover)
         shaping = -(
                 self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
                 self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)) +
