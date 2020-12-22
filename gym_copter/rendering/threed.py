@@ -208,7 +208,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self._update()
 
-class TargetedThreeDLanderRenderer(ThreeDLanderRenderer):
+class HardcoreThreeDLanderRenderer(ThreeDLanderRenderer):
 
     def __init__(self, env, radius=2):
 
