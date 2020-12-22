@@ -39,7 +39,7 @@ evolve a neural controller for your copter.
 
 * **Lander3D-v0** 3D lander with reward proportional on proximity of touchdown to center
 
-* **Lander3DHardcore-v0** 3D lander with maximum reward for landing inside circle
+* **Lander3DHardcore-v0** 3D lander with big reward for landing inside circle
 
 ## Similar projects
 
