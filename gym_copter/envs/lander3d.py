@@ -107,7 +107,8 @@ class Lander3D(gym.Env, EzPickle):
         shaping = -(
                 self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
                 self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2))
+                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors)
                 )
                                                                   
         reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
