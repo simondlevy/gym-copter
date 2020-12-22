@@ -225,4 +225,46 @@ class HardcoreThreeDLanderRenderer(ThreeDLanderRenderer):
         self.circle.set_data(self.circle_x, self.circle_y)
         self.circle.set_3d_properties(self.circle_z)
 
+class ThreeDDistanceRenderer(ThreeDRenderer):
 
+    def __init__(self, env, radius=2):
+
+        ThreeDRenderer.__init__(self, env, lim=20, label='Distance', viewangles=[30,120])
+
+    def render(self):
+
+        ThreeDRenderer.render(self)
+
+        return ThreeDRenderer.complete(self)
+
+    def _update(self):
+
+        return
+
+    def _animate(self, _):
+
+        ThreeDRenderer._animate(self, _)
+
+        self._update()
+        
+class ThreeDTakeoffRenderer(ThreeDRenderer):
+
+    def __init__(self, env, radius=2):
+
+        ThreeDRenderer.__init__(self, env, lim=10, label='Takeoff', viewangles=[30,120])
+
+    def render(self):
+
+        ThreeDRenderer.render(self)
+
+        return ThreeDRenderer.complete(self)
+
+    def _update(self):
+
+        return
+
+    def _animate(self, _):
+
+        ThreeDRenderer._animate(self, _)
+
+        self._update()
