@@ -37,9 +37,9 @@ evolve a neural controller for your copter.
 
 * **Lander-v0** 2D [LunarLander](https://gym.openai.com/envs/LunarLander-v2/)-style challenge
 
-* **Lander3D-v0** 3D lander without target
+* **Lander3D-v0** 3D lander with reward proportional on proximity of touchdown to center
 
-* **Lander3D-v1** 3D lander with target
+* **Lander3DHardcore-v0** 3D lander with maximum reward for landing inside circle
 
 ## Similar projects
 
