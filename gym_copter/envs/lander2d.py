@@ -208,7 +208,7 @@ def heuristic(s):
 
     return hover_todo-phi_todo, hover_todo+phi_todo
 
-def demo_heuristic_lander(env, seed=None, render=False, save=False):
+def demo_heuristic_lander(env, seed=None, render=False):
 
     from time import sleep
 
@@ -226,10 +226,6 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
             frame = env.render('rgb_array')
             time.sleep(1./env.FRAMES_PER_SECOND)
             if frame is None: break
-            if save:
-                from PIL import Image
-                img = Image.fromarray(frame)
-                img.save("img_%05d.png" % steps)
 
         if (steps % 20 == 0) or done:
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
@@ -243,7 +239,7 @@ def demo_heuristic_lander(env, seed=None, render=False, save=False):
 
 def main():
 
-    demo_heuristic_lander(Lander2D(), seed=None, render=True, save=False)
+    demo_heuristic_lander(Lander2D(), seed=None, render=True)
 
 if __name__ == '__main__':
     main()
