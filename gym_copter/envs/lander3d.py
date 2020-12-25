@@ -50,7 +50,7 @@ class Lander3D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
 
         # Support for rendering
-        self.renderer = None
+        self.viewer = None
         self.pose = None
 
         # Pre-convert max-angle degrees to radian
@@ -144,7 +144,7 @@ class Lander3D(gym.Env, EzPickle):
 
     def render(self, mode='human'):
         '''
-        Returns None because we run renderer on a separate thread
+        Returns None because we run viewer on a separate thread
         '''
 
         return None
@@ -160,7 +160,7 @@ class Lander3D(gym.Env, EzPickle):
 
 ## End of Lander3D classes ----------------------------------------------------------------
 
-def heuristic_lander(env, heuristic, renderer=None, seed=None):
+def heuristic_lander(env, heuristic, viewer=None, seed=None):
 
     import time
 
@@ -186,7 +186,7 @@ def heuristic_lander(env, heuristic, renderer=None, seed=None):
 
         if done: break
 
-        if not renderer is None:
+        if not viewer is None:
             time.sleep(1./env.FRAMES_PER_SECOND)
 
     env.close()
@@ -245,14 +245,14 @@ def run(env, radius):
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    renderer = ThreeDLanderRenderer(env, radius)
+    viewer = ThreeDLanderRenderer(env, radius)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, renderer))
+    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, viewer))
     thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
-    renderer.start()    
+    viewer.start()    
 
 
 if __name__ == '__main__':

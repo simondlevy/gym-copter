@@ -50,7 +50,7 @@ class Lander2D(gym.Env, EzPickle):
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
 
         # Support for rendering
-        self.renderer = None
+        self.viewer = None
         self.pose = None
         self.spinning = False
 
@@ -100,7 +100,7 @@ class Lander2D(gym.Env, EzPickle):
         # Get new state from dynamics
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
-        # Set lander pose for renderer
+        # Set lander pose for viewer
         self.pose = posy, posz, phi
 
         # Convert state to usable form
@@ -146,24 +146,24 @@ class Lander2D(gym.Env, EzPickle):
 
         from gym_copter.rendering.twod import TwoDLanderRenderer
 
-        # Create renderer if not done yet
-        if self.renderer is None:
-            self.renderer = TwoDLanderRenderer(self.LANDING_RADIUS)
+        # Create viewer if not done yet
+        if self.viewer is None:
+            self.viewer = TwoDLanderRenderer(self.LANDING_RADIUS)
 
-        return self.renderer.render(mode, self.pose, self.spinning)
+        return self.viewer.render(mode, self.pose, self.spinning)
 
     def close(self):
-        if self.renderer is not None:
-            self.renderer.close()
-            self.renderer = None
+        if self.viewer is not None:
+            self.viewer.close()
+            self.viewer = None
 
     def _perturb(self):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE, +self.INITIAL_RANDOM_FORCE)
 
     def _destroy(self):
-        if self.renderer is not None:
-            self.renderer.close()
+        if self.viewer is not None:
+            self.viewer.close()
 
 # End of Lander2D class ----------------------------------------------------------------
 
