@@ -18,16 +18,17 @@ def _eval_net(net, env):
 
 if __name__ == '__main__':
 
-    # Load genome and configuration from pickled file
+    # Load network and environment name from pickled file
     net, env_name, _, _ = read_file()
 
+    # Make environment from name
     env = gym.make(env_name)
 
     # Create a three-D renderer
     renderer = ThreeDLanderRenderer(env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=_eval_net, args=(net, env))
+    thread = threading.Thread(target=_eval_net, args=(net, env_name))
     thread.daemon = True
     thread.start()
 
