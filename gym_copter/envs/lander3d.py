@@ -7,6 +7,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
+import time
 import numpy as np
 
 import gym
@@ -15,25 +16,26 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+
 class Lander3D(gym.Env, EzPickle):
 
-    # Parameters to adjust  
-    INITIAL_ALTITUDE           = 5
-    INITIAL_RANDOM_OFFSET      = 2.5
-    XY_PENALTY_FACTOR          = 25   # designed so that maximal penalty is around 100
-    PITCH_ROLL_PENALTY_FACTOR  = 0 #250   
-    YAW_PENALTY_FACTOR         = 50   
-    MOTOR_PENALTY_FACTOR       = 0.03
-    BOUNDS                     = 10
-    OUT_OF_BOUNDS_PENALTY      = 100
-    RESTING_DURATION           = 1.0  # for rendering for a short while after successful landing
-    FRAMES_PER_SECOND          = 50
-    MAX_ANGLE                  = 45   # big penalty if roll or pitch angles go beyond this
-    EXCESS_ANGLE_PENALTY       = 100
+    # Parameters to adjust
+    INITIAL_ALTITUDE = 5
+    INITIAL_RANDOM_OFFSET = 2.5
+    XY_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
+    PITCH_ROLL_PENALTY_FACTOR = 0  # 250
+    YAW_PENALTY_FACTOR = 50
+    MOTOR_PENALTY_FACTOR = 0.03
+    BOUNDS = 10
+    OUT_OF_BOUNDS_PENALTY = 100
+    RESTING_DURATION = 1.0  # render a short while after successful landing
+    FRAMES_PER_SECOND = 50
+    MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
+    EXCESS_ANGLE_PENALTY = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : FRAMES_PER_SECOND
+        'video.frames_per_second': FRAMES_PER_SECOND
     }
 
     def __init__(self):
@@ -44,7 +46,8 @@ class Lander3D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # Observation is all state values
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32)
+        self.observation_space = (
+                spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
 
         # Action is four floats (one per motor)
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
@@ -72,9 +75,9 @@ class Lander3D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X]      =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Y]      =  self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Z]      = -self.INITIAL_ALTITUDE
+        state[d.STATE_X] = self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_Y] = self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
         return self.step(np.array([0, 0, 0, 0]))[0]
@@ -85,7 +88,10 @@ class Lander3D(gym.Env, EzPickle):
         d = self.dynamics
         status = d.getStatus()
 
-        motors = np.zeros(4) if status == d.STATUS_LANDED else np.clip(action, 0, 1) # keep motors in interval [0,1]
+        # Keep motors in interval [0,1]
+        motors = (np.zeros(4)
+                  if status == d.STATUS_LANDED
+                  else np.clip(action, 0, 1))
 
         d.setMotors(motors)
 
@@ -102,16 +108,20 @@ class Lander3D(gym.Env, EzPickle):
         # Set lander pose in display
         self.pose = x, y, z, phi, theta, psi
 
-        # Reward is a simple penalty for overall distance and angle and their first derivatives, plus
-        # a bit more for running motors (discourage endless hover)
+        # Reward is a simple penalty for overall distance and angle and their
+        # first derivatives, plus a bit more for running motors (discourage
+        # endless hover)
         shaping = -(
-                self.XY_PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2)) + 
-                self.PITCH_ROLL_PENALTY_FACTOR * np.sqrt(np.sum(state[6:10]**2)) +
+                self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                self.PITCH_ROLL_PENALTY_FACTOR *
+                np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
                 self.MOTOR_PENALTY_FACTOR * np.sum(motors)
                 )
-                                                                  
-        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
+
+        reward = ((shaping - self.prev_shaping)
+                  if (self.prev_shaping is not None)
+                  else 0)
         self.prev_shaping = shaping
 
         # Assume we're not done yet
@@ -122,7 +132,7 @@ class Lander3D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        # Lose bigly for excess roll or pitch 
+        # Lose bigly for excess roll or pitch
         if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
@@ -132,7 +142,8 @@ class Lander3D(gym.Env, EzPickle):
 
             done = True
 
-            # Different subclasses add different bonuses for proximity to center
+            # Different subclasses add different bonuses for proximity to
+            # center
             reward += self._get_bonus(x, y)
 
         elif status == d.STATUS_CRASHED:
@@ -146,11 +157,9 @@ class Lander3D(gym.Env, EzPickle):
         '''
         Returns None because we run viewer on a separate thread
         '''
-
         return None
 
     def close(self):
-
         return
 
     def _get_bonus(self, x, y):
@@ -158,11 +167,10 @@ class Lander3D(gym.Env, EzPickle):
         # Bonus is proximity to center
         return self.BOUNDS - np.sqrt(x**2+y**2)
 
-## End of Lander3D classes ----------------------------------------------------------------
+# End of Lander3D classes ----------------------------------------------------
+
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
-
-    import time
 
     if seed is not None:
         env.seed(seed)
@@ -179,21 +187,24 @@ def heuristic_lander(env, heuristic, viewer=None, seed=None):
         total_reward += reward
 
         if steps % 20 == 0 or done:
-           print("observations:", " ".join(["{:+0.2f}".format(x) for x in state]))
-           print("step {} total_reward {:+0.2f}".format(steps, total_reward))
+            print('observations:',
+                  ' '.join(['{:+0.2f}'.format(x) for x in state]))
+            print('step {} total_reward {:+0.2f}'.format(steps, total_reward))
 
         steps += 1
 
-        if done: break
+        if done:
+            break
 
-        if not viewer is None:
+        if viewer is not None:
             time.sleep(1./env.FRAMES_PER_SECOND)
 
     env.close()
     return total_reward
 
+
 def heuristic(s):
-    """
+    '''
     The heuristic for
     1. Testing
     2. Demonstration rollout.
@@ -211,8 +222,8 @@ def heuristic(s):
                   s[8] is the pitch angle
                   s[9] is the pitch angular speed
      returns:
-         a: The heuristic to be fed into the step function defined above to determine the next step and reward.
-    """
+         a: The heuristic to be fed into the step function defined above to
+            determine the next step and reward.  '''
 
     # Angle target
     A = 0.05
@@ -233,12 +244,15 @@ def heuristic(s):
     phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
 
     theta_targ = x*A + dx*B         # angle should point towards center
-    theta_todo = -(theta+theta_targ)*C - theta*D  + dtheta*E
+    theta_todo = -(theta+theta_targ)*C - theta*D + dtheta*E
 
     hover_todo = z*F + dz*G
 
-    t,r,p = (hover_todo+1)/2, phi_todo, theta_todo  # map throttle demand from [-1,+1] to [0,1]
-    return [t-r-p, t+r+p, t+r-p, t-r+p] # use mixer to set motors
+    # map throttle demand from [-1,+1] to [0,1]
+    t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
+
+    return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+
 
 def run(env, radius):
 
@@ -247,15 +261,15 @@ def run(env, radius):
 
     viewer = ThreeDLanderRenderer(env, radius)
 
-    thread = threading.Thread(target=heuristic_lander, args=(env, heuristic, viewer))
+    thread = threading.Thread(target=heuristic_lander,
+                              args=(env, heuristic, viewer))
     thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
-    viewer.start()    
+    viewer.start()
 
 
 if __name__ == '__main__':
 
     run(Lander3D(), .1)
-

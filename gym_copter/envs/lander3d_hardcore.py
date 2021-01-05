@@ -9,10 +9,11 @@ MIT License
 
 from gym_copter.envs.lander3d import Lander3D, run
 
+
 class Lander3DHardcore(Lander3D):
 
-    LANDING_RADIUS        = 2
-    INSIDE_RADIUS_BONUS   = 100
+    LANDING_RADIUS = 2
+    INSIDE_RADIUS_BONUS = 100
 
     def __init__(self):
 
@@ -20,7 +21,10 @@ class Lander3DHardcore(Lander3D):
 
     def _get_bonus(self, x, y):
 
-        return self.INSIDE_RADIUS_BONUS if x**2+y**2 < self.LANDING_RADIUS**2 else 0
+        return (self.INSIDE_RADIUS_BONUS
+                if x**2+y**2 < self.LANDING_RADIUS**2
+                else 0)
+
 
 if __name__ == '__main__':
 
