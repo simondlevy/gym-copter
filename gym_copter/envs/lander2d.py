@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''
-2D Copter-Lander, based on https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
+2D Copter-Lander, based on
+  https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
 
 This version controls each motor separately
 
@@ -18,21 +19,22 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+
 class Lander2D(gym.Env, EzPickle):
-    
+
     # Parameters to adjust
-    INITIAL_RANDOM_FORCE  = 30 # perturbation for initial position
-    INITIAL_ALTITUDE      = 10
-    LANDING_RADIUS        = 2
-    PENALTY_FACTOR        = 12  # designed so that maximal penalty is around 100
-    BOUNDS                = 10
+    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
+    INITIAL_ALTITUDE = 10
+    LANDING_RADIUS = 2
+    PENALTY_FACTOR = 12  # designed so that maximal penalty is around 100
+    BOUNDS = 10
     OUT_OF_BOUNDS_PENALTY = 100
-    INSIDE_RADIUS_BONUS   = 100
-    FRAMES_PER_SECOND     = 50
+    INSIDE_RADIUS_BONUS = 100
+    FRAMES_PER_SECOND = 50
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : FRAMES_PER_SECOND
+        'video.frames_per_second': FRAMES_PER_SECOND
     }
 
     def __init__(self):
@@ -44,7 +46,8 @@ class Lander2D(gym.Env, EzPickle):
         self.prev_reward = None
 
         # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,),
+                                            dtype=np.float32)
 
         # Action is two floats [throttle, roll]
         self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
@@ -72,10 +75,11 @@ class Lander2D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_Y] =  0
+        state[d.STATE_Y] = 0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
-        self.dynamics.perturb(np.array([0, self._perturb(), self._perturb(), 0, 0, 0]))
+        self.dynamics.perturb(np.array([0, self._perturb(),
+                                        self._perturb(), 0, 0, 0]))
 
         return self.step(np.array([0, 0]))[0]
 
@@ -109,7 +113,9 @@ class Lander2D(gym.Env, EzPickle):
         # A simple penalty for overall distance and velocity
         shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
 
-        reward = (shaping - self.prev_shaping) if (self.prev_shaping is not None) else 0
+        reward = ((shaping - self.prev_shaping)
+                  if (self.prev_shaping is not None)
+                  else 0)
 
         self.prev_shaping = shaping
 
@@ -130,7 +136,7 @@ class Lander2D(gym.Env, EzPickle):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(posy) < self.LANDING_RADIUS: 
+                if abs(posy) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
@@ -159,13 +165,14 @@ class Lander2D(gym.Env, EzPickle):
 
     def _perturb(self):
 
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE, +self.INITIAL_RANDOM_FORCE)
+        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
+                                 + self.INITIAL_RANDOM_FORCE)
 
     def _destroy(self):
         if self.viewer is not None:
             self.viewer.close()
 
-# End of Lander2D class ----------------------------------------------------------------
+# End of Lander2D class -------------------------------------------------------
 
 
 def heuristic(s):
@@ -183,15 +190,16 @@ def heuristic(s):
                   s[4] is the angle
                   s[5] is the angular speed
     returns:
-         a: The heuristic to be fed into the step function defined above to determine the next step and reward.
+         a: The heuristic to be fed into the step function defined above to
+            determine the next step and reward.
     """
 
     # Angle target
-    A = 0.1#0.05
-    B = 0.1#0.06
+    A = 0.1  # 0.05
+    B = 0.1  # 0.06
 
     # Angle PID
-    C = 0.1 #0.025
+    C = 0.1  # 0.025
     D = 0.05
     E = 0.4
 
@@ -207,6 +215,7 @@ def heuristic(s):
     hover_todo = posz*F + velz*G
 
     return hover_todo-phi_todo, hover_todo+phi_todo
+
 
 def demo_heuristic_lander(env, seed=None, render=False):
 
@@ -225,21 +234,25 @@ def demo_heuristic_lander(env, seed=None, render=False):
         if render:
             frame = env.render('rgb_array')
             time.sleep(1./env.FRAMES_PER_SECOND)
-            if frame is None: break
+            if frame is None:
+                break
 
         if (steps % 20 == 0) or done:
             print("step {} total_reward {:+0.2f}".format(steps, total_reward))
 
         steps += 1
-        if done: break
+        if done:
+            break
 
     sleep(1)
     env.close()
     return total_reward
 
+
 def main():
 
     demo_heuristic_lander(Lander2D(), seed=None, render=True)
+
 
 if __name__ == '__main__':
     main()
