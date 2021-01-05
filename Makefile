@@ -17,4 +17,5 @@ flake:
 	flake8 setup.py
 	flake8 gym_copter/__init__.py
 	flake8 gym_copter/dynamics/*.py
+	flake8 gym_copter/rendering/*.py
 	flake8 gym_copter/envs/*.py
