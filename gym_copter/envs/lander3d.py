@@ -104,6 +104,8 @@ class Lander3D(gym.Env, EzPickle):
 
         # Abbreviation
         d = self.dynamics
+
+        # Get current status (landed, crashed, ...)
         status = d.getStatus()
 
         # Keep motors in interval [0,1]
@@ -155,6 +157,9 @@ class Lander3D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
+        # No landing location until we've landed
+        landing_location = None
+
         # It's all over once we're on the ground
         if status == d.STATUS_LANDED:
 
@@ -164,15 +169,20 @@ class Lander3D(gym.Env, EzPickle):
             # center
             reward += self._get_bonus(x, y)
 
+            # Once we've landed, our location is our x,y position
+            landing_location = x, y
+
         elif status == d.STATUS_CRASHED:
 
             # Crashed!
             done = True
 
-        # XXX
-        behavior = 0, 0
-
-        return np.array(state, dtype=np.float32), reward, behavior, done, {}
+        return (np.array(state,
+                dtype=np.float32),
+                reward,
+                landing_location,
+                done,
+                {})
 
     def _get_bonus(self, x, y):
 
