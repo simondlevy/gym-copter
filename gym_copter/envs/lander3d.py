@@ -100,7 +100,9 @@ class Lander3D(gym.Env, EzPickle):
 
     def _step(self, action):
         '''
-        Takes an action and returns a tuple state, reward, behavior, done, info
+        Takes an action and returns a tuple
+        (state, reward, behavior, done, info).
+        Behavior is tuple (x, y, vertical velocity).
         '''
 
         # Abbreviation
@@ -158,32 +160,26 @@ class Lander3D(gym.Env, EzPickle):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        # No landing location until we've landed
-        landing_location = None
+        # No behavior until we've crashed or landed
+        behavior = None
 
         # It's all over once we're on the ground
-        if status == d.STATUS_LANDED:
+        if status in (d.STATUS_LANDED, d.STATUS_CRASHED):
+
+            # Once we're one the ground, our behavior is our x,y position and
+            # vertical velocity
+            behavior = x, y, state[d.STATE_Z_DOT]
 
             done = True
+
+        # Bonus for good landing
+        if status == d.STATUS_LANDED:
 
             # Different subclasses add different bonuses for proximity to
             # center
             reward += self._get_bonus(x, y)
 
-            # Once we've landed, our location is our x,y position
-            landing_location = x, y
-
-        elif status == d.STATUS_CRASHED:
-
-            # Crashed!
-            done = True
-
-        return (np.array(state,
-                dtype=np.float32),
-                reward,
-                landing_location,
-                done,
-                {})
+        return np.array(state, dtype=np.float32), reward, behavior, done, {}
 
     def _get_bonus(self, x, y):
 
