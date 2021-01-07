@@ -25,6 +25,12 @@ class Lander3DHardcore(Lander3D):
                 if x**2+y**2 < self.LANDING_RADIUS**2
                 else 0)
 
+    def step_novelty(self, action):
+        state, reward, done, info = self._step(action)
+        #placeholder
+        location = (0, 0)
+        return (state, reward, location, done, info)
+
 
 if __name__ == '__main__':
 
