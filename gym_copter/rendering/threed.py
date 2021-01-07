@@ -10,26 +10,28 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D # not explicitly used, but necessary
+from mpl_toolkits.mplot3d import Axes3D  # not explicitly used, but necessary
 from PIL import Image
+
 
 def create_axis(ax, color):
     obj = ax.plot([], [], [], '-', c=color)[0]
     obj.set_data([], [])
     return obj
 
+
 class _Vehicle:
 
-    VEHICLE_SIZE      = 0.5
-    PROPELLER_RADIUS  = 0.2
-    PROPELLER_OFFSET  = 0.01
+    VEHICLE_SIZE = 0.5
+    PROPELLER_RADIUS = 0.2
+    PROPELLER_OFFSET = 0.01
 
     def __init__(self, ax, showtraj, color='b'):
 
-        self.ax_traj  = create_axis(ax, color)
+        self.ax_traj = create_axis(ax, color)
 
-        self.ax_arms   = [create_axis(ax, color) for j in range(4)]
-        self.ax_props  = [create_axis(ax, color) for j in range(4)]
+        self.ax_arms = [create_axis(ax, color) for j in range(4)]
+        self.ax_props = [create_axis(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -73,11 +75,28 @@ class _Vehicle:
         for j in range(4):
 
             dx = 2 * (j // 2) - 1
-            dy = 2 * (j %  2) - 1
+            dy = 2 * (j % 2) - 1
 
-            self._set_axis(x, y, z, phi, theta, psi, self.ax_arms[j], dx*rs, dy*rs, 0)
-            self._set_axis(x, y, z, phi, theta, psi, self.ax_props[j], dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
+            self._set_axis(x,
+                           y,
+                           z,
+                           phi,
+                           theta,
+                           psi,
+                           self.ax_arms[j],
+                           dx*rs,
+                           dy*rs, 0)
 
+            self._set_axis(x,
+                           y,
+                           z,
+                           phi,
+                           theta,
+                           psi,
+                           self.ax_props[j],
+                           dx*v2+px,
+                           dy*v2+py,
+                           self.PROPELLER_OFFSET)
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
@@ -89,17 +108,17 @@ class _Vehicle:
         cps = np.cos(psi)
         sps = np.sin(psi)
 
-        # Build rotation matrix: 
+        # Build rotation matrix:
         # see http://www.kwon3d.com/theory/euler/euler_angles.html, Eqn. 2
-        a11 =  cth*cps
-        a12 =  sph*sth*cps + cph*sps
-        a21 = -cth*sps 
+        a11 = cth*cps
+        a12 = sph*sth*cps + cph*sps
+        a21 = -cth*sps
         a22 = -sph*sth*sps + cph*cps
-        a31 =  sth
+        a31 = sth
         a32 = -sph*cth
 
         # Rotate coordinates
-        xx = a11 * xs + a12 * ys 
+        xx = a11 * xs + a12 * ys
         yy = a21 * xs + a22 * ys
         zz = a31 * xs + a32 * ys
 
@@ -107,9 +126,15 @@ class _Vehicle:
         axis.set_data(x+xx, y+yy)
         axis.set_3d_properties(z+zz+dz)
 
+
 class ThreeDRenderer:
 
-    def __init__(self, env, lim=50, label=None, showtraj=False, viewangles=None):
+    def __init__(self,
+                 env,
+                 lim=50,
+                 label=None,
+                 showtraj=False,
+                 viewangles=None):
 
         # Environment will be used to get position
         self.env = env
@@ -142,15 +167,19 @@ class ThreeDRenderer:
 
     def start(self):
 
-        # Instantiate the animator.  Although we don't use the resulting value (anim), the code will not work
-        # without the assignment.
-        anim = animation.FuncAnimation(self.fig, self._animate, interval=int(1000/self.env.FRAMES_PER_SECOND), blit=False)
+        # Instantiate the animator.  Although we don't use the resulting value
+        # (anim), the code will not work without the assignment.
+        interval = int(1000/self.env.FRAMES_PER_SECOND)
+        anim = animation.FuncAnimation(self.fig,
+                                       self._animate,
+                                       interval=interval,
+                                       blit=False)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
         try:
             plt.show()
-        except:
+        except Exception:
             pass
 
     def close(self):
@@ -167,15 +196,15 @@ class ThreeDRenderer:
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
         buf = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8)
-        w,h = self.fig.canvas.get_width_height()
+        w, h = self.fig.canvas.get_width_height()
         buf.shape = w, h, 3
 
-        return np.array(Image.frombytes("RGB", (w ,h), buf.tostring()))
+        return np.array(Image.frombytes("RGB", (w, h), buf.tostring()))
 
     def _handle_close(self, event):
 
         self.is_open = False
-        
+
     def _animate(self, _):
 
         # Update the copter animation with vehicle pose
@@ -183,12 +212,17 @@ class ThreeDRenderer:
 
         # Draw everything
         self.fig.canvas.draw()
-        
+
+
 class ThreeDLanderRenderer(ThreeDRenderer):
 
     def __init__(self, env, radius=.1):
 
-        ThreeDRenderer.__init__(self, env, lim=5, label='Lander', viewangles=[30,120])
+        ThreeDRenderer.__init__(self,
+                                env,
+                                lim=5,
+                                label='Lander',
+                                viewangles=[30, 120])
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
