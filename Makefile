@@ -10,6 +10,9 @@ demo2:
 demo3:
 	python3 gym_copter/envs/lander3d.py
 
+demo3h:
+	python3 gym_copter/envs/lander3d_hardcore.py
+
 commit:
 	git commit -a
 

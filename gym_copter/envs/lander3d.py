@@ -84,6 +84,24 @@ class Lander3D(gym.Env, EzPickle):
 
     def step(self, action):
 
+        state, reward, _, done, info = self._step(action)
+
+        return state, reward, done, info
+
+    def render(self, mode='human'):
+        '''
+        Returns None because we run viewer on a separate thread
+        '''
+        return None
+
+    def close(self):
+        return
+
+    def _step(self, action):
+        '''
+        Takes an action and returns a tuple state, reward, behavior, done, info
+        '''
+
         # Abbreviation
         d = self.dynamics
         status = d.getStatus()
@@ -151,16 +169,10 @@ class Lander3D(gym.Env, EzPickle):
             # Crashed!
             done = True
 
-        return np.array(state, dtype=np.float32), reward, done, {}
+        # XXX
+        behavior = 0, 0
 
-    def render(self, mode='human'):
-        '''
-        Returns None because we run viewer on a separate thread
-        '''
-        return None
-
-    def close(self):
-        return
+        return np.array(state, dtype=np.float32), reward, behavior, done, {}
 
     def _get_bonus(self, x, y):
 

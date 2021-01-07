@@ -26,10 +26,7 @@ class Lander3DHardcore(Lander3D):
                 else 0)
 
     def step_novelty(self, action):
-        state, reward, done, info = self._step(action)
-        #placeholder
-        location = (0, 0)
-        return (state, reward, location, done, info)
+        return self._step(action)
 
 
 if __name__ == '__main__':
