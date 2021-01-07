@@ -62,6 +62,7 @@ class Lander3D(gym.Env, EzPickle):
         self.reset()
 
     def seed(self, seed=None):
+        np.random.seed(seed)
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
