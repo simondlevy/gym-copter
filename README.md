@@ -23,7 +23,7 @@ subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
 % python3 setup.py install
 % python3 gym_copter/envs/lander2d.py
 ```
-(On Linux you will probably need to run pip3 with <tt>sudo</tt>
+(On Linux you will probably need to run pip3 with <tt>sudo</tt>.)
 
 You should see the copter land safely.
 
