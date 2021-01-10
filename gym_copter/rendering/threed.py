@@ -216,7 +216,7 @@ class ThreeDRenderer:
 
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env, radius=.1):
+    def __init__(self, env):
 
         ThreeDRenderer.__init__(self,
                                 env,
@@ -226,8 +226,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = radius * np.sin(pts)
-        self.circle_y = radius * np.cos(pts)
+        self.circle_x = env.get_radius() * np.sin(pts)
+        self.circle_y = env.get_radius() * np.cos(pts)
         self.circle_z = np.zeros(self.circle_x.shape)
 
     def render(self):

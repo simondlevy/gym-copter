@@ -97,6 +97,10 @@ class Lander3D(gym.Env, EzPickle):
     def close(self):
         return
 
+    def get_radius(self):
+
+        return 0.1
+
     def _initial_random_offset(self):
 
         return 2.5
@@ -276,12 +280,12 @@ def heuristic(s):
     return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
-def demo(env, radius):
+def demo(env):
 
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
 
-    viewer = ThreeDLanderRenderer(env, radius)
+    viewer = ThreeDLanderRenderer(env)
 
     thread = threading.Thread(target=heuristic_lander,
                               args=(env, heuristic, viewer))
@@ -294,4 +298,4 @@ def demo(env, radius):
 
 if __name__ == '__main__':
 
-    demo(Lander3D(), .1)
+    demo(Lander3D())

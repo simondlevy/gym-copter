@@ -28,6 +28,10 @@ class Lander3DHardcore(Lander3D):
     def step_novelty(self, action):
         return self._step(action)
 
+    def get_radius(self):
+
+        return self.LANDING_RADIUS
+
 
 class Lander3DHardcoreFixed(Lander3DHardcore):
 
@@ -41,4 +45,4 @@ class Lander3DHardcoreFixed(Lander3DHardcore):
 
 if __name__ == '__main__':
 
-    demo(Lander3DHardcore(), 2)
+    demo(Lander3DHardcore())
