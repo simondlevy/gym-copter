@@ -21,7 +21,6 @@ class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust
     INITIAL_ALTITUDE = 5
-    INITIAL_RANDOM_OFFSET = 2.5
     XY_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
@@ -76,8 +75,8 @@ class Lander3D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X] = self.INITIAL_RANDOM_OFFSET * np.random.randn()
-        state[d.STATE_Y] = self.INITIAL_RANDOM_OFFSET * np.random.randn()
+        state[d.STATE_X] = self._initial_random_offset() * np.random.randn()
+        state[d.STATE_Y] = self._initial_random_offset() * np.random.randn()
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
@@ -97,6 +96,10 @@ class Lander3D(gym.Env, EzPickle):
 
     def close(self):
         return
+
+    def _initial_random_offset(self):
+
+        return 2.5
 
     def _step(self, action):
         '''

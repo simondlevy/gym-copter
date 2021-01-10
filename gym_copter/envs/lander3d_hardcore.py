@@ -29,6 +29,16 @@ class Lander3DHardcore(Lander3D):
         return self._step(action)
 
 
+class Lander3DHardcoreFixed(Lander3DHardcore):
+
+    def __init__(self):
+
+        Lander3DHardcore.__init__(self)
+
+    def _initial_random_offset(self):
+
+        return 0
+
 if __name__ == '__main__':
 
     run(Lander3DHardcore(), 2)
