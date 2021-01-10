@@ -276,7 +276,7 @@ def heuristic(s):
     return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
-def run(env, radius):
+def demo(env, radius):
 
     from gym_copter.rendering.threed import ThreeDLanderRenderer
     import threading
@@ -294,4 +294,4 @@ def run(env, radius):
 
 if __name__ == '__main__':
 
-    run(Lander3D(), .1)
+    demo(Lander3D(), .1)

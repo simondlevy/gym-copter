@@ -7,7 +7,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.lander3d import Lander3D, run
+from gym_copter.envs.lander3d import Lander3D, demo
 
 
 class Lander3DHardcore(Lander3D):
@@ -41,4 +41,4 @@ class Lander3DHardcoreFixed(Lander3DHardcore):
 
 if __name__ == '__main__':
 
-    run(Lander3DHardcore(), 2)
+    demo(Lander3DHardcore(), 2)
