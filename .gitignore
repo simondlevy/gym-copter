@@ -1,8 +1,9 @@
 *.pkl
-*.dat
 *.swp
 __pycache__/
 build/
 dist/
 movie/
+neat/models/
+neat/visuals/
 gym_copter.egg-info/
