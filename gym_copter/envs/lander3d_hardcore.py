@@ -39,9 +39,9 @@ class Lander3DHardcoreFixed(Lander3DHardcore):
 
         Lander3DHardcore.__init__(self)
 
-    def _initial_random_offset(self):
+    def _get_initial_offset(self):
 
-        return 0
+        return -3,+3
 
 if __name__ == '__main__':
 

@@ -24,8 +24,8 @@ if __name__ == '__main__':
     renderer = ThreeDLanderRenderer(env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=eval_net, args=(net, env, True))
-    thread.daemon = True
+    render, report = True, True
+    thread = threading.Thread(target=eval_net, args=(net, env, render, report))
     thread.start()
 
     # Begin 3D rendering on main thread

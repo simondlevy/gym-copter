@@ -76,8 +76,7 @@ class Lander3D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X] = self._initial_random_offset() * np.random.randn()
-        state[d.STATE_Y] = self._initial_random_offset() * np.random.randn()
+        state[d.STATE_X], state[d.STATE_Y] = self._get_initial_offset()
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
 
@@ -106,9 +105,9 @@ class Lander3D(gym.Env, EzPickle):
 
         return self.pose
 
-    def _initial_random_offset(self):
+    def _get_initial_offset(self):
 
-        return 2.5
+        return 2.5 * np.random.randn(2)
 
     def _step(self, action):
         '''
