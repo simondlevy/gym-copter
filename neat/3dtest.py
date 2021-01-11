@@ -24,7 +24,7 @@ if __name__ == '__main__':
     renderer = ThreeDLanderRenderer(env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=eval_net, args=(net, env))
+    thread = threading.Thread(target=eval_net, args=(net, env, True))
     thread.daemon = True
     thread.start()
 
