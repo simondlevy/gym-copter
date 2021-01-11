@@ -12,10 +12,6 @@ from neat_gym import read_file, eval_net
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 import threading
 
-def _eval_net(net, env):
-
-    print('Reward = %+03.f' % eval_net(net, env, render=True))
-
 if __name__ == '__main__':
 
     # Load network and environment name from pickled file
@@ -28,7 +24,7 @@ if __name__ == '__main__':
     renderer = ThreeDLanderRenderer(env)
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=_eval_net, args=(net, env_name))
+    thread = threading.Thread(target=eval_net, args=(net, env))
     thread.daemon = True
     thread.start()
 

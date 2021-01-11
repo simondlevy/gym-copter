@@ -44,7 +44,9 @@ class _Vehicle:
         # For render() support
         self.fig = None
 
-    def update(self, x, y, z, phi, theta, psi):
+    def update(self, pose):
+
+        x, y, z, phi, theta, psi = pose
 
         # Adjust for X axis orientation
         theta = -theta
@@ -132,12 +134,19 @@ class ThreeDRenderer:
     def __init__(self,
                  env,
                  lim=50,
+                 fps=50,
                  label=None,
                  showtraj=False,
                  viewangles=None):
 
-        # Environment will be used to get position
+        # Environment will share position with renderer
         self.env = env
+
+        # We also support different frame rates
+        self.fps = fps
+
+        # Big radius for hardcore version
+        self.radius = env.get_radius()
 
         # Helps us handle window close
         self.is_open = True
@@ -155,7 +164,7 @@ class ThreeDRenderer:
             self.ax.view_init(*viewangles)
 
         # Set title to name of environment
-        self.ax.set_title(env.unwrapped.spec.id if label is None else label)
+        self.ax.set_title(label)
 
         # Set axis limits
         self.ax.set_xlim((-lim, lim))
@@ -169,7 +178,7 @@ class ThreeDRenderer:
 
         # Instantiate the animator.  Although we don't use the resulting value
         # (anim), the code will not work without the assignment.
-        interval = int(1000/self.env.FRAMES_PER_SECOND)
+        interval = int(1000/self.fps)
         anim = animation.FuncAnimation(self.fig,
                                        self._animate,
                                        interval=interval,
@@ -189,7 +198,7 @@ class ThreeDRenderer:
 
     def render(self):
 
-        self.copter.update(*self.env.pose)
+        self.copter.update(self.env.get_pose())
 
     def complete(self):
 
@@ -226,8 +235,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = env.get_radius() * np.sin(pts)
-        self.circle_y = env.get_radius() * np.cos(pts)
+        self.circle_x = self.radius * np.sin(pts)
+        self.circle_y = self.radius * np.cos(pts)
         self.circle_z = np.zeros(self.circle_x.shape)
 
     def render(self):

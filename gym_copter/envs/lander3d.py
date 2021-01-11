@@ -16,6 +16,7 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
+from sys import stdout
 
 class Lander3D(gym.Env, EzPickle):
 
@@ -101,6 +102,10 @@ class Lander3D(gym.Env, EzPickle):
 
         return 0.1
 
+    def get_pose(self):
+
+        return self.pose
+
     def _initial_random_offset(self):
 
         return 2.5
@@ -135,7 +140,7 @@ class Lander3D(gym.Env, EzPickle):
         # Extract pose from state
         x, y, z, phi, theta, psi = state[0::2]
 
-        # Set lander pose in display
+        # Set pose pose for display
         self.pose = x, y, z, phi, theta, psi
 
         # Reward is a simple penalty for overall distance and angle and their
