@@ -219,8 +219,13 @@ class ThreeDRenderer:
         # Update the copter animation with vehicle pose
         self.render()
 
-        # Draw everything
-        self.fig.canvas.draw()
+        try:
+
+            # Draw everything
+            self.fig.canvas.draw()
+
+        except Exception:
+            pass
 
 
 class ThreeDLanderRenderer(ThreeDRenderer):
