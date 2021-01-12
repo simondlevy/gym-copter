@@ -6,8 +6,8 @@
 # MIT License
 #
 
-hyper:
-	neat-evolve.py --env gym_copter:Lander3DHardcore-v0 --hyper
+evo:
+	neat-evolve.py --env gym_copter:Lander3D-v0 --ngen 10
 
 clean:
 	rm -rf models/ visuals/
