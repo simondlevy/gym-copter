@@ -10,7 +10,7 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D  # not explicitly used, but necessary
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
 
 
@@ -176,10 +176,9 @@ class ThreeDRenderer:
 
     def start(self):
 
-        # Instantiate the animator.  Although we don't use the resulting value
-        # (anim), the code will not work without the assignment.
+        # Instantiate the animator
         interval = int(1000/self.fps)
-        anim = animation.FuncAnimation(self.fig,
+        anim = animation.FuncAnimation(self.fig,  # noqa: F841
                                        self._animate,
                                        interval=interval,
                                        blit=False)

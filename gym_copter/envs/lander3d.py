@@ -16,7 +16,6 @@ from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
-from sys import stdout
 
 class Lander3D(gym.Env, EzPickle):
 
@@ -153,7 +152,6 @@ class Lander3D(gym.Env, EzPickle):
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
-
     def _get_initial_offset(self):
 
         return 2.5 * np.random.randn(2)
@@ -243,6 +241,7 @@ class Lander3D(gym.Env, EzPickle):
     def _get_bonus(self, x, y):
 
         return 0
+
 
 class Lander3DTarget(gym.Env, EzPickle):
 
@@ -474,6 +473,7 @@ class Lander3DTarget(gym.Env, EzPickle):
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
+
 class Lander3DHardcore(Lander3DTarget):
 
     LANDING_RADIUS = 2
@@ -505,7 +505,7 @@ class Lander3DHardcoreFixed(Lander3DHardcore):
 
     def _get_initial_offset(self):
 
-        return -3,+3
+        return -3, +3
 
 # End of Lander3D classes ----------------------------------------------------
 
