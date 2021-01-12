@@ -18,7 +18,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 from sys import stdout
 
-class Lander3D(gym.Env, EzPickle):
+class Lander3DTarget(gym.Env, EzPickle):
 
     # Parameters to adjust
     INITIAL_ALTITUDE = 5
@@ -197,7 +197,7 @@ class Lander3D(gym.Env, EzPickle):
         # Bonus is proximity to center
         return self.BOUNDS - np.sqrt(x**2+y**2)
 
-# End of Lander3D classes ----------------------------------------------------
+# End of Lander3DTarget classes ----------------------------------------------------
 
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
@@ -302,4 +302,4 @@ def demo(env):
 
 if __name__ == '__main__':
 
-    demo(Lander3D())
+    demo(Lander3DTarget())
