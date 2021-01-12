@@ -197,7 +197,40 @@ class Lander3DTarget(gym.Env, EzPickle):
         # Bonus is proximity to center
         return self.BOUNDS - np.sqrt(x**2+y**2)
 
-# End of Lander3DTarget classes ----------------------------------------------------
+class Lander3DHardcore(Lander3DTarget):
+
+    LANDING_RADIUS = 2
+    INSIDE_RADIUS_BONUS = 100
+
+    def __init__(self):
+
+        Lander3D.__init__(self)
+
+    def _get_bonus(self, x, y):
+
+        return (self.INSIDE_RADIUS_BONUS
+                if x**2+y**2 < self.LANDING_RADIUS**2
+                else 0)
+
+    def step_novelty(self, action):
+        return self._step(action)
+
+    def get_radius(self):
+
+        return self.LANDING_RADIUS
+
+
+class Lander3DHardcoreFixed(Lander3DHardcore):
+
+    def __init__(self):
+
+        Lander3DHardcore.__init__(self)
+
+    def _get_initial_offset(self):
+
+        return -3,+3
+
+# End of Lander3D classes ----------------------------------------------------
 
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
