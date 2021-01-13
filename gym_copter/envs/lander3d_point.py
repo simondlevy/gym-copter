@@ -19,22 +19,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander3DPoint(Lander3D):
 
     # Parameters to adjust
-    INITIAL_ALTITUDE = 5
     XY_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
-    PITCH_ROLL_PENALTY_FACTOR = 0  # 250
-    YAW_PENALTY_FACTOR = 50
-    MOTOR_PENALTY_FACTOR = 0.03
-    BOUNDS = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    RESTING_DURATION = 1.0  # render a short while after successful landing
-    FRAMES_PER_SECOND = 50
-    MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
-    EXCESS_ANGLE_PENALTY = 100
-
-    metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': FRAMES_PER_SECOND
-    }
 
     def __init__(self):
 
