@@ -86,10 +86,6 @@ class Lander3DPoint(Lander3D):
 
         return 0.1
 
-    def get_pose(self):
-
-        return self.pose
-
     def _get_initial_offset(self):
 
         # return 2.5 * np.random.randn(2)
