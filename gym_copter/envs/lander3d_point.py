@@ -8,12 +8,8 @@ MIT License
 '''
 
 import numpy as np
-
 from gym import spaces
-from gym.utils import seeding, EzPickle
-
 from gym_copter.envs.lander3d import Lander3D, demo
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 
 class Lander3DPoint(Lander3D):

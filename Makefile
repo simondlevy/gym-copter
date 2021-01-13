@@ -15,7 +15,7 @@ clean:
 twod:
 	python3 gym_copter/envs/lander2d.py
 
-threed:
+land:
 	python3 gym_copter/envs/lander3d.py
 
 point:
