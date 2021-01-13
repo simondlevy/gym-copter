@@ -12,14 +12,17 @@ install:
 clean:
 	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/
 
-demo2:
+twod:
 	python3 gym_copter/envs/lander2d.py
 
-demo3:
+threed:
 	python3 gym_copter/envs/lander3d.py
 
-demo3h:
-	python3 gym_copter/envs/lander3d_hardcore.py
+point:
+	python3 gym_copter/envs/lander3d_point.py
+
+ring:
+	python3 gym_copter/envs/lander3d_ring.py
 
 commit:
 	git commit -a
