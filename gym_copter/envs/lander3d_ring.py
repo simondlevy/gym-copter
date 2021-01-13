@@ -7,16 +7,8 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import time
-import numpy as np
-
-import gym
-from gym import spaces
-from gym.utils import seeding, EzPickle
-
 from gym_copter.envs.lander3d import demo
 from gym_copter.envs.lander3d_point import Lander3DPoint
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 
 class Lander3DRing(Lander3DPoint):
@@ -52,7 +44,7 @@ class Lander3DRingFixed(Lander3DRing):
 
         return -3, +3
 
-# End of Lander3DRing class ----------------------------------------------------
+# End of Lander3DRing class ---------------------------------------------------
 
 
 def heuristic(s):

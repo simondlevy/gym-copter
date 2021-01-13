@@ -7,7 +7,6 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import time
 import numpy as np
 
 import gym
@@ -107,7 +106,7 @@ class Lander3DPoint(gym.Env, EzPickle):
 
     def _get_initial_offset(self):
 
-        #return 2.5 * np.random.randn(2)
+        # return 2.5 * np.random.randn(2)
         return 4, 4
 
     def _step(self, action):
@@ -250,7 +249,7 @@ class Lander3DPoint(gym.Env, EzPickle):
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
-# End of Lander3DPoint classes ----------------------------------------------------
+# End of Lander3DPoint classes ------------------------------------------------
 
 
 def heuristic(s):
