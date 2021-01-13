@@ -7,7 +7,7 @@
 #
 
 neat:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 100
+	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 200
 
 hyper:
 	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 100 --hyper

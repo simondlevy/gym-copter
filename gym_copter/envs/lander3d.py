@@ -332,7 +332,8 @@ class Lander3DTarget(gym.Env, EzPickle):
 
     def _get_initial_offset(self):
 
-        return 2.5 * np.random.randn(2)
+        #return 2.5 * np.random.randn(2)
+        return 4, 4
 
     def _step(self, action):
         '''
