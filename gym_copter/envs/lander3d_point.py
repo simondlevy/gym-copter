@@ -29,8 +29,6 @@ class Lander3DPoint(Lander3D):
         self.observation_space = (
                 spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
 
-        self.reset()
-
     def reset(self):
 
         self.prev_shaping = None
