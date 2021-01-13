@@ -38,7 +38,8 @@ class Lander3DPoint(Lander3D):
 
     def __init__(self):
 
-        EzPickle.__init__(self)
+        #EzPickle.__init__(self)
+        Lander3D.__init__(self)
         self.seed()
 
         self.prev_reward = None
@@ -58,11 +59,6 @@ class Lander3DPoint(Lander3D):
         self.max_angle = np.radians(self.MAX_ANGLE)
 
         self.reset()
-
-    def seed(self, seed=None):
-        np.random.seed(seed)
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def reset(self):
 
@@ -85,15 +81,6 @@ class Lander3DPoint(Lander3D):
         state, reward, _, done, info = self._step(action)
 
         return state, reward, done, info
-
-    def render(self, mode='human'):
-        '''
-        Returns None because we run viewer on a separate thread
-        '''
-        return None
-
-    def close(self):
-        return
 
     def get_radius(self):
 
