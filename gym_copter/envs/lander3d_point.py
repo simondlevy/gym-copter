@@ -23,25 +23,11 @@ class Lander3DPoint(Lander3D):
 
     def __init__(self):
 
-        #EzPickle.__init__(self)
         Lander3D.__init__(self)
-        self.seed()
-
-        self.prev_reward = None
 
         # Observation is all state values
         self.observation_space = (
                 spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
-
-        # Action is four floats (one per motor)
-        self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
-
-        # Support for rendering
-        self.viewer = None
-        self.pose = None
-
-        # Pre-convert max-angle degrees to radian
-        self.max_angle = np.radians(self.MAX_ANGLE)
 
         self.reset()
 
