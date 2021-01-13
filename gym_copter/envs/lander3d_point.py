@@ -14,6 +14,7 @@ import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 
+from gym_copter.envs.lander3d import demo
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 
@@ -334,22 +335,6 @@ def heuristic(s):
     t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
     return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
-
-
-def demo(env):
-
-    from gym_copter.rendering.threed import ThreeDLanderRenderer
-    import threading
-
-    viewer = ThreeDLanderRenderer(env)
-
-    thread = threading.Thread(target=heuristic_lander,
-                              args=(env, env.heuristic, viewer))
-    thread.daemon = True
-    thread.start()
-
-    # Begin 3D rendering on main thread
-    viewer.start()
 
 
 if __name__ == '__main__':
