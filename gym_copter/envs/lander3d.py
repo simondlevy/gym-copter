@@ -612,4 +612,4 @@ def demo(env):
 
 if __name__ == '__main__':
 
-    demo(Lander3DHardcore())
+    demo(Lander3DTarget())
