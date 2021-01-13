@@ -192,12 +192,7 @@ class Lander3D(gym.Env, EzPickle):
         # Reward is a simple penalty for overall distance and angle and their
         # first derivatives, plus a bit more for running motors (discourage
         # endless hover)
-        shaping = -(
-                self.PITCH_ROLL_PENALTY_FACTOR *
-                np.sqrt(np.sum(state[6:10]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors)
-                )
+        shaping = -self._get_penalty(state, motors)
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)
@@ -238,10 +233,16 @@ class Lander3D(gym.Env, EzPickle):
 
         return np.array(state, dtype=np.float32), reward, behavior, done, {}
 
+    def _get_penalty(self, state, motors):
+
+        return (self.PITCH_ROLL_PENALTY_FACTOR *
+                np.sqrt(np.sum(state[6:10]**2)) +
+                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
+
     def _get_bonus(self, x, y):
 
         return 0
-
 
 # End of Lander3D classes ----------------------------------------------------
 

@@ -44,88 +44,13 @@ class Lander3DPoint(Lander3D):
         # return 2.5 * np.random.randn(2)
         return 4, 4
 
-    def _step(self, action):
-        '''
-        Takes an action and returns a tuple
-        (state, reward, behavior, done, info).
-        Behavior is tuple (x, y, vertical velocity).
-        '''
+    def _get_penalty(self, state, motors):
 
-        # Abbreviation
-        d = self.dynamics
-
-        # Get current status (landed, crashed, ...)
-        status = d.getStatus()
-
-        # Keep motors in interval [0,1]
-        motors = (np.zeros(4)
-                  if status == d.STATUS_LANDED
-                  else np.clip(action, 0, 1))
-
-        d.setMotors(motors)
-
-        # Update dynamics if airborne
-        if status != d.STATUS_LANDED:
-            d.update()
-
-        # Get new state from dynamics
-        state = np.array(d.getState())
-
-        # Extract pose from state
-        x, y, z, phi, theta, psi = state[0::2]
-
-        # Set pose pose for display
-        self.pose = x, y, z, phi, theta, psi
-
-        # Reward is a simple penalty for overall distance and angle and their
-        # first derivatives, plus a bit more for running motors (discourage
-        # endless hover)
-        shaping = -(
-                self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+        return (self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                 self.PITCH_ROLL_PENALTY_FACTOR *
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors)
-                )
-
-        reward = ((shaping - self.prev_shaping)
-                  if (self.prev_shaping is not None)
-                  else 0)
-        self.prev_shaping = shaping
-
-        # Assume we're not done yet
-        done = False
-
-        # Lose bigly if we go out of bounds
-        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # Lose bigly for excess roll or pitch
-        if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # No behavior until we've crashed or landed
-        behavior = None
-
-        # It's all over once we're on the ground
-        if status in (d.STATUS_LANDED, d.STATUS_CRASHED):
-
-            # Once we're one the ground, our behavior is our x,y position and
-            # vertical velocity
-            behavior = x, y, state[d.STATE_Z_DOT]
-
-            done = True
-
-        # Bonus for good landing
-        if status == d.STATUS_LANDED:
-
-            # Different subclasses add different bonuses for proximity to
-            # center
-            reward += self._get_bonus(x, y)
-
-        return np.array(state, dtype=np.float32), reward, behavior, done, {}
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
 
     def _get_bonus(self, x, y):
 
