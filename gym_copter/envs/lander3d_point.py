@@ -29,22 +29,6 @@ class Lander3DPoint(Lander3D):
         self.observation_space = (
                 spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
 
-    def reset(self):
-
-        self.prev_shaping = None
-
-        # Create cusom dynamics model
-        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
-
-        # Initialize custom dynamics with random perturbations
-        state = np.zeros(12)
-        d = self.dynamics
-        state[d.STATE_X], state[d.STATE_Y] = self._get_initial_offset()
-        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
-        self.dynamics.setState(state)
-
-        return self.step(np.array([0, 0, 0, 0]))[0]
-
     def step(self, action):
 
         state, reward, _, done, info = self._step(action)
