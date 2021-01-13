@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander super-class (no ground target)
+3D Copter-Lander with point target
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -17,10 +17,11 @@ from gym.utils import seeding, EzPickle
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 
-class Lander3D(gym.Env, EzPickle):
+class Lander3DPoint(gym.Env, EzPickle):
 
     # Parameters to adjust
     INITIAL_ALTITUDE = 5
+    XY_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
     MOTOR_PENALTY_FACTOR = 0.03
@@ -30,7 +31,6 @@ class Lander3D(gym.Env, EzPickle):
     FRAMES_PER_SECOND = 50
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
     EXCESS_ANGLE_PENALTY = 100
-    LANDING_REWARD = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -44,9 +44,9 @@ class Lander3D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # Observation is state values without X,Y
+        # Observation is all state values
         self.observation_space = (
-                spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32))
+                spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
 
         # Action is four floats (one per motor)
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
@@ -83,11 +83,7 @@ class Lander3D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        # Get full state and other stuff
         state, reward, _, done, info = self._step(action)
-
-        # Remove X,Y from state
-        state = state[self.dynamics.STATE_Z:len(state)]
 
         return state, reward, done, info
 
@@ -102,59 +98,16 @@ class Lander3D(gym.Env, EzPickle):
 
     def get_radius(self):
 
-        return 0
+        return 0.1
 
     def get_pose(self):
 
         return self.pose
 
-    @staticmethod
-    def heuristic(s):
-        '''
-        The heuristic for
-        1. Testing
-        2. Demonstration rollout.
-
-        Args:
-            s (list): The state. Attributes:
-                      s[0] is the vertical coordinate
-                      s[1] is the vertical speed
-                      s[2] is the roll angle
-                      s[3] is the roll angular speed
-                      s[4] is the pitch angle
-                      s[5] is the pitch angular speed
-                      s[6] is the yaw angle
-                      s[7] is the yaw angular speed
-         returns:
-         returns:
-             a: The heuristic to be fed into the step function defined above to
-                determine the next step and reward.  '''
-
-        # Angle PID
-        C = 0.025
-        D = 0.05
-        E = 0.4
-
-        # Vertical PID
-        F = 1.15
-        G = 1.33
-
-        z, dz, phi, dphi, theta, dtheta, _, _ = s
-
-        phi_todo = phi*C + phi*D - dphi*E
-
-        theta_todo = -theta*C - theta*D + dtheta*E
-
-        hover_todo = z*F + dz*G
-
-        # map throttle demand from [-1,+1] to [0,1]
-        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
-
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
-
     def _get_initial_offset(self):
 
-        return 2.5 * np.random.randn(2)
+        #return 2.5 * np.random.randn(2)
+        return 4, 4
 
     def _step(self, action):
         '''
@@ -193,6 +146,7 @@ class Lander3D(gym.Env, EzPickle):
         # first derivatives, plus a bit more for running motors (discourage
         # endless hover)
         shaping = -(
+                self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                 self.PITCH_ROLL_PENALTY_FACTOR *
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
@@ -234,16 +188,68 @@ class Lander3D(gym.Env, EzPickle):
 
             # Different subclasses add different bonuses for proximity to
             # center
-            reward += self.LANDING_REWARD
+            reward += self._get_bonus(x, y)
 
         return np.array(state, dtype=np.float32), reward, behavior, done, {}
 
     def _get_bonus(self, x, y):
 
-        return 0
+        # Bonus is proximity to center
+        return self.BOUNDS - np.sqrt(x**2+y**2)
+
+    @staticmethod
+    def heuristic(s):
+        '''
+        The heuristic for
+        1. Testing
+        2. Demonstration rollout.
+
+        Args:
+            s (list): The state. Attributes:
+                      s[0] is the X coordinate
+                      s[1] is the X speed
+                      s[2] is the Y coordinate
+                      s[3] is the Y speed
+                      s[4] is the vertical coordinate
+                      s[5] is the vertical speed
+                      s[6] is the roll angle
+                      s[7] is the roll angular speed
+                      s[8] is the pitch angle
+                      s[9] is the pitch angular speed
+         returns:
+             a: The heuristic to be fed into the step function defined above to
+                determine the next step and reward.  '''
+
+        # Angle target
+        A = 0.05
+        B = 0.06
+
+        # Angle PID
+        C = 0.025
+        D = 0.05
+        E = 0.4
+
+        # Vertical PID
+        F = 1.15
+        G = 1.33
+
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
+
+        phi_targ = y*A + dy*B              # angle should point towards center
+        phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
+
+        theta_targ = x*A + dx*B         # angle should point towards center
+        theta_todo = -(theta+theta_targ)*C - theta*D + dtheta*E
+
+        hover_todo = z*F + dz*G
+
+        # map throttle demand from [-1,+1] to [0,1]
+        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
+
+        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
-# End of Lander3D classes ----------------------------------------------------
+# End of Lander3DPoint classes ----------------------------------------------------
 
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
@@ -348,4 +354,4 @@ def demo(env):
 
 if __name__ == '__main__':
 
-    demo(Lander3D())
+    demo(Lander3DPoint())

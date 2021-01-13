@@ -20,23 +20,23 @@ register(
     max_episode_steps=400
 )
 
-# 2D lander with X,Y ground target
+# 2D lander with X,Y point target
 register(
     id='Lander3D-v1',
-    entry_point='gym_copter.envs:Lander3DTarget',
+    entry_point='gym_copter.envs:Lander3DPoint',
     max_episode_steps=400
 )
 
 # 2D lander with discrete inside-of-circle ground target, fixed start
 register(
-    id='Lander3DHardcore-v0',
-    entry_point='gym_copter.envs:Lander3DHardcoreFixed',
+    id='Lander3DRing-v0',
+    entry_point='gym_copter.envs:Lander3DRingFixed',
     max_episode_steps=400
 )
 
 # 2D lander with discrete inside-of-circle ground target, randomized start
 register(
-    id='Lander3DHardcore-v1',
-    entry_point='gym_copter.envs:Lander3DHardcore',
+    id='Lander3DRing-v1',
+    entry_point='gym_copter.envs:Lander3DRing',
     max_episode_steps=400
 )
