@@ -10,15 +10,13 @@ MIT License
 import time
 import numpy as np
 import threading
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 
 import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
-from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.threed import make_parser, parse
 
 
 class Lander3D(gym.Env, EzPickle):
@@ -286,23 +284,15 @@ def heuristic_lander(env, heuristic, viewer=None, seed=None):
 
 def demo(env):
 
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--view', required=False, default=(30,120),
-                        help='View elevation, azimuth')
-    args = parser.parse_args()
-
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-
-    viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
+    parser = make_parser()
+    args, renderer = parse(parser, env)
 
     thread = threading.Thread(target=heuristic_lander,
-                              args=(env, env.heuristic, viewer))
-    thread.daemon = True
+                              args=(env, env.heuristic, renderer))
     thread.start()
 
     # Begin 3D rendering on main thread
-    viewer.start()
+    renderer.start()
 
 
 if __name__ == '__main__':

@@ -7,11 +7,14 @@ MIT License
 '''
 
 import time
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
+
 
 
 def create_axis(ax, color):
@@ -261,3 +264,17 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer._animate(self, _)
 
         self._update()
+        
+def make_parser():
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--view', required=False, default='30,120',
+                        help='View elevation, azimuth')
+    return parser
+
+
+def parse(parser, env):
+    args = parser.parse_args()
+    viewangles = tuple((int(s) for s in args.view.split(',')))
+    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
+    return args, renderer
