@@ -16,6 +16,7 @@ from gym import spaces
 from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import make_parser, parse
 
 
@@ -285,13 +286,15 @@ def heuristic_lander(env, heuristic, viewer=None, seed=None):
 def demo(env):
 
     parser = make_parser()
-    args, renderer = parse(parser, env)
+
+    args, viewangles = parse(parser)
+
+    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
     thread = threading.Thread(target=heuristic_lander,
                               args=(env, env.heuristic, renderer))
     thread.start()
 
-    # Begin 3D rendering on main thread
     renderer.start()
 
 

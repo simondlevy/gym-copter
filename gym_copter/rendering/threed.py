@@ -16,7 +16,6 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
 
 
-
 def create_axis(ax, color):
     obj = ax.plot([], [], [], '-', c=color)[0]
     obj.set_data([], [])
@@ -140,7 +139,7 @@ class ThreeDRenderer:
                  fps=50,
                  label=None,
                  showtraj=False,
-                 viewangles=(30,120)):
+                 viewangles=(30, 120)):
 
         # Environment will share position with renderer
         self.env = env
@@ -264,7 +263,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer._animate(self, _)
 
         self._update()
-        
+
+
 def make_parser():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -273,8 +273,7 @@ def make_parser():
     return parser
 
 
-def parse(parser, env):
+def parse(parser):
     args = parser.parse_args()
     viewangles = tuple((int(s) for s in args.view.split(',')))
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
-    return args, renderer
+    return args, viewangles

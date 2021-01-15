@@ -7,30 +7,30 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 import threading
+import pickle
 
 import gym
-from neat_gym import read_file, eval_net
 from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.threed import make_parser, parse
+
+from neat_gym import eval_net
+
 
 def main():
 
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument('filename', metavar='FILENAME', help='input file')
-    parser.add_argument('--record', default=None, help='If specified, sets the recording dir')
-    parser.add_argument('--seed', default=None, type=int, help='Sets Gym, PyTorch and Numpy seeds')
-    parser.add_argument('--view', required=False, default=(30,120),
-                        help='View elevation, azimuth')
-    args = parser.parse_args()
+    # Make a command-line parser with --view enabled
+    parser = make_parser()
 
-    viewangles = tuple((int(s) for s in args.view.split(',')))
+    parser.add_argument('filename', metavar='FILENAME', help='.dat input file')
+    parser.add_argument('--nodisplay', dest='nodisplay', action='store_true',
+                        help='Suppress display')
+    parser.add_argument('--record', default=None,
+                        help='If specified, sets the recording dir')
+    args, viewangles = parse(parser)
 
-    # Load network and environment name from pickled file
-    net, env_name, _, _ = read_file()
+    # Load net and environment name from pickled file
+    net, env_name = pickle.load(open(args.filename, 'rb'))
 
     # Make environment from name
     env = gym.make(env_name)
@@ -44,7 +44,8 @@ def main():
     thread.start()
 
     # Begin 3D rendering on main thread
-    renderer.start() 
+    renderer.start()
+
 
 if __name__ == '__main__':
     main()

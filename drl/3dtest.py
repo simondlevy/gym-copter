@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
-import time
 import threading
 
 import numpy as np
@@ -13,9 +10,14 @@ from gym import wrappers
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
 
+from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.threed import make_parser, parse
+
+
 def report(reward, steps):
 
     print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
+
 
 def run_td3(parts, env, nhid, record):
 
@@ -29,9 +31,12 @@ def run_td3(parts, env, nhid, record):
 
     report(*eval_policy(policy, env, render=(not record), eval_episodes=1))
 
+
 def run_other(parts, env, nhid, record):
 
-    net = model.ModelActor(env.observation_space.shape[0], env.action_space.shape[0], nhid)
+    net = model.ModelActor(env.observation_space.shape[0],
+                           env.action_space.shape[0],
+                           nhid)
 
     net.load_state_dict(parts)
 
@@ -44,7 +49,7 @@ def run_other(parts, env, nhid, record):
         mu_v = net(obs_v)
         action = mu_v.squeeze(dim=0).data.numpy()
         action = np.clip(action, -1, 1)
-        if np.isscalar(action): 
+        if np.isscalar(action):
             action = [action]
         obs, reward, done, _ = env.step(action)
         total_reward += reward
@@ -57,19 +62,17 @@ def run_other(parts, env, nhid, record):
 
 def main():
 
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
+    # Make a command-line parser with --view enabled
+    parser = make_parser()
     parser.add_argument('filename', metavar='FILENAME', help='input file')
-    parser.add_argument('--record', default=None, help='If specified, sets the recording dir')
-    parser.add_argument('--seed', default=None, type=int, help='Sets Gym, PyTorch and Numpy seeds')
-    parser.add_argument('--view', required=False, default=(30,120),
-                        help='View elevation, azimuth')
-    args = parser.parse_args()
+    parser.add_argument('--record', default=None,
+                        help='If specified, sets the recording dir')
+    parser.add_argument('--seed', default=None, type=int,
+                        help='Sets Gym, PyTorch and Numpy seeds')
+    args, viewangles = parse(parser)
 
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-
-    # Load network, environment name, and number of hidden units from pickled file
+    # Load network, environment name, and number of hidden units from pickled
+    # file
     parts, env_name, nhid = torch.load(open(args.filename, 'rb'))
 
     # Make a gym environment from the name
@@ -88,16 +91,13 @@ def main():
     # We use a different evaluator functions for TD3 vs. other algorithms
     fun = run_td3 if 'td3' in args.filename else run_other
 
-    # Create a three-D renderer
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
-
     # Start the network-evaluation episode on a separate thread
     thread = threading.Thread(target=fun, args=(parts, env, nhid, args.record))
-    thread.daemon = True
     thread.start()
 
     # Begin 3D rendering on main thread
-    renderer.start() 
+    ThreeDLanderRenderer(env, viewangles=viewangles).start()
+
 
 if __name__ == '__main__':
     main()
