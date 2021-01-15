@@ -9,12 +9,14 @@ MIT License
 
 import time
 import numpy as np
+import threading
 
 import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+from gym_copter.rendering.threed import ThreeDLanderRenderer
 
 
 class Lander3D(gym.Env, EzPickle):
@@ -281,9 +283,6 @@ def heuristic_lander(env, heuristic, viewer=None, seed=None):
 
 
 def demo(env):
-
-    from gym_copter.rendering.threed import ThreeDLanderRenderer
-    import threading
 
     viewer = ThreeDLanderRenderer(env)
 
