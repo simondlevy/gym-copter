@@ -53,8 +53,7 @@ class _Vehicle:
         # Adjust for X axis orientation
         theta = -theta
 
-        # Adjust coordinate frame
-        x = -x
+        # Adjust coordinate frame NED => NEU
         z = -z
 
         # Append position to arrays for plotting trajectory
