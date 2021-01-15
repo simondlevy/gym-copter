@@ -23,8 +23,6 @@ def main():
     parser = make_parser()
 
     parser.add_argument('filename', metavar='FILENAME', help='.dat input file')
-    parser.add_argument('--nodisplay', dest='nodisplay', action='store_true',
-                        help='Suppress display')
     parser.add_argument('--record', default=None,
                         help='If specified, sets the recording dir')
     args, viewangles = parse(parser)
