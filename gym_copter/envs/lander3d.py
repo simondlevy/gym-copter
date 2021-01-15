@@ -10,6 +10,8 @@ MIT License
 import time
 import numpy as np
 import threading
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 
 import gym
 from gym import spaces
@@ -284,7 +286,15 @@ def heuristic_lander(env, heuristic, viewer=None, seed=None):
 
 def demo(env):
 
-    viewer = ThreeDLanderRenderer(env)
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--view', required=False, default=(30,120),
+                        help='View elevation, azimuth')
+    args = parser.parse_args()
+
+    viewangles = tuple((int(s) for s in args.view.split(',')))
+
+    viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
     thread = threading.Thread(target=heuristic_lander,
                               args=(env, env.heuristic, viewer))

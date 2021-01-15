@@ -137,7 +137,7 @@ class ThreeDRenderer:
                  fps=50,
                  label=None,
                  showtraj=False,
-                 viewangles=None):
+                 viewangles=(30,120)):
 
         # Environment will share position with renderer
         self.env = env
@@ -229,13 +229,13 @@ class ThreeDRenderer:
 
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env):
+    def __init__(self, env, viewangles=None):
 
         ThreeDRenderer.__init__(self,
                                 env,
                                 lim=5,
                                 label='Lander',
-                                viewangles=[30, 120])
+                                viewangles=viewangles)
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
