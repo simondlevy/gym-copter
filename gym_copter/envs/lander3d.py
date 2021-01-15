@@ -26,6 +26,7 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_ALTITUDE = 5
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
+    ZDOT_PENALTY_FACTOR = 10
     MOTOR_PENALTY_FACTOR = 0.03
     BOUNDS = 10
     OUT_OF_BOUNDS_PENALTY = 100
@@ -33,7 +34,7 @@ class Lander3D(gym.Env, EzPickle):
     FRAMES_PER_SECOND = 50
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
     EXCESS_ANGLE_PENALTY = 100
-    LANDING_REWARD = 100
+    LANDING_BONUS = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -232,16 +233,19 @@ class Lander3D(gym.Env, EzPickle):
 
             # Different subclasses add different bonuses for proximity to
             # center
-            reward += self.LANDING_REWARD
+            reward += self.LANDING_BONUS
 
         return np.array(state, dtype=np.float32), reward, behavior, done, {}
 
     def _get_penalty(self, state, motors):
 
-        return (self.PITCH_ROLL_PENALTY_FACTOR *
+        return (
+                self.PITCH_ROLL_PENALTY_FACTOR *
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors) +
+                self.ZDOT_PENALTY_FACTOR * abs(state[5])
+                )
 
     def _get_bonus(self, x, y):
 

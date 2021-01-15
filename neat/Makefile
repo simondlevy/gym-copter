@@ -7,13 +7,13 @@
 #
 
 neat:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 200
+	neat-evolve.py --env gym_copter:Lander3D-v0 --checkpoint
 
 hyper:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 100 --hyper
+	neat-evolve.py --env gym_copter:Lander3D-v0 --ngen 100 --hyper
 
 es:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 100 --eshyper
+	neat-evolve.py --env gym_copter:Lander3D-v0 --ngen 100 --eshyper
 
 clean:
 	rm -rf models/ visuals/
