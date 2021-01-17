@@ -138,7 +138,8 @@ class ThreeDRenderer:
                  fps=50,
                  label=None,
                  showtraj=False,
-                 viewangles=(30, 120)):
+                 viewangles=(30, 120),
+                 outfile=None):
 
         # Environment will share position with renderer
         self.env = env
@@ -161,8 +162,17 @@ class ThreeDRenderer:
         self.ax.set_ylabel('Y (m)')
         self.ax.set_zlabel('Z (m)')
 
+        # Set view angles if indicated
         if viewangles is not None:
             self.ax.view_init(*viewangles)
+
+        # Set up formatting for the movie files
+        self.writer = None
+        self.outfile = outfile
+        if self.outfile is not None:
+            Writer = animation.writers['ffmpeg']
+            self.writer = Writer(fps=15, metadata=dict(artist='Me'),
+                                 bitrate=1800)
 
         # Set title to name of environment
         self.ax.set_title(label)
@@ -183,6 +193,7 @@ class ThreeDRenderer:
                                        self._animate,
                                        interval=interval,
                                        blit=False)
+        anim.save(self.outfile, writer=self.writer)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
@@ -230,13 +241,14 @@ class ThreeDRenderer:
 
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env, viewangles=None):
+    def __init__(self, env, viewangles=None, outfile=None):
 
         ThreeDRenderer.__init__(self,
                                 env,
                                 lim=5,
                                 label='Lander',
-                                viewangles=viewangles)
+                                viewangles=viewangles,
+                                outfile=outfile)
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)

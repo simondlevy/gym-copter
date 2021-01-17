@@ -1,5 +1,6 @@
 *.pkl
 *.swp
+*.mp4
 __pycache__/
 build/
 dist/

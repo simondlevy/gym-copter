@@ -23,8 +23,8 @@ def main():
     parser = make_parser()
 
     parser.add_argument('filename', metavar='FILENAME', help='.dat input file')
-    parser.add_argument('--record', default=None,
-                        help='If specified, sets the recording dir')
+    parser.add_argument('--movie', default=None,
+                        help='If specified, sets the output movie file name')
     args, viewangles = parse(parser)
 
     # Load net and environment name from pickled file
@@ -34,7 +34,8 @@ def main():
     env = gym.make(env_name)
 
     # Create a three-D renderer
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
+    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
+                                    outfile=args.movie)
 
     # Start the network-evaluation episode on a separate thread
     render, report = True, True
