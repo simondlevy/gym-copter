@@ -194,6 +194,7 @@ class ThreeDRenderer:
                                        interval=interval,
                                        blit=False)
         if self.outfile is not None:
+            print('Saving movie %s; may take a while ...' % self.outfile)
             anim.save(self.outfile, writer=self.writer)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
