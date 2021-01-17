@@ -5,7 +5,6 @@ import numpy as np
 import torch
 
 import gym
-from gym import wrappers
 
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
@@ -65,8 +64,8 @@ def main():
     # Make a command-line parser with --view enabled
     parser = make_parser()
     parser.add_argument('filename', metavar='FILENAME', help='input file')
-    parser.add_argument('--record', default=None,
-                        help='If specified, sets the recording dir')
+    parser.add_argument('--movie', default=None,
+                        help='If specified, sets the output movie file name')
     parser.add_argument('--seed', default=None, type=int,
                         help='Sets Gym, PyTorch and Numpy seeds')
     args, viewangles = parse(parser)
@@ -84,19 +83,17 @@ def main():
         torch.manual_seed(args.seed)
         np.random.seed(args.seed)
 
-    # Support recordinga  movie
-    if args.record:
-        env = wrappers.Monitor(env, args.record, force=True)
-
     # We use a different evaluator functions for TD3 vs. other algorithms
     fun = run_td3 if 'td3' in args.filename else run_other
 
     # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=fun, args=(parts, env, nhid, args.record))
+    thread = threading.Thread(target=fun, args=(parts, env, nhid, args.movie))
     thread.start()
 
     # Begin 3D rendering on main thread
-    ThreeDLanderRenderer(env, viewangles=viewangles).start()
+    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
+                                    outfile=args.movie)
+    renderer.start()
 
 
 if __name__ == '__main__':

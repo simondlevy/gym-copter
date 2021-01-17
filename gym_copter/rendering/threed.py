@@ -193,7 +193,8 @@ class ThreeDRenderer:
                                        self._animate,
                                        interval=interval,
                                        blit=False)
-        anim.save(self.outfile, writer=self.writer)
+        if self.outfile is not None:
+            anim.save(self.outfile, writer=self.writer)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
