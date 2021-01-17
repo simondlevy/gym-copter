@@ -36,7 +36,7 @@ class Lander3DPoint(Lander3D):
 
     def _get_penalty(self, state, motors):
 
-        return (self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+        return (self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:4:2]**2)) +
                 self.PITCH_ROLL_PENALTY_FACTOR *
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
@@ -83,7 +83,7 @@ class Lander3DPoint(Lander3D):
         F = 1.15
         G = 1.33
 
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s
 
         phi_targ = y*A + dy*B              # angle should point towards center
         phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
@@ -97,6 +97,10 @@ class Lander3DPoint(Lander3D):
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+
+    def _get_state(self, state):
+        # Strip off yaw
+        return state[:10]
 
 
 # End of Lander3DPoint classes ------------------------------------------------

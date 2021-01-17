@@ -155,8 +155,8 @@ class Lander3D(gym.Env, EzPickle):
             # center
             reward += self.LANDING_BONUS
 
-        # Remove X,Y from state
-        state = state[self.dynamics.STATE_Z:len(state)]
+        # Remove X, Y from state
+        state = self._get_state(state)
 
         # Support Novelty Search
         info = {'behavior': behavior}
@@ -241,6 +241,10 @@ class Lander3D(gym.Env, EzPickle):
     def _get_bonus(self, x, y):
 
         return 0
+
+    def _get_state(self, state):
+
+        return state[self.dynamics.STATE_Z:len(state)]
 
 # End of Lander3D classes ----------------------------------------------------
 
