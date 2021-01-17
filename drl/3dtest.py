@@ -13,12 +13,15 @@ from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import make_parser, parse
 
 
-def report(reward, steps):
+def report(reward, steps, movie):
 
     print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
+    
+    if movie is not None:
+        print('Saving movie %s ...' % movie)
 
 
-def run_td3(parts, env, nhid, record):
+def run_td3(parts, env, nhid, movie):
 
     policy = TD3(
             env.observation_space.shape[0],
@@ -28,10 +31,14 @@ def run_td3(parts, env, nhid, record):
 
     policy.set(parts)
 
-    report(*eval_policy(policy, env, render=(not record), eval_episodes=1))
+    report(*eval_policy(policy,
+                        env,
+                        render=(movie is None),
+                        eval_episodes=1),
+           movie)
 
 
-def run_other(parts, env, nhid, record):
+def run_other(parts, env, nhid, movie):
 
     net = model.ModelActor(env.observation_space.shape[0],
                            env.action_space.shape[0],
@@ -56,7 +63,7 @@ def run_other(parts, env, nhid, record):
         if done:
             break
 
-    report(total_reward, total_steps)
+    report(total_reward, total_steps, movie)
 
 
 def main():
@@ -85,6 +92,9 @@ def main():
 
     # We use a different evaluator functions for TD3 vs. other algorithms
     fun = run_td3 if 'td3' in args.filename else run_other
+
+    if args.movie is not None:
+        print('Running episode ...')
 
     # Start the network-evaluation episode on a separate thread
     thread = threading.Thread(target=fun, args=(parts, env, nhid, args.movie))

@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
+from neat_gym import eval_net
 
 
 def create_axis(ax, color):
@@ -200,7 +201,6 @@ class ThreeDRenderer:
 
         # Set up to save a movie if indicated
         if self.outfile is not None:
-            print('Running episode ...')
             anim.save(self.outfile, writer=self.writer)
 
         # Otherwise, show the display window
@@ -296,3 +296,9 @@ def parse(parser):
     args = parser.parse_args()
     viewangles = tuple((int(s) for s in args.view.split(',')))
     return args, viewangles
+
+
+def eval_with_movie(net, env, render, report, movie):
+    eval_net(net, env, render, report)
+    if movie is not None:
+        print('Saving %s ...' % movie)
