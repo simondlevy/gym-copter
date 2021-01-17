@@ -171,7 +171,8 @@ class ThreeDRenderer:
         self.outfile = outfile
         if self.outfile is not None:
             Writer = animation.writers['ffmpeg']
-            self.writer = Writer(fps=15, metadata=dict(artist='Me'),
+            self.writer = Writer(fps=15,  # works better than self.fps
+                                 metadata=dict(artist='Me'),
                                  bitrate=1800)
 
         # Set title to name of environment
@@ -194,15 +195,15 @@ class ThreeDRenderer:
                                        interval=interval,
                                        blit=False)
         if self.outfile is not None:
-            print('Saving movie %s; may take a while ...' % self.outfile)
             anim.save(self.outfile, writer=self.writer)
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
         # Show the display window
-        try:
-            plt.show()
-        except Exception:
-            pass
+        if self.outfile is None:
+            try:
+                plt.show()
+            except Exception:
+                pass
 
     def close(self):
 

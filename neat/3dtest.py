@@ -33,16 +33,14 @@ def main():
     # Make environment from name
     env = gym.make(env_name)
 
-    # Create a three-D renderer
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
-                                    outfile=args.movie)
-
     # Start the network-evaluation episode on a separate thread
     render, report = True, True
     thread = threading.Thread(target=eval_net, args=(net, env, render, report))
     thread.start()
 
     # Begin 3D rendering on main thread
+    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
+                                    outfile=args.movie)
     renderer.start()
 
 
