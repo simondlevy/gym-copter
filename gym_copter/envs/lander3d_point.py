@@ -83,7 +83,7 @@ class Lander3DPoint(Lander3D):
         F = 1.15
         G = 1.33
 
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
         phi_targ = y*A + dy*B              # angle should point towards center
         phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
@@ -99,8 +99,7 @@ class Lander3DPoint(Lander3D):
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
     def _get_state(self, state):
-        # Strip off yaw
-        return state[:10]
+        return state
 
 
 # End of Lander3DPoint classes ------------------------------------------------
