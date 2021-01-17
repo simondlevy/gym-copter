@@ -13,4 +13,4 @@ neat1:
 	neat-evolve.py --env gym_copter:Lander3D-v1 --checkpoint
 
 clean:
-	rm -rf models/ visuals/
+	rm -rf models/ visuals/ *.mp4

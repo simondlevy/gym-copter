@@ -200,6 +200,7 @@ class ThreeDRenderer:
 
         # Set up to save a movie if indicated
         if self.outfile is not None:
+            print('Running episode ...')
             anim.save(self.outfile, writer=self.writer)
 
         # Otherwise, show the display window
