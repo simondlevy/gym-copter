@@ -194,12 +194,16 @@ class ThreeDRenderer:
                                        self._animate,
                                        interval=interval,
                                        blit=False)
-        if self.outfile is not None:
-            anim.save(self.outfile, writer=self.writer)
+
+        # Support window close
         self.fig.canvas.mpl_connect('close_event', self._handle_close)
 
-        # Show the display window
-        if self.outfile is None:
+        # Set up to save a movie if indicated
+        if self.outfile is not None:
+            anim.save(self.outfile, writer=self.writer)
+
+        # Otherwise, show the display window
+        else:
             try:
                 plt.show()
             except Exception:
