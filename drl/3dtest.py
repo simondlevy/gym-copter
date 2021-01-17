@@ -16,7 +16,7 @@ from gym_copter.rendering.threed import make_parser, parse
 def report(reward, steps, movie):
 
     print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
-    
+
     if movie is not None:
         print('Saving movie %s ...' % movie)
 

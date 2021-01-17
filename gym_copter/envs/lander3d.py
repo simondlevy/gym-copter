@@ -87,86 +87,6 @@ class Lander3D(gym.Env, EzPickle):
 
     def step(self, action):
 
-        # Get full state and other stuff
-        state, reward, _, done, info = self._step(action)
-
-        # Remove X,Y from state
-        state = state[self.dynamics.STATE_Z:len(state)]
-
-        return state, reward, done, info
-
-    def render(self, mode='human'):
-        '''
-        Returns None because we run viewer on a separate thread
-        '''
-        return None
-
-    def close(self):
-        return
-
-    def get_radius(self):
-
-        return 0
-
-    def get_pose(self):
-
-        return self.pose
-
-    @staticmethod
-    def heuristic(s):
-        '''
-        The heuristic for
-        1. Testing
-        2. Demonstration rollout.
-
-        Args:
-            s (list): The state. Attributes:
-                      s[0] is the vertical coordinate
-                      s[1] is the vertical speed
-                      s[2] is the roll angle
-                      s[3] is the roll angular speed
-                      s[4] is the pitch angle
-                      s[5] is the pitch angular speed
-                      s[6] is the yaw angle
-                      s[7] is the yaw angular speed
-         returns:
-         returns:
-             a: The heuristic to be fed into the step function defined above to
-                determine the next step and reward.  '''
-
-        # Angle PID
-        C = 0.025
-        D = 0.05
-        E = 0.4
-
-        # Vertical PID
-        F = 1.15
-        G = 1.33
-
-        z, dz, phi, dphi, theta, dtheta, _, _ = s
-
-        phi_todo = phi*C + phi*D - dphi*E
-
-        theta_todo = -theta*C - theta*D + dtheta*E
-
-        hover_todo = z*F + dz*G
-
-        # map throttle demand from [-1,+1] to [0,1]
-        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
-
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
-
-    def _get_initial_offset(self):
-
-        return 2.5 * np.random.randn(2)
-
-    def _step(self, action):
-        '''
-        Takes an action and returns a tuple
-        (state, reward, behavior, done, info).
-        Behavior is tuple (x, y, vertical velocity).
-        '''
-
         # Abbreviation
         d = self.dynamics
 
@@ -235,7 +155,78 @@ class Lander3D(gym.Env, EzPickle):
             # center
             reward += self.LANDING_BONUS
 
-        return np.array(state, dtype=np.float32), reward, behavior, done, {}
+        # Remove X,Y from state
+        state = state[self.dynamics.STATE_Z:len(state)]
+
+        # Support Novelty Search
+        info = {'behavior': behavior}
+
+        return np.array(state, dtype=np.float32), reward, done, info
+
+    def render(self, mode='human'):
+        '''
+        Returns None because we run viewer on a separate thread
+        '''
+        return None
+
+    def close(self):
+        return
+
+    def get_radius(self):
+
+        return 0
+
+    def get_pose(self):
+
+        return self.pose
+
+    @staticmethod
+    def heuristic(s):
+        '''
+        The heuristic for
+        1. Testing
+        2. Demonstration rollout.
+
+        Args:
+            s (list): The state. Attributes:
+                      s[0] is the vertical coordinate
+                      s[1] is the vertical speed
+                      s[2] is the roll angle
+                      s[3] is the roll angular speed
+                      s[4] is the pitch angle
+                      s[5] is the pitch angular speed
+                      s[6] is the yaw angle
+                      s[7] is the yaw angular speed
+         returns:
+         returns:
+             a: The heuristic to be fed into the step function defined above to
+                determine the next step and reward.  '''
+
+        # Angle PID
+        C = 0.025
+        D = 0.05
+        E = 0.4
+
+        # Vertical PID
+        F = 1.15
+        G = 1.33
+
+        z, dz, phi, dphi, theta, dtheta, _, _ = s
+
+        phi_todo = phi*C + phi*D - dphi*E
+
+        theta_todo = -theta*C - theta*D + dtheta*E
+
+        hover_todo = z*F + dz*G
+
+        # map throttle demand from [-1,+1] to [0,1]
+        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
+
+        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+
+    def _get_initial_offset(self):
+
+        return 2.5 * np.random.randn(2)
 
     def _get_penalty(self, state, motors):
 

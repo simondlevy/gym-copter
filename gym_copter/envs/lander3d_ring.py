@@ -26,9 +26,6 @@ class Lander3DRing(Lander3DPoint):
                 if x**2+y**2 < self.LANDING_RADIUS**2
                 else 0)
 
-    def step_novelty(self, action):
-        return self._step(action)
-
     def get_radius(self):
 
         return self.LANDING_RADIUS
