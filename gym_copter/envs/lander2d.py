@@ -26,7 +26,7 @@ class Lander2D(gym.Env, EzPickle):
     INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     INITIAL_ALTITUDE = 10
     LANDING_RADIUS = 2
-    PENALTY_FACTOR = 12  # designed so that maximal penalty is around 100
+    PENALTY_FACTOR = 12  # penalizes distance from center and velocity
     BOUNDS = 10
     OUT_OF_BOUNDS_PENALTY = 100
     INSIDE_RADIUS_BONUS = 100
@@ -111,7 +111,7 @@ class Lander2D(gym.Env, EzPickle):
         # Convert state to usable form
         state = np.array([posy, vely, posz, velz, phi, velphi])
 
-        # A simple penalty for overall distance and velocity
+        # Penalize distance from center and velocity
         shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
 
         reward = ((shaping - self.prev_shaping)
