@@ -15,7 +15,7 @@ from gym_copter.envs.lander3d import Lander3D, demo
 class Lander3DPoint(Lander3D):
 
     # Parameters to adjust
-    XY_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
+    XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
     def __init__(self):
 
@@ -36,7 +36,7 @@ class Lander3DPoint(Lander3D):
 
     def _get_penalty(self, state, motors):
 
-        return (self.XY_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+        return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                 self.PITCH_ROLL_PENALTY_FACTOR *
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
