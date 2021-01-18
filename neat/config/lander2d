@@ -9,14 +9,14 @@
 
 [NEAT]
 fitness_criterion      = max
-fitness_threshold      = 100
+fitness_threshold      = 200
 pop_size               = 960
 reset_on_extinction    = False
 no_fitness_termination = False
 
 [Gym]
 environment = gym_copter:Lander-v0
-episode_reps = 1
+episode_reps = 10
 
 [Novelty]
 
