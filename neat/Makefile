@@ -6,11 +6,11 @@
 # MIT License
 #
 
-neat0:
-	neat-evolve.py --env gym_copter:Lander3D-v0 --checkpoint
+2d:
+	neat-evolve.py config/lander2d
 
-neat1:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --checkpoint
+3d:
+	neat-evolve.py config/lander3d
 
 clean:
 	rm -rf models/ visuals/ *.mp4
