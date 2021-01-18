@@ -10,7 +10,7 @@ neat0:
 	neat-evolve.py --env gym_copter:Lander3D-v0 --checkpoint
 
 neat1:
-	neat-evolve.py --env gym_copter:Lander3D-v1 --checkpoint
+	neat-evolve.py --env gym_copter:Lander3D-v1 --ngen 500
 
 clean:
 	rm -rf models/ visuals/ *.mp4
