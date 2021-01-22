@@ -255,7 +255,7 @@ class MultirotorDynamics:
 
         self._dxdt[self.STATE_X] = self._x[self.STATE_X_DOT]
 
-        self._dxdt[self.STATE_X_DOT] = accelNED[0]
+        self._dxdt[self.STATE_X_DOT] = accelNED[0] + self._perturb[0]
 
         self._dxdt[self.STATE_Y] = self._x[self.STATE_Y_DOT]
 
@@ -263,24 +263,24 @@ class MultirotorDynamics:
 
         self._dxdt[self.STATE_Z] = self._x[self.STATE_Z_DOT]
 
-        self._dxdt[self.STATE_Z_DOT] = netz
+        self._dxdt[self.STATE_Z_DOT] = netz + self._perturb[2]
 
         self._dxdt[self.STATE_PHI] = phidot
 
         self._dxdt[self.STATE_PHI_DOT] = (
             psidot*thedot*(p.Iy-p.Iz) / p.Ix-p.Jr / p.Ix*thedot*self._Omega
-            + self._U2 / p.Ix)
+            + self._U2 / p.Ix + self._perturb[3])
 
         self._dxdt[self.STATE_THETA] = thedot
 
         self._dxdt[self.STATE_THETA_DOT] = (
                 -(psidot*phidot*(p.Iz-p.Ix) / p.Iy + p.Jr /
-                  p.Iy*phidot*self._Omega + self._U3 / p.Iy))
+                  p.Iy*phidot*self._Omega + self._U3 / p.Iy) + self._perturb[4])
 
         self._dxdt[self.STATE_PSI] = psidot
 
         self._dxdt[self.STATE_PSI_DOT] = (
-            thedot*phidot*(p.Ix-p.Iy)/p.Iz + self._U4/p.Iz)
+            thedot*phidot*(p.Ix-p.Iy)/p.Iz + self._U4/p.Iz + self._perturb[5])
 
     def _computeMotorSpeed(self, motorvals):
         '''
