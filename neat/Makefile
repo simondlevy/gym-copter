@@ -13,4 +13,4 @@
 	neat-evolve.py config/lander3d
 
 clean:
-	rm -rf models/ visuals/ *.mp4
+	rm -rf models/ visuals/ runs/ *.mp4

@@ -37,10 +37,6 @@ class Lander3DRingFixed(Lander3DRing):
 
         Lander3DRing.__init__(self)
 
-    def _get_initial_offset(self):
-
-        return -3, +3
-
 # End of Lander3DRing class ---------------------------------------------------
 
 
