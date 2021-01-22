@@ -27,16 +27,9 @@ register(
     max_episode_steps=400
 )
 
-# 3D lander with discrete inside-of-circle ground target, fixed start
+# 3D lander with discrete inside-of-circle ground target
 register(
-    id='Lander3DRing-v0',
-    entry_point='gym_copter.envs:Lander3DRingFixed',
-    max_episode_steps=400
-)
-
-# 3D lander with discrete inside-of-circle ground target, randomized start
-register(
-    id='Lander3DRing-v1',
+    id='Lander3D-v2',
     entry_point='gym_copter.envs:Lander3DRing',
     max_episode_steps=400
 )
