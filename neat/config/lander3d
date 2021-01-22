@@ -1,4 +1,4 @@
-# ES-HyperNEAT configuration for gym_copter:Lander3D-v1
+# ES-HyperNEAT configuration for gym_copter:Lander3D-v0
 #
 # Copyright (C) 2020 Simon D. Levy
 #
@@ -9,14 +9,15 @@
 
 [NEAT]
 fitness_criterion      = max
-fitness_threshold      = 210
+fitness_threshold      = 200
 pop_size               = 96
 reset_on_extinction    = False
 no_fitness_termination = False
+checkpoint   = True
 
 [Gym]
 environment = gym_copter:Lander3D-v1
-episode_reps = 1
+episode_reps = 10
 
 [Novelty]
 
