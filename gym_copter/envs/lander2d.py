@@ -177,49 +177,46 @@ class Lander2D(gym.Env, EzPickle):
         if self.viewer is not None:
             self.viewer.close()
 
-# End of Lander2D class -------------------------------------------------------
+    def heuristic(self, s):
+        """
+        The heuristic for
+        1. Testing
+        2. Demonstration rollout.
 
+        Args:
+            s (list): The state. Attributes:
+                      s[0] is the horizontal coordinate
+                      s[1] is the horizontal speed
+                      s[2] is the vertical coordinate
+                      s[3] is the vertical speed
+                      s[4] is the angle
+                      s[5] is the angular speed
+        returns:
+             a: The heuristic to be fed into the step function defined above to
+                determine the next step and reward.
+        """
 
-def heuristic(s):
-    """
-    The heuristic for
-    1. Testing
-    2. Demonstration rollout.
+        # Angle target
+        A = 0.1  # 0.05
+        B = 0.1  # 0.06
 
-    Args:
-        s (list): The state. Attributes:
-                  s[0] is the horizontal coordinate
-                  s[1] is the horizontal speed
-                  s[2] is the vertical coordinate
-                  s[3] is the vertical speed
-                  s[4] is the angle
-                  s[5] is the angular speed
-    returns:
-         a: The heuristic to be fed into the step function defined above to
-            determine the next step and reward.
-    """
+        # Angle PID
+        C = 0.1  # 0.025
+        D = 0.05
+        E = 0.4
 
-    # Angle target
-    A = 0.1  # 0.05
-    B = 0.1  # 0.06
+        # Vertical PID
+        F = 1.15
+        G = 1.33
 
-    # Angle PID
-    C = 0.1  # 0.025
-    D = 0.05
-    E = 0.4
+        posy, vely, posz, velz, phi, velphi = s
 
-    # Vertical PID
-    F = 1.15
-    G = 1.33
+        phi_targ = posy*A + vely*B         # angle should point towards center
+        phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
-    posy, vely, posz, velz, phi, velphi = s
+        hover_todo = posz*F + velz*G
 
-    phi_targ = posy*A + vely*B         # angle should point towards center
-    phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
-
-    hover_todo = posz*F + velz*G
-
-    return hover_todo-phi_todo, hover_todo+phi_todo
+        return hover_todo-phi_todo, hover_todo+phi_todo
 
 
 def demo_heuristic_lander(env, seed=None, render=False):
@@ -232,7 +229,7 @@ def demo_heuristic_lander(env, seed=None, render=False):
     steps = 0
     state = env.reset()
     while True:
-        action = heuristic(state)
+        action = env.heuristic(state)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
