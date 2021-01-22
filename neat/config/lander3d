@@ -14,7 +14,6 @@ pop_size               = 96
 reset_on_extinction    = False
 no_fitness_termination = False
 checkpoint   = True
-generations = 10
 
 [Gym]
 environment = gym_copter:Lander3D-v2
