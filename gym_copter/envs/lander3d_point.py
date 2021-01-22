@@ -15,6 +15,7 @@ from gym_copter.envs.lander3d import Lander3D, demo
 class Lander3DPoint(Lander3D):
 
     # Parameters to adjust
+    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
     def __init__(self):
@@ -28,11 +29,6 @@ class Lander3DPoint(Lander3D):
     def get_radius(self):
 
         return 0.1
-
-    def _get_initial_offset(self):
-
-        # return 2.5 * np.random.randn(2)
-        return 4, 4
 
     def _get_penalty(self, state, motors):
 

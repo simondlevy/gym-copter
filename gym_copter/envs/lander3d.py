@@ -23,6 +23,7 @@ from gym_copter.rendering.threed import make_parser, parse
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust
+    INITIAL_RANDOM_FORCE = 0  # perturbation for initial position
     INITIAL_ALTITUDE = 5
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
@@ -79,9 +80,16 @@ class Lander3D(gym.Env, EzPickle):
         # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
-        state[d.STATE_X], state[d.STATE_Y] = self._get_initial_offset()
+        state[d.STATE_X] = 0
+        state[d.STATE_Y] = 0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
+        self.dynamics.perturb(np.array([self._perturb(),  # X
+                                        self._perturb(),  # Y
+                                        self._perturb(),  # Z
+                                        0,                # phi
+                                        0,                # theta
+                                        0]))              # psi
 
         return self.step(np.array([0, 0, 0, 0]))[0]
 
@@ -224,9 +232,10 @@ class Lander3D(gym.Env, EzPickle):
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
-    def _get_initial_offset(self):
+    def _perturb(self):
 
-        return 2.5 * np.random.randn(2)
+        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
+                                 + self.INITIAL_RANDOM_FORCE)
 
     def _get_penalty(self, state, motors):
 

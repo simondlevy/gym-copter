@@ -79,12 +79,12 @@ class Lander2D(gym.Env, EzPickle):
         state[d.STATE_Y] = 0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
-        self.dynamics.perturb(np.array([0,               # X
-                                        self._perturb(), # Y
-                                        self._perturb(), # Z
-                                        0,               # phi
-                                        0,               # theta
-                                        0]))             # psi
+        self.dynamics.perturb(np.array([0,                # X
+                                        self._perturb(),  # Y
+                                        self._perturb(),  # Z
+                                        0,                # phi
+                                        0,                # theta
+                                        0]))              # psi
 
         return self.step(np.array([0, 0]))[0]
 

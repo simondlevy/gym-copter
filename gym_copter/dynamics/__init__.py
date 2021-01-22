@@ -275,7 +275,8 @@ class MultirotorDynamics:
 
         self._dxdt[self.STATE_THETA_DOT] = (
                 -(psidot*phidot*(p.Iz-p.Ix) / p.Iy + p.Jr /
-                  p.Iy*phidot*self._Omega + self._U3 / p.Iy) + self._perturb[4])
+                  p.Iy*phidot*self._Omega + self._U3 / p.Iy) +
+                self._perturb[4])
 
         self._dxdt[self.STATE_PSI] = psidot
 
