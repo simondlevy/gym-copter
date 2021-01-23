@@ -184,8 +184,7 @@ class Lander3D(gym.Env, EzPickle):
 
     def get_radius(self):
 
-        # XXX should come from a superclass
-        return 2.0
+        return self.LANDING_RADIUS
 
     def get_pose(self):
 
