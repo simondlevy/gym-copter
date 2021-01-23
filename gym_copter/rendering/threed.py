@@ -216,7 +216,7 @@ class ThreeDRenderer:
 
     def render(self):
 
-        self.copter.update(self.env.get_pose())
+        self.copter.update(self.env.pose)
 
     def complete(self):
 

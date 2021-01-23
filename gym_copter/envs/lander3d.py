@@ -68,8 +68,8 @@ class Lander3D(Lander):
         # Extract pose from state
         x, y, z, phi, theta, psi = state[0::2]
 
-        # Set pose pose for display
-        self.pose = x, y, z, phi, theta, psi
+        # Set pose for display
+        self.pose = state[0:-1:2]
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -102,17 +102,17 @@ class Lander3D(Lander):
 
             reward += self.LANDING_BONUS
 
-        return np.array(state, dtype=np.float32), reward, done, {}
+        return (np.array(self._get_state(state),
+                dtype=np.float32),
+                reward,
+                done,
+                {})
 
     def render(self, mode='human'):
         '''
         Returns None because we run viewer on a separate thread
         '''
         return None
-
-    def get_pose(self):
-
-        return self.pose
 
     def _get_penalty(self, state, motors):
 
@@ -128,13 +128,13 @@ class Lander3D(Lander):
                 if x**2+y**2 < self.LANDING_RADIUS**2
                 else 0)
 
-    def _get_state(self, state):
-
-        return state[self.dynamics.STATE_Z:len(state)]
-
     def _get_motors(self, motors):
 
         return motors
+
+    def _get_state(self, state):
+
+        return state
 
     @staticmethod
     def heuristic(s):
