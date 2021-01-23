@@ -39,12 +39,6 @@ class Lander3D(Lander):
         '''
         return None
 
-    def _get_penalty(self, state, motors):
-
-        return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
-
     def _get_motors(self, motors):
 
         return motors

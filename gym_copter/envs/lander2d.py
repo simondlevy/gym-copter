@@ -10,8 +10,6 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-import numpy as np
-
 from gym_copter.envs.lander import Lander
 
 
@@ -87,11 +85,6 @@ class Lander2D(Lander):
         hover_todo = posz*F + velz*G
 
         return hover_todo-phi_todo, hover_todo+phi_todo
-
-    def _get_penalty(self, state, motors):
-
-        # Penalize distance from center and velocity
-        return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2))
 
     def _get_motors(self, motors):
 

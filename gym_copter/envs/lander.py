@@ -22,16 +22,15 @@ class Lander(gym.Env, EzPickle):
     INITIAL_ALTITUDE = 10
     LANDING_RADIUS = 2
     BOUNDS = 10
+    FRAMES_PER_SECOND = 50
 
     # Reward shaping
     OUT_OF_BOUNDS_PENALTY = 100
-    FRAMES_PER_SECOND = 50
     INSIDE_RADIUS_BONUS = 100
     MAX_ANGLE = 45
     YAW_PENALTY_FACTOR = 50
     MOTOR_PENALTY_FACTOR = 0.03
     XYZ_PENALTY_FACTOR = 25
-    PENALTY_FACTOR = 12
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -142,6 +141,12 @@ class Lander(gym.Env, EzPickle):
                 reward,
                 done,
                 {})
+
+    def _get_penalty(self, state, motors):
+
+        return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
 
     def _reset(self, xperturb):
 
