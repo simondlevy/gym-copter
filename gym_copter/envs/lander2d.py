@@ -46,23 +46,6 @@ class Lander2D(Lander):
             self.viewer = None
 
     def heuristic(self, s):
-        """
-        The heuristic for
-        1. Testing
-        2. Demonstration rollout.
-
-        Args:
-            s (list): The state. Attributes:
-                      s[0] horizontal coordinate
-                      s[1] horizontal speed
-                      s[2] vertical coordinate
-                      s[3] vertical speed
-                      s[4] angle
-                      s[5] angular speed
-        returns:
-             a: The heuristic to be fed into the step function defined above to
-                determine the next step and reward.
-        """
 
         y, dy, z, dz, phi, velphi = s
 

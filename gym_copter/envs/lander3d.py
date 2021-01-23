@@ -48,28 +48,6 @@ class Lander3D(Lander):
         return state
 
     def heuristic(self, s):
-        '''
-        The heuristic for
-        1. Testing
-        2. Demonstration rollout.
-
-        Args:
-            s (list): The state. Attributes:
-                      s[0]  X coordinate
-                      s[1]  X speed
-                      s[2]  Y coordinate
-                      s[3]  Y speed
-                      s[4]  vertical coordinate
-                      s[5]  vertical speed
-                      s[6]  roll angle
-                      s[7]  roll angular speed
-                      s[8]  pitch angle
-                      s[9]  pitch angular speed
-                      s[10] yaw angle
-                      s[12] yaw angular speed
-         returns:
-             a: The heuristic to be fed into the step function defined above to
-                determine the next step and reward.  '''
 
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
@@ -78,7 +56,7 @@ class Lander3D(Lander):
                     dphi*self.PID_E)
 
         theta_targ = x*self.PID_A + dx*self.PID_B
-        theta_todo = (-(theta+theta_targ)*self.PID_C - theta*self.PID_D +
+        theta_todo = ((-theta-theta_targ)*self.PID_C - theta*self.PID_D +
                       dtheta*self.PID_E)
 
         hover_todo = z*self.PID_F + dz*self.PID_G
