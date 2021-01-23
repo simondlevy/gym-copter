@@ -64,25 +64,13 @@ class Lander2D(Lander):
                 determine the next step and reward.
         """
 
-        # Angle target
-        A = 0.1
-        B = 0.1
+        y, dy, z, dz, phi, velphi = s
 
-        # Angle PID
-        C = 0.1
-        D = 0.05
-        E = 0.4
+        phi_targ = y*self.PID_A + dy*self.PID_B
+        phi_todo = ((phi-phi_targ)*self.PID_C + phi*self.PID_D -
+                    velphi*self.PID_E)
 
-        # Vertical PID
-        F = 1.15
-        G = 1.33
-
-        posy, vely, posz, velz, phi, velphi = s
-
-        phi_targ = posy*A + vely*B         # angle should point towards center
-        phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
-
-        hover_todo = posz*F + velz*G
+        hover_todo = z*self.PID_F + dz*self.PID_G
 
         return hover_todo-phi_todo, hover_todo+phi_todo
 

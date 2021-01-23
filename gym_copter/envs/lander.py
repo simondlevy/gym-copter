@@ -32,6 +32,15 @@ class Lander(gym.Env, EzPickle):
     MOTOR_PENALTY_FACTOR = 0.03
     XYZ_PENALTY_FACTOR = 25
 
+    # PIDs for heuristic demo
+    PID_A = 0.1
+    PID_B = 0.1
+    PID_C = 0.025
+    PID_D = 0.05
+    PID_E = 0.4
+    PID_F = 1.15
+    PID_G = 1.33
+
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second': FRAMES_PER_SECOND

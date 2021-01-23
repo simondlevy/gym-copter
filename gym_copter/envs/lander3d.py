@@ -47,8 +47,7 @@ class Lander3D(Lander):
 
         return state
 
-    @staticmethod
-    def heuristic(s):
+    def heuristic(self, s):
         '''
         The heuristic for
         1. Testing
@@ -72,28 +71,17 @@ class Lander3D(Lander):
              a: The heuristic to be fed into the step function defined above to
                 determine the next step and reward.  '''
 
-        # Angle target
-        A = 0.1
-        B = 0.1
-
-        # Angle PID
-        C = 0.025
-        D = 0.05
-        E = 0.4
-
-        # Vertical PID
-        F = 1.15
-        G = 1.33
-
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
-        phi_targ = y*A + dy*B              # angle should point towards center
-        phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
+        phi_targ = y*self.PID_A + dy*self.PID_B
+        phi_todo = ((phi-phi_targ)*self.PID_C + phi*self.PID_D -
+                    dphi*self.PID_E)
 
-        theta_targ = x*A + dx*B         # angle should point towards center
-        theta_todo = -(theta+theta_targ)*C - theta*D + dtheta*E
+        theta_targ = x*self.PID_A + dx*self.PID_B
+        theta_todo = (-(theta+theta_targ)*self.PID_C - theta*self.PID_D +
+                      dtheta*self.PID_E)
 
-        hover_todo = z*F + dz*G
+        hover_todo = z*self.PID_F + dz*self.PID_G
 
         # map throttle demand from [-1,+1] to [0,1]
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
