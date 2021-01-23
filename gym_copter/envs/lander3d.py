@@ -157,9 +157,6 @@ class Lander3D(Lander):
         '''
         return None
 
-    def close(self):
-        return
-
     def get_radius(self):
 
         return self.LANDING_RADIUS
