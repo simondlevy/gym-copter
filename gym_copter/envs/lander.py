@@ -57,22 +57,34 @@ class Lander(gym.Env, EzPickle):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reset(self):
+    def _reset(self, xperturb):
 
         # Support for rendering
         self.pose = None
         self.spinning = False
         self.prev_shaping = None
 
-        # Create cusom dynamics model
+        # Create dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
+        # Set up initial conditions
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_X] = 0
         state[d.STATE_Y] = 0
         state[d.STATE_Z] = -self.INITIAL_ALTITUDE
         self.dynamics.setState(state)
+
+        # Perturb with a random force
+        self.dynamics.perturb(np.array([xperturb,          # X
+                                        self._perturb(),   # Y
+                                        self._perturb(),   # Z
+                                        0,                 # phi
+                                        0,                 # theta
+                                        0]))               # psi
+
+        # Return initial state
+        return self.step(np.zeros(self.ACTION_SIZE))[0]
 
     def demo_heuristic(self, seed=None, render=True):
 

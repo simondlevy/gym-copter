@@ -29,7 +29,6 @@ class Lander3D(Lander):
     RESTING_DURATION = 1.0  # render a short while after successful landing
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
     LANDING_BONUS = 100
-    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
     def __init__(self):
@@ -41,16 +40,7 @@ class Lander3D(Lander):
 
     def reset(self):
 
-        Lander.reset(self)
-
-        self.dynamics.perturb(np.array([self._perturb(),  # X
-                                        self._perturb(),  # Y
-                                        self._perturb(),  # Z
-                                        0,                # phi
-                                        0,                # theta
-                                        0]))              # psi
-
-        return self.step(np.zeros(self.ACTION_SIZE))[0]
+        return Lander._reset(self, self._perturb())
 
     def step(self, action):
 

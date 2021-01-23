@@ -30,16 +30,7 @@ class Lander2D(Lander):
         if self.viewer is not None:
             self.viewer.close()
 
-        Lander.reset(self)
-
-        self.dynamics.perturb(np.array([0,                # X
-                                        self._perturb(),  # Y
-                                        self._perturb(),  # Z
-                                        0,                # phi
-                                        0,                # theta
-                                        0]))              # psi
-
-        return self.step(np.zeros(self.ACTION_SIZE))[0]
+        return Lander._reset(self, 0)
 
     def step(self, action):
 
