@@ -56,16 +56,18 @@ class Lander3D(Lander):
 
         Args:
             s (list): The state. Attributes:
-                      s[0] is the X coordinate
-                      s[1] is the X speed
-                      s[2] is the Y coordinate
-                      s[3] is the Y speed
-                      s[4] is the vertical coordinate
-                      s[5] is the vertical speed
-                      s[6] is the roll angle
-                      s[7] is the roll angular speed
-                      s[8] is the pitch angle
-                      s[9] is the pitch angular speed
+                      s[0]  X coordinate
+                      s[1]  X speed
+                      s[2]  Y coordinate
+                      s[3]  Y speed
+                      s[4]  vertical coordinate
+                      s[5]  vertical speed
+                      s[6]  roll angle
+                      s[7]  roll angular speed
+                      s[8]  pitch angle
+                      s[9]  pitch angular speed
+                      s[10] yaw angle
+                      s[12] yaw angular speed
          returns:
              a: The heuristic to be fed into the step function defined above to
                 determine the next step and reward.  '''
