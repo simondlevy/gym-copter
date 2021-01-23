@@ -178,8 +178,6 @@ class ThreeDRenderer:
         # Set title to name of environment
         self.ax.set_title(label)
 
-        print(lim)
-
         # Set axis limits
         self.ax.set_xlim((-lim, lim))
         self.ax.set_ylim((-lim, lim))

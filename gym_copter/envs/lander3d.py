@@ -7,7 +7,6 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import time
 import numpy as np
 import threading
 
@@ -221,39 +220,6 @@ class Lander3D(Lander):
     # End of Lander3D classes -------------------------------------------------
 
 
-def heuristic_lander(env, heuristic, viewer=None, seed=None):
-
-    if seed is not None:
-        env.seed(seed)
-        np.random.seed(seed)
-
-    total_reward = 0
-    steps = 0
-    state = env.reset()
-
-    while True:
-
-        action = heuristic(state)
-        state, reward, done, _ = env.step(action)
-        total_reward += reward
-
-        if steps % 20 == 0 or done:
-            print('observations:',
-                  ' '.join(['{:+0.2f}'.format(x) for x in state]))
-            print('step {} total_reward {:+0.2f}'.format(steps, total_reward))
-
-        steps += 1
-
-        if done:
-            break
-
-        if viewer is not None:
-            time.sleep(1./env.FRAMES_PER_SECOND)
-
-    env.close()
-    return total_reward
-
-
 def demo(env):
 
     parser = make_parser()
@@ -262,8 +228,8 @@ def demo(env):
 
     renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
-    thread = threading.Thread(target=heuristic_lander,
-                              args=(env, env.heuristic, renderer))
+    thread = threading.Thread(target=env.demo_heuristic)
+
     thread.start()
 
     renderer.start()

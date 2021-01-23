@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 Superclass for 2D and 3D copter lander
 
@@ -72,21 +71,24 @@ class Lander(gym.Env, EzPickle):
 
         self.seed(seed)
         np.random.seed(seed)
+        self.seed(seed)
+
         total_reward = 0
         steps = 0
         state = self.reset()
+
         while True:
+
             action = self.heuristic(state)
             state, reward, done, _ = self.step(action)
             total_reward += reward
 
-            if render:
-                frame = self.render('rgb_array')
-                sleep(1./self.FRAMES_PER_SECOND)
-                if frame is None:
-                    break
+            self.render('rgb_array')
+
+            sleep(1./self.FRAMES_PER_SECOND)
 
             steps += 1
+
             if done:
                 break
 
