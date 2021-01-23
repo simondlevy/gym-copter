@@ -11,26 +11,18 @@ import time
 import numpy as np
 import threading
 
-import gym
 from gym import spaces
-from gym.utils import EzPickle
+
+from gym_copter.envs.lander import Lander
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import make_parser, parse
 
 
-class Lander3D(gym.Env, EzPickle):
+class Lander3D(Lander):
 
     # Parameters to adjust
-    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
-    INITIAL_ALTITUDE = 10
-    LANDING_RADIUS = 2
-    BOUNDS = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    FRAMES_PER_SECOND = 50
-    INSIDE_RADIUS_BONUS = 100
-
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
     ZDOT_PENALTY_FACTOR = 10
@@ -41,17 +33,9 @@ class Lander3D(gym.Env, EzPickle):
     INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
-    metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': FRAMES_PER_SECOND
-    }
-
     def __init__(self):
 
-        EzPickle.__init__(self)
-        self.seed()
-
-        self.prev_reward = None
+        Lander.__init__(self)
 
         # Observation is all state values
         self.observation_space = (
