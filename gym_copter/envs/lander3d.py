@@ -46,8 +46,6 @@ class Lander3D(Lander):
 
         # Abbreviation
         d = self.dynamics
-
-        # Get current status (landed, crashed, ...)
         status = d.getStatus()
 
         # Keep motors in interval [0,1]
@@ -93,15 +91,8 @@ class Lander3D(Lander):
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        # No behavior until we've crashed or landed
-        behavior = None
-
         # It's all over once we're on the ground
         if status in (d.STATUS_LANDED, d.STATUS_CRASHED):
-
-            # Once we're one the ground, our behavior is our x,y position and
-            # vertical velocity
-            behavior = x, y, state[d.STATE_Z_DOT]
 
             done = True
 
@@ -112,10 +103,7 @@ class Lander3D(Lander):
             # center
             reward += self.LANDING_BONUS
 
-        # Support Novelty Search
-        info = {'behavior': behavior}
-
-        return np.array(state, dtype=np.float32), reward, done, info
+        return np.array(state, dtype=np.float32), reward, done, {}
 
     def render(self, mode='human'):
         '''
