@@ -143,11 +143,6 @@ class Lander3D(Lander):
 
         return self.pose
 
-    def _perturb(self):
-
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
-                                 + self.INITIAL_RANDOM_FORCE)
-
     def _get_penalty(self, state, motors):
 
         return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +

@@ -97,3 +97,8 @@ class Lander(gym.Env, EzPickle):
         sleep(1)
         self.close()
         return total_reward
+
+    def _perturb(self):
+
+        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
+                                 + self.INITIAL_RANDOM_FORCE)

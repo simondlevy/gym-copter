@@ -125,11 +125,6 @@ class Lander2D(Lander):
             self.viewer.close()
             self.viewer = None
 
-    def _perturb(self):
-
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
-                                 + self.INITIAL_RANDOM_FORCE)
-
     def _destroy(self):
         if self.viewer is not None:
             self.viewer.close()
