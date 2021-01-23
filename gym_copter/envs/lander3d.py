@@ -69,7 +69,7 @@ def demo(env):
     parser = make_parser()
     args, viewangles = parse(parser)
     renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
-    thread = threading.Thread(target=env.demo_heuristic)
+    thread = threading.Thread(target=env.demo_heuristic, args=(args.seed, ))
     thread.start()
     renderer.start()
 

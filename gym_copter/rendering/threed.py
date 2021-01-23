@@ -288,6 +288,8 @@ def make_parser():
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--view', required=False, default='30,120',
                         help='View elevation, azimuth')
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Random seed for reproducibility')
     return parser
 
 
