@@ -71,7 +71,7 @@ class Lander2D(Lander):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(state[2]) >= self.BOUNDS:
+        if abs(state[0]) >= self.BOUNDS or abs(state[2]) >= self.BOUNDS:
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
