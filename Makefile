@@ -12,10 +12,10 @@ install:
 clean:
 	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/
 
-twod:
+2d:
 	python3 gym_copter/envs/lander2d.py
 
-land:
+3d:
 	python3 gym_copter/envs/lander3d.py
 
 point:
