@@ -47,13 +47,11 @@ class Lander2D(Lander):
 
     def heuristic(self, s):
 
-        y, dy, z, dz, phi, velphi = s
+        y, dy, z, dz, phi, dphi = s
 
-        phi_targ = y*self.PID_A + dy*self.PID_B
-        phi_todo = ((phi-phi_targ)*self.PID_C + phi*self.PID_D -
-                    velphi*self.PID_E)
+        phi_todo = self._angle_pid(y, dy, phi, dphi)
 
-        hover_todo = z*self.PID_F + dz*self.PID_G
+        hover_todo = self._hover_pid(z, dz)
 
         return hover_todo-phi_todo, hover_todo+phi_todo
 

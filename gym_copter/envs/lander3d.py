@@ -51,17 +51,12 @@ class Lander3D(Lander):
 
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
-        phi_targ = y*self.PID_A + dy*self.PID_B
-        phi_todo = ((phi-phi_targ)*self.PID_C + phi*self.PID_D -
-                    dphi*self.PID_E)
+        phi_todo = self._angle_pid(y, dy, phi, dphi)
 
-        theta_targ = x*self.PID_A + dx*self.PID_B
-        theta_todo = ((-theta-theta_targ)*self.PID_C - theta*self.PID_D +
-                      dtheta*self.PID_E)
+        theta_todo = self._angle_pid(x, dx, -theta, -dtheta)
 
-        hover_todo = z*self.PID_F + dz*self.PID_G
+        hover_todo = self._hover_pid(z, dz)
 
-        # map throttle demand from [-1,+1] to [0,1]
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors

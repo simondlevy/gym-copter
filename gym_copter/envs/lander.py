@@ -215,6 +215,14 @@ class Lander(gym.Env, EzPickle):
         self.close()
         return total_reward
 
+    def _angle_pid(self, x, dx, phi, dphi):
+
+        phi_targ = x*self.PID_A + dx*self.PID_B
+        return ((phi-phi_targ)*self.PID_C + phi*self.PID_D - dphi*self.PID_E)
+
+    def _hover_pid(self, z, dz):
+        return z*self.PID_F + dz*self.PID_G
+
     def _perturb(self):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
