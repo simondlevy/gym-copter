@@ -27,10 +27,11 @@ class Lander(gym.Env, EzPickle):
     OUT_OF_BOUNDS_PENALTY = 100
     FRAMES_PER_SECOND = 50
     INSIDE_RADIUS_BONUS = 100
-    MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
+    MAX_ANGLE = 45
     YAW_PENALTY_FACTOR = 50
     MOTOR_PENALTY_FACTOR = 0.03
     XYZ_PENALTY_FACTOR = 25
+    PENALTY_FACTOR = 12
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],

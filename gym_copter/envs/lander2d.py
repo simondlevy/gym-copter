@@ -21,9 +21,6 @@ class Lander2D(Lander):
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
 
-    # Reward shaping
-    PENALTY_FACTOR = 12  # penalizes distance from center of floor
-
     def __init__(self):
 
         Lander.__init__(self)
