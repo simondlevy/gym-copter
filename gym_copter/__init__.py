@@ -16,6 +16,6 @@ register(
 # 3D lander without ground target
 register(
     id='Lander3D-v0',
-    entry_point='gym_copter.envs:Lander3DRing',
+    entry_point='gym_copter.envs:Lander3D',
     max_episode_steps=400
 )

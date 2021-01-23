@@ -36,6 +36,11 @@ class Lander3D(gym.Env, EzPickle):
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
     EXCESS_ANGLE_PENALTY = 100
     LANDING_BONUS = 100
+    LANDING_RADIUS = 2
+    INSIDE_RADIUS_BONUS = 100
+    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
+    XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
+
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -49,9 +54,9 @@ class Lander3D(gym.Env, EzPickle):
 
         self.prev_reward = None
 
-        # Observation is state values without X,Y
+        # Observation is all state values
         self.observation_space = (
-                spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32))
+                spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
 
         # Action is four floats (one per motor)
         self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
@@ -163,9 +168,6 @@ class Lander3D(gym.Env, EzPickle):
             # center
             reward += self.LANDING_BONUS
 
-        # Remove X, Y from state
-        state = self._get_state(state)
-
         # Support Novelty Search
         info = {'behavior': behavior}
 
@@ -182,11 +184,36 @@ class Lander3D(gym.Env, EzPickle):
 
     def get_radius(self):
 
-        return 0
+        # XXX should come from a superclass
+        return 2.0
 
     def get_pose(self):
 
         return self.pose
+
+
+    def _perturb(self):
+
+        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
+                                 + self.INITIAL_RANDOM_FORCE)
+
+    def _get_penalty(self, state, motors):
+
+        return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                self.PITCH_ROLL_PENALTY_FACTOR *
+                np.sqrt(np.sum(state[6:10]**2)) +
+                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
+                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
+
+    def _get_bonus(self, x, y):
+
+        return (self.INSIDE_RADIUS_BONUS
+                if x**2+y**2 < self.LANDING_RADIUS**2
+                else 0)
+
+    def _get_state(self, state):
+
+        return state[self.dynamics.STATE_Z:len(state)]
 
     @staticmethod
     def heuristic(s):
@@ -197,18 +224,23 @@ class Lander3D(gym.Env, EzPickle):
 
         Args:
             s (list): The state. Attributes:
-                      s[0] is the vertical coordinate
-                      s[1] is the vertical speed
-                      s[2] is the roll angle
-                      s[3] is the roll angular speed
-                      s[4] is the pitch angle
-                      s[5] is the pitch angular speed
-                      s[6] is the yaw angle
-                      s[7] is the yaw angular speed
-         returns:
+                      s[0] is the X coordinate
+                      s[1] is the X speed
+                      s[2] is the Y coordinate
+                      s[3] is the Y speed
+                      s[4] is the vertical coordinate
+                      s[5] is the vertical speed
+                      s[6] is the roll angle
+                      s[7] is the roll angular speed
+                      s[8] is the pitch angle
+                      s[9] is the pitch angular speed
          returns:
              a: The heuristic to be fed into the step function defined above to
                 determine the next step and reward.  '''
+
+        # Angle target
+        A = 0.05
+        B = 0.06
 
         # Angle PID
         C = 0.025
@@ -219,43 +251,20 @@ class Lander3D(gym.Env, EzPickle):
         F = 1.15
         G = 1.33
 
-        z, dz, phi, dphi, theta, dtheta, _, _ = s
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
 
-        phi_todo = phi*C + phi*D - dphi*E
+        phi_targ = y*A + dy*B              # angle should point towards center
+        phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
 
-        theta_todo = -theta*C - theta*D + dtheta*E
+        theta_targ = x*A + dx*B         # angle should point towards center
+        theta_todo = -(theta+theta_targ)*C - theta*D + dtheta*E
 
         hover_todo = z*F + dz*G
 
         # map throttle demand from [-1,+1] to [0,1]
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
-
-    def _perturb(self):
-
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
-                                 + self.INITIAL_RANDOM_FORCE)
-
-    def _get_penalty(self, state, motors):
-
-        return (
-                self.PITCH_ROLL_PENALTY_FACTOR *
-                np.sqrt(np.sum(state[6:10]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors) +
-                self.ZDOT_PENALTY_FACTOR * abs(state[5])
-                )
-
-    def _get_bonus(self, x, y):
-
-        return 0
-
-    def _get_state(self, state):
-
-        return state[self.dynamics.STATE_Z:len(state)]
-
-# End of Lander3D classes ----------------------------------------------------
+        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors# End of Lander3D classes ----------------------------------------------------
 
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
