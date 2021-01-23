@@ -13,8 +13,6 @@ MIT License
 import numpy as np
 import time
 
-from gym import spaces
-
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.envs.lander import Lander
 
@@ -22,30 +20,18 @@ from gym_copter.envs.lander import Lander
 class Lander2D(Lander):
 
     PENALTY_FACTOR = 12  # penalizes distance from center of floor
+    OBSERVATION_SIZE = 6
+    ACTION_SIZE = 2
 
     def __init__(self):
 
         Lander.__init__(self)
 
-        # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,),
-                                            dtype=np.float32)
-
-        # Action is two floats [throttle, roll]
-        self.action_space = spaces.Box(-1, +1, (2,), dtype=np.float32)
-
-        # Support for rendering
-        self.viewer = None
-        self.pose = None
-        self.spinning = False
-
-        self.reset()
-
     def reset(self):
 
-        self._destroy()
+        Lander.reset(self)
 
-        self.prev_shaping = None
+        self._destroy()
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)

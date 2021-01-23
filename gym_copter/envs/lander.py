@@ -9,6 +9,7 @@ MIT License
 
 import numpy as np
 import gym
+from gym import spaces
 from gym.utils import EzPickle, seeding
 
 
@@ -33,9 +34,30 @@ class Lander(gym.Env, EzPickle):
         EzPickle.__init__(self)
         self.seed()
         self.viewer = None
+        self.pose = None
         self.prev_reward = None
 
+        # useful range is -1 .. +1, but spikes can be higher
+        self.observation_space = spaces.Box(-np.inf,
+                                            +np.inf,
+                                            shape=(self.OBSERVATION_SIZE,),
+                                            dtype=np.float32)
+
+        # Action is two floats [throttle, roll]
+        self.action_space = spaces.Box(-1,
+                                       +1,
+                                       (self.ACTION_SIZE,),
+                                       dtype=np.float32)
+
     def seed(self, seed=None):
+
         np.random.seed(seed)
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
+
+    def reset(self):
+
+        # Support for rendering
+        self.pose = None
+        self.spinning = False
+        self.prev_shaping = None

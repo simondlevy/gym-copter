@@ -11,8 +11,6 @@ import time
 import numpy as np
 import threading
 
-from gym import spaces
-
 from gym_copter.envs.lander import Lander
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
@@ -21,6 +19,9 @@ from gym_copter.rendering.threed import make_parser, parse
 
 
 class Lander3D(Lander):
+
+    OBSERVATION_SIZE = 12
+    ACTION_SIZE = 4
 
     # Parameters to adjust
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
@@ -37,25 +38,12 @@ class Lander3D(Lander):
 
         Lander.__init__(self)
 
-        # Observation is all state values
-        self.observation_space = (
-                spaces.Box(-np.inf, np.inf, shape=(12,), dtype=np.float32))
-
-        # Action is four floats (one per motor)
-        self.action_space = spaces.Box(-1, +1, (4,), dtype=np.float32)
-
-        # Support for rendering
-        self.viewer = None
-        self.pose = None
-
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
 
-        self.reset()
-
     def reset(self):
 
-        self.prev_shaping = None
+        Lander.reset(self)
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
