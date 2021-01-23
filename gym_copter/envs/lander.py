@@ -96,7 +96,9 @@ class Lander(gym.Env, EzPickle):
         self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state and motors
-        shaping = -self._get_penalty(state, motors)
+        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)) +
+                    self.MOTOR_PENALTY_FACTOR*np.sum(motors))
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)
@@ -141,12 +143,6 @@ class Lander(gym.Env, EzPickle):
                 reward,
                 done,
                 {})
-
-    def _get_penalty(self, state, motors):
-
-        return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
-                self.MOTOR_PENALTY_FACTOR * np.sum(motors))
 
     def _reset(self, xperturb):
 
