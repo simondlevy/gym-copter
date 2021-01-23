@@ -87,7 +87,7 @@ class Lander2D(Lander):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(x) < self.LANDING_RADIUS:
+                if np.sqrt(x**2+y**2) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
