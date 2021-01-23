@@ -67,6 +67,13 @@ class Lander(gym.Env, EzPickle):
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
 
+        state = np.zeros(12)
+        d = self.dynamics
+        state[d.STATE_X] = 0
+        state[d.STATE_Y] = 0
+        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
+        self.dynamics.setState(state)
+
     def demo_heuristic(self, seed=None, render=True):
 
         self.seed(seed)

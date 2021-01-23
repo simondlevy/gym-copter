@@ -43,12 +43,6 @@ class Lander3D(Lander):
 
         Lander.reset(self)
 
-        state = np.zeros(12)
-        d = self.dynamics
-        state[d.STATE_X] = 0
-        state[d.STATE_Y] = 0
-        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
-        self.dynamics.setState(state)
         self.dynamics.perturb(np.array([self._perturb(),  # X
                                         self._perturb(),  # Y
                                         self._perturb(),  # Z
@@ -56,7 +50,7 @@ class Lander3D(Lander):
                                         0,                # theta
                                         0]))              # psi
 
-        return self.step(np.array([0, 0, 0, 0]))[0]
+        return self.step(np.zeros(self.ACTION_SIZE))[0]
 
     def step(self, action):
 
@@ -218,15 +212,10 @@ class Lander3D(Lander):
 def demo(env):
 
     parser = make_parser()
-
     args, viewangles = parse(parser)
-
     renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
-
     thread = threading.Thread(target=env.demo_heuristic)
-
     thread.start()
-
     renderer.start()
 
 

@@ -27,15 +27,11 @@ class Lander2D(Lander):
 
     def reset(self):
 
+        if self.viewer is not None:
+            self.viewer.close()
+
         Lander.reset(self)
 
-        self._destroy()
-
-        state = np.zeros(12)
-        d = self.dynamics
-        state[d.STATE_Y] = 0
-        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
-        self.dynamics.setState(state)
         self.dynamics.perturb(np.array([0,                # X
                                         self._perturb(),  # Y
                                         self._perturb(),  # Z
@@ -43,7 +39,7 @@ class Lander2D(Lander):
                                         0,                # theta
                                         0]))              # psi
 
-        return self.step(np.array([0, 0]))[0]
+        return self.step(np.zeros(self.ACTION_SIZE))[0]
 
     def step(self, action):
 
@@ -124,10 +120,6 @@ class Lander2D(Lander):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
-
-    def _destroy(self):
-        if self.viewer is not None:
-            self.viewer.close()
 
     def heuristic(self, s):
         """
