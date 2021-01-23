@@ -18,16 +18,15 @@ from gym_copter.rendering.threed import make_parser, parse
 
 class Lander3D(Lander):
 
+    # 3D model
     OBSERVATION_SIZE = 12
     ACTION_SIZE = 4
 
-    # Parameters to adjust
+    # Reward shaping
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
-    ZDOT_PENALTY_FACTOR = 10
     MOTOR_PENALTY_FACTOR = 0.03
-    LANDING_BONUS = 100
-    XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
+    XYZ_PENALTY_FACTOR = 25
 
     def __init__(self):
 
@@ -53,12 +52,6 @@ class Lander3D(Lander):
                 np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
                 self.MOTOR_PENALTY_FACTOR * np.sum(motors))
-
-    def _get_bonus(self, x, y):
-
-        return (self.INSIDE_RADIUS_BONUS
-                if x**2+y**2 < self.LANDING_RADIUS**2
-                else 0)
 
     def _get_motors(self, motors):
 

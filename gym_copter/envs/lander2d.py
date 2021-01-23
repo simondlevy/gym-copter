@@ -17,9 +17,12 @@ from gym_copter.envs.lander import Lander
 
 class Lander2D(Lander):
 
-    PENALTY_FACTOR = 12  # penalizes distance from center of floor
+    # 2D model
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
+
+    # Reward shaping
+    PENALTY_FACTOR = 12  # penalizes distance from center of floor
 
     def __init__(self):
 
