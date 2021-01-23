@@ -99,7 +99,7 @@ class Lander(gym.Env, EzPickle):
             if done:
                 break
 
-        print("steps =  {} total_reward {:+0.2f}".format(steps, total_reward))
+        print('steps =  %d total_reward = %+0.2f' % (steps, total_reward))
 
         sleep(1)
         self.close()
