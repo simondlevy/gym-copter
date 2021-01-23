@@ -148,8 +148,7 @@ class ThreeDRenderer:
         # We also support different frame rates
         self.fps = fps
 
-        # Big radius for hardcore version
-        self.radius = env.get_radius()
+        self.radius = env.LANDING_RADIUS
 
         # Helps us handle window close
         self.is_open = True

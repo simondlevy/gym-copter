@@ -157,10 +157,6 @@ class Lander3D(Lander):
         '''
         return None
 
-    def get_radius(self):
-
-        return self.LANDING_RADIUS
-
     def get_pose(self):
 
         return self.pose
