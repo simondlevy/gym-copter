@@ -48,15 +48,18 @@ class Lander3D(Lander):
         d = self.dynamics
         status = d.getStatus()
 
-        # Keep motors in interval [0,1]
-        motors = (np.zeros(4)
-                  if status == d.STATUS_LANDED
-                  else np.clip(action, 0, 1))
+        motors = np.zeros(4)
 
-        d.setMotors(motors)
+        # Stop motors after safe landing
+        if status == d.STATUS_LANDED:
+            d.setMotors(motors)
+            self.spinning = False
 
-        # Update dynamics if airborne
-        if status != d.STATUS_LANDED:
+        # In air, set motors from action
+        else:
+            motors = np.clip(action, 0, 1)    # stay in interval [0,1]
+            d.setMotors(self._get_motors(motors))
+            self.spinning = sum(motors) > 0
             d.update()
 
         # Get new state from dynamics
@@ -130,6 +133,10 @@ class Lander3D(Lander):
     def _get_state(self, state):
 
         return state[self.dynamics.STATE_Z:len(state)]
+
+    def _get_motors(self, motors):
+
+        return motors
 
     @staticmethod
     def heuristic(s):

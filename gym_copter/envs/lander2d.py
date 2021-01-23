@@ -47,8 +47,8 @@ class Lander2D(Lander):
 
         # In air, set motors from action
         else:
-            motors = np.clip(action, 0, 1)    # keep motors in interval [0,1]
-            d.setMotors([motors[0], motors[1], motors[1], motors[0]])
+            motors = np.clip(action, 0, 1)    # stay in interval [0,1]
+            d.setMotors(self._get_motors(motors))
             self.spinning = sum(motors) > 0
             d.update()
 
@@ -159,6 +159,10 @@ class Lander2D(Lander):
 
         # Penalize distance from center and velocity
         return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
+
+    def _get_motors(self, motors):
+
+        return [motors[0], motors[1], motors[1], motors[0]]
 
 
 def main():
