@@ -55,8 +55,11 @@ class Lander2D(Lander):
         # Get new state from dynamics
         state = np.array(d.getState())
 
+        # Extract components from state
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
+
         # Set lander pose for viewer
-        self.pose = state[0:-1:2]
+        self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -71,7 +74,7 @@ class Lander2D(Lander):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(state[0]) >= self.BOUNDS or abs(state[2]) >= self.BOUNDS:
+        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
@@ -84,7 +87,7 @@ class Lander2D(Lander):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(state[2]) < self.LANDING_RADIUS:
+                if abs(x) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
