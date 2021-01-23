@@ -13,37 +13,19 @@ MIT License
 import numpy as np
 import time
 
-import gym
 from gym import spaces
-from gym.utils import seeding, EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+from gym_copter.envs.lander import Lander
 
 
-class Lander2D(gym.Env, EzPickle):
+class Lander2D(Lander):
 
-    # Parameters to adjust
-    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
-    INITIAL_ALTITUDE = 10
-    LANDING_RADIUS = 2
-    PENALTY_FACTOR = 12  # penalizes distance from center and velocity
-    BOUNDS = 10
-    OUT_OF_BOUNDS_PENALTY = 100
-    INSIDE_RADIUS_BONUS = 100
-    FRAMES_PER_SECOND = 50
-
-    metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': FRAMES_PER_SECOND
-    }
+    PENALTY_FACTOR = 12  # penalizes distance from center of floor
 
     def __init__(self):
 
-        EzPickle.__init__(self)
-        self.seed()
-        self.viewer = None
-
-        self.prev_reward = None
+        Lander.__init__(self)
 
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,),
@@ -58,11 +40,6 @@ class Lander2D(gym.Env, EzPickle):
         self.spinning = False
 
         self.reset()
-
-    def seed(self, seed=None):
-        np.random.seed(seed)
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def reset(self):
 

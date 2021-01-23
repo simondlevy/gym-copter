@@ -13,7 +13,7 @@ import threading
 
 import gym
 from gym import spaces
-from gym.utils import seeding, EzPickle
+from gym.utils import EzPickle
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.rendering.threed import ThreeDLanderRenderer
@@ -23,24 +23,23 @@ from gym_copter.rendering.threed import make_parser, parse
 class Lander3D(gym.Env, EzPickle):
 
     # Parameters to adjust
-    INITIAL_RANDOM_FORCE = 0  # perturbation for initial position
-    INITIAL_ALTITUDE = 5
+    INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
+    INITIAL_ALTITUDE = 10
+    LANDING_RADIUS = 2
+    BOUNDS = 10
+    OUT_OF_BOUNDS_PENALTY = 100
+    FRAMES_PER_SECOND = 50
+    INSIDE_RADIUS_BONUS = 100
+
     PITCH_ROLL_PENALTY_FACTOR = 0  # 250
     YAW_PENALTY_FACTOR = 50
     ZDOT_PENALTY_FACTOR = 10
     MOTOR_PENALTY_FACTOR = 0.03
-    BOUNDS = 10
-    OUT_OF_BOUNDS_PENALTY = 100
     RESTING_DURATION = 1.0  # render a short while after successful landing
-    FRAMES_PER_SECOND = 50
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
-    EXCESS_ANGLE_PENALTY = 100
     LANDING_BONUS = 100
-    LANDING_RADIUS = 2
-    INSIDE_RADIUS_BONUS = 100
     INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
-
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -69,11 +68,6 @@ class Lander3D(gym.Env, EzPickle):
         self.max_angle = np.radians(self.MAX_ANGLE)
 
         self.reset()
-
-    def seed(self, seed=None):
-        np.random.seed(seed)
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def reset(self):
 
@@ -190,7 +184,6 @@ class Lander3D(gym.Env, EzPickle):
 
         return self.pose
 
-
     def _perturb(self):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
@@ -263,7 +256,9 @@ class Lander3D(gym.Env, EzPickle):
         # map throttle demand from [-1,+1] to [0,1]
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors# End of Lander3D classes ----------------------------------------------------
+        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+
+    # End of Lander3D classes -------------------------------------------------
 
 
 def heuristic_lander(env, heuristic, viewer=None, seed=None):
