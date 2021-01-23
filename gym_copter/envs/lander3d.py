@@ -68,9 +68,7 @@ class Lander3D(Lander):
         # Set pose pose for display
         self.pose = x, y, z, phi, theta, psi
 
-        # Reward is a simple penalty for overall distance and angle and their
-        # first derivatives, plus a bit more for running motors (discourage
-        # endless hover)
+        # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
 
         reward = ((shaping - self.prev_shaping)

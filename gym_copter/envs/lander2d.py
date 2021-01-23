@@ -38,16 +38,18 @@ class Lander2D(Lander):
         d = self.dynamics
         status = d.getStatus()
 
+        motors = np.zeros(4)
+
         # Stop motors after safe landing
         if status == d.STATUS_LANDED:
-            d.setMotors(np.zeros(4))
+            d.setMotors(motors)
             self.spinning = False
 
         # In air, set motors from action
         else:
-            m = np.clip(action, 0, 1)    # keep motors in interval [0,1]
-            d.setMotors([m[0], m[1], m[1], m[0]])
-            self.spinning = sum(m) > 0
+            motors = np.clip(action, 0, 1)    # keep motors in interval [0,1]
+            d.setMotors([motors[0], motors[1], motors[1], motors[0]])
+            self.spinning = sum(motors) > 0
             d.update()
 
         # Get new state from dynamics
@@ -59,8 +61,8 @@ class Lander2D(Lander):
         # Convert state to usable form
         state = np.array([posy, vely, posz, velz, phi, velphi])
 
-        # Penalize distance from center and velocity
-        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
+        # Get penalty based on state and motors
+        shaping = -self._get_penalty(state, motors)
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)
@@ -152,6 +154,11 @@ class Lander2D(Lander):
         hover_todo = posz*F + velz*G
 
         return hover_todo-phi_todo, hover_todo+phi_todo
+
+    def _get_penalty(self, state, motors):
+
+        # Penalize distance from center and velocity
+        return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
 
 
 def main():
