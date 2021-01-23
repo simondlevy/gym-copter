@@ -27,7 +27,6 @@ class Lander3D(Lander):
     ZDOT_PENALTY_FACTOR = 10
     MOTOR_PENALTY_FACTOR = 0.03
     RESTING_DURATION = 1.0  # render a short while after successful landing
-    MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
     LANDING_BONUS = 100
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
@@ -65,11 +64,11 @@ class Lander3D(Lander):
         # Get new state from dynamics
         state = np.array(d.getState())
 
-        # Extract pose from state
-        x, y, z, phi, theta, psi = state[0::2]
+        # Extract components from state
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
 
         # Set pose for display
-        self.pose = state[0:-1:2]
+        self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -83,7 +82,7 @@ class Lander3D(Lander):
         done = False
 
         # Lose bigly if we go out of bounds
-        if abs(state[0]) >= self.BOUNDS or abs(state[2]) >= self.BOUNDS:
+        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 

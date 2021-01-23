@@ -58,7 +58,7 @@ class Lander2D(Lander):
         # Extract components from state
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
 
-        # Set lander pose for viewer
+        # Set pose for display
         self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state and motors
@@ -77,6 +77,11 @@ class Lander2D(Lander):
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
+
+        # Lose bigly for excess roll or pitch
+        elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
+            done = True
+            reward = -self.OUT_OF_BOUNDS_PENALTY
 
         else:
 

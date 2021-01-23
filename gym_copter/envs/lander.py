@@ -25,6 +25,7 @@ class Lander(gym.Env, EzPickle):
     OUT_OF_BOUNDS_PENALTY = 100
     FRAMES_PER_SECOND = 50
     INSIDE_RADIUS_BONUS = 100
+    MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -50,6 +51,9 @@ class Lander(gym.Env, EzPickle):
                                        +1,
                                        (self.ACTION_SIZE,),
                                        dtype=np.float32)
+
+        # Pre-convert max-angle degrees to radians
+        self.max_angle = np.radians(self.MAX_ANGLE)
 
     def seed(self, seed=None):
 
