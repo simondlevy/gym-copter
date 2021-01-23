@@ -22,12 +22,6 @@ class Lander3D(Lander):
     OBSERVATION_SIZE = 12
     ACTION_SIZE = 4
 
-    # Reward shaping
-    PITCH_ROLL_PENALTY_FACTOR = 0  # 250
-    YAW_PENALTY_FACTOR = 50
-    MOTOR_PENALTY_FACTOR = 0.03
-    XYZ_PENALTY_FACTOR = 25
-
     def __init__(self):
 
         Lander.__init__(self)
@@ -48,8 +42,6 @@ class Lander3D(Lander):
     def _get_penalty(self, state, motors):
 
         return (self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                self.PITCH_ROLL_PENALTY_FACTOR *
-                np.sqrt(np.sum(state[6:10]**2)) +
                 self.YAW_PENALTY_FACTOR * np.sqrt(np.sum(state[10:12]**2)) +
                 self.MOTOR_PENALTY_FACTOR * np.sum(motors))
 

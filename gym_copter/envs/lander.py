@@ -17,15 +17,20 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 class Lander(gym.Env, EzPickle):
 
-    # Parameters to adjust
+    # Physics
     INITIAL_RANDOM_FORCE = 30  # perturbation for initial position
     INITIAL_ALTITUDE = 10
     LANDING_RADIUS = 2
     BOUNDS = 10
+
+    # Reward shaping
     OUT_OF_BOUNDS_PENALTY = 100
     FRAMES_PER_SECOND = 50
     INSIDE_RADIUS_BONUS = 100
     MAX_ANGLE = 45   # big penalty if roll or pitch angles go beyond this
+    YAW_PENALTY_FACTOR = 50
+    MOTOR_PENALTY_FACTOR = 0.03
+    XYZ_PENALTY_FACTOR = 25
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
