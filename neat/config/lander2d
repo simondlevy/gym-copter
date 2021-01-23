@@ -13,6 +13,7 @@ fitness_threshold      = 300
 pop_size               = 96
 reset_on_extinction    = False
 no_fitness_termination = False
+generations = 1
 
 [Gym]
 environment = gym_copter:Lander-v0

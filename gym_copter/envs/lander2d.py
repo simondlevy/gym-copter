@@ -10,6 +10,8 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 from gym_copter.envs.lander import Lander
 
 
@@ -65,7 +67,12 @@ class Lander2D(Lander):
 
 
 def main():
-    Lander2D().demo_heuristic()
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Random seed for reproducibility')
+    args = parser.parse_args()
+    Lander2D().demo_heuristic(seed=args.seed)
 
 
 if __name__ == '__main__':

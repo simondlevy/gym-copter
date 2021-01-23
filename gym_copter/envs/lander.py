@@ -182,11 +182,10 @@ class Lander(gym.Env, EzPickle):
         # Return initial state
         return self.step(np.zeros(self.ACTION_SIZE))[0]
 
-    def demo_heuristic(self, seed=None, render=True):
+    def demo_heuristic(self, seed=None):
 
         self.seed(seed)
         np.random.seed(seed)
-        self.seed(seed)
 
         total_reward = 0
         steps = 0
@@ -221,6 +220,7 @@ class Lander(gym.Env, EzPickle):
         return ((phi-phi_targ)*self.PID_C + phi*self.PID_D - dphi*self.PID_E)
 
     def _hover_pid(self, z, dz):
+
         return z*self.PID_F + dz*self.PID_G
 
     def _perturb(self):
