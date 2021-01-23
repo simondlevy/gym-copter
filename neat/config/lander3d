@@ -13,10 +13,11 @@ fitness_threshold      = 200
 pop_size               = 96
 reset_on_extinction    = False
 no_fitness_termination = False
-checkpoint   = True
+checkpoint             = True
+generations            = 5
 
 [Gym]
-environment = gym_copter:Lander3D-v2
+environment = gym_copter:Lander3D-v0
 episode_reps = 10
 
 [Novelty]
