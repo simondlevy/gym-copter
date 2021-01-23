@@ -8,6 +8,7 @@ MIT License
 '''
 
 import numpy as np
+from time import sleep
 import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
@@ -66,3 +67,31 @@ class Lander(gym.Env, EzPickle):
 
         # Create cusom dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
+
+    def demo_heuristic(self, seed=None, render=True):
+
+        self.seed(seed)
+        np.random.seed(seed)
+        total_reward = 0
+        steps = 0
+        state = self.reset()
+        while True:
+            action = self.heuristic(state)
+            state, reward, done, _ = self.step(action)
+            total_reward += reward
+
+            if render:
+                frame = self.render('rgb_array')
+                sleep(1./self.FRAMES_PER_SECOND)
+                if frame is None:
+                    break
+
+            steps += 1
+            if done:
+                break
+
+        print("steps =  {} total_reward {:+0.2f}".format(steps, total_reward))
+
+        sleep(1)
+        self.close()
+        return total_reward

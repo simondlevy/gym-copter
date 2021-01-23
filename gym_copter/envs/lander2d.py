@@ -11,7 +11,6 @@ MIT License
 '''
 
 import numpy as np
-import time
 
 from gym_copter.envs.lander import Lander
 
@@ -177,41 +176,8 @@ class Lander2D(Lander):
         return hover_todo-phi_todo, hover_todo+phi_todo
 
 
-def demo_heuristic_lander(env, seed=None, render=False):
-
-    from time import sleep
-
-    env.seed(seed)
-    np.random.seed(seed)
-    total_reward = 0
-    steps = 0
-    state = env.reset()
-    while True:
-        action = env.heuristic(state)
-        state, reward, done, _ = env.step(action)
-        total_reward += reward
-
-        if render:
-            frame = env.render('rgb_array')
-            time.sleep(1./env.FRAMES_PER_SECOND)
-            if frame is None:
-                break
-
-        if (steps % 20 == 0) or done:
-            print("step {} total_reward {:+0.2f}".format(steps, total_reward))
-
-        steps += 1
-        if done:
-            break
-
-    sleep(1)
-    env.close()
-    return total_reward
-
-
 def main():
-
-    demo_heuristic_lander(Lander2D(), seed=None, render=True)
+    Lander2D().demo_heuristic()
 
 
 if __name__ == '__main__':
