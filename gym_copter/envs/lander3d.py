@@ -13,7 +13,6 @@ import threading
 
 from gym_copter.envs.lander import Lander
 
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import make_parser, parse
 
@@ -45,10 +44,6 @@ class Lander3D(Lander):
 
         Lander.reset(self)
 
-        # Create cusom dynamics model
-        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
-
-        # Initialize custom dynamics with random perturbations
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_X] = 0

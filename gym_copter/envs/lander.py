@@ -12,6 +12,8 @@ import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
 
+from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+
 
 class Lander(gym.Env, EzPickle):
 
@@ -61,3 +63,6 @@ class Lander(gym.Env, EzPickle):
         self.pose = None
         self.spinning = False
         self.prev_shaping = None
+
+        # Create cusom dynamics model
+        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)

@@ -13,7 +13,6 @@ MIT License
 import numpy as np
 import time
 
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.envs.lander import Lander
 
 
@@ -33,10 +32,6 @@ class Lander2D(Lander):
 
         self._destroy()
 
-        # Create cusom dynamics model
-        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
-
-        # Initialize custom dynamics with random perturbation
         state = np.zeros(12)
         d = self.dynamics
         state[d.STATE_Y] = 0
