@@ -26,7 +26,6 @@ class Lander3D(Lander):
     YAW_PENALTY_FACTOR = 50
     ZDOT_PENALTY_FACTOR = 10
     MOTOR_PENALTY_FACTOR = 0.03
-    RESTING_DURATION = 1.0  # render a short while after successful landing
     LANDING_BONUS = 100
     XYZ_PENALTY_FACTOR = 25   # designed so that maximal penalty is around 100
 
@@ -40,72 +39,6 @@ class Lander3D(Lander):
     def reset(self):
 
         return Lander._reset(self, self._perturb())
-
-    def step(self, action):
-
-        # Abbreviation
-        d = self.dynamics
-        status = d.getStatus()
-
-        motors = np.zeros(4)
-
-        # Stop motors after safe landing
-        if status == d.STATUS_LANDED:
-            d.setMotors(motors)
-            self.spinning = False
-
-        # In air, set motors from action
-        else:
-            motors = np.clip(action, 0, 1)    # stay in interval [0,1]
-            d.setMotors(self._get_motors(motors))
-            self.spinning = sum(motors) > 0
-            d.update()
-
-        # Get new state from dynamics
-        state = np.array(d.getState())
-
-        # Extract components from state
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
-
-        # Set pose for display
-        self.pose = x, y, z, phi, theta, psi
-
-        # Get penalty based on state and motors
-        shaping = -self._get_penalty(state, motors)
-
-        reward = ((shaping - self.prev_shaping)
-                  if (self.prev_shaping is not None)
-                  else 0)
-        self.prev_shaping = shaping
-
-        # Assume we're not done yet
-        done = False
-
-        # Lose bigly if we go out of bounds
-        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # Lose bigly for excess roll or pitch
-        if abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # It's all over once we're on the ground
-        if status in (d.STATUS_LANDED, d.STATUS_CRASHED):
-
-            done = True
-
-        # Bonus for good landing
-        if status == d.STATUS_LANDED:
-
-            reward += self.LANDING_BONUS
-
-        return (np.array(self._get_state(state),
-                dtype=np.float32),
-                reward,
-                done,
-                {})
 
     def render(self, mode='human'):
         '''
