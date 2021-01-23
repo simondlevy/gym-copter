@@ -65,11 +65,11 @@ class Lander2D(Lander):
         """
 
         # Angle target
-        A = 0.1  # 0.05
-        B = 0.1  # 0.06
+        A = 0.1
+        B = 0.1
 
         # Angle PID
-        C = 0.1  # 0.025
+        C = 0.1
         D = 0.05
         E = 0.4
 
