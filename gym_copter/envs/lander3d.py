@@ -100,8 +100,6 @@ class Lander3D(Lander):
         # Bonus for good landing
         if status == d.STATUS_LANDED:
 
-            # Different subclasses add different bonuses for proximity to
-            # center
             reward += self.LANDING_BONUS
 
         return np.array(state, dtype=np.float32), reward, done, {}

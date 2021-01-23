@@ -53,13 +53,10 @@ class Lander2D(Lander):
             d.update()
 
         # Get new state from dynamics
-        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
+        state = np.array(d.getState())
 
         # Set lander pose for viewer
-        self.pose = posy, posz, phi
-
-        # Convert state to usable form
-        state = np.array([posy, vely, posz, velz, phi, velphi])
+        self.pose = state[0:-1:2]
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -74,7 +71,7 @@ class Lander2D(Lander):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(posy) >= self.BOUNDS:
+        if abs(state[2]) >= self.BOUNDS:
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
@@ -87,7 +84,7 @@ class Lander2D(Lander):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(posy) < self.LANDING_RADIUS:
+                if abs(state[2]) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
@@ -97,7 +94,11 @@ class Lander2D(Lander):
                 done = True
                 self.spinning = False
 
-        return np.array(state, dtype=np.float32), reward, done, {}
+        return (np.array(self._get_state(state),
+                dtype=np.float32),
+                reward,
+                done,
+                {})
 
     def render(self, mode='human'):
 
@@ -158,11 +159,15 @@ class Lander2D(Lander):
     def _get_penalty(self, state, motors):
 
         # Penalize distance from center and velocity
-        return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
+        return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:6]**2))
 
     def _get_motors(self, motors):
 
         return [motors[0], motors[1], motors[1], motors[0]]
+
+    def _get_state(self, state):
+
+        return state[2:8]
 
 
 def main():
