@@ -59,13 +59,13 @@ class Lander2D(Lander):
         state = np.array(d.getState())
 
         # Extract components from state
-        _, _, y, dy, z, dz, phi, velphi = d.getState()[:8]
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
 
         # Set lander pose for viewer
         self.pose = y, z, phi
 
         # Convert state to usable form
-        state = np.array([y, dy, z, dz, phi, velphi])
+        state = np.array([y, dy, z, dz, phi, dphi])
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -152,10 +152,10 @@ class Lander2D(Lander):
         F = 1.15
         G = 1.33
 
-        y, dy, z, dz, phi, velphi = s
+        y, dy, z, dz, phi, dphi = s
 
         phi_targ = y*A + dy*B         # angle should point towards center
-        phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
+        phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
 
         hover_todo = z*F + dz*G
 
