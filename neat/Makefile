@@ -12,5 +12,8 @@
 3d:
 	neat-evolve.py config/lander3d
 
+best:
+	ls -c1 models | head
+
 clean:
 	rm -rf models/ visuals/ runs/ *.mp4
