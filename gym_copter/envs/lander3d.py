@@ -22,6 +22,9 @@ class Lander3D(Lander):
     OBSERVATION_SIZE = 12
     ACTION_SIZE = 4
 
+    # Angle PID for heuristic demo
+    PID_C = 0.025
+
     def __init__(self):
 
         Lander.__init__(self)
