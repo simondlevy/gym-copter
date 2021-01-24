@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander super-class (no ground target)
+3D Copter-Lander class
 
 Copyright (C) 2021 Simon D. Levy
 
