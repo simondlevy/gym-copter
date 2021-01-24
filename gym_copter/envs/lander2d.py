@@ -59,13 +59,13 @@ class Lander2D(Lander):
         state = np.array(d.getState())
 
         # Extract components from state
-        _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
+        _, _, y, dy, z, dz, phi, velphi = d.getState()[:8]
 
         # Set lander pose for viewer
-        self.pose = posy, posz, phi
+        self.pose = y, z, phi
 
         # Convert state to usable form
-        state = np.array([posy, vely, posz, velz, phi, velphi])
+        state = np.array([y, dy, z, dz, phi, velphi])
 
         # Get penalty based on state and motors
         shaping = -self._get_penalty(state, motors)
@@ -80,7 +80,7 @@ class Lander2D(Lander):
         done = False
 
         # Lose bigly if we go outside window
-        if abs(posy) >= self.BOUNDS:
+        if abs(y) >= self.BOUNDS:
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
@@ -93,7 +93,7 @@ class Lander2D(Lander):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(posy) < self.LANDING_RADIUS:
+                if abs(y) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
@@ -152,12 +152,12 @@ class Lander2D(Lander):
         F = 1.15
         G = 1.33
 
-        posy, vely, posz, velz, phi, velphi = s
+        y, dy, z, dz, phi, velphi = s
 
-        phi_targ = posy*A + vely*B         # angle should point towards center
+        phi_targ = y*A + dy*B         # angle should point towards center
         phi_todo = (phi-phi_targ)*C + phi*D - velphi*E
 
-        hover_todo = posz*F + velz*G
+        hover_todo = z*F + dz*G
 
         return hover_todo-phi_todo, hover_todo+phi_todo
 
