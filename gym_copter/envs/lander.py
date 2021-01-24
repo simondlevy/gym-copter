@@ -201,7 +201,7 @@ class Lander(gym.Env, EzPickle):
 
             sleep(1./self.FRAMES_PER_SECOND)
 
-            if (steps % 20 == 0) or done:
+            if False:  # (steps % 20 == 0) or done:
                 print('steps =  %03d    total_reward = %+0.2f' %
                       (steps, total_reward))
 

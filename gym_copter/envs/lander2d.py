@@ -49,9 +49,9 @@ class Lander2D(Lander):
 
     def heuristic(self, s):
 
-        y, dy, z, dz, phi, dphi = s
+        x, dx, z, dz, phi, dphi = s
 
-        phi_todo = self._angle_pid(y, dy, phi, dphi)
+        phi_todo = self._angle_pid(x, dx, phi, dphi)
 
         hover_todo = self._hover_pid(z, dz)
 
@@ -63,7 +63,7 @@ class Lander2D(Lander):
 
     def _get_state(self, state):
 
-        return state[2:8]
+        return state[0], state[1], state[4], state[5], state[6], state[7]
 
 
 def main():
