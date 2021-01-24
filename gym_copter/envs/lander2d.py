@@ -61,8 +61,8 @@ class Lander2D(Lander):
         # Extract components from state
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
 
-        # Set lander pose for viewer
-        self.pose = y, z, phi
+        # Set pose for display
+        self.pose = x, y, z, phi, theta, psi
 
         # Convert state to usable form
         state = np.array([y, dy, z, dz, phi, dphi])
