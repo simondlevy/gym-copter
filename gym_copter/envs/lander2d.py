@@ -81,6 +81,11 @@ class Lander2D(Lander):
             done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
+        # Lose bigly for excess roll or pitch
+        elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
+            done = True
+            reward = -self.OUT_OF_BOUNDS_PENALTY
+
         else:
 
             # It's all over once we're on the ground
