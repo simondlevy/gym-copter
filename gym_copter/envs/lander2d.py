@@ -64,11 +64,11 @@ class Lander2D(Lander):
         # Set pose for display
         self.pose = x, y, z, phi, theta, psi
 
-        # Convert state to usable form
-        state = np.array([y, dy, z, dz, phi, dphi])
-
         # Get penalty based on state and motors
-        shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
+        # shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
+        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)) +
+                    self.MOTOR_PENALTY_FACTOR*np.sum(motors))
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)
@@ -102,6 +102,9 @@ class Lander2D(Lander):
                 # Crashed!
                 done = True
                 self.spinning = False
+
+        # Convert state to usable form
+        state = np.array([y, dy, z, dz, phi, dphi])
 
         return np.array(state, dtype=np.float32), reward, done, {}
 
