@@ -95,7 +95,7 @@ class Lander2D(Lander):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if abs(y) < self.LANDING_RADIUS:
+                if np.sqrt(x**2+y**2) < self.LANDING_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 
@@ -105,6 +105,7 @@ class Lander2D(Lander):
                 done = True
                 self.spinning = False
 
+        # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
                 reward,
                 done,
