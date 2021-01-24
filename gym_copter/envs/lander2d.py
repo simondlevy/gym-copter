@@ -56,6 +56,9 @@ class Lander2D(Lander):
             d.update()
 
         # Get new state from dynamics
+        state = np.array(d.getState())
+
+        # Extract components from state
         _, _, posy, vely, posz, velz, phi, velphi = d.getState()[:8]
 
         # Set lander pose for viewer
