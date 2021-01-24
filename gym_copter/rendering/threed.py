@@ -213,8 +213,12 @@ class ThreeDRenderer:
 
         time.sleep(1)
         plt.close(self.fig)
+        exit(0)
 
     def render(self):
+
+        if self.env.done():
+            self.close()
 
         self.copter.update(self.env.pose)
 

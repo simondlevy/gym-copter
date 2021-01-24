@@ -42,6 +42,12 @@ class Lander3D(Lander):
         '''
         return None
 
+    def done(self):
+
+        d = self.dynamics
+
+        return d.getStatus() != d.STATUS_AIRBORNE
+
     def _get_motors(self, motors):
 
         return motors
