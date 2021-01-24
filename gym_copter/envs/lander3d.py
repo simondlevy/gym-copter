@@ -19,7 +19,7 @@ from gym_copter.rendering.threed import make_parser, parse
 class Lander3D(Lander):
 
     # 3D model
-    OBSERVATION_SIZE = 12
+    OBSERVATION_SIZE = 10
     ACTION_SIZE = 4
 
     # Angle PID for heuristic demo
@@ -54,11 +54,11 @@ class Lander3D(Lander):
 
     def _get_state(self, state):
 
-        return state
+        return state[:10]
 
-    def heuristic(self, s):
+    def heuristic(self, state):
 
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = s[:10]
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
 
         phi_todo = self._angle_pid(y, dy, phi, dphi)
 
