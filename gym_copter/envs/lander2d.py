@@ -30,7 +30,7 @@ class Lander2D(Lander):
         if self.viewer is not None:
             self.viewer.close()
 
-        return Lander._reset(self, self._randforce())
+        return Lander._reset(self)
 
     def step(self, action):
 
