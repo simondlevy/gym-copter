@@ -22,6 +22,9 @@ class Lander2D(Lander):
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
 
+    # PID for heuristic demo
+    PID_C = 0.1
+
     def __init__(self):
 
         Lander.__init__(self)
@@ -57,43 +60,13 @@ class Lander2D(Lander):
         return [motors[0], motors[1], motors[1], motors[0]]
 
     def heuristic(self, s):
-        """
-        The heuristic for
-        1. Testing
-        2. Demonstration rollout.
-
-        Args:
-            s (list): The state. Attributes:
-                      s[0] is the horizontal coordinate
-                      s[1] is the horizontal speed
-                      s[2] is the vertical coordinate
-                      s[3] is the vertical speed
-                      s[4] is the angle
-                      s[5] is the angular speed
-        returns:
-             a: The heuristic to be fed into the step function defined above to
-                determine the next step and reward.
-        """
-
-        # Angle target
-        A = 0.1
-        B = 0.1
-
-        # Angle PID
-        C = 0.1
-        D = 0.05
-        E = 0.4
-
-        # Vertical PID
-        F = 1.15
-        G = 1.33
 
         y, dy, z, dz, phi, dphi = s
 
-        phi_targ = y*A + dy*B         # angle should point towards center
-        phi_todo = (phi-phi_targ)*C + phi*D - dphi*E
+        phi_targ = y*self.PID_A + dy*self.PID_B
+        phi_todo = (phi-phi_targ)*self.PID_C + phi*self.PID_D - dphi*self.PID_E
 
-        hover_todo = z*F + dz*G
+        hover_todo = z*self.PID_F + dz*self.PID_G
 
         return hover_todo-phi_todo, hover_todo+phi_todo
 
