@@ -31,7 +31,7 @@ class Lander3D(Lander):
 
     def reset(self):
 
-        return Lander._reset(self, self._perturb())
+        return Lander._reset(self, self._randforce())
 
     def render(self, mode='human'):
         '''

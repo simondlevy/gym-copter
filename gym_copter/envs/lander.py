@@ -153,7 +153,7 @@ class Lander(gym.Env, EzPickle):
                 done,
                 {})
 
-    def _reset(self, yperturb):
+    def _reset(self, yforce):
 
         # Support for rendering
         self.pose = None
@@ -172,12 +172,12 @@ class Lander(gym.Env, EzPickle):
         self.dynamics.setState(state)
 
         # Perturb with a random force
-        self.dynamics.perturb(np.array([self._perturb(),   # X
-                                        yperturb,          # Y
-                                        self._perturb(),   # Z
-                                        0,                 # phi
-                                        0,                 # theta
-                                        0]))               # psi
+        self.dynamics.perturb(np.array([self._randforce(),  # X
+                                        yforce,             # Y
+                                        self._randforce(),  # Z
+                                        0,                  # phi
+                                        0,                  # theta
+                                        0]))                # psi
 
         # Return initial state
         return self.step(np.zeros(self.ACTION_SIZE))[0]
@@ -223,7 +223,7 @@ class Lander(gym.Env, EzPickle):
 
         return z*self.PID_F + dz*self.PID_G
 
-    def _perturb(self):
+    def _randforce(self):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
                                  + self.INITIAL_RANDOM_FORCE)
