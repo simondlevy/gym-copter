@@ -65,7 +65,6 @@ class Lander2D(Lander):
         self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state and motors
-        # shaping = -self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
         shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                     self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)) +
                     self.MOTOR_PENALTY_FACTOR*np.sum(motors))
@@ -103,10 +102,10 @@ class Lander2D(Lander):
                 done = True
                 self.spinning = False
 
-        # Convert state to usable form
-        state = np.array([y, dy, z, dz, phi, dphi])
-
-        return np.array(state, dtype=np.float32), reward, done, {}
+        return (np.array(self._get_state(state), dtype=np.float32),
+                reward,
+                done,
+                {})
 
     def render(self, mode='human'):
 
@@ -122,6 +121,10 @@ class Lander2D(Lander):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
+
+    def _get_state(self, state):
+
+        return state[2:8]
 
     def heuristic(self, s):
         """

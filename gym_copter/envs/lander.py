@@ -147,8 +147,8 @@ class Lander(gym.Env, EzPickle):
                 done = True
                 self.spinning = False
 
-        return (np.array(self._get_state(state),
-                dtype=np.float32),
+        # Extract 2D or 3D components of state and rerturn them with the rest
+        return (np.array(self._get_state(state), dtype=np.float32),
                 reward,
                 done,
                 {})
