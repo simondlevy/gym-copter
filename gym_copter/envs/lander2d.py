@@ -49,7 +49,7 @@ class Lander2D(Lander):
         # In air, set motors from action
         else:
             motors = np.clip(action, 0, 1)    # keep motors in interval [0,1]
-            d.setMotors([motors[0], motors[1], motors[1], motors[0]])
+            d.setMotors(self._get_motors(motors))
             self.spinning = sum(motors) > 0
             d.update()
 
@@ -129,6 +129,10 @@ class Lander2D(Lander):
     def _get_state(self, state):
 
         return state[2:8]
+
+    def _get_motors(self, motors):
+
+        return [motors[0], motors[1], motors[1], motors[0]]
 
     def heuristic(self, s):
         """
