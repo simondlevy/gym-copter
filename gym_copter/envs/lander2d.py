@@ -10,16 +10,19 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
-
 from gym_copter.envs.lander import Lander
 
 
 class Lander2D(Lander):
 
-    PENALTY_FACTOR = 12  # penalizes distance from center of floor
+    # 3D model
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
+
+    PENALTY_FACTOR = 12
 
     def __init__(self):
 
@@ -134,11 +137,11 @@ class Lander2D(Lander):
         """
 
         # Angle target
-        A = 0.1  # 0.05
-        B = 0.1  # 0.06
+        A = 0.1
+        B = 0.1
 
         # Angle PID
-        C = 0.1  # 0.025
+        C = 0.1
         D = 0.05
         E = 0.4
 
@@ -162,7 +165,12 @@ class Lander2D(Lander):
 
 
 def main():
-    Lander2D().demo_heuristic()
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Random seed for reproducibility')
+    args = parser.parse_args()
+    Lander2D().demo_heuristic(seed=args.seed)
 
 
 if __name__ == '__main__':
