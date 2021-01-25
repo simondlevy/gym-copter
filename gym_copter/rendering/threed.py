@@ -306,7 +306,9 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        # self.axviz.set_data([0, 0], [1, 1])
+        Z = np.random.rand(6, 10)
+
+        self.axviz.pcolor(Z)
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
