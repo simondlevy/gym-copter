@@ -12,7 +12,15 @@ import pickle
 
 import gym
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import make_parser, parse, eval_with_movie
+from gym_copter.rendering.threed import make_parser, parse
+
+from neat_gym import eval_net
+
+
+def eval_with_movie(net, env, render, report, movie):
+    eval_net(net, env, render, report)
+    if movie is not None:
+        print('Saving %s ...' % movie)
 
 
 def main():
