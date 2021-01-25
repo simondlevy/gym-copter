@@ -25,9 +25,11 @@ class Lander3D(Lander):
     # Angle PID for heuristic demo
     PID_C = 0.025
 
-    def __init__(self):
+    def __init__(self, view_width=1):
 
         Lander.__init__(self)
+
+        self.view_width = view_width
 
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)

@@ -155,7 +155,8 @@ class ThreeDRenderer:
 
         # Set up figure & 3D axis for animation
         self.fig = plt.figure()
-        self.ax = self.fig.add_axes([0, 0, 1, 1], projection='3d')
+        self.ax = self.fig.add_axes([0, 0, env.view_width, 1],
+                                    projection='3d')
 
         # Set up axis labels
         self.ax.set_xlabel('X (m)')

@@ -18,11 +18,8 @@ clean:
 3d:
 	python3 gym_copter/envs/lander3d.py
 
-point:
-	python3 gym_copter/envs/lander3d_point.py
-
-ring:
-	python3 gym_copter/envs/lander3d_ring.py
+viz:
+	python3 gym_copter/envs/lander3d_visual.py
 
 commit:
 	git commit -a

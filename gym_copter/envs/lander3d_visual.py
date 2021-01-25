@@ -18,7 +18,7 @@ class Lander3DVisual(Lander3D):
 
     def __init__(self):
 
-        Lander3D.__init__(self)
+        Lander3D.__init__(self, view_width=0.5)
 
 
 if __name__ == '__main__':
