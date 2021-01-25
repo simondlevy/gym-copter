@@ -297,8 +297,11 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
-        self.ax = self.fig.add_axes([0, 0, view_width, 1],
-                                    projection='3d')
+        self.axviz = self.fig.add_axes([0.5, 0, 0.5, 1], frameon=False)
+
+    def render(self):
+
+        ThreeDLanderRenderer.render(self)
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
