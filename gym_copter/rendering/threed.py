@@ -305,6 +305,9 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
                                        yticks=[],
                                        yticklabels=[])
 
+        figsize = self.fig.get_size_inches()
+        self.fig.set_size_inches(1.5*figsize[0], figsize[1])
+
         # Make a red-on-white colormap
         self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
 
