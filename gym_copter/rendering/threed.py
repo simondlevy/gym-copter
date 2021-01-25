@@ -299,6 +299,7 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         self.axviz = self.fig.add_axes([0.5, 0, 0.5, 1],
                                        frame_on=False,
+                                       aspect='equal',
                                        yticks=[],
                                        yticklabels=[])
 
@@ -306,9 +307,9 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        Z = np.random.rand(6, 10)
+        z = np.random.rand(10, 10)
 
-        self.axviz.pcolor(Z)
+        self.axviz.pcolormesh(z)
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
