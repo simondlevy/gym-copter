@@ -82,7 +82,7 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
-    # End of Lander3D classes -------------------------------------------------
+# End of Lander3D classes -------------------------------------------------
 
 
 def main():

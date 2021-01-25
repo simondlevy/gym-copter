@@ -292,16 +292,21 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
 class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
-    def __init__(self, env, viewangles=None, outfile=None):
+    def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
+
+        self.ax = self.fig.add_axes([0, 0, view_width, 1],
+                                    projection='3d')
+
+# End of ThreeDRenderer classes -----------------------------------------------
 
 
 def make_parser():
     '''
     Exported function to support command-line parsing in scripts.
-    You can add your own arguments.
+    You can add your own arguments, then call parse() to get args.
     '''
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
