@@ -298,15 +298,15 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
                                       view_width=0.5)
 
         self.axviz = self.fig.add_axes([0.5, 0, 0.5, 1],
-                                        frame_on=False,
-                                        yticks=[],
-                                        yticklabels=[])
+                                       frame_on=False,
+                                       yticks=[],
+                                       yticklabels=[])
 
     def render(self):
 
         ThreeDLanderRenderer.render(self)
 
-        #self.axviz.set_data([0, 0], [1, 1])
+        # self.axviz.set_data([0, 0], [1, 1])
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
