@@ -11,7 +11,7 @@ import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib import cm as cm
+from matplotlib.colors import ListedColormap
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
@@ -306,8 +306,8 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
                                        yticks=[],
                                        yticklabels=[])
 
-        self.cmap = cm.get_cmap('viridis', 2)
-        self.cmap.colors = [[1, 1, 1, 1],  [1, 0, 0, 1]]
+        # Make a red-on-white colormap
+        self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
 
     def render(self):
 
