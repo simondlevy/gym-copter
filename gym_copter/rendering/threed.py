@@ -300,6 +300,8 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
         self.axviz = self.fig.add_axes([0.5, 0, 0.5, 1],
                                        frame_on=False,
                                        aspect='equal',
+                                       xticks=[],
+                                       xticklabels=[],
                                        yticks=[],
                                        yticklabels=[])
 
