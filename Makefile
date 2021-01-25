@@ -19,7 +19,7 @@ clean:
 	python3 gym_copter/envs/lander3d.py
 
 viz:
-	python3 gym_copter/envs/lander3d_visual.py
+	python3 gym_copter/envs/lander3d.py --visual
 
 commit:
 	git commit -a

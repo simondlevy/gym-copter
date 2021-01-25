@@ -290,7 +290,19 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         self._update()
 
 
+class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
+
+    def __init__(self, env, viewangles=None, outfile=None):
+
+        ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
+                                      view_width=0.5)
+
+
 def make_parser():
+    '''
+    Exported function to support command-line parsing in scripts.
+    You can add your own arguments.
+    '''
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--view', required=False, default='30,120',
@@ -312,11 +324,3 @@ def eval_with_movie(net, env, render, report, movie):
     eval_net(net, env, render, report)
     if movie is not None:
         print('Saving %s ...' % movie)
-
-
-class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
-
-    def __init__(self, env, viewangles=None, outfile=None):
-
-        ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
-                                      view_width=0.5)
