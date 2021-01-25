@@ -74,9 +74,7 @@ class Lander3D(Lander):
 
 class Lander3DVisual(Lander3D):
 
-    # 3D model
-    OBSERVATION_SIZE = 10
-    ACTION_SIZE = 4
+    RESOLUTION = 128
 
     def __init__(self):
 

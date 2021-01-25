@@ -307,7 +307,9 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        z = np.random.rand(10, 10)
+        res = self.env.RESOLUTION
+
+        z = np.random.rand(res, res)
 
         self.axviz.pcolormesh(z)
 
