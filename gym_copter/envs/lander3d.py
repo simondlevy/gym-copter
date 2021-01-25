@@ -13,6 +13,7 @@ import threading
 from gym_copter.envs.lander import Lander
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.threed import ThreeDLanderRendererVisual
 from gym_copter.rendering.threed import make_parser, parse
 
 
@@ -25,11 +26,9 @@ class Lander3D(Lander):
     # Angle PID for heuristic demo
     PID_C = 0.025
 
-    def __init__(self, view_width=1):
+    def __init__(self):
 
         Lander.__init__(self)
-
-        self.view_width = view_width
 
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
@@ -72,19 +71,37 @@ class Lander3D(Lander):
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
+
+class Lander3DVisual(Lander3D):
+
+    # 3D model
+    OBSERVATION_SIZE = 10
+    ACTION_SIZE = 4
+
+    def __init__(self):
+
+        Lander3D.__init__(self)
+
     # End of Lander3D classes -------------------------------------------------
 
 
-def demo(env):
+def main():
 
     parser = make_parser()
     args, viewangles = parse(parser)
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles)
+
+    if args.visual:
+        env = Lander3DVisual()
+        viewer = ThreeDLanderRendererVisual(env, viewangles=viewangles)
+    else:
+        env = Lander3D()
+        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
+
     thread = threading.Thread(target=env.demo_heuristic, args=(args.seed, ))
     thread.start()
-    renderer.start()
+    viewer.start()
 
 
 if __name__ == '__main__':
 
-    demo(Lander3D())
+    main()

@@ -135,6 +135,7 @@ class ThreeDRenderer:
 
     def __init__(self,
                  env,
+                 view_width=1,
                  lim=50,
                  fps=50,
                  label=None,
@@ -155,7 +156,7 @@ class ThreeDRenderer:
 
         # Set up figure & 3D axis for animation
         self.fig = plt.figure()
-        self.ax = self.fig.add_axes([0, 0, env.view_width, 1],
+        self.ax = self.fig.add_axes([0, 0, view_width, 1],
                                     projection='3d')
 
         # Set up axis labels
@@ -253,14 +254,15 @@ class ThreeDRenderer:
 
 class ThreeDLanderRenderer(ThreeDRenderer):
 
-    def __init__(self, env, viewangles=None, outfile=None):
+    def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
         ThreeDRenderer.__init__(self,
                                 env,
                                 lim=10,
                                 label='Lander',
                                 viewangles=viewangles,
-                                outfile=outfile)
+                                outfile=outfile,
+                                view_width=view_width)
 
         self.circle = create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
@@ -295,6 +297,8 @@ def make_parser():
                         help='View elevation, azimuth')
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
+    parser.add_argument('--visual', action='store_true',
+                        help='Run visual environment')
     return parser
 
 
@@ -308,3 +312,11 @@ def eval_with_movie(net, env, render, report, movie):
     eval_net(net, env, render, report)
     if movie is not None:
         print('Saving %s ...' % movie)
+
+
+class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
+
+    def __init__(self, env, viewangles=None, outfile=None):
+
+        ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
+                                      view_width=0.5)
