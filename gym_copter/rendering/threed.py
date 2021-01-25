@@ -192,7 +192,7 @@ class ThreeDRenderer:
 
         # Instantiate the animator
         interval = int(1000/self.fps)
-        anim = animation.FuncAnimation(self.fig,  # noqa: F841
+        anim = animation.FuncAnimation(self.fig,
                                        self._animate,
                                        interval=interval,
                                        blit=False)
