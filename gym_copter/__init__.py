@@ -19,3 +19,10 @@ register(
     entry_point='gym_copter.envs:Lander3D',
     max_episode_steps=400
 )
+
+# 3D lander with vision
+register(
+    id='Lander3D-v1',
+    entry_point='gym_copter.envs:Lander3DVisual',
+    max_episode_steps=400
+)
