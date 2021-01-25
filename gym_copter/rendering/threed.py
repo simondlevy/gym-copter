@@ -17,12 +17,6 @@ from PIL import Image
 from neat_gym import eval_net
 
 
-def create_axis(ax, color):
-    obj = ax.plot([], [], [], '-', c=color)[0]
-    obj.set_data([], [])
-    return obj
-
-
 class _Vehicle:
 
     VEHICLE_SIZE = 0.5
@@ -31,10 +25,10 @@ class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
-        self.ax_traj = create_axis(ax, color)
+        self.ax_traj = _Vehicle.create_axis(ax, color)
 
-        self.ax_arms = [create_axis(ax, color) for j in range(4)]
-        self.ax_props = [create_axis(ax, color) for j in range(4)]
+        self.ax_arms = [_Vehicle.create_axis(ax, color) for j in range(4)]
+        self.ax_props = [_Vehicle.create_axis(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -129,6 +123,12 @@ class _Vehicle:
         # Set axis points
         axis.set_data(x+xx, y+yy)
         axis.set_3d_properties(z+zz+dz)
+
+    @staticmethod
+    def create_axis(ax, color):
+        obj = ax.plot([], [], [], '-', c=color)[0]
+        obj.set_data([], [])
+        return obj
 
 
 class ThreeDRenderer:
@@ -264,7 +264,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.circle = create_axis(self.ax, 'r')
+        self.circle = _Vehicle.create_axis(self.ax, 'r')
         pts = np.linspace(-np.pi, +np.pi, 1000)
         self.circle_x = self.radius * np.sin(pts)
         self.circle_y = self.radius * np.cos(pts)
