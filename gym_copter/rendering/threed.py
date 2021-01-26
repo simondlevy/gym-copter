@@ -292,6 +292,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
 class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
+    MARGIN = 20
+
     def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
@@ -305,21 +307,29 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
                                        yticks=[],
                                        yticklabels=[])
 
+        # Widen the figure
         figsize = self.fig.get_size_inches()
         self.fig.set_size_inches(1.5*figsize[0], figsize[1])
 
         # Make a red-on-white colormap
         self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
 
+        # Store image sizes
+        self.res = self.env.RESOLUTION
+        self.size = (self.res + 2*self.MARGIN,)*2
+
     def render(self):
 
         ThreeDLanderRenderer.render(self)
 
-        res = self.env.RESOLUTION
+        image = np.random.rand(self.res, self.res) > 0.5
 
-        z = np.random.rand(res, res) > 0.5
+        padded = np.zeros(self.size)
 
-        self.axviz.pcolormesh(z, cmap=self.cmap)
+        padded[self.MARGIN:self.MARGIN+self.res,
+               self.MARGIN:self.MARGIN+self.res] = image
+
+        self.axviz.pcolormesh(padded, cmap=self.cmap)
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
