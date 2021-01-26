@@ -313,7 +313,7 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        target = self.env.target
+        target = self.env.get_target_points()
 
         self.vision_axis.scatter(target[0, :], target[1, :], c='r', s=2.0)
 

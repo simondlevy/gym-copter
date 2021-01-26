@@ -88,20 +88,12 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
-    def get_image(self):
+    def get_target_points(self):
 
         # XXX Transform the target by perspective projection
         target = self.target.copy()
 
-        # Convert to target indices
-        j, k = (((target / self.LANDING_RADIUS + 1) / 2 *
-                self.RESOLUTION).astype(int))
-
-        # Use indices to populate image
-        image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
-        image[j, k] = 1
-
-        return image
+        return target
 
 # End of Lander3D classes -------------------------------------------------
 
