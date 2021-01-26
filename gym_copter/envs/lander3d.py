@@ -23,6 +23,9 @@ class Lander3D(Lander):
     OBSERVATION_SIZE = 10
     ACTION_SIZE = 4
 
+    # Number of target points
+    TARGET_POINTS = 1000
+
     # Angle PID for heuristic demo
     PID_C = 0.025
 
@@ -34,7 +37,7 @@ class Lander3D(Lander):
         self.max_angle = np.radians(self.MAX_ANGLE)
 
         # Create points for landing zone
-        pts = np.linspace(-np.pi, +np.pi, 1000)
+        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
         self.target = np.array([self.LANDING_RADIUS * np.sin(pts),
                                 self.LANDING_RADIUS * np.cos(pts)])
 
