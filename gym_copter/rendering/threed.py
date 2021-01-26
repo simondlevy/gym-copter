@@ -264,12 +264,11 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.circle = _Vehicle.create_axis(self.ax, 'r')
+        self.target_axis = _Vehicle.create_axis(self.ax, 'r')
 
-        pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.circle_x = self.radius * np.sin(pts)
-        self.circle_y = self.radius * np.cos(pts)
-        self.circle_z = np.zeros(self.circle_x.shape)
+        self.target_x = env.target[0, :]
+        self.target_y = env.target[1, :]
+        self.target_z = np.zeros(self.target_x.shape)
 
     def render(self):
 
@@ -281,8 +280,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
     def _update(self):
 
-        self.circle.set_data(self.circle_x, self.circle_y)
-        self.circle.set_3d_properties(self.circle_z)
+        self.target_axis.set_data(self.target_x, self.target_y)
+        self.target_axis.set_3d_properties(self.target_z)
 
     def _animate(self, _):
 
