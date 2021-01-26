@@ -80,11 +80,25 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
-    def get_points(self):
+        # Basic circle
         pts = np.linspace(-np.pi, +np.pi, 1000)
-        x = self.LANDING_RADIUS * np.sin(pts)
-        y = self.LANDING_RADIUS * np.cos(pts)
-        return x, y
+        self.target = np.array([self.LANDING_RADIUS * np.sin(pts),
+                                self.LANDING_RADIUS * np.cos(pts)])
+
+    def get_image(self):
+
+        # XXX Transform the target by perspective projection
+        # target = self.target.copy()
+
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        x = ((np.sin(pts) + 1) / 2 * self.RESOLUTION).astype(int)
+        y = ((np.cos(pts) + 1) / 2 * self.RESOLUTION).astype(int)
+
+        # Convert transformed target into image
+        image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
+        image[x, y] = 1
+
+        return image
 
 # End of Lander3D classes -------------------------------------------------
 

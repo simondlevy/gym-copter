@@ -324,15 +324,7 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        x, y = self.env.get_points()
-
-        # XXX
-        xnz = np.random.randint(0, self.res, 100)
-        ynz = np.random.randint(0, self.res, 100)
-
-        image = np.zeros((self.res, self.res))
-
-        image[xnz, ynz] = 1
+        image = self.env.get_image()
 
         padded = np.zeros(self.shape)
 
