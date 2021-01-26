@@ -317,17 +317,19 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
         # Store image sizes
         self.res = self.env.RESOLUTION
         self.size = (self.res + 2*self.MARGIN,)*2
+        self.lo = self.MARGIN
+        self.hi = self.MARGIN + self.res
 
     def render(self):
 
         ThreeDLanderRenderer.render(self)
 
+        # XXX
         image = np.random.rand(self.res, self.res) > 0.5
 
         padded = np.zeros(self.size)
 
-        padded[self.MARGIN:self.MARGIN+self.res,
-               self.MARGIN:self.MARGIN+self.res] = image
+        padded[self.lo:self.hi, self.lo:self.hi] = image
 
         self.axviz.pcolormesh(padded, cmap=self.cmap)
 
