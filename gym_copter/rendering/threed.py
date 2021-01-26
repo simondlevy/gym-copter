@@ -265,6 +265,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 view_width=view_width)
 
         self.circle = _Vehicle.create_axis(self.ax, 'r')
+
         pts = np.linspace(-np.pi, +np.pi, 1000)
         self.circle_x = self.radius * np.sin(pts)
         self.circle_y = self.radius * np.cos(pts)

@@ -33,6 +33,11 @@ class Lander3D(Lander):
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
 
+        # Create points for landing zone
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        self.target = np.array([self.LANDING_RADIUS * np.sin(pts),
+                                self.LANDING_RADIUS * np.cos(pts)])
+
     def reset(self):
 
         return Lander._reset(self)
@@ -79,11 +84,6 @@ class Lander3DVisual(Lander3D):
     def __init__(self):
 
         Lander3D.__init__(self)
-
-        # Basic circle
-        pts = np.linspace(-np.pi, +np.pi, 1000)
-        self.target = np.array([self.LANDING_RADIUS * np.sin(pts),
-                                self.LANDING_RADIUS * np.cos(pts)])
 
     def get_image(self):
 
