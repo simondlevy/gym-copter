@@ -90,14 +90,13 @@ class Lander3DVisual(Lander3D):
         # XXX Transform the target by perspective projection
         target = self.target.copy()
 
-        x = (((target[0, :] / self.LANDING_RADIUS + 1) / 2 *
-             self.RESOLUTION).astype(int))
-        y = (((target[1, :] / self.LANDING_RADIUS + 1) / 2 *
-             self.RESOLUTION).astype(int))
+        # Convert to target indices
+        j, k = (((target / self.LANDING_RADIUS + 1) / 2 *
+                self.RESOLUTION).astype(int))
 
-        # Convert transformed target into image
+        # Use indices to populate image
         image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
-        image[x, y] = 1
+        image[j, k] = 1
 
         return image
 
