@@ -80,6 +80,12 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
+    def get_points(self):
+        pts = np.linspace(-np.pi, +np.pi, 1000)
+        x = self.LANDING_RADIUS * np.sin(pts)
+        y = self.LANDING_RADIUS * np.cos(pts)
+        return x, y
+
 # End of Lander3D classes -------------------------------------------------
 
 

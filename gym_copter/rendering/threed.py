@@ -316,7 +316,7 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         # Store image sizes
         self.res = self.env.RESOLUTION
-        self.size = (self.res + 2*self.MARGIN,)*2
+        self.shape = (self.res + 2*self.MARGIN,)*2
         self.lo = self.MARGIN
         self.hi = self.MARGIN + self.res
 
@@ -324,10 +324,17 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        # XXX
-        image = np.random.rand(self.res, self.res) > 0.5
+        x, y = self.env.get_points()
 
-        padded = np.zeros(self.size)
+        # XXX
+        xnz = np.random.randint(0, self.res, 100)
+        ynz = np.random.randint(0, self.res, 100)
+
+        image = np.zeros((self.res, self.res))
+
+        image[xnz, ynz] = 1
+
+        padded = np.zeros(self.shape)
 
         padded[self.lo:self.hi, self.lo:self.hi] = image
 
