@@ -24,7 +24,7 @@ class Lander3D(Lander):
     ACTION_SIZE = 4
 
     # Number of target points
-    TARGET_POINTS = 1000
+    TARGET_POINTS = 250
 
     # Angle PID for heuristic demo
     PID_C = 0.025
