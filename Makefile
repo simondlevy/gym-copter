@@ -16,10 +16,10 @@ clean:
 	python3 gym_copter/envs/lander2d.py
 
 3d:
-	python3 gym_copter/envs/lander3d.py
+	time python3 gym_copter/envs/lander3d.py --seed 0
 
 viz:
-	python3 gym_copter/envs/lander3d.py --visual
+	time python3 gym_copter/envs/lander3d.py --visual --seed 0
 
 commit:
 	git commit -a

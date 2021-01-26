@@ -75,26 +75,15 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j % 2) - 1
 
-            self._set_axis(x,
-                           y,
-                           z,
-                           phi,
-                           theta,
-                           psi,
+            self._set_axis(x, y, z,
+                           phi, theta, psi,
                            self.ax_arms[j],
-                           dx*rs,
-                           dy*rs, 0)
+                           dx*rs, dy*rs, 0)
 
-            self._set_axis(x,
-                           y,
-                           z,
-                           phi,
-                           theta,
-                           psi,
+            self._set_axis(x, y, z,
+                           phi, theta, psi,
                            self.ax_props[j],
-                           dx*v2+px,
-                           dy*v2+py,
-                           self.PROPELLER_OFFSET)
+                           dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
@@ -299,13 +288,13 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
-        self.axviz = self.fig.add_axes([0.5, 0, 0.5, 1],
-                                       frame_on=False,
-                                       aspect='equal',
-                                       xticks=[],
-                                       xticklabels=[],
-                                       yticks=[],
-                                       yticklabels=[])
+        self.vision_axis = self.fig.add_axes([0.5, 0, 0.5, 1],
+                                             frame_on=False,
+                                             aspect='equal',
+                                             xticks=[],
+                                             xticklabels=[],
+                                             yticks=[],
+                                             yticklabels=[])
 
         # Widen the figure
         figsize = self.fig.get_size_inches()
@@ -324,13 +313,10 @@ class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
 
         ThreeDLanderRenderer.render(self)
 
-        image = self.env.get_image()
+        target = self.env.target
 
-        padded = np.zeros(self.shape)
+        self.vision_axis.scatter(target[0, :], target[1, :], c='r', s=2.0)
 
-        padded[self.lo:self.hi, self.lo:self.hi] = image
-
-        self.axviz.pcolormesh(padded, cmap=self.cmap)
 
 # End of ThreeDRenderer classes -----------------------------------------------
 
