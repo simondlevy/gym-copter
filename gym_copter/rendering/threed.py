@@ -11,7 +11,6 @@ import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.colors import ListedColormap
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
@@ -300,18 +299,11 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         figsize = self.fig.get_size_inches()
         self.fig.set_size_inches(1.5*figsize[0], figsize[1])
 
-        # Make a red-on-white colormap
-        self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
-
-        # Store image sizes
-        self.res = self.env.RESOLUTION
-        self.shape = (self.res + 2*self.MARGIN,)*2
-        self.lo = self.MARGIN
-        self.hi = self.MARGIN + self.res
-
     def render(self):
 
         ThreeDLanderRenderer.render(self)
+
+        print(type(self.vision_axes))
 
         target = self.env.get_target_image_points()
 
