@@ -290,6 +290,10 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         self.vision_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
                                              frame_on=False,
                                              aspect='equal',
+                                             xlim=[-env.TARGET_RADIUS,
+                                                   +env.TARGET_RADIUS],
+                                             ylim=[-env.TARGET_RADIUS,
+                                                   +env.TARGET_RADIUS],
                                              xticks=[],
                                              xticklabels=[],
                                              yticks=[],
@@ -302,8 +306,6 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
     def render(self):
 
         ThreeDLanderRenderer.render(self)
-
-        print(type(self.vision_axes))
 
         target = self.env.get_target_image_points()
 

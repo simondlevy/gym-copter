@@ -110,7 +110,8 @@ class Lander3DVisual(Lander3D):
         # Therefore m = 1 / (u/f - 1)
         m = 1 / (u / self.f - 1)
 
-        return self._get_target_points(m)
+        return self._get_target_points(scale=m)
+
 
 # End of Lander3D classes -------------------------------------------------
 
