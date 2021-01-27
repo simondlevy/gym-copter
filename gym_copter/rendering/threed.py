@@ -280,8 +280,6 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
     target
     '''
 
-    MARGIN = 20
-
     def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
