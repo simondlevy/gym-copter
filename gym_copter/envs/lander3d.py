@@ -98,13 +98,20 @@ class Lander3DVisual(Lander3D):
 
     def get_target_points(self):
 
-        # Get distance v to image as negated NED altitude
-        v = -np.array(self.dynamics.getState())[4]
+        # Get distance u to image as negated NED altitude
+        u = -np.array(self.dynamics.getState())[4]
 
-        print(v)
-
-        # Get image distance v, from
+        # Get image magnification m from equations in
         # https://www.aplustopper.com/numerical-methods-in-lens/
+        #
+        # 1/u + 1/v = 1/f
+        #
+        # m = v/u
+        #
+        # Therefore m = 1 / (u/f - 1)
+        m = 1 / (u / self.f - 1)
+
+        print(m)
 
         # XXX Transform the target by perspective projection
         target = self.target.copy()
