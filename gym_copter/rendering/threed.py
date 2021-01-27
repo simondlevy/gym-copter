@@ -33,10 +33,10 @@ class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
-        self.traj_axes = _create_line3d(ax, color)
+        self.traj_line = _create_line3d(ax, color)
 
-        self.arms_axes = [_create_line3d(ax, color) for j in range(4)]
-        self.props_axes = [_create_line3d(ax, color) for j in range(4)]
+        self.arms_lines = [_create_line3d(ax, color) for j in range(4)]
+        self.props_lines = [_create_line3d(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -66,8 +66,8 @@ class _Vehicle:
 
         # Plot trajectory if indicated
         if self.showtraj:
-            self.traj_axes.set_data(self.xs, self.ys)
-            self.traj_axes.set_3d_properties(self.zs)
+            self.traj_line.set_data(self.xs, self.ys)
+            self.traj_line.set_3d_properties(self.zs)
 
         # Create points for arms
         v2 = self.VEHICLE_SIZE / 2
@@ -85,12 +85,12 @@ class _Vehicle:
 
             self._set_axes(x, y, z,
                            phi, theta, psi,
-                           self.arms_axes[j],
+                           self.arms_lines[j],
                            dx*rs, dy*rs, 0)
 
             self._set_axes(x, y, z,
                            phi, theta, psi,
-                           self.props_axes[j],
+                           self.props_lines[j],
                            dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
     def _set_axes(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
@@ -260,7 +260,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.target_axes = _create_line3d(self.axes, 'r')
+        self.target_line = _create_line3d(self.axes, 'r')
 
         self.target_x = env.target[0, :]
         self.target_y = env.target[1, :]
@@ -271,8 +271,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer.render(self)
 
         # Draw target on ground
-        self.target_axes.set_data(self.target_x, self.target_y)
-        self.target_axes.set_3d_properties(self.target_z)
+        self.target_line.set_data(self.target_x, self.target_y)
+        self.target_line.set_3d_properties(self.target_z)
 
         return ThreeDRenderer._complete(self)
 
