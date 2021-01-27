@@ -275,7 +275,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         return ThreeDRenderer.complete(self)
 
 
-class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
+class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
     '''
     Extends 3D landing-target rendering class with a visual display of the
     target

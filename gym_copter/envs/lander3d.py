@@ -13,7 +13,7 @@ import threading
 from gym_copter.envs.lander import Lander
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import ThreeDLanderRendererVisual
+from gym_copter.rendering.threed import ThreeDVisualLanderRenderer
 from gym_copter.rendering.threed import make_parser, parse
 
 
@@ -128,7 +128,7 @@ def main():
 
     if args.visual:
         env = Lander3DVisual()
-        viewer = ThreeDLanderRendererVisual(env, viewangles=viewangles)
+        viewer = ThreeDVisualLanderRenderer(env, viewangles=viewangles)
     else:
         env = Lander3D()
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
