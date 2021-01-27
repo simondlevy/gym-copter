@@ -96,7 +96,7 @@ class Lander3DVisual(Lander3D):
         self.f = (0.5 * self.SENSOR_SIZE /
                   np.tan(np.radians(self.FIELD_OF_VIEW/2)))
 
-    def get_target_points(self):
+    def get_target_image_points(self):
 
         # Get distance u to image as negated NED altitude
         u = -np.array(self.dynamics.getState())[4]
