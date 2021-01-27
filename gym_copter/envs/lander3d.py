@@ -37,9 +37,7 @@ class Lander3D(Lander):
         self.max_angle = np.radians(self.MAX_ANGLE)
 
         # Create points for landing zone
-        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-        self.target = np.array([self.TARGET_RADIUS * np.sin(pts),
-                                self.TARGET_RADIUS * np.cos(pts)])
+        self.target = self._get_target_points()
 
     def reset(self):
 
@@ -57,6 +55,12 @@ class Lander3D(Lander):
 
         return d.getStatus() != d.STATUS_AIRBORNE
 
+    def _get_target_points(self, scale=1.0):
+
+        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
+
+        return scale * np.array([np.sin(pts), np.cos(pts)])
+
     def _get_motors(self, motors):
 
         return motors
@@ -68,15 +72,10 @@ class Lander3D(Lander):
     def heuristic(self, state):
 
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
-
         phi_todo = self._angle_pid(y, dy, phi, dphi)
-
         theta_todo = self._angle_pid(x, dx, -theta, -dtheta)
-
         hover_todo = self._hover_pid(z, dz)
-
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
-
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
@@ -111,12 +110,7 @@ class Lander3DVisual(Lander3D):
         # Therefore m = 1 / (u/f - 1)
         m = 1 / (u / self.f - 1)
 
-        print(m * self.TARGET_RADIUS)
-
-        # XXX Transform the target by perspective projection
-        target = self.target.copy()
-
-        return target
+        return self._get_target_points(m)
 
 # End of Lander3D classes -------------------------------------------------
 

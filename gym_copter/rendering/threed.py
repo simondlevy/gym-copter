@@ -25,10 +25,10 @@ class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
-        self.ax_traj = _Vehicle.create_axis(ax, color)
+        self.traj_axes = _Vehicle.create_axes(ax, color)
 
-        self.ax_arms = [_Vehicle.create_axis(ax, color) for j in range(4)]
-        self.ax_props = [_Vehicle.create_axis(ax, color) for j in range(4)]
+        self.arms_axes = [_Vehicle.create_axes(ax, color) for j in range(4)]
+        self.props_axes = [_Vehicle.create_axes(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -58,8 +58,8 @@ class _Vehicle:
 
         # Plot trajectory if indicated
         if self.showtraj:
-            self.ax_traj.set_data(self.xs, self.ys)
-            self.ax_traj.set_3d_properties(self.zs)
+            self.traj_axes.set_data(self.xs, self.ys)
+            self.traj_axes.set_3d_properties(self.zs)
 
         # Create points for arms
         v2 = self.VEHICLE_SIZE / 2
@@ -77,12 +77,12 @@ class _Vehicle:
 
             self._set_axis(x, y, z,
                            phi, theta, psi,
-                           self.ax_arms[j],
+                           self.arms_axes[j],
                            dx*rs, dy*rs, 0)
 
             self._set_axis(x, y, z,
                            phi, theta, psi,
-                           self.ax_props[j],
+                           self.props_axes[j],
                            dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
     def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
@@ -114,7 +114,7 @@ class _Vehicle:
         axis.set_3d_properties(z+zz+dz)
 
     @staticmethod
-    def create_axis(ax, color):
+    def create_axes(ax, color):
         obj = ax.plot([], [], [], '-', c=color)[0]
         obj.set_data([], [])
         return obj
@@ -148,17 +148,16 @@ class ThreeDRenderer:
 
         # Set up figure & 3D axis for animation
         self.fig = plt.figure()
-        self.ax = self.fig.add_axes([0, 0, view_width, 1],
-                                    projection='3d')
+        self.axes = self.fig.add_axes([0, 0, view_width, 1], projection='3d')
 
         # Set up axis labels
-        self.ax.set_xlabel('X (m)')
-        self.ax.set_ylabel('Y (m)')
-        self.ax.set_zlabel('Z (m)')
+        self.axes.set_xlabel('X (m)')
+        self.axes.set_ylabel('Y (m)')
+        self.axes.set_zlabel('Z (m)')
 
         # Set view angles if indicated
         if viewangles is not None:
-            self.ax.view_init(*viewangles)
+            self.axes.view_init(*viewangles)
 
         # Set up formatting for the movie files
         self.writer = None
@@ -170,15 +169,15 @@ class ThreeDRenderer:
                                  bitrate=1800)
 
         # Set title to name of environment
-        self.ax.set_title(label)
+        self.axes.set_title(label)
 
         # Set axis limits
-        self.ax.set_xlim((-lim, lim))
-        self.ax.set_ylim((-lim, lim))
-        self.ax.set_zlim((0, lim))
+        self.axes.set_xlim((-lim, lim))
+        self.axes.set_ylim((-lim, lim))
+        self.axes.set_zlim((0, lim))
 
         # Create a representation of the copter
-        self.copter = _Vehicle(self.ax, showtraj)
+        self.copter = _Vehicle(self.axes, showtraj)
 
     def start(self):
 
@@ -259,7 +258,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.target_axis = _Vehicle.create_axis(self.ax, 'r')
+        self.target_axis = _Vehicle.create_axes(self.axes, 'r')
 
         self.target_x = env.target[0, :]
         self.target_y = env.target[1, :]
@@ -289,7 +288,7 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
-        self.vision_axis = self.fig.add_axes([0.5, 0, 0.5, 1],
+        self.vision_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
                                              frame_on=False,
                                              aspect='equal',
                                              xticks=[],
@@ -316,7 +315,7 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
 
         target = self.env.get_target_image_points()
 
-        self.vision_axis.scatter(target[0, :], target[1, :], c='r', s=2.0)
+        self.vision_axes.scatter(target[0, :], target[1, :], c='r', s=2.0)
 
 
 # End of ThreeDRenderer classes -----------------------------------------------
