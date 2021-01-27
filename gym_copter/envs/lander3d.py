@@ -82,11 +82,19 @@ class Lander3D(Lander):
 
 class Lander3DVisual(Lander3D):
 
-    RESOLUTION = 128
+    # Arbitrary specs of a hypothetical low-resolution camera with square
+    # sensor.
+    RESOLUTION = 128  # pixels
+    FIELD_OF_VIEW = 60  # degrees
+    SENSOR_SIZE = .008  # meters
 
     def __init__(self):
 
         Lander3D.__init__(self)
+
+        # http://paulbourke.net/miscellaneous/lens/
+        self.focal_length = (0.5 * self.SENSOR_SIZE /
+                             np.tan(np.radians(self.FIELD_OF_VIEW/2)))
 
     def get_target_points(self):
 
