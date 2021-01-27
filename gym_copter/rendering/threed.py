@@ -74,17 +74,17 @@ class _Vehicle:
             dx = 2 * (j // 2) - 1
             dy = 2 * (j % 2) - 1
 
-            self._set_axis(x, y, z,
+            self._set_axes(x, y, z,
                            phi, theta, psi,
                            self.arms_axes[j],
                            dx*rs, dy*rs, 0)
 
-            self._set_axis(x, y, z,
+            self._set_axes(x, y, z,
                            phi, theta, psi,
                            self.props_axes[j],
                            dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
 
-    def _set_axis(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
+    def _set_axes(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
         # Make convenient abbreviations for functions of Euler angles
         cph = np.cos(phi)
@@ -257,7 +257,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.target_axis = _Vehicle.create_axes(self.axes, 'r')
+        self.target_axes = _Vehicle.create_axes(self.axes, 'r')
 
         self.target_x = env.target[0, :]
         self.target_y = env.target[1, :]
@@ -268,8 +268,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer.render(self)
 
         # Draw target on ground
-        self.target_axis.set_data(self.target_x, self.target_y)
-        self.target_axis.set_3d_properties(self.target_z)
+        self.target_axes.set_data(self.target_x, self.target_y)
+        self.target_axes.set_3d_properties(self.target_z)
 
         return ThreeDRenderer._complete(self)
 
