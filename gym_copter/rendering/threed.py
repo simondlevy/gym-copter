@@ -269,20 +269,10 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         ThreeDRenderer.render(self)
 
-        self._draw_target()
-
-        return ThreeDRenderer.complete(self)
-
-    def _draw_target(self):
-
         self.target_axis.set_data(self.target_x, self.target_y)
         self.target_axis.set_3d_properties(self.target_z)
 
-    def _animate(self, _):
-
-        ThreeDRenderer._animate(self, _)
-
-        self._draw_target()
+        return ThreeDRenderer.complete(self)
 
 
 class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
