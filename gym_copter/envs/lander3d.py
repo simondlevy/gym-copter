@@ -83,7 +83,7 @@ class Lander3D(Lander):
 class Lander3DVisual(Lander3D):
 
     # Arbitrary specs of a hypothetical low-resolution camera with square
-    # sensor.
+    # sensor
     RESOLUTION = 128  # pixels
     FIELD_OF_VIEW = 60  # degrees
     SENSOR_SIZE = .008  # meters
@@ -92,11 +92,19 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
-        # http://paulbourke.net/miscellaneous/lens/
-        self.focal_length = (0.5 * self.SENSOR_SIZE /
-                             np.tan(np.radians(self.FIELD_OF_VIEW/2)))
+        # Focal length f, from http://paulbourke.net/miscellaneous/lens/
+        self.f = (0.5 * self.SENSOR_SIZE /
+                  np.tan(np.radians(self.FIELD_OF_VIEW/2)))
 
     def get_target_points(self):
+
+        # Get distance v to image as negated NED altitude
+        v = -np.array(self.dynamics.getState())[4]
+
+        print(v)
+
+        # Get image distance v, from
+        # https://www.aplustopper.com/numerical-methods-in-lens/
 
         # XXX Transform the target by perspective projection
         target = self.target.copy()
