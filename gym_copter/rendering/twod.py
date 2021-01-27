@@ -119,7 +119,7 @@ class TwoDRenderer:
 
         self.props_visible = (not spinning or ((self.props_visible + 1) % 3))
 
-    def complete(self, mode):
+    def _complete(self, mode):
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
@@ -183,4 +183,4 @@ class TwoDLanderRenderer(TwoDRenderer):
                                        flagy2-5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
-        return TwoDRenderer.complete(self, mode)
+        return TwoDRenderer._complete(self, mode)

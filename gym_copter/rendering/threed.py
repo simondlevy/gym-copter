@@ -216,7 +216,7 @@ class ThreeDRenderer:
 
         self.copter.update(self.env.pose)
 
-    def complete(self):
+    def _complete(self):
 
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
@@ -272,7 +272,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         self.target_axis.set_data(self.target_x, self.target_y)
         self.target_axis.set_3d_properties(self.target_z)
 
-        return ThreeDRenderer.complete(self)
+        return ThreeDRenderer._complete(self)
 
 
 class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
