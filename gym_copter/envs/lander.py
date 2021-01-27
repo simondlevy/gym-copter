@@ -20,7 +20,7 @@ class Lander(gym.Env, EzPickle):
     # Physics
     INITIAL_RANDOM_FORCE = 30
     INITIAL_ALTITUDE = 10
-    LANDING_RADIUS = 2
+    TARGET_RADIUS = 2
     BOUNDS = 10
     FRAMES_PER_SECOND = 50
 
@@ -136,7 +136,7 @@ class Lander(gym.Env, EzPickle):
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
-                if np.sqrt(x**2+y**2) < self.LANDING_RADIUS:
+                if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
 
                     reward += self.INSIDE_RADIUS_BONUS
 

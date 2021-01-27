@@ -121,6 +121,9 @@ class _Vehicle:
 
 
 class ThreeDRenderer:
+    '''
+    Base class for 3D rendering
+    '''
 
     def __init__(self,
                  env,
@@ -138,7 +141,7 @@ class ThreeDRenderer:
         # We also support different frame rates
         self.fps = fps
 
-        self.radius = env.LANDING_RADIUS
+        self.radius = env.TARGET_RADIUS
 
         # Helps us handle window close
         self.is_open = True
@@ -242,6 +245,9 @@ class ThreeDRenderer:
 
 
 class ThreeDLanderRenderer(ThreeDRenderer):
+    '''
+    Extends 3D rendering base class by displaying a landing target
+    '''
 
     def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
@@ -263,11 +269,11 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         ThreeDRenderer.render(self)
 
-        self._update()
+        self._draw_target()
 
         return ThreeDRenderer.complete(self)
 
-    def _update(self):
+    def _draw_target(self):
 
         self.target_axis.set_data(self.target_x, self.target_y)
         self.target_axis.set_3d_properties(self.target_z)
@@ -276,10 +282,14 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         ThreeDRenderer._animate(self, _)
 
-        self._update()
+        self._draw_target()
 
 
 class ThreeDLanderRendererVisual(ThreeDLanderRenderer):
+    '''
+    Extends 3D landing-target rendering class with a visual display of the
+    target
+    '''
 
     MARGIN = 20
 

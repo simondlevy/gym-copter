@@ -42,7 +42,7 @@ class Lander2D(Lander):
 
         # Create viewer if not done yet
         if self.viewer is None:
-            self.viewer = TwoDLanderRenderer(self.LANDING_RADIUS)
+            self.viewer = TwoDLanderRenderer(self.TARGET_RADIUS)
 
         return self.viewer.render(mode, self.pose, self.spinning)
 

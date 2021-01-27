@@ -23,7 +23,7 @@ class Lander3D(Lander):
     OBSERVATION_SIZE = 10
     ACTION_SIZE = 4
 
-    # Number of target points
+    # Number of target points (arbitrary)
     TARGET_POINTS = 250
 
     # Angle PID for heuristic demo
@@ -38,8 +38,8 @@ class Lander3D(Lander):
 
         # Create points for landing zone
         pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-        self.target = np.array([self.LANDING_RADIUS * np.sin(pts),
-                                self.LANDING_RADIUS * np.cos(pts)])
+        self.target = np.array([self.TARGET_RADIUS * np.sin(pts),
+                                self.TARGET_RADIUS * np.cos(pts)])
 
     def reset(self):
 
@@ -111,7 +111,7 @@ class Lander3DVisual(Lander3D):
         # Therefore m = 1 / (u/f - 1)
         m = 1 / (u / self.f - 1)
 
-        print(m)
+        print(m * self.TARGET_RADIUS)
 
         # XXX Transform the target by perspective projection
         target = self.target.copy()
