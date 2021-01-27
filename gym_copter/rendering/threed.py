@@ -16,6 +16,12 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 from PIL import Image
 
 
+def _create_axes(ax, color):
+    obj = ax.plot([], [], [], '-', c=color)[0]
+    obj.set_data([], [])
+    return obj
+
+
 class _Vehicle:
 
     VEHICLE_SIZE = 0.5
@@ -24,10 +30,10 @@ class _Vehicle:
 
     def __init__(self, ax, showtraj, color='b'):
 
-        self.traj_axes = _Vehicle.create_axes(ax, color)
+        self.traj_axes = _create_axes(ax, color)
 
-        self.arms_axes = [_Vehicle.create_axes(ax, color) for j in range(4)]
-        self.props_axes = [_Vehicle.create_axes(ax, color) for j in range(4)]
+        self.arms_axes = [_create_axes(ax, color) for j in range(4)]
+        self.props_axes = [_create_axes(ax, color) for j in range(4)]
 
         # Support plotting trajectories
         self.showtraj = showtraj
@@ -111,12 +117,6 @@ class _Vehicle:
         # Set axis points
         axis.set_data(x+xx, y+yy)
         axis.set_3d_properties(z+zz+dz)
-
-    @staticmethod
-    def create_axes(ax, color):
-        obj = ax.plot([], [], [], '-', c=color)[0]
-        obj.set_data([], [])
-        return obj
 
 
 class ThreeDRenderer:
@@ -257,7 +257,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.target_axes = _Vehicle.create_axes(self.axes, 'r')
+        self.target_axes = _create_axes(self.axes, 'r')
 
         self.target_x = env.target[0, :]
         self.target_y = env.target[1, :]
