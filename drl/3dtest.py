@@ -10,7 +10,7 @@ from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import make_parser, parse
+from gym_copter.envs.lander3d import make_parser, parse
 
 
 def report(reward, steps, movie):

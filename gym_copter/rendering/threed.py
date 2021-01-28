@@ -7,8 +7,6 @@ MIT License
 '''
 
 import time
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
@@ -313,30 +311,3 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         target = self.env.get_target_image_points()
 
         self.line.set_data(target[0, :], target[1, :])
-
-
-# End of ThreeDRenderer classes -----------------------------------------------
-
-
-def make_parser():
-    '''
-    Exported function to support command-line parsing in scripts.
-    You can add your own arguments, then call parse() to get args.
-    '''
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--view', required=False, default='30,120',
-                        help='View elevation, azimuth')
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
-    parser.add_argument('--visual', action='store_true',
-                        help='Run visual environment')
-    parser.add_argument('--freeze', dest='pose', type=tuple, required=False,
-                        default=None, help='Freeze in pose (x,y,z,phi,theta)')
-    return parser
-
-
-def parse(parser):
-    args = parser.parse_args()
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-    return args, viewangles

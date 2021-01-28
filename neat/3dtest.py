@@ -12,7 +12,7 @@ import pickle
 
 import gym
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import make_parser, parse
+from gym_copter.envs.lander3d import make_parser, parse
 
 from neat_gym import eval_net
 
