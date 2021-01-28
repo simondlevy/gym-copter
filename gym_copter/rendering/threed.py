@@ -288,17 +288,17 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
-        self.vision_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
-                                             frame_on=False,
-                                             aspect='equal',
-                                             xlim=[-env.TARGET_RADIUS,
-                                                   +env.TARGET_RADIUS],
-                                             ylim=[-env.TARGET_RADIUS,
-                                                   +env.TARGET_RADIUS],
-                                             xticks=[],
-                                             xticklabels=[],
-                                             yticks=[],
-                                             yticklabels=[])
+        ax = self.fig.add_axes([0.5, 0, 0.5, 1],
+                               frame_on=False,
+                               aspect='equal',
+                               xlim=[-env.TARGET_RADIUS, +env.TARGET_RADIUS],
+                               ylim=[-env.TARGET_RADIUS, +env.TARGET_RADIUS],
+                               xticks=[],
+                               xticklabels=[],
+                               yticks=[],
+                               yticklabels=[])
+
+        self.line = _create_line3d(ax, 'r')
 
         # Widen the figure
         figsize = self.fig.get_size_inches()
@@ -310,7 +310,7 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
 
         target = self.env.get_target_image_points()
 
-        self.vision_axes.scatter(target[0, :], target[1, :], c='r', s=2.0)
+        self.line.set_data(target[0, :], target[1, :])
 
 
 # End of ThreeDRenderer classes -----------------------------------------------
