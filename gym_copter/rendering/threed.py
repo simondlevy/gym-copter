@@ -331,6 +331,8 @@ def make_parser():
                         help='Random seed for reproducibility')
     parser.add_argument('--visual', action='store_true',
                         help='Run visual environment')
+    parser.add_argument('--freeze', dest='pose', type=tuple, required=False,
+                        default=None, help='Freeze in pose (x,y,z,phi,theta)')
     return parser
 
 
