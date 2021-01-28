@@ -91,9 +91,15 @@ class Lander3DVisual(Lander3D):
 
         Lander3D.__init__(self)
 
-        # Focal length f, from http://paulbourke.net/miscellaneous/lens/
-        self.f = (0.5 * self.SENSOR_SIZE /
-                  np.tan(np.radians(self.FIELD_OF_VIEW/2)))
+        # Get focal length f from equations in
+        # http://paulbourke.net/miscellaneous/lens/
+        #
+        # field of view = 2 atan(0.5 width / focallength)
+        #
+        # Therefore focalllength = width / (2 tan(field of view /2))
+        #
+        self.f = (self.SENSOR_SIZE /
+                  (2 * np.tan(np.radians(self.FIELD_OF_VIEW/2))))
 
     def get_target_image_points(self):
 
@@ -108,6 +114,7 @@ class Lander3DVisual(Lander3D):
         # m = v/u
         #
         # Therefore m = 1 / (u/f - 1)
+        #
         m = 1 / (u / self.f - 1)
 
         return self._get_target_points(scale=m)

@@ -288,11 +288,13 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
+        s2 = env.SENSOR_SIZE / 2
+
         ax = self.fig.add_axes([0.5, 0, 0.5, 1],
                                frame_on=False,
                                aspect='equal',
-                               xlim=[-env.TARGET_RADIUS, +env.TARGET_RADIUS],
-                               ylim=[-env.TARGET_RADIUS, +env.TARGET_RADIUS],
+                               xlim=[-s2, +s2],
+                               ylim=[-s2, +s2],
                                xticks=[],
                                xticklabels=[],
                                yticks=[],
