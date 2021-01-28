@@ -181,7 +181,7 @@ class Lander(gym.Env, EzPickle):
         # Return initial state
         return self.step(np.zeros(self.ACTION_SIZE))[0]
 
-    def demo_heuristic(self, seed=None):
+    def demo_heuristic(self, seed=None, pose=None):
 
         self.seed(seed)
         np.random.seed(seed)

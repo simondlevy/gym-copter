@@ -159,14 +159,20 @@ def main():
         env = Lander3D()
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
+    threadfun = env.demo_heuristic
+    threadargs = args.seed
+
     if args.pose is not None:
         try:
             x, y, z, phi, theta = (int(s) for s in args.pose.split(','))
         except Exception:
             print('POSE must be x,y,z,phi,theta')
             exit(1)
+        print('Pose not yet implemented')
+        exit(0)
 
-    thread = threading.Thread(target=env.demo_heuristic, args=(args.seed, ))
+    thread = threading.Thread(target=threadfun, args=(threadargs, ))
+
     thread.start()
     viewer.start()
 
