@@ -148,8 +148,8 @@ def parse(parser):
 def main():
 
     parser = make_parser()
-    parser.add_argument('--freeze', dest='pose', type=tuple, required=False,
-                        default=None, help='Freeze in pose (x,y,z,phi,theta)')
+    parser.add_argument('--freeze', dest='pose', required=False,
+                        default=None, help='Freeze in pose x,y,z,phi,theta')
     args, viewangles = parse(parser)
 
     if args.visual:
@@ -161,7 +161,7 @@ def main():
 
     if args.pose is not None:
         try:
-            x, y, z, phi, theta = (int(s) for s in args.pose)
+            x, y, z, phi, theta = (int(s) for s in args.pose.split(','))
         except Exception:
             print('POSE must be x,y,z,phi,theta')
             exit(1)

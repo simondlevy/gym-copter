@@ -22,7 +22,7 @@ viz:
 	python3 gym_copter/envs/lander3d.py --visual
 
 pose:
-	python3 gym_copter/envs/lander3d.py --visual --freeze 0
+	python3 gym_copter/envs/lander3d.py --visual --freeze 0,0,5,0,0
 
 commit:
 	git commit -a
