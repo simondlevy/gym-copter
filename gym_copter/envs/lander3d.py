@@ -96,7 +96,7 @@ class Lander3DVisual(Lander3D):
 
     # Arbitrary specs of a hypothetical low-resolution camera with square
     # sensor
-    # RESOLUTION = 128  # pixels
+    RESOLUTION = 128  # pixels
     FIELD_OF_VIEW = 60  # degrees
     SENSOR_SIZE = .008  # meters
 
@@ -139,6 +139,22 @@ class Lander3DVisual(Lander3D):
         target[:, 1] += y
 
         return m * target
+
+    def get_image(self):
+
+        # Transform the target by perspective projection
+        target = self.get_target_image_points()
+
+        # Convert to target indices
+        j = (((target[:, 0] + 1) / 2 * self.RESOLUTION).astype(int))
+        k = (((target[:, 1] + 1) / 2 * self.RESOLUTION).astype(int))
+
+        # Use indices to populate image
+        image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
+        image[j, k] = 1
+
+        return image
+
 
 # End of Lander3D classes -------------------------------------------------
 
