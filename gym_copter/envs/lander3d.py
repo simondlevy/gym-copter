@@ -56,6 +56,37 @@ class Lander3D(Lander):
 
         return d.getStatus() != d.STATUS_AIRBORNE
 
+    def demo_pose(self, pose):
+
+        from time import sleep
+
+        total_reward = 0
+        steps = 0
+        state = self.reset()
+
+        while True:
+
+            action = self.heuristic(state)
+            state, reward, done, _ = self.step(action)
+            total_reward += reward
+
+            self.render('rgb_array')
+
+            sleep(.02)
+
+            if (steps % 20 == 0) or done:
+                print('steps =  %03d    total_reward = %+0.2f' %
+                      (steps, total_reward))
+
+            steps += 1
+
+            if done:
+                break
+
+        self.close()
+        sleep(1)
+        return total_reward
+
     def _get_target_points(self, scale=1.0):
 
         pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
@@ -71,7 +102,9 @@ class Lander3D(Lander):
         return state[:10]
 
     def heuristic(self, state):
-
+        '''
+        PID controller
+        '''
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
         phi_todo = self._angle_pid(y, dy, phi, dphi)
         theta_todo = self._angle_pid(x, dx, -theta, -dtheta)
@@ -84,7 +117,7 @@ class Lander3DVisual(Lander3D):
 
     # Arbitrary specs of a hypothetical low-resolution camera with square
     # sensor
-    RESOLUTION = 128  # pixels
+    # RESOLUTION = 128  # pixels
     FIELD_OF_VIEW = 60  # degrees
     SENSOR_SIZE = .008  # meters
 
@@ -168,8 +201,8 @@ def main():
         except Exception:
             print('POSE must be x,y,z,phi,theta')
             exit(1)
-        print('Pose not yet implemented')
-        exit(0)
+        threadfun = env.demo_pose
+        threadargs = (x, y, z, phi, theta)
 
     thread = threading.Thread(target=threadfun, args=(threadargs, ))
 
