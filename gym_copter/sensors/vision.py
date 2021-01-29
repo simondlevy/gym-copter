@@ -8,7 +8,7 @@ MIT License
 '''
 
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 class VisionSensor(object):
@@ -25,9 +25,10 @@ class VisionSensor(object):
         #
         # Therefore focalllength = width / (2 tan(field of view /2))
         #
-        self.focal_length = sensor_size / (2 * np.tan(np.radians(field_of_view/2)))
+        self.focal_length = (sensor_size /
+                             (2 * np.tan(np.radians(field_of_view/2))))
 
-    def get_image(points):
+    def get_image(self, points):
         '''
         @param Nx2 array of points
         @return self.resolution X self.resolution image
@@ -40,7 +41,7 @@ class VisionSensor(object):
              self.sensor_size).astype(int))
 
         # Use indices to populate image
-        image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
+        image = np.zeros((self.resolution, self.resolution)).astype('uint8')
         image[j, k] = 1
 
         return image
@@ -52,6 +53,7 @@ class VisionSensor(object):
 def main():
 
     return
+
 
 if __name__ == '__main__':
 
