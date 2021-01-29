@@ -39,7 +39,8 @@ class Lander3D(Lander):
         self.max_angle = np.radians(self.MAX_ANGLE)
 
         # Create points for landing zone
-        self.target = self._get_target_points()
+        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
+        self.target = np.array([np.sin(pts), np.cos(pts)])
 
     def reset(self):
 
@@ -70,12 +71,6 @@ class Lander3D(Lander):
             sleep(.01)
 
         self.close()
-
-    def _get_target_points(self, scale=1.0):
-
-        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-
-        return scale * np.array([np.sin(pts), np.cos(pts)])
 
     def _get_motors(self, motors):
 
@@ -121,8 +116,11 @@ class Lander3DVisual(Lander3D):
 
     def get_target_image_points(self):
 
+        # Extract pose
+        x, y, z, phi, theta, _ = self.pose
+
         # Get distance u to image as negated NED altitude
-        u = -np.array(self.dynamics.getState())[4]
+        u = -z
 
         # Get image magnification m from equations in
         # https://www.aplustopper.com/numerical-methods-in-lens/
@@ -135,10 +133,12 @@ class Lander3DVisual(Lander3D):
         #
         m = 1 / (u / self.f - 1)
 
-        return self._get_target_points(scale=m)
+        pts = self.target
 
+        return m * pts
 
 # End of Lander3D classes -------------------------------------------------
+
 
 def make_parser():
     '''
