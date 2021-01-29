@@ -60,32 +60,22 @@ class Lander3D(Lander):
 
         from time import sleep
 
-        total_reward = 0
-        steps = 0
-        state = self.reset()
+        self.reset()
 
         while True:
 
-            action = self.heuristic(state)
-            state, reward, done, _ = self.step(action)
-            total_reward += reward
+            # action = self.heuristic(state)
+            # _, _, done, _ = self.step(action)
 
             self.render('rgb_array')
 
             sleep(.02)
 
-            if (steps % 20 == 0) or done:
-                print('steps =  %03d    total_reward = %+0.2f' %
-                      (steps, total_reward))
-
-            steps += 1
-
-            if done:
-                break
+            # if done:
+            #     break
 
         self.close()
         sleep(1)
-        return total_reward
 
     def _get_target_points(self, scale=1.0):
 
