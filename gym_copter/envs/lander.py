@@ -7,6 +7,7 @@ MIT License
 '''
 
 import numpy as np
+from numpy import radians
 from time import sleep
 import gym
 from gym import spaces
@@ -168,8 +169,8 @@ class Lander(gym.Env, EzPickle):
         state[d.STATE_X] = pose[0]
         state[d.STATE_Y] = pose[1]
         state[d.STATE_Z] = -pose[2]  # NED
-        state[d.STATE_PHI] = pose[3]
-        state[d.STATE_THETA] = pose[4]
+        state[d.STATE_PHI] = radians(pose[3])
+        state[d.STATE_THETA] = radians(pose[4])
         self.dynamics.setState(state)
 
         # Perturb with a random force
