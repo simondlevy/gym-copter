@@ -80,12 +80,12 @@ class Lander3D(Lander):
         self.dynamics.setState(state)
 
         # Perturb with a random force
-        self.dynamics.perturb(np.array([self._randforce(),  # X
-                                        self._randforce(),  # Y
-                                        self._randforce(),  # Z
-                                        0,                  # phi
-                                        0,                  # theta
-                                        0]))                # psi
+        # self.dynamics.perturb(np.array([self._randforce(),  # X
+        #                                 self._randforce(),  # Y
+        #                                 self._randforce(),  # Z
+        #                                 0,                  # phi
+        #                                 0,                  # theta
+        #                                 0]))                # psi
 
         # Return initial state
         self.step(np.zeros(self.ACTION_SIZE))[0]
