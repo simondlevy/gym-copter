@@ -18,6 +18,8 @@ from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import ThreeDVisualLanderRenderer
 
+from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+
 
 class Lander3D(Lander):
 
@@ -59,7 +61,34 @@ class Lander3D(Lander):
 
     def demo_pose(self, args):
 
-        self._reset()
+        # self._reset()
+
+        # Support for rendering
+        self.pose = None
+        self.spinning = False
+        self.prev_shaping = None
+
+        # Create dynamics model
+        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
+
+        # Set up initial conditions
+        state = np.zeros(12)
+        d = self.dynamics
+        state[d.STATE_X] = 0
+        state[d.STATE_Y] = 0
+        state[d.STATE_Z] = -self.INITIAL_ALTITUDE
+        self.dynamics.setState(state)
+
+        # Perturb with a random force
+        self.dynamics.perturb(np.array([self._randforce(),  # X
+                                        self._randforce(),  # Y
+                                        self._randforce(),  # Z
+                                        0,                  # phi
+                                        0,                  # theta
+                                        0]))                # psi
+
+        # Return initial state
+        self.step(np.zeros(self.ACTION_SIZE))[0]
 
         x, y, z, phi, theta, viewer = args
 
