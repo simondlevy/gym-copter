@@ -7,6 +7,7 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+from time import sleep
 import numpy as np
 import threading
 import argparse
@@ -57,8 +58,6 @@ class Lander3D(Lander):
         return d.getStatus() != d.STATUS_AIRBORNE
 
     def demo_pose(self, args):
-
-        from time import sleep
 
         self.reset()
 
