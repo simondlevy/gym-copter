@@ -40,7 +40,7 @@ class Lander3D(Lander):
 
         # Create points for landing zone
         pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-        self.target = np.array([np.sin(pts), np.cos(pts)])
+        self.target = np.array([np.sin(pts), np.cos(pts)]).transpose()
 
     def reset(self):
 
@@ -133,9 +133,9 @@ class Lander3DVisual(Lander3D):
         #
         m = 1 / (u / self.f - 1)
 
-        pts = self.target
+        target = self.target.copy()
 
-        return m * pts
+        return m * target
 
 # End of Lander3D classes -------------------------------------------------
 

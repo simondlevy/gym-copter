@@ -264,9 +264,9 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self.target_line = _create_line3d(self.axes, 'r')
 
-        self.target_x = env.target[0, :]
-        self.target_y = env.target[1, :]
-        self.target_z = np.zeros(self.target_x.shape)
+        self.target_x = env.target[:, 0]
+        self.target_y = env.target[:, 1]
+        self.target_z = np.zeros(len(self.target_x))
 
     def render(self):
 
@@ -314,4 +314,4 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
 
         target = self.env.get_target_image_points()
 
-        self.line.set_data(target[0, :], target[1, :])
+        self.line.set_data(target[:, 0], target[:, 1])
