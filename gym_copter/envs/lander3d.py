@@ -56,13 +56,15 @@ class Lander3D(Lander):
 
         return d.getStatus() != d.STATUS_AIRBORNE
 
-    def demo_pose(self, pose):
+    def demo_pose(self, args):
 
         from time import sleep
 
         self.reset()
 
-        while True:
+        x, y, z, phi, theta, viewer = args
+
+        while viewer.is_open:
 
             # action = self.heuristic(state)
             # _, _, done, _ = self.step(action)
@@ -192,7 +194,7 @@ def main():
             print('POSE must be x,y,z,phi,theta')
             exit(1)
         threadfun = env.demo_pose
-        threadargs = (x, y, z, phi, theta)
+        threadargs = (x, y, z, phi, theta, viewer)
 
     thread = threading.Thread(target=threadfun, args=(threadargs, ))
 
