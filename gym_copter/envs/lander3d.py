@@ -135,6 +135,9 @@ class Lander3DVisual(Lander3D):
 
         target = self.target.copy()
 
+        target[:, 0] += x
+        target[:, 1] += y
+
         return m * target
 
 # End of Lander3D classes -------------------------------------------------
