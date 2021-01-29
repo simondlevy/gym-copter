@@ -133,21 +133,27 @@ class Lander3DVisual(Lander3D):
         #
         m = 1 / (u / self.f - 1)
 
+        # Start with original target
         target = self.target.copy()
 
+        # Add x,y offset
         target[:, 0] += x
         target[:, 1] += y
 
+        # XXX need to skew by phi, theta
+
         return m * target
 
-    def get_image(self):
+    def get_target_image(self):
 
         # Transform the target by perspective projection
         target = self.get_target_image_points()
 
         # Convert to target indices
-        j = (((target[:, 0] + 1) / 2 * self.RESOLUTION).astype(int))
-        k = (((target[:, 1] + 1) / 2 * self.RESOLUTION).astype(int))
+        j = (((target[:, 0] / 2 + 1) / 2 * self.RESOLUTION /
+             self.SENSOR_SIZE).astype(int))
+        k = (((target[:, 1] / 2 + 1) / 2 * self.RESOLUTION /
+             self.SENSOR_SIZE).astype(int))
 
         # Use indices to populate image
         image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')

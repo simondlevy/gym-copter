@@ -293,29 +293,27 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
                                       view_width=0.5)
 
-        '''
         s2 = env.SENSOR_SIZE / 2
-
-        self.image_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
-                                             frame_on=False,
-                                             aspect='equal',
-                                             xlim=[-s2, +s2],
-                                             ylim=[-s2, +s2],
-                                             xticks=[],
-                                             xticklabels=[],
-                                             yticks=[],
-                                             yticklabels=[])
-        '''
 
         self.image_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
                                             frame_on=False,
                                             aspect='equal',
+                                            xlim=[-s2, +s2],
+                                            ylim=[-s2, +s2],
                                             xticks=[],
                                             xticklabels=[],
                                             yticks=[],
                                             yticklabels=[])
 
-        # self.line = _create_line3d(self.image_axes, 'r')
+        self.image_axes2 = self.fig.add_axes([0.5, 0, 0.5, 1],
+                                             frame_on=False,
+                                             aspect='equal',
+                                             xticks=[],
+                                             xticklabels=[],
+                                             yticks=[],
+                                             yticklabels=[])
+
+        self.line = _create_line3d(self.image_axes, 'r')
 
         # Make a red-on-white colormap
         self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
@@ -337,10 +335,10 @@ class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
         # target = self.env.get_target_image_points()
         # self.line.set_data(target[:, 0], target[:, 1])
 
-        image = self.env.get_image()
+        image = self.env.get_target_image()
 
         padded = np.zeros(self.shape)
 
         padded[self.lo:self.hi, self.lo:self.hi] = image
 
-        self.image_axes.imshow(padded, cmap=self.cmap)
+        self.image_axes2.imshow(padded, cmap=self.cmap)
