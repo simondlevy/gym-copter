@@ -64,7 +64,7 @@ class Lander3D(Lander):
 
         x, y, z, phi, theta, viewer = args
 
-        while viewer.is_open:
+        while viewer.is_open():
 
             # action = self.heuristic(state)
             # _, _, done, _ = self.step(action)
@@ -77,7 +77,6 @@ class Lander3D(Lander):
             #     break
 
         self.close()
-        sleep(1)
 
     def _get_target_points(self, scale=1.0):
 

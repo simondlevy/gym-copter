@@ -144,7 +144,7 @@ class ThreeDRenderer:
         self.radius = env.TARGET_RADIUS
 
         # Helps us handle window close
-        self.is_open = True
+        self.open = True
 
         # Set up figure & 3D axis for animation
         self.fig = plt.figure()
@@ -215,6 +215,10 @@ class ThreeDRenderer:
 
         self.copter.update(self.env.pose)
 
+    def is_open(self):
+
+        return self.open
+
     def _complete(self):
 
         self.fig.canvas.draw()
@@ -227,7 +231,7 @@ class ThreeDRenderer:
 
     def _handle_close(self, event):
 
-        self.is_open = False
+        self.open = False
 
     def _animate(self, _):
 
