@@ -66,15 +66,9 @@ class Lander3D(Lander):
 
         while viewer.is_open():
 
-            # action = self.heuristic(state)
-            # _, _, done, _ = self.step(action)
+            self.render()
 
-            self.render('rgb_array')
-
-            sleep(.02)
-
-            # if done:
-            #     break
+            sleep(.01)
 
         self.close()
 
