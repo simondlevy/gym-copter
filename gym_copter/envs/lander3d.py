@@ -59,7 +59,7 @@ class Lander3D(Lander):
 
     def demo_pose(self, args):
 
-        self.reset()
+        self._reset()
 
         x, y, z, phi, theta, viewer = args
 
