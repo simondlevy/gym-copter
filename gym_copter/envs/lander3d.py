@@ -76,7 +76,7 @@ class Lander3D(Lander):
         d = self.dynamics
         state[d.STATE_X] = 0
         state[d.STATE_Y] = 0
-        state[d.STATE_Z] = 5  # self.INITIAL_ALTITUDE
+        state[d.STATE_Z] = -5
         self.dynamics.setState(state)
 
         # Step to initial state
