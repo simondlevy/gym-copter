@@ -38,6 +38,10 @@ class DVS:
                              (2 * np.tan(np.radians(field_of_view/2))))
 
     def get_image(self, pos):
+        '''
+        @param pos X,Y,Z
+        @return image
+        '''
 
         # Use altitude as distance to object
         u = pos[2]
@@ -87,6 +91,7 @@ def main():
 
     dvs = DVS()
 
+    # Arbitrary stating position
     pos = [64, 64, 10]
 
     while True:
@@ -99,7 +104,7 @@ def main():
             image[x][y][1 if p == +1 else 2] = 255
 
         # Scale up and display the image
-        image = cv2.resize(image, (128*SCALEUP, 128*SCALEUP))
+        image = cv2.resize(image, ((128*SCALEUP, )*2))
         cv2.imshow('Events', image)
         if cv2.waitKey(10) == 27:  # ESC
             break
