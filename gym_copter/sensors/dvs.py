@@ -62,24 +62,23 @@ class DVS:
         #
         m = 1 / (u / self.focal_length - 1)
 
-        print(m)
+        # Make an image of an arbitrarily-shaped object
+        image_curr = self._make_image(pos, m)
 
-        self.pos = pos
-
-        image_curr = self._make_image(pos)
-
-        # First time around, return an empty image.  Subsequent times, do a
-        # first difference to get the image.
+        # First time around, no eventsimage.  Subsequent times, do a first
+        # difference to get the events.
         image_diff = (self.image_prev - image_curr
                       if self.image_prev is not None
                       else np.zeros((self.resolution, self.resolution)))
 
+        # Track previous event image for first difference
         self.image_prev = image_curr
 
+        # Collect and return nonzero points
         return [(x, y, image_diff[x, y])
                 for x, y in zip(*np.nonzero(image_diff))]
 
-    def _make_image(self, pos):
+    def _make_image(self, pos, mag):
 
         image = np.zeros((self.resolution, self.resolution)).astype('int8')
 
