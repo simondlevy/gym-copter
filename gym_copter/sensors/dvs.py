@@ -15,13 +15,18 @@ class DVS:
 
     RADIUS = 1
 
-    def __init__(self, resolution=128, field_of_view=60, sensor_size=8):
+    def __init__(self, object_size,
+                 resolution=128,
+                 field_of_view=60,
+                 sensor_size=8):
         '''
+        @param object_size meters
         @param resolution pixels
         @param field_of_view degrees
         @param sensor_size millimeters
         '''
 
+        self.object_size = object_size
         self.resolution = resolution
         self.sensor_size = sensor_size / 1000  # mm to m
 
@@ -89,7 +94,8 @@ def main():
 
     SCALEUP = 4
 
-    dvs = DVS()
+    # Arbitrary object size (2m)
+    dvs = DVS(2)
 
     # Arbitrary stating position
     pos = [64, 64, 10]
