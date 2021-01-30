@@ -15,22 +15,17 @@ class DVS:
 
     RADIUS = 1
 
-    def __init__(self,
-                 resolution=128,
-                 field_of_view=60,
-                 sensor_size=8,
-                 startpos=(64, 64, 10)):
+    def __init__(self, resolution=128, field_of_view=60, sensor_size=8):
         '''
         @param resolution pixels
         @param field_of_view degrees
         @param sensor_size millimeters
-        @param startpos starting position XXX
         '''
 
         self.resolution = resolution
         self.sensor_size = sensor_size / 1000  # mm to m
 
-        self.image_prev = self._make_image(startpos)
+        self.image_prev = None
 
         # Get focal length f from equations in
         # http://paulbourke.net/miscellaneous/lens/
@@ -44,6 +39,7 @@ class DVS:
 
     def get_image(self, pos):
 
+        # Use altitude as distance to object
         u = pos[2]
 
         # Get image magnification m from equations in
@@ -63,7 +59,11 @@ class DVS:
 
         image_curr = self._make_image(pos)
 
-        image_diff = self.image_prev - image_curr
+        # First time around, return an empty image.  Subsequent times, do a
+        # first difference to get the image.
+        image_diff = (self.image_prev - image_curr
+                      if self.image_prev is not None
+                      else np.zeros((self.resolution, self.resolution)))
 
         self.image_prev = image_curr
 
@@ -72,7 +72,7 @@ class DVS:
 
     def _make_image(self, pos):
 
-        image = np.zeros((128, 128)).astype('int8')
+        image = np.zeros((self.resolution, self.resolution)).astype('int8')
 
         cv2.circle(image, (pos[0], pos[1]), 10, 1, thickness=-1)
 
@@ -91,9 +91,10 @@ def main():
 
     while True:
 
-        # Convert events to color image
         image = np.zeros((128, 128, 3)).astype('uint8')
+
         events = dvs.get_image(pos)
+
         for x, y, p in events:
             image[x][y][1 if p == +1 else 2] = 255
 
