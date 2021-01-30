@@ -14,9 +14,9 @@ import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
-
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.threed import ThreeDVisualLanderRenderer
+from gym_copter.sensors.vision import VisionSensor
 
 
 class Lander3D(Lander):
@@ -94,44 +94,18 @@ class Lander3D(Lander):
 
 class Lander3DVisual(Lander3D):
 
-    # Arbitrary specs of a hypothetical low-resolution camera with square
-    # sensor
-    RESOLUTION = 128  # pixels
-    FIELD_OF_VIEW = 60  # degrees
-    SENSOR_SIZE = .008  # meters
+    RESOLUTION = 128
 
     def __init__(self):
 
         Lander3D.__init__(self)
 
-        # Get focal length f from equations in
-        # http://paulbourke.net/miscellaneous/lens/
-        #
-        # field of view = 2 atan(0.5 width / focallength)
-        #
-        # Therefore focalllength = width / (2 tan(field of view /2))
-        #
-        self.f = (self.SENSOR_SIZE /
-                  (2 * np.tan(np.radians(self.FIELD_OF_VIEW/2))))
+        self.vision_sensor = VisionSensor(resolution=self.RESOLUTION)
 
     def get_target_image_points(self):
 
         # Extract pose
         x, y, z, phi, theta, _ = self.pose
-
-        # Get distance u to image as negated NED altitude
-        u = -z
-
-        # Get image magnification m from equations in
-        # https://www.aplustopper.com/numerical-methods-in-lens/
-        #
-        # 1/u + 1/v = 1/f
-        #
-        # m = v/u
-        #
-        # Therefore m = 1 / (u/f - 1)
-        #
-        m = 1 / (u / self.f - 1)
 
         # Start with original target
         target = self.target.copy()
@@ -142,24 +116,15 @@ class Lander3DVisual(Lander3D):
 
         # XXX need to skew by phi, theta
 
-        return m * target
+        return target
 
     def get_target_image(self):
 
-        # Transform the target by perspective projection
-        target = self.get_target_image_points()
+        # Extract pose
+        x, y, z, phi, theta, _ = self.pose
 
-        # Convert to target indices
-        j = (((target[:, 0] / 2 + 1) / 2 * self.RESOLUTION /
-             self.SENSOR_SIZE).astype(int))
-        k = (((target[:, 1] / 2 + 1) / 2 * self.RESOLUTION /
-             self.SENSOR_SIZE).astype(int))
-
-        # Use indices to populate image
-        image = np.zeros((self.RESOLUTION, self.RESOLUTION)).astype('uint8')
-        image[j, k] = 1
-
-        return image
+        # Negate NED altitude to get distance to target
+        return self.vision_sensor.get_image(self.get_target_image_points(), -z)
 
 
 # End of Lander3D classes -------------------------------------------------
