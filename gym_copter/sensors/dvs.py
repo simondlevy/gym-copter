@@ -37,10 +37,10 @@ class DVS:
         self.focal_length = (self.sensor_size /
                              (2 * np.tan(np.radians(field_of_view/2))))
 
-    def get_image(self, pos):
+    def get_events(self, pos):
         '''
         @param pos X,Y,Z
-        @return image
+        @return list of x,y events
         '''
 
         # Use altitude as distance to object
@@ -96,10 +96,11 @@ def main():
 
     while True:
 
+        # Get events
+        events = dvs.get_events(pos)
+
+        # Make an image from the events
         image = np.zeros((128, 128, 3)).astype('uint8')
-
-        events = dvs.get_image(pos)
-
         for x, y, p in events:
             image[x][y][1 if p == +1 else 2] = 255
 
