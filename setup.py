@@ -13,7 +13,7 @@ from setuptools import setup
 setup(
     name='gym_copter',
     version='0.1',
-    install_requires=['gym', 'numpy', 'Box2D', 'opencv'],
+    install_requires=['gym', 'numpy', 'Box2D', 'opencv-python'],
     description='Gym environment for multicopters',
     packages=['gym_copter',
               'gym_copter.envs',

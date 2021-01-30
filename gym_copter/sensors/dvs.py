@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Vision Sensor simulation
+Dynamic Vision Sensor simulation
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -42,7 +42,9 @@ class DVS:
         self.focal_length = (self.sensor_size /
                              (2 * np.tan(np.radians(field_of_view/2))))
 
-    def get_image(self, pos, distance):
+    def get_image(self, pos):
+
+        u = pos[2]
 
         # Get image magnification m from equations in
         # https://www.aplustopper.com/numerical-methods-in-lens/
@@ -53,7 +55,9 @@ class DVS:
         #
         # Therefore m = 1 / (u/f - 1)
         #
-        # m = 1 / (distance / self.focal_length - 1)
+        m = 1 / (u / self.focal_length - 1)
+
+        print(m)
 
         self.pos = pos
 
@@ -89,7 +93,7 @@ def main():
 
         # Convert events to color image
         image = np.zeros((128, 128, 3)).astype('uint8')
-        events = dvs.get_image(pos, 0)
+        events = dvs.get_image(pos)
         for x, y, p in events:
             image[x][y][1 if p == +1 else 2] = 255
 
