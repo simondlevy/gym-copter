@@ -13,44 +13,31 @@ import cv2
 
 class VisionSensor(object):
 
-    def __init__(self, object_size,
-                 resolution=128,
-                 field_of_view=60,
-                 sensor_size=8):
+    def __init__(self, object_size, resolution=128, field_of_view=60):
         '''
         @param object_size meters
         @param resolution pixels
         @param field_of_view degrees
-        @param sensor_size millimeters
         '''
 
         self.object_size = object_size
         self.resolution = resolution
-        self.sensor_size = sensor_size / 1000  # mm to m
 
         self.tana = np.tan(np.radians(field_of_view/2))
-
-        # Get focal length f from equations in
-        # http://paulbourke.net/miscellaneous/lens/
-        #
-        # field of view = 2 atan(0.5 width / focallength)
-        #
-        # Therefore focalllength = width / (2 tan(field of view /2))
-        #
-        self.focal_length = (self.sensor_size /
-                             (2 * np.tan(np.radians(field_of_view/2))))
 
     def get_image(self, pose):
 
         # Use trig formula to compute fraction of object in
         # current field of view.
-        s = self.object_size / (pose[2] * self.tana)
+        s = self.object_size / (2 * pose[2] * self.tana)
 
         image = np.zeros((self.resolution, )*2)
 
         # XXX Ignore effects of all but altitude for now
         x, y = (self.resolution//2, )*2
 
+        # Add a circle with radius proportional to fraction of object
+        # in current field of view.
         cv2.circle(image, (x, y), int(s*self.resolution), 1, thickness=1)
 
         return image
@@ -58,19 +45,14 @@ class VisionSensor(object):
 
 class DVS(VisionSensor):
 
-    def __init__(self, object_size,
-                 resolution=128,
-                 field_of_view=60,
-                 sensor_size=8):
+    def __init__(self, object_size, resolution=128, field_of_view=60):
         '''
         @param object_size meters
         @param resolution pixels
         @param field_of_view degrees
-        @param sensor_size millimeters
         '''
 
-        VisionSensor.__init__(self, object_size, resolution,
-                              field_of_view, sensor_size)
+        VisionSensor.__init__(self, object_size, resolution)
 
         self.image_prev = None
 
@@ -79,20 +61,6 @@ class DVS(VisionSensor):
         @param pos x,y,z,phi,theta
         @return list of x,y sensor events
         '''
-
-        # Use altitude as distance to object
-        # u = pose[2]
-
-        # Get image magnification m from equations in
-        # https://www.aplustopper.com/numerical-methods-in-lens/
-        #
-        # 1/u + 1/v = 1/f
-        #
-        # m = v/u
-        #
-        # Therefore m = 1 / (u/f - 1)
-        #
-        # m = 1 / (u / self.focal_length - 1)
 
         # Make an image of an arbitrarily-shaped object
         image_curr = self._make_image(pose)
