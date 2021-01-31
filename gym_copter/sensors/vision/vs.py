@@ -27,18 +27,21 @@ class VisionSensor(object):
 
     def get_image(self, pose):
 
+        # Extract pose elements
+        _, _, z, _hi, _heta = pose
+
         # Use trig formula to compute fraction of object in
         # current field of view.
-        s = self.object_size / (2 * pose[2] * self.tana)
+        s = self.object_size / (2 * z * self.tana)
 
         image = np.zeros((self.resolution, )*2)
 
         # XXX Ignore effects of all but altitude for now
-        x, y = (self.resolution//2, )*2
+        cx, cy = (self.resolution//2, )*2
 
         # Add a circle with radius proportional to fraction of object
         # in current field of view.
-        cv2.circle(image, (x, y), int(s*self.resolution), 1, thickness=1)
+        cv2.circle(image, (cx, cy), int(s*self.resolution), 1, thickness=1)
 
         return image
 
