@@ -28,6 +28,8 @@ class VisionSensor(object):
         self.resolution = resolution
         self.sensor_size = sensor_size / 1000  # mm to m
 
+        self.tana = np.tan(np.radians(field_of_view/2))
+
         # Get focal length f from equations in
         # http://paulbourke.net/miscellaneous/lens/
         #
@@ -40,8 +42,17 @@ class VisionSensor(object):
 
     def get_image(self, pose):
 
+        # Use trig formula to compute fraction of object in
+        # current field of view.
+        s = self.object_size / (pose[2] * self.tana)
+
         image = np.zeros((self.resolution, )*2)
-        cv2.circle(image, (64, 64), 10, 1, thickness=1)
+
+        # XXX Ignore effects of all but altitude for now
+        x, y = (self.resolution//2, )*2
+
+        cv2.circle(image, (x, y), int(s*self.resolution), 1, thickness=1)
+
         return image
 
 
@@ -121,11 +132,11 @@ def display_image(image, name, scaleup=4):
 
 def dvs():
 
-    # Arbitrary object size (2m)
-    dvs = DVS(2)
+    # Arbitrary object size (1m)
+    dvs = DVS(1)
 
     # Arbitrary stating pose
-    pose = [10, 0, 10]
+    pose = [10, 0, 10, 0, 0]
 
     while True:
 
@@ -146,10 +157,13 @@ def dvs():
 
 def vision():
 
-    vs = VisionSensor(2)
+    vs = VisionSensor(1)
 
     # Arbitrary stating position
-    pose = [10, 0, 10]
+    pose = [0, 0, 10, 0, 0]
+
+    dz = .01
+    sgn = -1
 
     while True:
 
@@ -157,6 +171,14 @@ def vision():
 
         if not display_image(image, 'Image'):
             break
+
+        pose[2] += sgn * dz
+
+        if (pose[2] > 10):
+            sgn = -1
+
+        if (pose[2] < 5):
+            sgn = +1
 
 
 if __name__ == '__main__':
