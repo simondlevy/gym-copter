@@ -130,7 +130,7 @@ def vision():
     # Arbitrary stating position
     pose = [0, 0, 10, 0, 0]
 
-    dz = .01
+    dz = .1
     sgn = -1
 
     while True:
