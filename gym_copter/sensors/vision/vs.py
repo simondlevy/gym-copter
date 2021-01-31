@@ -28,7 +28,7 @@ class VisionSensor(object):
     def get_image(self, pose):
 
         # Extract pose elements
-        _, _, z, _hi, _heta = pose
+        _x, _y, z, _phi, _theta = pose
 
         # Use trig formula to compute fraction of object in
         # current field of view.
