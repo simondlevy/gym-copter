@@ -36,11 +36,9 @@ class VisionSensor(object):
         cy = self.locate(z, y)
         cr = self.scale(z, self.object_size)
 
-        print(cx, self.locate(z, x))
-
-        # Add a circle with radius proportional to fraction of object
-        # in current field of view.
-        cv2.circle(image, (cx, cy), cr, 1, thickness=1)
+        # Add a circle with radius and line thickness proportional to fraction
+        # of object in current field of view.
+        cv2.circle(image, (cx, cy), cr, 1, thickness=self.scale(z, 0.1))
 
         return image
 
