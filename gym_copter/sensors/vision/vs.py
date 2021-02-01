@@ -28,19 +28,25 @@ class VisionSensor(object):
     def get_image(self, pose):
 
         # Extract pose elements
-        x, _y, z, _phi, _theta = pose
+        x, y, z, _phi, _theta = pose
 
         image = np.zeros((self.resolution, )*2)
 
-        # XXX Ignore effects of all but altitude for now
-        cx, cy = (self.resolution//2, )*2
+        cx = self.locate(z, x)
+        cy = self.locate(z, y)
         cr = self.scale(z, self.object_size)
+
+        print(cx, self.locate(z, x))
 
         # Add a circle with radius proportional to fraction of object
         # in current field of view.
         cv2.circle(image, (cx, cy), cr, 1, thickness=1)
 
         return image
+
+    def locate(self, z, coord):
+
+        return self.scale(z, coord) + self.resolution//2
 
     def scale(self, z, val):
 
@@ -64,7 +70,7 @@ def main():
     vs = VisionSensor(1)
 
     # Arbitrary stating position
-    pose = [1, 0, 10, 0, 0]
+    pose = [0, 0, 10, 0, 0]
 
     dz = 0.1
     sgn = -1
