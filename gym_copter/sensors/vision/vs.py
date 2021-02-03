@@ -31,13 +31,25 @@ class VisionSensor(object):
 
         image = np.zeros((self.resolution, )*2)
 
+        # Compute image center in pixels
         cx = self.locate(z, x)
         cy = self.locate(z, y)
-        cr = self.scale(z, self.object_size)
 
-        # Add a filled circle with radius and proportional to fraction of
-        # object in current field of view.
-        cv2.circle(image, (cx, cy), cr, 1, thickness=-1)
+        # Compute scaling factor
+        s = self.scale(z, self.object_size)
+
+        # Add a filled polygon with size proportional to fraction of object in
+        # current field of view.
+
+
+        penta = np.array([[40, 160],
+                           [120, 100],
+                           [200, 160],
+                           [160, 240],
+                           [80, 240]],
+                           np.int32)
+
+        cv2.polylines(image, [penta], True, (255, 255, 255))
 
         return image
 
