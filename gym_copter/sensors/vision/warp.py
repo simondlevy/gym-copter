@@ -128,7 +128,7 @@ def main():
 
     args = parser.parse_args()
 
-    image = cv2.imread(args.file)
+    image = cv2.imread(args.file)[:,:,0]
 
     while(True):
 
