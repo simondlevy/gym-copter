@@ -35,9 +35,6 @@ class VisionSensor(object):
         cx = self.locate(z, x)
         cy = self.locate(z, y)
 
-        # Compute scaling factor
-        s = self.scale(z, self.object_size)
-
         # A pentagon centered around the origin with unit width and height
         penta = np.array([[-.5, -0.0714],
                           [0, -0.5],
@@ -45,10 +42,10 @@ class VisionSensor(object):
                           [+.25, +.5],
                           [-.25, +.5]])
 
-        # Scale up the pentagon
-        penta *= 20
-        penta[:,0] += cx
-        penta[:,1] += cy
+        # Scale up the pentagon and center it in the image
+        penta *= self.scale(z, self.object_size)
+        penta[:, 0] += cx
+        penta[:, 1] += cy
 
         # Draw the pentagon as a filled polygon
         cv2.fillPoly(image, [penta.astype('int32')], 255)
