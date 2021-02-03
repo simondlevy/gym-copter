@@ -119,7 +119,7 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--file',  default='triangle.png', help='Input file')
+    parser.add_argument('--file',  default='chevron.png', help='Input file')
     parser.add_argument('--theta',  type=float, default=0, help='Angle theta')
     parser.add_argument('--phi',  type=float, default=0, help='Angle phi')
     parser.add_argument('--gamma',  type=float, default=0, help='Angle gamma')
