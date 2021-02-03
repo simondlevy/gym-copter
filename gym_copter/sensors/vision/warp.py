@@ -27,7 +27,7 @@ def hypot(shape):
     return np.sqrt(shape[0]**2 + shape[1]**2)
 
 
-def warpMatrix(sz, psi, theta, phi, scale, fovy):
+def warpMatrix(sz, psi, theta, phi, fovy):
 
     st = np.sin(np.radians(psi))
     ct = np.cos(np.radians(psi))
@@ -38,16 +38,16 @@ def warpMatrix(sz, psi, theta, phi, scale, fovy):
 
     halfFovy = fovy*0.5
     d = hypot(sz)
-    sideLength = scale*d/np.cos(np.radians(halfFovy))
+    sideLength = d/np.cos(np.radians(halfFovy))
     h = d/(2.0*np.sin(np.radians(halfFovy)))
     n = h-(d/2.0)
     f = h+(d/2.0)
 
     F = np.zeros((4, 4))  # 4x4 transformation matrix F
 
-    Rpsi = np.eye(4)    # 4x4 rotation matrix around Z-axis by psi degrees
-    Rtheta = np.eye(4)      # 4x4 rotation matrix around X-axis by theta degrees
-    Rphi = np.eye(4)    # 4x4 rotation matrix around Y-axis by phi degrees
+    Rpsi = np.eye(4)      # 4x4 rotation matrix around Z-axis by psi degrees
+    Rtheta = np.eye(4)    # 4x4 rotation matrix around X-axis by theta degrees
+    Rphi = np.eye(4)      # 4x4 rotation matrix around Y-axis by phi degrees
     T = np.eye(4)         # 4x4 translation matrix along Z-axis by -h units
     P = np.zeros((4, 4))  # Allocate 4x4 projection matrix
 
@@ -101,14 +101,14 @@ def warpMatrix(sz, psi, theta, phi, scale, fovy):
     return cv2.getPerspectiveTransform(ptsInPt2f, ptsOutPt2f)
 
 
-def warpImage(src, phi, theta, psi, scale, fovy):
+def warpImage(src, phi, theta, psi, fovy):
 
     halfFovy = fovy*0.5
     d = hypot(src.shape)
-    sideLength = int(scale*d/np.cos(np.radians(halfFovy)))
+    sideLength = int(d/np.cos(np.radians(halfFovy)))
 
     # Compute warp matrix
-    M = warpMatrix(src.shape, psi, theta, phi, scale, fovy)
+    M = warpMatrix(src.shape, psi, theta, phi, fovy)
 
     # Do actual image war0
     return cv2.warpPerspective(src, M, (sideLength, sideLength))
@@ -120,15 +120,17 @@ def main():
             formatter_class=ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--file',  default='chevron.png', help='Input file')
+    parser.add_argument('--x',  type=float, default=0, help='X coordinate')
+    parser.add_argument('--y',  type=float, default=0, help='Y coordinate')
+    parser.add_argument('--z',  type=float, default=5, help='Z coordinate')
     parser.add_argument('--phi',  type=float, default=0, help='Roll angle')
     parser.add_argument('--theta',  type=float, default=0, help='Pitch angle')
     parser.add_argument('--psi',  type=float, default=0, help='Yaw angle')
-    parser.add_argument('--scale',  type=float, default=1, help='Scale factor')
     parser.add_argument('--fov',  type=float, default=30, help='Field of view')
 
     args = parser.parse_args()
 
-    image = cv2.imread(args.file)[:,:,0]
+    image = cv2.imread(args.file)[:, :, 0]
 
     while(True):
 
@@ -136,7 +138,6 @@ def main():
                            args.phi,
                            args.theta,
                            args.psi,
-                           args.scale,
                            args.fov)
 
         cv2.imshow(args.file, warped)
