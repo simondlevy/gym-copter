@@ -38,18 +38,20 @@ class VisionSensor(object):
         # Compute scaling factor
         s = self.scale(z, self.object_size)
 
-        # Add a filled polygon with size proportional to fraction of object in
-        # current field of view.
+        # A pentagon centered around the origin with unit width and height
+        penta = np.array([[-.5, -0.0714],
+                          [0, -0.5],
+                          [+.5, -0.0714],
+                          [+.25, +.5],
+                          [-.25, +.5]])
 
+        # Scale up the pentagon
+        penta *= 20
+        penta[:,0] += cx
+        penta[:,1] += cy
 
-        penta = np.array([[40, 160],
-                           [120, 100],
-                           [200, 160],
-                           [160, 240],
-                           [80, 240]],
-                           np.int32)
-
-        cv2.polylines(image, [penta], True, (255, 255, 255))
+        # Draw the pentagon as a filled polygon
+        cv2.fillPoly(image, [penta.astype('int32')], 255)
 
         return image
 
