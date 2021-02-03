@@ -27,10 +27,7 @@ class VisionSensor(object):
 
         self.tana = np.tan(np.radians(field_of_view/2))
 
-    def get_image(self, pose):
-
-        # Extract pose elements
-        x, y, z, _phi, _theta, _psi = pose
+    def get_image(self, x, y, z, phi, theta, psi):
 
         image = np.zeros((self.resolution, )*2)
 
@@ -38,9 +35,9 @@ class VisionSensor(object):
         cy = self.locate(z, y)
         cr = self.scale(z, self.object_size)
 
-        # Add a circle with radius and line thickness proportional to fraction
-        # of object in current field of view.
-        cv2.circle(image, (cx, cy), cr, 1, thickness=self.scale(z, 0.1))
+        # Add a filled circle with radius and proportional to fraction of
+        # object in current field of view.
+        cv2.circle(image, (cx, cy), cr, 1, thickness=-1)
 
         return image
 
@@ -70,7 +67,6 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--file',  default='chevron.png', help='Input file')
     parser.add_argument('--x',  type=float, default=0, help='X coordinate (m)')
     parser.add_argument('--y',  type=float, default=0, help='Y coordinate (m)')
     parser.add_argument('--z',  type=float, default=5, help='Z coordinate (m)')
@@ -87,14 +83,16 @@ def main():
 
     args = parser.parse_args()
 
-    vs = VisionSensor()
+    vs = VisionSensor(args.size)
 
-    image = vs.get_image((0, 0, 10, 0, 0, 0))
+    image = vs.get_image(args.x, args.y, args.z,
+                         args.phi, args.theta, args.psi)
 
     while True:
 
         if not VisionSensor.display_image(image, 'Image'):
             break
+
 
 if __name__ == '__main__':
 
