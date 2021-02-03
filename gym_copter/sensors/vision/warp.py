@@ -119,33 +119,31 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--theta',  type=float, default=5, help='Angle theta')
-    parser.add_argument('--phi',  type=float, default=50, help='Angle phi')
+    parser.add_argument('--file',  default='triangle.png', help='Input file')
+    parser.add_argument('--theta',  type=float, default=0, help='Angle theta')
+    parser.add_argument('--phi',  type=float, default=0, help='Angle phi')
     parser.add_argument('--gamma',  type=float, default=0, help='Angle gamma')
     parser.add_argument('--scale',  type=float, default=1, help='Scale factor')
     parser.add_argument('--fov',  type=float, default=30, help='Field of view')
 
     args = parser.parse_args()
 
-    cap = cv2.VideoCapture(0)
+    image = cv2.imread(args.file)
 
     while(True):
 
-        _, frame = cap.read()
+        warped = warpImage(image,
+                           args.theta,
+                           args.phi,
+                           args.gamma,
+                           args.scale,
+                           args.fov)
 
-        frame = warpImage(frame,
-                          args.theta,
-                          args.phi,
-                          args.gamma,
-                          args.scale,
-                          args.fov)
-
-        cv2.imshow('frame', frame)
+        cv2.imshow(args.file, warped)
 
         if cv2.waitKey(1) == 27:  # ESC
             break
 
-    cap.release()
     cv2.destroyAllWindows()
 
 
