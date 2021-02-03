@@ -36,19 +36,19 @@ class VisionSensor(object):
         cy = self.locate(z, y)
 
         # A pentagon centered around the origin with unit width and height
-        penta = np.array([[-.5, -0.0714],
+        shape = np.array([[-.5, -0.0714],
                           [0, -0.5],
                           [+.5, -0.0714],
                           [+.25, +.5],
                           [-.25, +.5]])
 
         # Scale up the pentagon and center it in the image
-        penta *= self.scale(z, self.object_size)
-        penta[:, 0] += cx
-        penta[:, 1] += cy
+        shape *= self.scale(z, self.object_size)
+        shape[:, 0] += cx
+        shape[:, 1] += cy
 
-        # Draw the pentagon as a filled polygon
-        cv2.fillPoly(image, [penta.astype('int32')], 255)
+        # Draw the shapegon as a filled polygon
+        cv2.fillPoly(image, [shape.astype('int32')], 255)
 
         return image
 
