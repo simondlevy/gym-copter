@@ -136,6 +136,7 @@ def main():
 
     args = parser.parse_args()
 
+    # Use only first image channel
     image = cv2.imread(args.file)[:, :, 0]
 
     while(True):

@@ -7,13 +7,15 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 import cv2
 
 
 class VisionSensor(object):
 
-    def __init__(self, object_size, resolution=128, field_of_view=60):
+    def __init__(self, object_size=1, resolution=128, field_of_view=60):
         '''
         @param object_size meters
         @param resolution pixels
@@ -28,7 +30,7 @@ class VisionSensor(object):
     def get_image(self, pose):
 
         # Extract pose elements
-        x, y, z, _phi, _theta = pose
+        x, y, z, _phi, _theta, _psi = pose
 
         image = np.zeros((self.resolution, )*2)
 
@@ -65,29 +67,34 @@ class VisionSensor(object):
 
 def main():
 
-    vs = VisionSensor(1)
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
 
-    # Arbitrary stating position
-    pose = [0, 0, 10, 0, 0]
+    parser.add_argument('--file',  default='chevron.png', help='Input file')
+    parser.add_argument('--x',  type=float, default=0, help='X coordinate (m)')
+    parser.add_argument('--y',  type=float, default=0, help='Y coordinate (m)')
+    parser.add_argument('--z',  type=float, default=5, help='Z coordinate (m)')
+    parser.add_argument('--phi',  type=float, default=0,
+                        help='Roll angle (deg)')
+    parser.add_argument('--theta',  type=float, default=0,
+                        help='Pitch angle (deg)')
+    parser.add_argument('--psi',  type=float, default=0,
+                        help='Yaw angle (deg)')
+    parser.add_argument('--fov',  type=float, default=30,
+                        help='Field of view (deg)')
+    parser.add_argument('--size',  type=float, default=1,
+                        help='Object size (m)')
 
-    dz = 0.1
-    sgn = -1
+    args = parser.parse_args()
+
+    vs = VisionSensor()
+
+    image = vs.get_image((0, 0, 10, 0, 0, 0))
 
     while True:
 
-        image = vs.get_image(pose)
-
         if not VisionSensor.display_image(image, 'Image'):
             break
-
-        pose[2] += sgn * dz
-
-        if (pose[2] > 10):
-            sgn = -1
-
-        if (pose[2] < 5):
-            sgn = +1
-
 
 if __name__ == '__main__':
 
