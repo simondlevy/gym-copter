@@ -27,14 +27,14 @@ def hypot(shape):
     return np.sqrt(shape[0]**2 + shape[1]**2)
 
 
-def warpMatrix(sz, theta, phi, gamma, scale, fovy):
+def warpMatrix(sz, psi, theta, phi, scale, fovy):
 
-    st = np.sin(np.radians(theta))
-    ct = np.cos(np.radians(theta))
-    sp = np.sin(np.radians(phi))
-    cp = np.cos(np.radians(phi))
-    sg = np.sin(np.radians(gamma))
-    cg = np.cos(np.radians(gamma))
+    st = np.sin(np.radians(psi))
+    ct = np.cos(np.radians(psi))
+    sp = np.sin(np.radians(theta))
+    cp = np.cos(np.radians(theta))
+    sg = np.sin(np.radians(phi))
+    cg = np.cos(np.radians(phi))
 
     halfFovy = fovy*0.5
     d = hypot(sz)
@@ -45,26 +45,26 @@ def warpMatrix(sz, theta, phi, gamma, scale, fovy):
 
     F = np.zeros((4, 4))  # 4x4 transformation matrix F
 
-    Rtheta = np.eye(4)    # 4x4 rotation matrix around Z-axis by theta degrees
-    Rphi = np.eye(4)      # 4x4 rotation matrix around X-axis by phi degrees
-    Rgamma = np.eye(4)    # 4x4 rotation matrix around Y-axis by gamma degrees
+    Rpsi = np.eye(4)    # 4x4 rotation matrix around Z-axis by psi degrees
+    Rtheta = np.eye(4)      # 4x4 rotation matrix around X-axis by theta degrees
+    Rphi = np.eye(4)    # 4x4 rotation matrix around Y-axis by phi degrees
     T = np.eye(4)         # 4x4 translation matrix along Z-axis by -h units
     P = np.zeros((4, 4))  # Allocate 4x4 projection matrix
 
+    # Rpsi
+    Rpsi[0, 0] = Rpsi[1, 1] = ct
+    Rpsi[0, 1] = -st
+    Rpsi[1, 0] = st
+
     # Rtheta
-    Rtheta[0, 0] = Rtheta[1, 1] = ct
-    Rtheta[0, 1] = -st
-    Rtheta[1, 0] = st
+    Rtheta[1, 1] = Rtheta[2, 2] = cp
+    Rtheta[1, 2] = -sp
+    Rtheta[2, 1] = sp
 
     # Rphi
-    Rphi[1, 1] = Rphi[2, 2] = cp
-    Rphi[1, 2] = -sp
-    Rphi[2, 1] = sp
-
-    # Rgamma
-    Rgamma[0, 0] = Rgamma[2, 2] = cg
-    Rgamma[0, 2] = -sg
-    Rgamma[2, 0] = sg
+    Rphi[0, 0] = Rphi[2, 2] = cg
+    Rphi[0, 2] = -sg
+    Rphi[2, 0] = sg
 
     # T
     T[2, 3] = -h
@@ -76,7 +76,7 @@ def warpMatrix(sz, theta, phi, gamma, scale, fovy):
     P[3, 2] = -1.0
 
     # Compose transformations
-    F = np.dot(np.dot(np.dot(np.dot(P, T), Rphi), Rtheta), Rgamma)
+    F = np.dot(np.dot(np.dot(np.dot(P, T), Rtheta), Rpsi), Rphi)
 
     # Transform 4x4 points
     halfW = sz[1]/2
@@ -101,14 +101,14 @@ def warpMatrix(sz, theta, phi, gamma, scale, fovy):
     return cv2.getPerspectiveTransform(ptsInPt2f, ptsOutPt2f)
 
 
-def warpImage(src, theta, phi, gamma, scale, fovy):
+def warpImage(src, phi, theta, psi, scale, fovy):
 
     halfFovy = fovy*0.5
     d = hypot(src.shape)
     sideLength = int(scale*d/np.cos(np.radians(halfFovy)))
 
     # Compute warp matrix
-    M = warpMatrix(src.shape, theta, phi, gamma, scale, fovy)
+    M = warpMatrix(src.shape, psi, theta, phi, scale, fovy)
 
     # Do actual image war0
     return cv2.warpPerspective(src, M, (sideLength, sideLength))
@@ -120,9 +120,9 @@ def main():
             formatter_class=ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--file',  default='chevron.png', help='Input file')
-    parser.add_argument('--theta',  type=float, default=0, help='Angle theta')
-    parser.add_argument('--phi',  type=float, default=0, help='Angle phi')
-    parser.add_argument('--gamma',  type=float, default=0, help='Angle gamma')
+    parser.add_argument('--phi',  type=float, default=0, help='Roll angle')
+    parser.add_argument('--theta',  type=float, default=0, help='Pitch angle')
+    parser.add_argument('--psi',  type=float, default=0, help='Yaw angle')
     parser.add_argument('--scale',  type=float, default=1, help='Scale factor')
     parser.add_argument('--fov',  type=float, default=30, help='Field of view')
 
@@ -133,9 +133,9 @@ def main():
     while(True):
 
         warped = warpImage(image,
-                           args.theta,
                            args.phi,
-                           args.gamma,
+                           args.theta,
+                           args.psi,
                            args.scale,
                            args.fov)
 
