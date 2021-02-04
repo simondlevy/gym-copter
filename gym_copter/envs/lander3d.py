@@ -15,8 +15,6 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import ThreeDVisualLanderRenderer
-from gym_copter.sensors.vision import VisionSensor
 
 
 class Lander3D(Lander):
@@ -92,41 +90,6 @@ class Lander3D(Lander):
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
-class Lander3DVisual(Lander3D):
-
-    RESOLUTION = 128
-
-    def __init__(self):
-
-        Lander3D.__init__(self)
-
-        self.vision_sensor = VisionSensor(resolution=self.RESOLUTION)
-
-    def get_target_image_points(self):
-
-        # Extract pose
-        x, y, z, phi, theta, _ = self.pose
-
-        # Start with original target
-        target = self.target.copy()
-
-        # Add x,y offset
-        target[:, 0] += x
-        target[:, 1] += y
-
-        # XXX need to skew by phi, theta
-
-        return target
-
-    def get_target_image(self):
-
-        # Extract pose
-        x, y, z, phi, theta, _ = self.pose
-
-        # Negate NED altitude to get distance to target
-        return self.vision_sensor.get_image(self.get_target_image_points(), -z)
-
-
 # End of Lander3D classes -------------------------------------------------
 
 
@@ -141,8 +104,6 @@ def make_parser():
                         help='View elevation, azimuth')
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
-    parser.add_argument('--visual', action='store_true',
-                        help='Run visual environment')
     return parser
 
 
@@ -157,13 +118,13 @@ def main():
     parser = make_parser()
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
+    parser.add_argument('--nodisplay', dest='nodisplay', action='store_true',
+                        help='Suppress display')
     args, viewangles = parse(parser)
 
-    if args.visual:
-        env = Lander3DVisual()
-        viewer = ThreeDVisualLanderRenderer(env, viewangles=viewangles)
-    else:
-        env = Lander3D()
+    env = Lander3D()
+
+    if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
     threadfun = env.demo_heuristic
@@ -181,7 +142,9 @@ def main():
     thread = threading.Thread(target=threadfun, args=(threadargs, ))
 
     thread.start()
-    viewer.start()
+
+    if not args.nodisplay:
+        viewer.start()
 
 
 if __name__ == '__main__':

@@ -25,12 +25,6 @@ pose:
 	python3 gym_copter/envs/lander3d.py --visual --freeze="0, 0, 5, 0, 0"
 	# python3 gym_copter/envs/lander3d.py --visual --freeze="-3, -3, 5, 0, 0"
 
-vs:
-	python3 gym_copter/sensors/vision/vs.py
-
-dvs:
-	python3 gym_copter/sensors/vision/dvs.py
-
 commit:
 	git commit -a
 
@@ -40,7 +34,5 @@ flake:
 	flake8 gym_copter/dynamics/*.py
 	flake8 gym_copter/rendering/*.py
 	flake8 gym_copter/envs/*.py
-	flake8 gym_copter/sensors/*.py
-	flake8 gym_copter/sensors/vision/*.py
 	flake8 drl/3dtest.py
 	flake8 neat/3dtest.py
