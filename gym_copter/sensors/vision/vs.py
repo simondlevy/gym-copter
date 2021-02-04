@@ -15,7 +15,7 @@ import cv2
 
 class VisionSensor(object):
 
-    def __init__(self, object_size=1, resolution=128, field_of_view=60):
+    def __init__(self, object_size, resolution, field_of_view):
         '''
         @param object_size meters
         @param resolution pixels
@@ -78,6 +78,12 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
+    parser.add_argument('--res',  type=int, default=128,
+                        help='Pixel resolution')
+    parser.add_argument('--fov',  type=float, default=30,
+                        help='Field of view (deg)')
+    parser.add_argument('--size',  type=float, default=1,
+                        help='Object size (m)')
     parser.add_argument('--x',  type=float, default=0, help='X coordinate (m)')
     parser.add_argument('--y',  type=float, default=0, help='Y coordinate (m)')
     parser.add_argument('--z',  type=float, default=5, help='Z coordinate (m)')
@@ -87,14 +93,10 @@ def main():
                         help='Pitch angle (deg)')
     parser.add_argument('--psi',  type=float, default=0,
                         help='Yaw angle (deg)')
-    parser.add_argument('--fov',  type=float, default=30,
-                        help='Field of view (deg)')
-    parser.add_argument('--size',  type=float, default=1,
-                        help='Object size (m)')
 
     args = parser.parse_args()
 
-    vs = VisionSensor(args.size)
+    vs = VisionSensor(args.size, args.res, args.fov)
 
     image = vs.get_image(args.x, args.y, args.z,
                          args.phi, args.theta, args.psi)
