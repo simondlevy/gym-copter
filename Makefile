@@ -34,5 +34,6 @@ flake:
 	flake8 gym_copter/dynamics/*.py
 	flake8 gym_copter/rendering/*.py
 	flake8 gym_copter/envs/*.py
+	flake8 gym_copter/sensors/*.py
 	flake8 drl/3dtest.py
 	flake8 neat/3dtest.py
