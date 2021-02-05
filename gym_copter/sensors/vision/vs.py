@@ -55,7 +55,7 @@ class VisionSensor(object):
         return warped[margin:-margin, margin:-margin]
 
     @staticmethod
-    def display_image(image, name, display_size=400):
+    def display_image(image, name='Vision', display_size=400):
         '''
         Scale up and display the image
         '''
@@ -217,7 +217,7 @@ def main():
 
     while True:
 
-        if not VisionSensor.display_image(image, 'Image'):
+        if not VisionSensor.display_image(image):
             break
 
 
