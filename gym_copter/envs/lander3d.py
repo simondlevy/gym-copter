@@ -71,14 +71,6 @@ class Lander3D(Lander):
 
         self.close()
 
-    def _get_motors(self, motors):
-
-        return motors
-
-    def _get_state(self, state):
-
-        return state[:10]
-
     def heuristic(self, state):
         '''
         PID controller
@@ -89,6 +81,14 @@ class Lander3D(Lander):
         hover_todo = self._hover_pid(z, dz)
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+
+    def _get_motors(self, motors):
+
+        return motors
+
+    def _get_state(self, state):
+
+        return state[:10]
 
 
 class Lander3DVisual(Lander3D):
