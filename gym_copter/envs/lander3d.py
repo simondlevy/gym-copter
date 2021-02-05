@@ -15,7 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.sensors.vision.vs import VisionSensor
+# from gym_copter.sensors.vision.vs import VisionSensor
 
 
 class Lander3D(Lander):
@@ -91,20 +91,19 @@ class Lander3D(Lander):
         return state[:10]
 
 
-class Lander3DVisual(Lander3D):
+class LanderVisual(Lander3D):
 
     def __init__(self):
 
         Lander3D.__init__(self)
 
-        self.vs = VisionSensor()
-
     def step(self, action):
 
-        retval = Lander.step(self, action)
+        result = Lander3D.step(self, action)
 
-        return retval
+        print('step')
 
+        return result
 
 # End of Lander3D classes -------------------------------------------------
 
@@ -140,7 +139,7 @@ def main():
                         help='Suppress display')
     args, viewangles = parse(parser)
 
-    env = Lander3D()
+    env = LanderVisual() if args.visual else Lander3D()
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
