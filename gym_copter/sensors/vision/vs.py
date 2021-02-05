@@ -4,6 +4,8 @@ Vision Sensor simulation
 
 Copyright (C) 2021 Simon D. Levy
 
+Perspective warping adapted from https:# stackoverflow.com/questions/17087446/
+
 MIT License
 '''
 
@@ -52,12 +54,17 @@ class VisionSensor(object):
         # Compute warp matrix
         M = self.getWarpMatrix(image.shape, psi, theta, phi)
 
-        halfFovy = self.fov/2
+        # Compute new image size for warping
+        halfFov = self.fov/2
         d = VisionSensor.hypot(image.shape)
-        sideLength = int(d/np.cos(np.radians(halfFovy)))
+        sideLength = int(d/np.cos(np.radians(halfFov)))
 
         # Warp image
-        return cv2.warpPerspective(image, M, (sideLength, sideLength))
+        warped = cv2.warpPerspective(image, M, (sideLength, sideLength))
+
+        # Remove margin introduced by warping
+        margin = (warped.shape[0] - image.shape[0]) // 2
+        return warped[margin:-margin, margin:-margin]
 
     def locate(self, z, coord):
 
@@ -76,10 +83,10 @@ class VisionSensor(object):
         sg = np.sin(np.radians(phi))
         cg = np.cos(np.radians(phi))
 
-        halfFovy = self.fov/2
+        halfFov = self.fov/2
         d = VisionSensor.hypot(size)
-        sideLength = d/np.cos(np.radians(halfFovy))
-        h = d/(2.0*np.sin(np.radians(halfFovy)))
+        sideLength = d/np.cos(np.radians(halfFov))
+        h = d/(2.0*np.sin(np.radians(halfFov)))
         n = h-(d/2.0)
         f = h+(d/2.0)
 
@@ -120,7 +127,7 @@ class VisionSensor(object):
         T[2, 3] = -h
 
         # P
-        P[0, 0] = P[1, 1] = 1.0/np.tan(np.radians(halfFovy))
+        P[0, 0] = P[1, 1] = 1.0/np.tan(np.radians(halfFov))
         P[2, 2] = -(f+n)/(f-n)
         P[2, 3] = -(2.0*f*n)/(f-n)
         P[3, 2] = -1.0
@@ -156,11 +163,11 @@ class VisionSensor(object):
         return np.sqrt(shape[0]**2 + shape[1]**2)
 
     @staticmethod
-    def display_image(image, name, scaleup=4):
+    def display_image(image, name, display_size=400):
         '''
         Scale up and display the image
         '''
-        image = cv2.resize(image, ((128*scaleup, )*2))
+        image = cv2.resize(image, ((display_size, )*2))
         cv2.imshow(name, image)
         return cv2.waitKey(10) != 27  # ESC
 
