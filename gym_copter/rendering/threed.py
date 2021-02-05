@@ -11,7 +11,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
-from matplotlib.colors import ListedColormap
 from PIL import Image
 
 
@@ -278,52 +277,3 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         self.target_line.set_3d_properties(self.target_z)
 
         return ThreeDRenderer._complete(self)
-
-
-class ThreeDVisualLanderRenderer(ThreeDLanderRenderer):
-    '''
-    Extends 3D landing-target rendering class with a visual display of the
-    target
-    '''
-
-    MARGIN = 20
-
-    def __init__(self, env, resolution=128,
-                 viewangles=None, outfile=None, view_width=1):
-
-        ThreeDLanderRenderer.__init__(self, env, viewangles, outfile,
-                                      view_width=0.5)
-
-        self.image_axes = self.fig.add_axes([0.5, 0, 0.5, 1],
-                                            frame_on=False,
-                                            aspect='equal',
-                                            xticks=[],
-                                            xticklabels=[],
-                                            yticks=[],
-                                            yticklabels=[])
-
-        self.line = _create_line3d(self.image_axes, 'r')
-
-        # Make a red-on-white colormap
-        self.cmap = ListedColormap([[1, 1, 1, 1],  [1, 0, 0, 1]])
-
-        # Store image sizes
-        self.shape = (resolution + 2*self.MARGIN,)*2
-        self.lo = self.MARGIN
-        self.hi = self.MARGIN + resolution
-
-        # Widen the figure
-        figsize = self.fig.get_size_inches()
-        self.fig.set_size_inches(1.5*figsize[0], figsize[1])
-
-    def render(self):
-
-        ThreeDLanderRenderer.render(self)
-
-        image = self.env.get_target_image()
-
-        padded = np.zeros(self.shape)
-
-        padded[self.lo:self.hi, self.lo:self.hi] = image
-
-        self.image_axes.imshow(padded, cmap=self.cmap)

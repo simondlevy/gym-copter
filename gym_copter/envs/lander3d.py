@@ -15,8 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.rendering.threed import ThreeDVisualLanderRenderer
-# from gym_copter.sensors.vision import VisionSensor
+# from gym_copter.sensors.vision.vs import VisionSensor
 
 
 class Lander3D(Lander):
