@@ -33,30 +33,18 @@ class VisionSensor(object):
         image = np.zeros((self.res, )*2)
 
         # Compute image center in pixels
-        cx = self.locate(z, x)
-        cy = self.locate(z, y)
+        cx = self._locate(z, x)
+        cy = self._locate(z, y)
 
-        # A pentagon centered around the origin with unit width and height
-        shape = np.array([[-.5, -0.0714],
-                          [0, -0.5],
-                          [+.5, -0.0714],
-                          [+.25, +.5],
-                          [-.25, +.5]])
-
-        # Scale up the pentagon and center it in the image
-        shape *= self.scale(z, self.size)
-        shape[:, 0] += cx
-        shape[:, 1] += cy
-
-        # Draw the shapegon as a filled polygon
-        cv2.fillPoly(image, [shape.astype('int32')], 255)
+        # Add a shape of your choice to the image
+        self._add_shape(image, cx, cy, z)
 
         # Compute warp matrix
-        M = self.getWarpMatrix(image.shape, psi, theta, phi)
+        M = self._getWarpMatrix(image.shape, psi, theta, phi)
 
         # Compute new image size for warping
         halfFov = self.fov/2
-        d = VisionSensor.hypot(image.shape)
+        d = VisionSensor._hypot(image.shape)
         sideLength = int(d/np.cos(np.radians(halfFov)))
 
         # Warp image
@@ -66,15 +54,41 @@ class VisionSensor(object):
         margin = (warped.shape[0] - image.shape[0]) // 2
         return warped[margin:-margin, margin:-margin]
 
-    def locate(self, z, coord):
+    @staticmethod
+    def display_image(image, name, display_size=400):
+        '''
+        Scale up and display the image
+        '''
+        image = cv2.resize(image, ((display_size, )*2))
+        cv2.imshow(name, image)
+        return cv2.waitKey(10) != 27  # ESC
 
-        return self.scale(z, coord) + self.res//2
+    def _add_shape(self, image, cx, cy, z):
 
-    def scale(self, z, val):
+        # A pentagon centered around the origin with unit width and height
+        shape = np.array([[-.5, -0.0714],
+                          [0, -0.5],
+                          [+.5, -0.0714],
+                          [+.25, +.5],
+                          [-.25, +.5]])
+
+        # Scale up the pentagon and center it in the image
+        shape *= self._scale(z, self.size)
+        shape[:, 0] += cx
+        shape[:, 1] += cy
+
+        # Draw the shapegon as a filled polygon
+        cv2.fillPoly(image, [shape.astype('int32')], 255)
+
+    def _locate(self, z, coord):
+
+        return self._scale(z, coord) + self.res//2
+
+    def _scale(self, z, val):
 
         return int(val * self.res / (2 * z * np.tan(np.radians(self.fov/2))))
 
-    def getWarpMatrix(self, size, psi, theta, phi):
+    def _getWarpMatrix(self, size, psi, theta, phi):
 
         st = np.sin(np.radians(psi))
         ct = np.cos(np.radians(psi))
@@ -84,7 +98,7 @@ class VisionSensor(object):
         cg = np.cos(np.radians(phi))
 
         halfFov = self.fov/2
-        d = VisionSensor.hypot(size)
+        d = VisionSensor._hypot(size)
         sideLength = d/np.cos(np.radians(halfFov))
         h = d/(2.0*np.sin(np.radians(halfFov)))
         n = h-(d/2.0)
@@ -159,17 +173,8 @@ class VisionSensor(object):
         return cv2.getPerspectiveTransform(ptsInPt2f, ptsOutPt2f)
 
     @staticmethod
-    def hypot(shape):
+    def _hypot(shape):
         return np.sqrt(shape[0]**2 + shape[1]**2)
-
-    @staticmethod
-    def display_image(image, name, display_size=400):
-        '''
-        Scale up and display the image
-        '''
-        image = cv2.resize(image, ((display_size, )*2))
-        cv2.imshow(name, image)
-        return cv2.waitKey(10) != 27  # ESC
 
 
 # End of VisionSensor classes -------------------------------------------------
