@@ -65,6 +65,13 @@ class VisionSensor(object):
 
     def _add_shape(self, image, cx, cy, z):
 
+        # Scale radius by altitude
+        r = self._scale(z, self.size)
+
+        cv2.circle(image, (cx, cy), r, (255, 255, 255))
+
+    def _add_shape_pentagon(self, image, cx, cy, z):
+
         # A pentagon centered around the origin with unit width and height
         shape = np.array([[-.5, -0.0714],
                           [0, -0.5],
