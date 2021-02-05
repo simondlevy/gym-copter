@@ -99,6 +99,12 @@ class Lander3DVisual(Lander3D):
 
         self.vs = VisionSensor()
 
+    def step(self, action):
+
+        retval = Lander.step(self, action)
+
+        return retval
+
 
 # End of Lander3D classes -------------------------------------------------
 
