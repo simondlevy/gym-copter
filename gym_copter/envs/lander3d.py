@@ -103,7 +103,7 @@ def make_parser():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--view', required=False, default='30,120',
-                        help='View elevation, azimuth')
+                        help='Elevation, azimuth for view perspective')
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
     return parser
