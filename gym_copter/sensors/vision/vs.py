@@ -17,14 +17,14 @@ import cv2
 
 class VisionSensor(object):
 
-    def __init__(self, size, res, fov):
+    def __init__(self, objsize=1, res=128, fov=30):
         '''
         @param size size meters
         @param res resolution in (pixels)
         @param fov field of view (degrees)
         '''
 
-        self.size = size
+        self.objsize = objsize
         self.res = res
         self.fov = fov
 
@@ -66,7 +66,7 @@ class VisionSensor(object):
     def _add_shape(self, image, cx, cy, z):
 
         # Scale radius by altitude
-        r = self._scale(z, self.size)
+        r = self._scale(z, self.objsize)
 
         cv2.circle(image, (cx, cy), r, (255, 255, 255))
 
@@ -80,7 +80,7 @@ class VisionSensor(object):
                           [-.25, +.5]])
 
         # Scale up the pentagon and center it in the image
-        shape *= self._scale(z, self.size)
+        shape *= self._scale(z, self.objsize)
         shape[:, 0] += cx
         shape[:, 1] += cy
 
@@ -196,7 +196,7 @@ def main():
                         help='Pixel resolution')
     parser.add_argument('--fov',  type=float, default=30,
                         help='Field of view (deg)')
-    parser.add_argument('--size',  type=float, default=1,
+    parser.add_argument('--objsize',  type=float, default=1,
                         help='Object size (m)')
     parser.add_argument('--x',  type=float, default=0, help='X coordinate (m)')
     parser.add_argument('--y',  type=float, default=0, help='Y coordinate (m)')
@@ -210,7 +210,7 @@ def main():
 
     args = parser.parse_args()
 
-    vs = VisionSensor(args.size, args.res, args.fov)
+    vs = VisionSensor(args.objsize, args.res, args.fov)
 
     image = vs.get_image(args.x, args.y, args.z,
                          args.phi, args.theta, args.psi)

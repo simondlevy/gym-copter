@@ -15,7 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-# from gym_copter.sensors.vision.vs import VisionSensor
+from gym_copter.sensors.vision.vs import VisionSensor
 
 
 class Lander3D(Lander):
@@ -91,6 +91,15 @@ class Lander3D(Lander):
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
 
+class Lander3DVisual(Lander3D):
+
+    def __init__(self):
+
+        Lander3D.__init__(self)
+
+        self.vs = VisionSensor()
+
+
 # End of Lander3D classes -------------------------------------------------
 
 
@@ -103,6 +112,8 @@ def make_parser():
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--view', required=False, default='30,120',
                         help='Elevation, azimuth for view perspective')
+    parser.add_argument('--visual', dest='visual', action='store_true',
+                        help='Use vision sensor')
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
     return parser
