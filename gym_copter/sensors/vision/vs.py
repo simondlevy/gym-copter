@@ -49,19 +49,15 @@ class VisionSensor(object):
         # Draw the shapegon as a filled polygon
         cv2.fillPoly(image, [shape.astype('int32')], 255)
 
-        '''
+        # Compute warp matrix
+        M = self.getWarpMatrix(image.shape, psi, theta, phi)
+
         halfFovy = self.fov/2
-        d = VisionSensor.hypot(src.shape)
+        d = VisionSensor.hypot(image.shape)
         sideLength = int(d/np.cos(np.radians(halfFovy)))
 
-        # Compute warp matrix
-        M = getWarpMatrix(src.shape, psi, theta, phi)
-
         # Warp image
-        return cv2.warpPerspective(src, M, (sideLength, sideLength))
-        '''
-
-        return image
+        return cv2.warpPerspective(image, M, (sideLength, sideLength))
 
     def locate(self, z, coord):
 
@@ -71,7 +67,7 @@ class VisionSensor(object):
 
         return int(val * self.res / (2 * z * np.tan(np.radians(self.fov/2))))
 
-    def getWarpMatrix(self, sz, psi, theta, phi):
+    def getWarpMatrix(self, size, psi, theta, phi):
 
         st = np.sin(np.radians(psi))
         ct = np.cos(np.radians(psi))
@@ -81,7 +77,7 @@ class VisionSensor(object):
         cg = np.cos(np.radians(phi))
 
         halfFovy = self.fov/2
-        d = VisionSensor.hypot(sz)
+        d = VisionSensor.hypot(size)
         sideLength = d/np.cos(np.radians(halfFovy))
         h = d/(2.0*np.sin(np.radians(halfFovy)))
         n = h-(d/2.0)
@@ -133,8 +129,8 @@ class VisionSensor(object):
         F = np.dot(np.dot(np.dot(np.dot(P, T), Rtheta), Rpsi), Rphi)
 
         # Transform 4x4 points
-        halfW = sz[1]/2
-        halfH = sz[0]/2
+        halfW = size[1]/2
+        halfH = size[0]/2
 
         ptsIn = np.array([-halfW, halfH, 0,
                           halfW, halfH, 0,
