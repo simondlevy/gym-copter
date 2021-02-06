@@ -61,9 +61,9 @@ class Lander3D(Lander):
 
         x, y, z, phi, theta, viewer = args
 
-        self._reset(pose=(x, y, z, phi, theta), perturb=False)
-
         while viewer.is_open():
+
+            self._reset(pose=(x, y, z, phi, theta), perturb=False)
 
             self.render()
 
@@ -160,7 +160,7 @@ def main():
 
     if args.pose is not None:
         try:
-            x, y, z, phi, theta = (int(s) for s in args.pose.split(','))
+            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
         except Exception:
             print('POSE must be x,y,z,phi,theta')
             exit(1)

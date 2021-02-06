@@ -17,7 +17,7 @@ import cv2
 
 class VisionSensor(object):
 
-    def __init__(self, objsize=1, res=128, fov=30):
+    def __init__(self, objsize=1, res=128, fov=60):
         '''
         @param size size meters
         @param res resolution in (pixels)
