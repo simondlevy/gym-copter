@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
+
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+import mpl_toolkits.mplot3d.art3d as art3d
 
-def main():
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 
+# Draw a circle on the x=0 'wall'
+p = Circle((5, 5), 3)
+ax.add_patch(p)
+art3d.pathpatch_2d_to_3d(p, zdir='z')
 
-    fig = plt.figure()
-    ax = plt.gca()
-    ax.set_aspect(1)
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 10)
+ax.set_zlim(0, 10)
 
-    def animate(i):
-
-        return [ax.add_patch(plt.Circle((0.5, 0.5), 0.45, color='r'))]
-
-    anim = animation.FuncAnimation(fig, animate, frames=10, interval=20, blit=True)
-    plt.show()
-
-
-if __name__ == '__main__':
-    main()
+plt.show()

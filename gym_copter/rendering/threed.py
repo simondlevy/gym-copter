@@ -10,7 +10,9 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
+from matplotlib.patches import Circle
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+import mpl_toolkits.mplot3d.art3d as art3d
 from PIL import Image
 
 
@@ -263,6 +265,10 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 view_width=view_width)
 
         self.target_line = _create_line3d(self.axes, 'r')
+
+        p = Circle((5, 5), 3)
+        ax.add_patch(p)
+        art3d.pathpatch_2d_to_3d(p, z=0, zdir='x')
 
         self.target_x = env.target[:, 0]
         self.target_y = env.target[:, 1]
