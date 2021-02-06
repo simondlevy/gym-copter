@@ -74,7 +74,7 @@ class VisionSensor(object):
         r = self._scale(z, self.objsize)
 
         try:
-            cv2.circle(image, (cx, cy), r, (255, 255, 255))
+            cv2.circle(image, (cx, cy), r, (255, 255, 255), thickness=-1)
 
         except Exception:
             pass
