@@ -264,9 +264,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.target_line = _create_line3d(self.axes, 'r')
-
-        p = Circle((5, 5), 3, color='r')
+        p = Circle((0, 0), env.TARGET_RADIUS, color='r', alpha=0.5)
         self.axes.add_patch(p)
         art3d.pathpatch_2d_to_3d(p, zdir='z')
 
@@ -277,9 +275,5 @@ class ThreeDLanderRenderer(ThreeDRenderer):
     def render(self):
 
         ThreeDRenderer.render(self)
-
-        # Draw target on ground
-        self.target_line.set_data(self.target_x, self.target_y)
-        self.target_line.set_3d_properties(self.target_z)
 
         return ThreeDRenderer._complete(self)
