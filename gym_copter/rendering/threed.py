@@ -266,9 +266,9 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         self.target_line = _create_line3d(self.axes, 'r')
 
-        p = Circle((5, 5), 3)
-        ax.add_patch(p)
-        art3d.pathpatch_2d_to_3d(p, z=0, zdir='x')
+        p = Circle((5, 5), 3, color='r')
+        self.axes.add_patch(p)
+        art3d.pathpatch_2d_to_3d(p, zdir='z')
 
         self.target_x = env.target[:, 0]
         self.target_y = env.target[:, 1]
