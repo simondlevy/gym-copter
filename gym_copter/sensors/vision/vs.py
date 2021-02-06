@@ -28,7 +28,11 @@ class VisionSensor(object):
         self.res = res
         self.fov = fov
 
-    def get_image(self, x, y, z, phi, theta, psi):
+    def getImage(self, x, y, z, phi, theta, psi):
+        '''
+        @param x, y, z position (meters)
+        @param phi, theta, psi Euler angles (degrees)
+        '''
 
         image = np.zeros((self.res, )*2)
 
@@ -61,7 +65,7 @@ class VisionSensor(object):
         '''
         image = cv2.resize(image, ((display_size, )*2))
         cv2.imshow(name, image)
-        cv2.moveWindow(name, 725, 65);
+        cv2.moveWindow(name, 725, 0);
         return cv2.waitKey(10) != 27  # ESC
 
     def _add_shape(self, image, cx, cy, z):
@@ -69,7 +73,11 @@ class VisionSensor(object):
         # Scale radius by altitude
         r = self._scale(z, self.objsize)
 
-        cv2.circle(image, (cx, cy), r, (255, 255, 255))
+        try:
+            cv2.circle(image, (cx, cy), r, (255, 255, 255))
+
+        except Exception:
+            pass
 
     def _add_shape_pentagon(self, image, cx, cy, z):
 
@@ -213,8 +221,8 @@ def main():
 
     vs = VisionSensor(args.objsize, args.res, args.fov)
 
-    image = vs.get_image(args.x, args.y, args.z,
-                         args.phi, args.theta, args.psi)
+    image = vs.getImage(args.x, args.y, args.z,
+                        args.phi, args.theta, args.psi)
 
     while True:
 
