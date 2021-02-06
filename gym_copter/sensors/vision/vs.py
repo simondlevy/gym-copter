@@ -61,6 +61,7 @@ class VisionSensor(object):
         '''
         image = cv2.resize(image, ((display_size, )*2))
         cv2.imshow(name, image)
+        cv2.moveWindow(name, 725, 65);
         return cv2.waitKey(10) != 27  # ESC
 
     def _add_shape(self, image, cx, cy, z):
