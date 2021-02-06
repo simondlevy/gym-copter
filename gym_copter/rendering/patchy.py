@@ -10,16 +10,11 @@ def main():
     ax = plt.gca()
     ax.set_aspect(1)
 
-    def init():
-        # initialize an empty list of cirlces
-        return []
-
     def animate(i):
 
         return [ax.add_patch(plt.Circle((0.5, 0.5), 0.45, color='r'))]
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init,
-                                   frames=10, interval=20, blit=True)
+    anim = animation.FuncAnimation(fig, animate, frames=10, interval=20, blit=True)
     plt.show()
 
 
