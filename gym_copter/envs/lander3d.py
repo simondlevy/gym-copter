@@ -107,7 +107,7 @@ class LanderVisual(Lander3D):
 
         image = self.vs.getImage(x,
                                  y,
-                                 -z,
+                                 max(-z, 1e-6),  # keep Z positive
                                  np.degrees(phi),
                                  np.degrees(theta),
                                  np.degrees(psi))

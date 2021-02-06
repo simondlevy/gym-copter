@@ -19,7 +19,7 @@ from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 class Lander(gym.Env, EzPickle):
 
     # Physics
-    INITIAL_RANDOM_FORCE = 30
+    INITIAL_RANDOM_FORCE = 0  # 30
     INITIAL_ALTITUDE = 10
     TARGET_RADIUS = 2
     BOUNDS = 10
