@@ -103,9 +103,14 @@ class LanderVisual(Lander3D):
 
         result = Lander3D.step(self, action)
 
-        x, y, z, _phi, _theta, _psi = self.pose
+        x, y, z, phi, theta, psi = self.pose
 
-        image = self.vs.getImage(x, y, -z, 0, 0, 0)
+        image = self.vs.getImage(x,
+                                 y,
+                                 -z,
+                                 np.degrees(phi),
+                                 np.degrees(theta),
+                                 np.degrees(psi))
 
         VisionSensor.display_image(image)
 
