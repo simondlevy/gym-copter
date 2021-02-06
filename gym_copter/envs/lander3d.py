@@ -15,6 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 from gym_copter.envs.lander import Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.sensors.vision.vs import VisionSensor
 
 
 class Lander3D(Lander):
@@ -60,23 +61,15 @@ class Lander3D(Lander):
 
         x, y, z, phi, theta, viewer = args
 
-        self._reset(pose=(x, y, z, phi, theta), perturb=False)
-
         while viewer.is_open():
+
+            self._reset(pose=(x, y, z, phi, theta), perturb=False)
 
             self.render()
 
             sleep(.01)
 
         self.close()
-
-    def _get_motors(self, motors):
-
-        return motors
-
-    def _get_state(self, state):
-
-        return state[:10]
 
     def heuristic(self, state):
         '''
@@ -89,6 +82,39 @@ class Lander3D(Lander):
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
+    def _get_motors(self, motors):
+
+        return motors
+
+    def _get_state(self, state):
+
+        return state[:10]
+
+
+class LanderVisual(Lander3D):
+
+    def __init__(self):
+
+        Lander3D.__init__(self)
+
+        self.vs = VisionSensor()
+
+    def step(self, action):
+
+        result = Lander3D.step(self, action)
+
+        x, y, z, phi, theta, psi = self.pose
+
+        image = self.vs.getImage(x,
+                                 y,
+                                 -z,
+                                 np.degrees(phi),
+                                 np.degrees(theta),
+                                 np.degrees(psi))
+
+        VisionSensor.display_image(image)
+
+        return result
 
 # End of Lander3D classes -------------------------------------------------
 
@@ -101,7 +127,9 @@ def make_parser():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--view', required=False, default='30,120',
-                        help='View elevation, azimuth')
+                        help='Elevation, azimuth for view perspective')
+    parser.add_argument('--visual', dest='visual', action='store_true',
+                        help='Use vision sensor')
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
     return parser
@@ -122,7 +150,7 @@ def main():
                         help='Suppress display')
     args, viewangles = parse(parser)
 
-    env = Lander3D()
+    env = LanderVisual() if args.visual else Lander3D()
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
@@ -132,7 +160,7 @@ def main():
 
     if args.pose is not None:
         try:
-            x, y, z, phi, theta = (int(s) for s in args.pose.split(','))
+            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
         except Exception:
             print('POSE must be x,y,z,phi,theta')
             exit(1)
