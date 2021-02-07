@@ -22,8 +22,8 @@ class Lander2D(Lander):
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
 
-    # Angle PID for heuristic demo
-    PID_C = 0.1
+    # Target angle PID for heuristic demo
+    PID_ANGLE = 0.1
 
     def __init__(self):
 

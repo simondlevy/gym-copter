@@ -220,7 +220,7 @@ class Lander(gym.Env, EzPickle):
     def _angle_pid(self, x, dx, phi, dphi):
 
         phi_targ = x*self.PID_X + dx*self.PID_DX
-        return ((phi-phi_targ)*self.PID_C
+        return ((phi-phi_targ)*self.PID_ANGLE
                 + phi*self.PID_PHI - dphi*self.PID_DPHI)
 
     def _hover_pid(self, z, dz):
