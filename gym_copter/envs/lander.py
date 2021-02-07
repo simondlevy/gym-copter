@@ -34,12 +34,12 @@ class Lander(gym.Env, EzPickle):
     XYZ_PENALTY_FACTOR = 25
 
     # PIDs for heuristic demo
-    PID_A = 0.1
-    PID_B = 0.1
-    PID_D = 0.05
-    PID_E = 0.4
-    PID_F = 1.15
-    PID_G = 1.33
+    PID_X = 0.1
+    PID_DX = 0.1
+    PID_PHI = 0.05
+    PID_DPHI = 0.4
+    PID_Z = 1.15
+    PID_DZ = 1.33
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -219,12 +219,13 @@ class Lander(gym.Env, EzPickle):
 
     def _angle_pid(self, x, dx, phi, dphi):
 
-        phi_targ = x*self.PID_A + dx*self.PID_B
-        return ((phi-phi_targ)*self.PID_C + phi*self.PID_D - dphi*self.PID_E)
+        phi_targ = x*self.PID_X + dx*self.PID_DX
+        return ((phi-phi_targ)*self.PID_C
+                + phi*self.PID_PHI - dphi*self.PID_DPHI)
 
     def _hover_pid(self, z, dz):
 
-        return z*self.PID_F + dz*self.PID_G
+        return z*self.PID_Z + dz*self.PID_DZ
 
     def _randforce(self):
 
