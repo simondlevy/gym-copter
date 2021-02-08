@@ -10,15 +10,13 @@ MIT License
 from time import sleep
 import numpy as np
 import threading
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 
-from gym_copter.envs.lander import Lander
+from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 
 
-class Lander3D(Lander):
+class Lander3D(_Lander):
 
     # 3D model
     OBSERVATION_SIZE = 10
@@ -28,11 +26,11 @@ class Lander3D(Lander):
     TARGET_POINTS = 250
 
     # Angle PID for heuristic demo
-    PID_TARG = 0.025
+    PID_TARG = 0  # 0.025
 
     def __init__(self):
 
-        Lander.__init__(self)
+        _Lander.__init__(self)
 
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
@@ -43,7 +41,7 @@ class Lander3D(Lander):
 
     def reset(self):
 
-        return Lander._reset(self)
+        return _Lander._reset(self)
 
     def render(self, mode='human'):
         '''
@@ -124,14 +122,12 @@ def make_parser():
     Exported function to support command-line parsing in scripts.
     You can add your own arguments, then call parse() to get args.
     '''
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser = _make_parser()
+
     parser.add_argument('--view', required=False, default='30,120',
                         help='Elevation, azimuth for view perspective')
     parser.add_argument('--visual', dest='visual', action='store_true',
                         help='Use vision sensor')
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
     return parser
 
 

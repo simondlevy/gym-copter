@@ -10,31 +10,29 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
-from gym_copter.envs.lander import Lander
+from gym_copter.envs.lander import _Lander, _make_parser
 
 
-class Lander2D(Lander):
+class Lander2D(_Lander):
 
     # 3D model
     OBSERVATION_SIZE = 6
     ACTION_SIZE = 2
 
     # Target angle PID for heuristic demo
-    PID_TARG = 0.1
+    PID_TARG = 0  # 0.1
 
     def __init__(self):
 
-        Lander.__init__(self)
+        _Lander.__init__(self)
 
     def reset(self):
 
         if self.viewer is not None:
             self.viewer.close()
 
-        return Lander._reset(self)
+        return _Lander._reset(self)
 
     def render(self, mode='human'):
 
@@ -76,10 +74,7 @@ class Lander2D(Lander):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
+    parser = _make_parser()
     args = parser.parse_args()
     Lander2D().demo_heuristic(seed=args.seed)
 

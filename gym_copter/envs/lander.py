@@ -9,6 +9,9 @@ MIT License
 import numpy as np
 from numpy import radians
 from time import sleep
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
+
 import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
@@ -16,7 +19,7 @@ from gym.utils import EzPickle, seeding
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 
 
-class Lander(gym.Env, EzPickle):
+class _Lander(gym.Env, EzPickle):
 
     # Physics
     INITIAL_RANDOM_FORCE = 30
@@ -34,9 +37,9 @@ class Lander(gym.Env, EzPickle):
     XYZ_PENALTY_FACTOR = 25
 
     # PIDs for heuristic demo
-    PID_X = 0.1
-    PID_DX = 0.1
-    PID_PHI = 0.05
+    PID_X = 0  # 0.1
+    PID_DX = 0  # 0.1
+    PID_PHI = 0  # 0.05
     PID_DPHI = 0.4
     PID_Z = 1.15
     PID_DZ = 1.33
@@ -231,3 +234,12 @@ class Lander(gym.Env, EzPickle):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
                                  + self.INITIAL_RANDOM_FORCE)
+
+
+def _make_parser():
+
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Random seed for reproducibility')
+    return parser
