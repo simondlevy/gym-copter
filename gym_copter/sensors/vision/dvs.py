@@ -49,21 +49,16 @@ class DVS(VisionSensor):
 
         return image_diff 
 
-    def display_image(self, image, name='Vision', display_size=400):
-        '''
-        Scale up and display the image
-        '''
-        # Image comes in as greyscale quantized to -1, 0, +1.  We convert it to 
-        # color.
-        image = cv2.resize(image, ((display_size, )*2))
-        cimage = np.zeros((display_size, display_size, 3)).astype('uint8')
+    def _process_image(self, image):
+
+        # Make a color image with -1 red and +1 green
+        cimage = np.zeros((image.shape[0], image.shape[1], 3)).astype('uint8')
         r, c = np.where(image == -1)
         cimage[r,c,2] = 255
         r, c = np.where(image == +1)
         cimage[r,c,1] = 255
-        cv2.imshow(name, cimage)
-        cv2.moveWindow(name, 725, 0);
-        return cv2.waitKey(10) != 27  # ESC
+
+        return cimage
 
 # End of DVS class -------------------------------------------------
 

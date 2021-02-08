@@ -62,11 +62,15 @@ class VisionSensor(object):
         '''
         Scale up and display the image
         '''
-
         image = cv2.resize(image, ((display_size, )*2))
+        image = self._process_image(image)
         cv2.imshow(name, image)
         cv2.moveWindow(name, 725, 0);
         return cv2.waitKey(10) != 27  # ESC
+
+    def _process_image(self, image):
+
+        return image
 
     def _add_shape(self, image, cx, cy, z):
 
