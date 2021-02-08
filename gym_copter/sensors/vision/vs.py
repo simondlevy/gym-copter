@@ -193,7 +193,7 @@ class VisionSensor(object):
         return np.sqrt(shape[0]**2 + shape[1]**2)
 
 
-# End of VisionSensor classes -------------------------------------------------
+# End of VisionSensor class -------------------------------------------------
 
 
 def main():

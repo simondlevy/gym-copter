@@ -14,7 +14,7 @@ import threading
 from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
-# from gym_copter.sensors.vision.dvs import DVS
+from gym_copter.sensors.vision.dvs import DVS
 
 
 class Lander3D(_Lander):
@@ -126,6 +126,14 @@ class LanderVisual(Lander3D):
             VisionSensor.display_image(self.image)
 
 
+class LanderDVS(LanderVisual):
+
+    def __init__(self):
+
+        LanderVisual.__init__(self)
+
+        self.vs = DVS()
+
 # End of Lander3D classes -------------------------------------------------
 
 
@@ -172,7 +180,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = LanderVisual() if args.visual else Lander3D()
+    env = (LanderDVS() if args.dvs
+           else (LanderVisual() if args.visual
+                 else Lander3D()))
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)

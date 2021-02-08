@@ -26,14 +26,13 @@ class DVS(VisionSensor):
 
         self.image_prev = None
 
-    def get_events(self, pose):
+    def getImage(self, x, y, z, phi, theta, psi):
         '''
-        @param pos x,y,z,phi,theta
-        @return list of x,y sensor events
+        @param x, y, z position (meters)
+        @param phi, theta, psi Euler angles (degrees)
         '''
 
-        # Make an image of an arbitrarily-shaped object
-        image_curr = self._make_image(pose)
+        image_curr = VisionSensor.getImage(self, x, y, z, phi, theta, psi)
 
         # First time around, no eventsimage.  Subsequent times, do a first
         # difference to get the events.
@@ -44,45 +43,39 @@ class DVS(VisionSensor):
         # Track previous event image for first difference
         self.image_prev = image_curr
 
-        # Collect and return nonzero points
-        return [(x, y, image_diff[x, y])
-                for x, y in zip(*np.nonzero(image_diff))]
+        return image_diff 
 
-    def _make_image(self, pose):
-
-        image = np.zeros((self.res, self.res)).astype('int8')
-
-        cv2.circle(image, (pose[0], pose[1]), 10, 1, thickness=-1)
-
-        return image
-
-# End of VisionSensor classes -------------------------------------------------
+# End of DVS class -------------------------------------------------
 
 
 def main():
+
+    XRANGE = 4
+    SPEED = .02
 
     # Arbitrary object size (1m)
     dvs = DVS(1)
 
     # Arbitrary stating pose
-    pose = [10, 0, 10, 0, 0]
+    x, y, z, phi, theta, psi = -XRANGE, 0, 10, 0, 0, 0
+
+    dx = +1
 
     while True:
 
-        # Get events
-        events = dvs.get_events(pose)
-
-        # Make an image from the events
-        image = np.zeros((128, 128, 3)).astype('uint8')
-        for x, y, p in events:
-            image[x][y][1 if p == +1 else 2] = 255
+        image = dvs.getImage(x, y, z, phi, theta, psi)
 
         if not VisionSensor.display_image(image, 'Events'):
             break
 
         # Move pose across field of view
-        pose[0] = (pose[0] + 1) % 128
+        x += dx * SPEED
 
+        if x <= -XRANGE:
+            dx = +1
+
+        if x >= XRANGE:
+            dx = -1
 
 if __name__ == '__main__':
 
