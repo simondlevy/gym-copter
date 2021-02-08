@@ -53,12 +53,15 @@ class DVS(VisionSensor):
 
         # Make a color image with -1 red and +1 green
         cimage = np.zeros((image.shape[0], image.shape[1], 3)).astype('uint8')
-        r, c = np.where(image == -1)
-        cimage[r,c,2] = 255
-        r, c = np.where(image == +1)
-        cimage[r,c,1] = 255
+        self._set_color(image, cimage, -1, 2)
+        self._set_color(image, cimage, +1, 1)
 
         return cimage
+
+    def _set_color(self, src, dst, val, chan):
+        r, c = np.where(src == val)
+        dst[r,c,chan] = 255
+ 
 
 # End of DVS class -------------------------------------------------
 
