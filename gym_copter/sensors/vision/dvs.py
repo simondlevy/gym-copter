@@ -40,10 +40,31 @@ class DVS(VisionSensor):
                       if self.image_prev is not None
                       else np.zeros((self.res, self.res)))
 
+        # Quantize image to -1, 0, +1
+        image_diff[image_diff > 0] = +1
+        image_diff[image_diff < 0] = -1
+
         # Track previous event image for first difference
         self.image_prev = image_curr
 
         return image_diff 
+
+    @staticmethod
+    def display_image(image, name='Vision', display_size=400):
+        '''
+        Scale up and display the image
+        '''
+        # Image comes in as greyscale quantized to -1, 0, +1.  We convert it to 
+        # color.
+        image = cv2.resize(image, ((display_size, )*2))
+        cimage = np.zeros((display_size, display_size, 3)).astype('uint8')
+        r, c = np.where(image == -1)
+        cimage[r,c,2] = 255
+        r, c = np.where(image == +1)
+        cimage[r,c,1] = 255
+        cv2.imshow(name, cimage)
+        cv2.moveWindow(name, 725, 0);
+        return cv2.waitKey(10) != 27  # ESC
 
 # End of DVS class -------------------------------------------------
 
@@ -65,7 +86,7 @@ def main():
 
         image = dvs.getImage(x, y, z, phi, theta, psi)
 
-        if not VisionSensor.display_image(image, 'Events'):
+        if not DVS.display_image(image, 'Events'):
             break
 
         # Move pose across field of view
