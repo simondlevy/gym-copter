@@ -150,6 +150,10 @@ def make_parser():
 
     group.add_argument('--dvs', dest='dvs', action='store_true',
                        help='Use Dynamic Vision Sensor')
+
+    group.add_argument('--nodisplay', dest='nodisplay', action='store_true',
+                       help='Suppress display')
+
     return parser
 
 
@@ -165,9 +169,6 @@ def main():
 
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
-
-    parser.add_argument('--nodisplay', dest='nodisplay', action='store_true',
-                        help='Suppress display')
 
     args, viewangles = parse(parser)
 
