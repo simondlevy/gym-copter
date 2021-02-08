@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Vision Sensor simulation
+Dynamic Vision Sensor simulation
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -15,14 +15,14 @@ from gym_copter.sensors.vision.vs import VisionSensor
 
 class DVS(VisionSensor):
 
-    def __init__(self, object_size, resolution=128, field_of_view=60):
+    def __init__(self, objsize=1, res=128, fov=60):
         '''
-        @param object_size meters
-        @param resolution pixels
-        @param field_of_view degrees
+        @param size size meters
+        @param res resolution in (pixels)
+        @param fov field of view (degrees)
         '''
 
-        VisionSensor.__init__(self, object_size, resolution)
+        VisionSensor.__init__(self, objsize, res)
 
         self.image_prev = None
 
@@ -39,7 +39,7 @@ class DVS(VisionSensor):
         # difference to get the events.
         image_diff = (self.image_prev - image_curr
                       if self.image_prev is not None
-                      else np.zeros((self.resolution, self.resolution)))
+                      else np.zeros((self.res, self.res)))
 
         # Track previous event image for first difference
         self.image_prev = image_curr
@@ -50,7 +50,7 @@ class DVS(VisionSensor):
 
     def _make_image(self, pose):
 
-        image = np.zeros((self.resolution, self.resolution)).astype('int8')
+        image = np.zeros((self.res, self.res)).astype('int8')
 
         cv2.circle(image, (pose[0], pose[1]), 10, 1, thickness=-1)
 
