@@ -103,22 +103,28 @@ class LanderVisual(Lander3D):
 
         self.vs = VisionSensor()
 
+        self.image = None
+
     def step(self, action):
 
         result = Lander3D.step(self, action)
 
         x, y, z, phi, theta, psi = self.pose
 
-        image = self.vs.getImage(x,
-                                 y,
-                                 max(-z, 1e-6),  # keep Z positive
-                                 np.degrees(phi),
-                                 np.degrees(theta),
-                                 np.degrees(psi))
-
-        VisionSensor.display_image(image)
+        self.image = self.vs.getImage(x,
+                                      y,
+                                      max(-z, 1e-6),  # keep Z positive
+                                      np.degrees(phi),
+                                      np.degrees(theta),
+                                      np.degrees(psi))
 
         return result
+
+    def render(self, mode='human'):
+
+        if self.image is not None:
+            VisionSensor.display_image(self.image)
+
 
 # End of Lander3D classes -------------------------------------------------
 
@@ -156,10 +162,13 @@ def parse(parser):
 def main():
 
     parser = make_parser()
+
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
+
     parser.add_argument('--nodisplay', dest='nodisplay', action='store_true',
                         help='Suppress display')
+
     args, viewangles = parse(parser)
 
     env = LanderVisual() if args.visual else Lander3D()
