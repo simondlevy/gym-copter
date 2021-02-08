@@ -123,7 +123,7 @@ class LanderVisual(Lander3D):
     def render(self, mode='human'):
 
         if self.image is not None:
-            VisionSensor.display_image(self.image)
+            self.vs.display_image(self.image)
 
 
 class LanderDVS(LanderVisual):

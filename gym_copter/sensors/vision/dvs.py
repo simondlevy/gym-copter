@@ -49,8 +49,7 @@ class DVS(VisionSensor):
 
         return image_diff 
 
-    @staticmethod
-    def display_image(image, name='Vision', display_size=400):
+    def display_image(self, image, name='Vision', display_size=400):
         '''
         Scale up and display the image
         '''
@@ -86,7 +85,7 @@ def main():
 
         image = dvs.getImage(x, y, z, phi, theta, psi)
 
-        if not DVS.display_image(image, 'Events'):
+        if not dvs.display_image(image, 'Events'):
             break
 
         # Move pose across field of view

@@ -58,11 +58,11 @@ class VisionSensor(object):
         margin = (warped.shape[0] - image.shape[0]) // 2
         return warped[margin:-margin, margin:-margin]
 
-    @staticmethod
-    def display_image(image, name='Vision', display_size=400):
+    def display_image(self, image, name='Vision', display_size=400):
         '''
         Scale up and display the image
         '''
+
         image = cv2.resize(image, ((display_size, )*2))
         cv2.imshow(name, image)
         cv2.moveWindow(name, 725, 0);
@@ -226,7 +226,7 @@ def main():
 
     while True:
 
-        if not VisionSensor.display_image(image):
+        if not vs.display_image(image):
             break
 
 
