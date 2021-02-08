@@ -28,7 +28,7 @@ class Lander3D(Lander):
     TARGET_POINTS = 250
 
     # Angle PID for heuristic demo
-    PID_ANGLE = 0.025
+    PID_TARG = 0.025
 
     def __init__(self):
 

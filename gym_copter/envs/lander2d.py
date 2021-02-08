@@ -23,7 +23,7 @@ class Lander2D(Lander):
     ACTION_SIZE = 2
 
     # Target angle PID for heuristic demo
-    PID_ANGLE = 0.1
+    PID_TARG = 0.1
 
     def __init__(self):
 
