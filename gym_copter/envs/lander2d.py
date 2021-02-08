@@ -57,11 +57,11 @@ class Lander2D(_Lander):
 
         return [motors[0], motors[1], motors[1], motors[0]]
 
-    def heuristic(self, s):
+    def heuristic(self, s, nopid):
 
         y, dy, z, dz, phi, dphi = s
 
-        phi_todo = self._angle_pid(y, dy, phi, dphi)
+        phi_todo = 0 if nopid else self._angle_pid(y, dy, phi, dphi)
 
         hover_todo = self._hover_pid(z, dz)
 
@@ -76,7 +76,7 @@ class Lander2D(_Lander):
 def main():
     parser = _make_parser()
     args = parser.parse_args()
-    Lander2D().demo_heuristic(seed=args.seed)
+    Lander2D().demo_heuristic(seed=args.seed, nopid=args.nopid)
 
 
 if __name__ == '__main__':

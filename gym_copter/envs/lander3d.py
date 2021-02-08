@@ -26,7 +26,7 @@ class Lander3D(_Lander):
     TARGET_POINTS = 250
 
     # Angle PID for heuristic demo
-    PID_TARG = 0  # 0.025
+    PID_TARG = 0.025
 
     def __init__(self):
 
@@ -69,15 +69,20 @@ class Lander3D(_Lander):
 
         self.close()
 
-    def heuristic(self, state):
+    def heuristic(self, state, nopid):
         '''
         PID controller
         '''
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
-        phi_todo = self._angle_pid(y, dy, phi, dphi)
-        theta_todo = self._angle_pid(x, dx, -theta, -dtheta)
+
+        phi_todo = 0 if nopid else self._angle_pid(y, dy, phi, dphi)
+
+        theta_todo = 0 if nopid else self._angle_pid(x, dx, -theta, -dtheta)
+
         hover_todo = self._hover_pid(z, dz)
+
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
+
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
     def _get_motors(self, motors):
@@ -152,7 +157,7 @@ def main():
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
     threadfun = env.demo_heuristic
-    threadargs = args.seed
+    threadargs = args.seed, args.nopid
 
     if args.pose is not None:
         try:
@@ -163,7 +168,7 @@ def main():
         threadfun = env.demo_pose
         threadargs = (x, y, z, phi, theta, viewer)
 
-    thread = threading.Thread(target=threadfun, args=(threadargs, ))
+    thread = threading.Thread(target=threadfun, args=threadargs)
 
     thread.start()
 

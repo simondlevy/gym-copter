@@ -37,9 +37,9 @@ class _Lander(gym.Env, EzPickle):
     XYZ_PENALTY_FACTOR = 25
 
     # PIDs for heuristic demo
-    PID_X = 0  # 0.1
-    PID_DX = 0  # 0.1
-    PID_PHI = 0  # 0.05
+    PID_X = 0.1
+    PID_DX = 0.1
+    PID_PHI = 0.05
     PID_DPHI = 0.4
     PID_Z = 1.15
     PID_DZ = 1.33
@@ -156,7 +156,7 @@ class _Lander(gym.Env, EzPickle):
                 done,
                 {})
 
-    def demo_heuristic(self, seed=None):
+    def demo_heuristic(self, seed=None, nopid=False):
 
         self.seed(seed)
         np.random.seed(seed)
@@ -167,7 +167,7 @@ class _Lander(gym.Env, EzPickle):
 
         while True:
 
-            action = self.heuristic(state)
+            action = self.heuristic(state, nopid)
             state, reward, done, _ = self.step(action)
             total_reward += reward
 
@@ -223,6 +223,7 @@ class _Lander(gym.Env, EzPickle):
     def _angle_pid(self, x, dx, phi, dphi):
 
         phi_targ = x*self.PID_X + dx*self.PID_DX
+
         return ((phi-phi_targ)*self.PID_TARG
                 + phi*self.PID_PHI - dphi*self.PID_DPHI)
 
@@ -242,4 +243,6 @@ def _make_parser():
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
+    parser.add_argument('--nopid', dest='nopid', action='store_true',
+                        help='Turn off lateral PID control')
     return parser
