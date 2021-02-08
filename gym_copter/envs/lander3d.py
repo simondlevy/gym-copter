@@ -14,6 +14,7 @@ import threading
 from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
+# from gym_copter.sensors.vision.dvs import DVS
 
 
 class Lander3D(_Lander):
@@ -127,12 +128,22 @@ def make_parser():
     Exported function to support command-line parsing in scripts.
     You can add your own arguments, then call parse() to get args.
     '''
+
+    # Start with general-purpose parser from _Lander superclass
     parser = _make_parser()
+
+    # Add 3D-specific argument support
 
     parser.add_argument('--view', required=False, default='30,120',
                         help='Elevation, azimuth for view perspective')
-    parser.add_argument('--visual', dest='visual', action='store_true',
-                        help='Use vision sensor')
+
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument('--visual', dest='visual', action='store_true',
+                       help='Use vision sensor')
+
+    group.add_argument('--dvs', dest='dvs', action='store_true',
+                       help='Use Dynamic Vision Sensor')
     return parser
 
 
