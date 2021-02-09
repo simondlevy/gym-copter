@@ -272,10 +272,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
         # Create points for landing zone
         pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-        target = np.array([np.sin(pts), np.cos(pts)]).transpose()
-
-        self.target_x = target[:, 0]
-        self.target_y = target[:, 1]
+        self.target_x = np.sin(pts)
+        self.target_y = np.cos(pts)
         self.target_z = np.zeros(len(self.target_x))
 
     def render(self):
