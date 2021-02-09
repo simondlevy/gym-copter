@@ -12,7 +12,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 import cv2
 
-from gym_copter.sensors.vision.vs import VisionSensor
+from gym_copter.sensors.vision.vs import VisionSensor, _make_parser
 
 
 class DVS(VisionSensor):
@@ -73,15 +73,7 @@ def main():
     XRANGE = 4
     SPEED = .02
 
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('--res',  type=int, default=128,
-                        help='Pixel resolution')
-    parser.add_argument('--fov',  type=float, default=30,
-                        help='Field of view (deg)')
-    parser.add_argument('--objsize',  type=float, default=1,
-                        help='Object size (m)')
+    parser = _make_parser()
     args = parser.parse_args()
 
      # Arbitrary object size (1m)

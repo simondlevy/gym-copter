@@ -200,7 +200,7 @@ class VisionSensor(object):
 # End of VisionSensor class -------------------------------------------------
 
 
-def main():
+def _make_parser():
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -211,6 +211,14 @@ def main():
                         help='Field of view (deg)')
     parser.add_argument('--objsize',  type=float, default=1,
                         help='Object size (m)')
+
+    return parser
+
+
+def main():
+
+    parser = _make_parser()
+
     parser.add_argument('--x',  type=float, default=0, help='X coordinate (m)')
     parser.add_argument('--y',  type=float, default=0, help='Y coordinate (m)')
     parser.add_argument('--z',  type=float, default=5, help='Z coordinate (m)')
