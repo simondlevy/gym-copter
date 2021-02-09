@@ -49,24 +49,25 @@ class _Lander(gym.Env, EzPickle):
         'video.frames_per_second': FRAMES_PER_SECOND
     }
 
-    def __init__(self):
+    def __init__(self, observation_size, action_size):
 
         EzPickle.__init__(self)
         self.seed()
         self.viewer = None
         self.pose = None
         self.prev_reward = None
+        self.action_size = action_size
 
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf,
                                             +np.inf,
-                                            shape=(self.OBSERVATION_SIZE,),
+                                            shape=(observation_size,),
                                             dtype=np.float32)
 
         # Action is two floats [throttle, roll]
         self.action_space = spaces.Box(-1,
                                        +1,
-                                       (self.ACTION_SIZE,),
+                                       (action_size,),
                                        dtype=np.float32)
 
         # Pre-convert max-angle degrees to radians
@@ -218,7 +219,7 @@ class _Lander(gym.Env, EzPickle):
                                             0]))                # psi
 
         # Return initial state
-        return self.step(np.zeros(self.ACTION_SIZE))[0]
+        return self.step(np.zeros(self.action_size))[0]
 
     def _angle_pid(self, x, dx, phi, dphi):
 

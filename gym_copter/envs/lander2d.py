@@ -16,16 +16,12 @@ from gym_copter.envs.lander import _Lander, _make_parser
 
 class Lander2D(_Lander):
 
-    # 3D model
-    OBSERVATION_SIZE = 6
-    ACTION_SIZE = 2
-
     # Target angle PID for heuristic demo
-    PID_TARG = 0  # 0.1
+    PID_TARG = 0.1
 
     def __init__(self):
 
-        _Lander.__init__(self)
+        _Lander.__init__(self, 6, 2)
 
     def reset(self):
 

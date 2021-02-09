@@ -19,16 +19,12 @@ from gym_copter.sensors.vision.dvs import DVS
 
 class Lander3D(_Lander):
 
-    # 3D model
-    OBSERVATION_SIZE = 10
-    ACTION_SIZE = 4
-
     # Angle PID for heuristic demo
     PID_TARG = 0.025
 
     def __init__(self):
 
-        _Lander.__init__(self)
+        _Lander.__init__(self, 10, 4)
 
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
