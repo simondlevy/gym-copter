@@ -264,7 +264,7 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        p = Circle((0, 0), env.TARGET_RADIUS, color='r', alpha=0.5)
+        p = Circle((0, 0), env.TARGET_RADIUS, color='gray', alpha=0.5)
         self.axes.add_patch(p)
         art3d.pathpatch_2d_to_3d(p, zdir='z')
 
