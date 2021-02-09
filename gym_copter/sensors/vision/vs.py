@@ -54,6 +54,10 @@ class VisionSensor(object):
         # Warp image
         warped = cv2.warpPerspective(image, M, (sideLength, sideLength))
 
+        # Re-discretize
+        warped[warped < 0.5] = 0
+        warped[warped > 0.5] = 1
+
         # Remove margin introduced by warping
         margin = (warped.shape[0] - image.shape[0]) // 2
         return warped[margin:-margin, margin:-margin]
@@ -78,7 +82,7 @@ class VisionSensor(object):
         r = self._scale(z, self.objsize)
 
         try:
-            cv2.circle(image, (cx, cy), r, (255, 255, 255), thickness=-1)
+            cv2.circle(image, (cx, cy), r, (1, 1, 1), thickness=-1)
 
         except Exception:
             pass
