@@ -23,9 +23,6 @@ class Lander3D(_Lander):
     OBSERVATION_SIZE = 10
     ACTION_SIZE = 4
 
-    # Number of target points (arbitrary)
-    TARGET_POINTS = 250
-
     # Angle PID for heuristic demo
     PID_TARG = 0.025
 
@@ -35,10 +32,6 @@ class Lander3D(_Lander):
 
         # Pre-convert max-angle degrees to radian
         self.max_angle = np.radians(self.MAX_ANGLE)
-
-        # Create points for landing zone
-        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
-        self.target = np.array([np.sin(pts), np.cos(pts)]).transpose()
 
     def reset(self):
 

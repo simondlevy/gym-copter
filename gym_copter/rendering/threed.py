@@ -253,6 +253,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
     '''
     Extends 3D rendering base class by displaying a landing target
     '''
+    # Number of target points (arbitrary)
+    TARGET_POINTS = 250
 
     def __init__(self, env, viewangles=None, outfile=None, view_width=1):
 
@@ -268,8 +270,12 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         self.axes.add_patch(p)
         art3d.pathpatch_2d_to_3d(p, zdir='z')
 
-        self.target_x = env.target[:, 0]
-        self.target_y = env.target[:, 1]
+        # Create points for landing zone
+        pts = np.linspace(-np.pi, +np.pi, self.TARGET_POINTS)
+        target = np.array([np.sin(pts), np.cos(pts)]).transpose()
+
+        self.target_x = target[:, 0]
+        self.target_y = target[:, 1]
         self.target_z = np.zeros(len(self.target_x))
 
     def render(self):
