@@ -22,7 +22,7 @@ nopid:
 	python3 gym_copter/envs/lander3d.py --nopid
 
 
-viz:
+vs:
 	python3 gym_copter/envs/lander3d.py --visual
 
 dvs:

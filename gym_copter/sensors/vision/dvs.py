@@ -24,7 +24,7 @@ class DVS(VisionSensor):
         @param fov field of view (degrees)
         '''
 
-        VisionSensor.__init__(self, objsize, res)
+        VisionSensor.__init__(self, objsize, res, winname='DVS')
 
         self.image_prev = None
 

@@ -17,7 +17,7 @@ import cv2
 
 class VisionSensor(object):
 
-    def __init__(self, objsize=1, res=128, fov=60):
+    def __init__(self, objsize=1, res=128, fov=60, winname='Vision'):
         '''
         @param size size meters
         @param res resolution in (pixels)
@@ -27,6 +27,8 @@ class VisionSensor(object):
         self.objsize = objsize
         self.res = res
         self.fov = fov
+
+        self.window_name = winname + (': %dx%d' % (res, res))
 
     def getImage(self, x, y, z, phi, theta, psi):
         '''
@@ -62,14 +64,14 @@ class VisionSensor(object):
         margin = (warped.shape[0] - image.shape[0]) // 2
         return warped[margin:-margin, margin:-margin]
 
-    def display_image(self, image, name='Vision', display_size=400):
+    def display_image(self, image, display_size=400):
         '''
         Scale up and display the image
         '''
         image = cv2.resize(image, ((display_size, )*2), interpolation=cv2.INTER_NEAREST)
         image = self._process_image(image)
-        cv2.imshow(name, image)
-        cv2.moveWindow(name, 725, 0);
+        cv2.imshow(self.window_name, image)
+        cv2.moveWindow(self.window_name, 725, 0);
         return cv2.waitKey(10) != 27  # ESC
 
     def _process_image(self, image):
