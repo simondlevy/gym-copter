@@ -97,11 +97,13 @@ class Lander3D(_Lander):
 
 class LanderVisual(Lander3D):
 
-    def __init__(self):
+    RES = 16
+
+    def __init__(self, vs=VisionSensor(res=RES)):
 
         Lander3D.__init__(self)
 
-        self.vs = VisionSensor(res=16)
+        self.vs = vs
 
         self.image = None
 
@@ -130,9 +132,7 @@ class LanderDVS(LanderVisual):
 
     def __init__(self):
 
-        LanderVisual.__init__(self)
-
-        self.vs = DVS(res=16)
+        LanderVisual.__init__(self, vs=DVS(res=LanderVisual.RES))
 
 # End of Lander3D classes -------------------------------------------------
 
