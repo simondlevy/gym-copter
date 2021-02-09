@@ -62,7 +62,7 @@ class VisionSensor(object):
         '''
         Scale up and display the image
         '''
-        image = cv2.resize(image, ((display_size, )*2))
+        image = cv2.resize(image, ((display_size, )*2), interpolation=cv2.INTER_NEAREST)
         image = self._process_image(image)
         cv2.imshow(name, image)
         cv2.moveWindow(name, 725, 0);

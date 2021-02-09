@@ -7,6 +7,8 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 import numpy as np
 import cv2
 
@@ -71,8 +73,19 @@ def main():
     XRANGE = 4
     SPEED = .02
 
-    # Arbitrary object size (1m)
-    dvs = DVS(1)
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('--res',  type=int, default=128,
+                        help='Pixel resolution')
+    parser.add_argument('--fov',  type=float, default=30,
+                        help='Field of view (deg)')
+    parser.add_argument('--objsize',  type=float, default=1,
+                        help='Object size (m)')
+    args = parser.parse_args()
+
+     # Arbitrary object size (1m)
+    dvs = DVS(args.objsize, args.res, args.fov)
 
     # Arbitrary stating pose
     x, y, z, phi, theta, psi = -XRANGE, 0, 10, 0, 0, 0
