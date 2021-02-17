@@ -142,10 +142,10 @@ def make_parser():
 
     group = parser.add_mutually_exclusive_group()
 
-    group.add_argument('--visual', dest='visual', action='store_true',
+    group.add_argument('--vision', action='store_true',
                        help='Use vision sensor')
 
-    group.add_argument('--dvs', dest='dvs', action='store_true',
+    group.add_argument('--dvs', action='store_true',
                        help='Use Dynamic Vision Sensor')
 
     group.add_argument('--nodisplay', dest='nodisplay', action='store_true',
@@ -170,7 +170,7 @@ def main():
     args, viewangles = parse(parser)
 
     env = (LanderDVS() if args.dvs
-           else (LanderVisual() if args.visual
+           else (LanderVisual() if args.vision
                  else Lander3D()))
 
     if not args.nodisplay:

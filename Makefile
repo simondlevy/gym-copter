@@ -18,12 +18,15 @@ clean:
 3d:
 	python3 gym_copter/envs/lander3d.py
 
+nodisp:
+	python3 gym_copter/envs/lander3d.py --nodisplay
+
 nopid:
 	python3 gym_copter/envs/lander3d.py --nopid
 
 
 vs:
-	python3 gym_copter/envs/lander3d.py --visual
+	python3 gym_copter/envs/lander3d.py --vision
 
 dvs:
 	python3 gym_copter/envs/lander3d.py --dvs
