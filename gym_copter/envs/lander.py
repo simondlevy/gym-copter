@@ -244,6 +244,6 @@ def _make_parser():
             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
-    parser.add_argument('--nopid', dest='nopid', action='store_true',
+    parser.add_argument('--nopid', action='store_true',
                         help='Turn off lateral PID control')
     return parser
