@@ -24,13 +24,22 @@ def main():
         print('Unable to open file %s' % args.csvfile)
         exit(1)
 
+
     t = data[:,0]
     z = data[:,5]
+    dz = data[:,6]
 
-    plt.subplot(2,1,1)
-    plt.plot(t, -z)  # invert for NED
+    fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-    plt.title(args.csvfile)
+    axs[0].plot(t, z)
+    axs[0].set_ylabel('Z (m)')
+
+    fig.suptitle(args.csvfile, fontsize=16)
+
+    axs[1].plot(t, dz)
+    axs[1].set_xlabel('Time (s)')
+    axs[1].set_ylabel('dZ/dt (m/s)')
+
     plt.show()
 
 
