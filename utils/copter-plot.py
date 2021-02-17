@@ -31,7 +31,7 @@ def main():
 
     fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-    axs[0].plot(t, z)
+    axs[0].plot(t, -z)  # adjust for NED
     axs[0].set_ylabel('Z (m)')
 
     fig.suptitle(args.csvfile, fontsize=16)
