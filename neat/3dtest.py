@@ -17,8 +17,9 @@ from gym_copter.envs.lander3d import make_parser, parse
 from neat_gym import eval_net
 
 
-def eval_with_movie(net, env, render, report, movie):
-    eval_net(net, env, render, report)
+def eval_with_movie(net, env, render, report, seed, movie, csvfilename):
+    eval_net(net, env,
+             seed=seed, render=render, report=report, csvfilename=csvfilename)
     if movie is not None:
         print('Saving %s ...' % movie)
 
@@ -45,7 +46,13 @@ def main():
     # Start the network-evaluation episode on a separate thread
     render, report = True, True
     thread = threading.Thread(target=eval_with_movie,
-                              args=(net, env, render, report, args.movie))
+                              args=(net,
+                                    env,
+                                    render,
+                                    report,
+                                    args.seed,
+                                    args.movie,
+                                    args.csvfilename))
     thread.start()
 
     # Begin 3D rendering on main thread
