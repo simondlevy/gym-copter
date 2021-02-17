@@ -75,6 +75,14 @@ class Lander3D(_Lander):
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
+    def csv_get_header(self):
+
+        return 'X,dX,Y,dY,z,dZ,phi,dPhi,theta,dTheta'
+
+    def csv_get_fps(self):
+
+        return self.FRAMES_PER_SECOND
+
     def _get_motors(self, motors):
 
         return motors

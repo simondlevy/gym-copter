@@ -24,10 +24,9 @@ def main():
         print('Unable to open file %s' % args.csvfile)
         exit(1)
 
-
-    t = data[:,0]
-    z = data[:,5]
-    dz = data[:,6]
+    t = data[:, 0]
+    z = data[:, 5]
+    dz = data[:, 6]
 
     fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
