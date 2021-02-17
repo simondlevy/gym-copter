@@ -172,13 +172,17 @@ class _Lander(gym.Env, EzPickle):
         csvfile = None
         if csvfilename is not None:
             csvfile = open(csvfilename, 'w')
-            csvfile.write('X,dX,Y,dY,z,dZ,phi,dPhi,theta,dTheta,psi,dPsi\n')
+            csvfile.write('X,dX,Y,dY,z,dZ,phi,dPhi,theta,dTheta\n')
 
         while True:
 
             action = self.heuristic(state, nopid)
             state, reward, done, _ = self.step(action)
             total_reward += reward
+
+            if csvfile is not None:
+                csvfile.write('%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' %
+                              tuple(state))
 
             self.render('rgb_array')
 
