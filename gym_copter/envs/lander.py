@@ -158,6 +158,9 @@ class _Lander(gym.Env, EzPickle):
                 {})
 
     def demo_heuristic(self, seed=None, nopid=False, csvfilename=None):
+        '''
+        csvfile arg will only be added by 3D scripts.
+        '''
 
         self.seed(seed)
         np.random.seed(seed)
@@ -165,6 +168,11 @@ class _Lander(gym.Env, EzPickle):
         total_reward = 0
         steps = 0
         state = self.reset()
+
+        csvfile = None
+        if csvfilename is not None:
+            csvfile = open(csvfilename, 'w')
+            csvfile.write('X,dX,Y,dY,z,dZ,phi,dPhi,theta,dTheta,psi,dPsi\n')
 
         while True:
 
@@ -187,6 +195,8 @@ class _Lander(gym.Env, EzPickle):
 
         sleep(1)
         self.close()
+        if csvfile is not None:
+            csvfile.close()
         return total_reward
 
     def _reset(self, pose=(0, 0, INITIAL_ALTITUDE, 0, 0), perturb=True):
