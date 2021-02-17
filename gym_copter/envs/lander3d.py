@@ -148,7 +148,7 @@ def make_parser():
     group.add_argument('--dvs', action='store_true',
                        help='Use Dynamic Vision Sensor')
 
-    group.add_argument('--nodisplay', dest='nodisplay', action='store_true',
+    group.add_argument('--nodisplay', action='store_true',
                        help='Suppress display')
 
     return parser
