@@ -104,7 +104,7 @@ class MultirotorDynamics:
         '''
         self._p = params
         self._motorCount = motorCount
-        self._fps = framesPerSecond
+        self._dt = 1. / framesPerSecond
         self.g = g
 
         self._omegas = np.zeros(motorCount)
@@ -207,7 +207,7 @@ class MultirotorDynamics:
 
             # Compute state as first temporal integral of first temporal
             # derivative
-            self._x += 1./self._fps * self._dxdt
+            self._x += self._dt * self._dxdt
 
             # Once airborne, inertial-frame acceleration is same as NED
             # acceleration
