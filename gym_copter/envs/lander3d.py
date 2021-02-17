@@ -151,8 +151,8 @@ def make_parser():
     group.add_argument('--nodisplay', action='store_true',
                        help='Suppress display')
 
-    group.add_argument('--save', dest='csvfile',
-                       help='Sae trajectory in CSV file')
+    group.add_argument('--save', dest='csvfilename',
+                       help='Save trajectory in CSV file')
 
     return parser
 
@@ -180,7 +180,7 @@ def main():
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
     threadfun = env.demo_heuristic
-    threadargs = args.seed, args.nopid
+    threadargs = args.seed, args.nopid, args.csvfilename
 
     if args.pose is not None:
         try:

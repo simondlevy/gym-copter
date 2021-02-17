@@ -157,7 +157,7 @@ class _Lander(gym.Env, EzPickle):
                 done,
                 {})
 
-    def demo_heuristic(self, seed=None, nopid=False):
+    def demo_heuristic(self, seed=None, nopid=False, csvfilename=None):
 
         self.seed(seed)
         np.random.seed(seed)
@@ -242,8 +242,11 @@ def _make_parser():
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
+
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
+
     parser.add_argument('--nopid', action='store_true',
                         help='Turn off lateral PID control')
+
     return parser
