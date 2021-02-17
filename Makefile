@@ -10,7 +10,7 @@ install:
 	sudo python3 setup.py install
 
 clean:
-	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/
+	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/ *.csv
 
 2d:
 	python3 gym_copter/envs/lander2d.py
@@ -39,6 +39,7 @@ commit:
 
 flake:
 	flake8 setup.py
+	flake8 utils/*.py
 	flake8 gym_copter/__init__.py
 	flake8 gym_copter/dynamics/*.py
 	flake8 gym_copter/rendering/*.py
