@@ -24,7 +24,11 @@ def main():
         print('Unable to open file %s' % args.csvfile)
         exit(1)
 
-    print(data)
+    t = data[:,0]
+    z = data[:,5]
+
+    plt.subplot(2,1,1)
+    plt.plot(t, -z)  # invert for NED
 
     plt.title(args.csvfile)
     plt.show()
