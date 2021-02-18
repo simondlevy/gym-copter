@@ -28,6 +28,9 @@ def main():
     parser.add_argument('--title', required=False, default=None,
                         help='Figure title (defaults to filename)')
 
+    parser.add_argument('--time', type=float, default=8,
+                        help='Time axis limit')
+
     parser.add_argument('--dzlim', type=float, default=15,
                         help='Axis limit for dZ/dt')
 
@@ -71,6 +74,9 @@ def main():
     axs[2].set_ylim((0, 1))
 
     axs[2].set_xlabel('Time (s)')
+
+    for ax in axs:
+        ax.set_xlim((0, args.time))
 
     plt.show()
 
