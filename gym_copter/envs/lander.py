@@ -174,7 +174,7 @@ class _Lander(gym.Env, EzPickle):
         csvfile = None
         if csvfilename is not None:
             csvfile = open(csvfilename, 'w')
-            csvfile.write('t,%s\n' % self.csv_get_header())
+            csvfile.write('t,X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
 
         while True:
 

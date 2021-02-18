@@ -14,7 +14,10 @@ import matplotlib.pyplot as plt
 
 from gym_copter.envs.lander import _Lander
 
+
 def main():
+
+    DZ_AXLIM = 15
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -23,6 +26,9 @@ def main():
 
     parser.add_argument('--raw', action='store_true',
                         help='File has no header or timestamps')
+
+    parser.add_argument('--title', required=False, default=None,
+                        help='Figure title (defaults to filename)')
 
     args = parser.parse_args()
 
@@ -34,7 +40,7 @@ def main():
         exit(1)
 
     zcol = 5
-    t = data[:,0]
+    t = data[:, 0]
 
     if args.raw:
         n = data.shape[0]
@@ -50,9 +56,11 @@ def main():
     axs[0].plot(t, -z)  # adjust for NED
     axs[0].set_ylabel('Z (m)')
 
-    fig.suptitle(args.csvfile, fontsize=16)
+    fig.suptitle(args.csvfile if args.title is None else args.title,
+                 fontsize=16)
 
     axs[1].plot(t, -dz)
+    axs[1].set_ylim((0, -DZ_AXLIM))
     axs[1].set_xlabel('Time (s)')
     axs[1].set_ylabel('dZ/dt (m/s)')
 
