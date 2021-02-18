@@ -51,9 +51,7 @@ def main():
     z = data[:, col+8]
     dz = data[:, (col+9)]
 
-    print(z)
-
-    fig, axs = plt.subplots(2, 1, constrained_layout=True)
+    fig, axs = plt.subplots(3, 1, constrained_layout=True)
 
     axs[0].plot(t, -z)  # adjust for NED
     axs[0].set_ylabel('Z (m)')
@@ -63,8 +61,14 @@ def main():
 
     axs[1].plot(t, -dz)
     axs[1].set_ylim((0, -DZ_AXLIM))
-    axs[1].set_xlabel('Time (s)')
     axs[1].set_ylabel('dZ/dt (m/s)')
+
+    motors = data[:,col:(col+4)]
+    for k in range(4):
+        axs[2].plot(t, motors[:,k])
+    axs[2].set_ylabel('Motors')
+
+    axs[2].set_xlabel('Time (s)')
 
     plt.show()
 
