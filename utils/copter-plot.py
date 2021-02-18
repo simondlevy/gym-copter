@@ -17,8 +17,6 @@ from gym_copter.envs.lander import _Lander
 
 def main():
 
-    DZ_AXLIM = 15
-
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
@@ -29,6 +27,9 @@ def main():
 
     parser.add_argument('--title', required=False, default=None,
                         help='Figure title (defaults to filename)')
+
+    parser.add_argument('--dzlim', type=float, default=15,
+                        help='Axis limit for dZ/dt')
 
     args = parser.parse_args()
 
@@ -60,7 +61,7 @@ def main():
                  fontsize=16)
 
     axs[1].plot(t, -dz)
-    axs[1].set_ylim((0, -DZ_AXLIM))
+    axs[1].set_ylim((0, -args.dzlim))
     axs[1].set_ylabel('dZ/dt (m/s)')
 
     motors = data[:, col:(col+4)]
