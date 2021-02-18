@@ -136,8 +136,6 @@ class MultirotorDynamics:
         motorvals in interval [0,1]
         '''
 
-        print(motorvals)
-
         # Convert the  motor values to radians per second
         self._omegas = self._computeMotorSpeed(motorvals)
 

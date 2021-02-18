@@ -63,9 +63,9 @@ def main():
     axs[1].set_ylim((0, -DZ_AXLIM))
     axs[1].set_ylabel('dZ/dt (m/s)')
 
-    motors = data[:,col:(col+4)]
+    motors = data[:, col:(col+4)]
     for k in range(4):
-        axs[2].plot(t, motors[:,k])
+        axs[2].plot(t, motors[:, k])
     axs[2].set_ylabel('Motors')
 
     axs[2].set_xlabel('Time (s)')
