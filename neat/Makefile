@@ -16,4 +16,4 @@ best:
 	ls -c1 models | head
 
 clean:
-	rm -rf models/ visuals/ runs/ *.mp4
+	rm -rf models/ visuals/ runs/ *.mp4 *.csv
