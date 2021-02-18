@@ -39,17 +39,19 @@ def main():
         print('Unable to open file %s' % args.csvfile)
         exit(1)
 
-    zcol = 5
+    col = 1
     t = data[:, 0]
 
     if args.raw:
         n = data.shape[0]
         dur = n / _Lander.FRAMES_PER_SECOND
         t = np.linspace(0, dur, n) if args.raw else data[:, 0]
-        zcol = 4
+        col = 0
 
-    z = data[:, zcol]
-    dz = data[:, (zcol+1)]
+    z = data[:, col+8]
+    dz = data[:, (col+9)]
+
+    print(z)
 
     fig, axs = plt.subplots(2, 1, constrained_layout=True)
 

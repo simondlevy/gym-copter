@@ -174,7 +174,8 @@ class _Lander(gym.Env, EzPickle):
         csvfile = None
         if csvfilename is not None:
             csvfile = open(csvfilename, 'w')
-            csvfile.write('t,X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
+            csvfile.write('t,m1,m2,m3,m4,')
+            csvfile.write('X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
 
         while True:
 
@@ -185,6 +186,8 @@ class _Lander(gym.Env, EzPickle):
             if csvfile is not None:
 
                 csvfile.write('%f,' % (dt * steps))
+
+                csvfile.write('%f,%f,%f,%f,' % tuple(action))
 
                 csvfile.write('%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' %
                               tuple(state))
