@@ -22,9 +22,6 @@ def main():
 
     parser.add_argument('csvfile', metavar='CSVFILE', help='input .csv file')
 
-    parser.add_argument('--raw', action='store_true',
-                        help='File has no header or timestamps')
-
     parser.add_argument('--title', required=False, default=None,
                         help='Figure title (defaults to filename)')
 
@@ -36,24 +33,26 @@ def main():
 
     args = parser.parse_args()
 
+    data = None
+
     try:
-        data = np.genfromtxt(args.csvfile, delimiter=',',
-                             skip_header=(0 if args.raw else 1))
+        data = np.genfromtxt(args.csvfile, delimiter=',')
+
     except Exception:
         print('Unable to open file %s' % args.csvfile)
         exit(1)
 
-    col = 1
-    t = data[:, 0]
+    if data.shape[1] == 15:
+        t = data[1:, 0]
+        data = data[1:, 1:]
 
-    if args.raw:
+    else:
         n = data.shape[0]
         dur = n / _Lander.FRAMES_PER_SECOND
-        t = np.linspace(0, dur, n) if args.raw else data[:, 0]
-        col = 0
+        t = np.linspace(0, dur, n)
 
-    z = data[:, col+8]
-    dz = data[:, (col+9)]
+    z = data[:, 8]
+    dz = data[:, 9]
 
     fig, axs = plt.subplots(3, 1, constrained_layout=True)
 
@@ -67,7 +66,7 @@ def main():
     axs[1].set_ylim((0, -args.dzlim))
     axs[1].set_ylabel('dZ/dt (m/s)')
 
-    motors = data[:, col:(col+4)]
+    motors = data[:, 0:4]
     for k in range(4):
         axs[2].plot(t, motors[:, k])
     axs[2].set_ylabel('Motors')
