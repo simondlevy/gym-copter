@@ -69,7 +69,7 @@ def main():
                  fontsize=16)
 
     axs[1].plot(t, -dz)
-    axs[1].set_ylim((0, -args.dzlim))
+    axs[1].set_ylim((-args.dzlim, 0))
     axs[1].set_ylabel('dZ/dt (m/s)')
 
     m = 4 if is3d else 2
@@ -78,6 +78,7 @@ def main():
         axs[2].plot(t, motors[:, k])
     axs[2].set_ylabel('Motors')
     axs[2].set_ylim((0, 1))
+    axs[2].legend([('m%d' % (k+1)) for k in range(m)])
 
     axs[2].set_xlabel('Time (s)')
 
