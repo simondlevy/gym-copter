@@ -273,4 +273,7 @@ def _make_parser():
     parser.add_argument('--nopid', action='store_true',
                         help='Turn off lateral PID control')
 
+    parser.add_argument('--save', dest='csvfilename',
+                        help='Save trajectory in CSV file')
+
     return parser

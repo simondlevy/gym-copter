@@ -23,6 +23,9 @@ class Lander2D(_Lander):
 
         _Lander.__init__(self, 6, 2)
 
+        # For generating CSV file
+        self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
+
     def reset(self):
 
         if self.viewer is not None:
@@ -72,7 +75,9 @@ class Lander2D(_Lander):
 def main():
     parser = _make_parser()
     args = parser.parse_args()
-    Lander2D().demo_heuristic(seed=args.seed, nopid=args.nopid)
+    Lander2D().demo_heuristic(seed=args.seed,
+                              nopid=args.nopid,
+                              csvfilename=args.csvfilename)
 
 
 if __name__ == '__main__':
