@@ -171,11 +171,14 @@ class _Lander(gym.Env, EzPickle):
 
         dt = 1. / self.FRAMES_PER_SECOND
 
+        actsize = self.action_space.shape[0]
+
         csvfile = None
         if csvfilename is not None:
             csvfile = open(csvfilename, 'w')
-            csvfile.write('t,m1,m2,m3,m4,')
-            csvfile.write('X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
+            csvfile.write('t,' + ','.join([('m%d' % k)
+                                          for k in range(1, actsize+1)]))
+            csvfile.write(',X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
 
         while True:
 

@@ -16,7 +16,7 @@ clean:
 	python3 gym_copter/envs/lander2d.py
 
 3d:
-	python3 gym_copter/envs/lander3d.py --save PID.csv
+	python3 gym_copter/envs/lander3d.py --save pid.csv
 
 nodisp:
 	python3 gym_copter/envs/lander3d.py --nodisplay
