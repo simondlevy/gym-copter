@@ -29,6 +29,10 @@ class Lander3D(_Lander):
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
 
+        # For generating CSV file
+        self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
+                            'Phi', 'dPhi', 'Theta', 'dTheta']
+
     def reset(self):
 
         return _Lander._reset(self)

@@ -178,7 +178,7 @@ class _Lander(gym.Env, EzPickle):
             csvfile = open(csvfilename, 'w')
             csvfile.write('t,' + ','.join([('m%d' % k)
                                           for k in range(1, actsize+1)]))
-            csvfile.write(',X,dX,y,dY,Z,dZ,phi,dPhi,theta,dTheta\n')
+            csvfile.write(',' + ','.join(self.STATE_NAMES) + '\n')
 
         while True:
 
