@@ -188,12 +188,11 @@ class _Lander(gym.Env, EzPickle):
 
             if csvfile is not None:
 
-                csvfile.write('%f,' % (dt * steps))
+                csvfile.write('%f' % (dt * steps))
 
-                csvfile.write(('%f,'*actsize) % tuple(action))
+                csvfile.write((',%f' * actsize) % tuple(action))
 
-                csvfile.write('%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' %
-                              tuple(state))
+                csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
 
             self.render('rgb_array')
 

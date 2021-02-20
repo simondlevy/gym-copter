@@ -18,6 +18,9 @@ clean:
 3d:
 	python3 gym_copter/envs/lander3d.py --save pid.csv
 
+plot:
+	python3 utils/copter-plot.py pid.csv
+
 nodisp:
 	python3 gym_copter/envs/lander3d.py --nodisplay
 
