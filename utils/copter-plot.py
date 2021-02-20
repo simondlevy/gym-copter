@@ -38,8 +38,8 @@ def main():
     try:
         data = np.genfromtxt(args.csvfile, delimiter=',')
 
-    except Exception:
-        print('Unable to open file %s' % args.csvfile)
+    except Exception as e:
+        print('Unable to open file %s: %s' % (args.csvfile + str(e)))
         exit(1)
 
     if data.shape[1] == 15:

@@ -190,7 +190,7 @@ class _Lander(gym.Env, EzPickle):
 
                 csvfile.write('%f,' % (dt * steps))
 
-                csvfile.write('%f,%f,%f,%f,' % tuple(action))
+                csvfile.write(('%f,'*actsize) % tuple(action))
 
                 csvfile.write('%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n' %
                               tuple(state))
