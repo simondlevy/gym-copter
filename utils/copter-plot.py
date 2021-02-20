@@ -42,17 +42,23 @@ def main():
         print('Unable to open file %s: %s' % (args.csvfile + str(e)))
         exit(1)
 
-    if data.shape[1] == 15:
+    cols = data.shape[1]
+    is3d = cols > 9
+
+    # Full CSV file with column headers and time values
+    if cols in (9, 15):
         t = data[1:, 0]
         data = data[1:, 1:]
 
+    # "Raw" file with no column headers or time values
     else:
         n = data.shape[0]
         dur = n / _Lander.FRAMES_PER_SECOND
         t = np.linspace(0, dur, n)
 
-    z = data[:, 8]
-    dz = data[:, 9]
+    zcol = 8 if is3d else 4
+    z = data[:, zcol]
+    dz = data[:, zcol+1]
 
     fig, axs = plt.subplots(3, 1, constrained_layout=True)
 
@@ -66,8 +72,9 @@ def main():
     axs[1].set_ylim((0, -args.dzlim))
     axs[1].set_ylabel('dZ/dt (m/s)')
 
-    motors = data[:, 0:4]
-    for k in range(4):
+    m = 4 if is3d else 2
+    motors = data[:, 0:m]
+    for k in range(m):
         axs[2].plot(t, motors[:, k])
     axs[2].set_ylabel('Motors')
     axs[2].set_ylim((0, 1))
