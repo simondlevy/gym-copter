@@ -33,8 +33,9 @@ class _Lander(gym.Env, EzPickle):
     INSIDE_RADIUS_BONUS = 100
     MAX_ANGLE = 45
     YAW_PENALTY_FACTOR = 50
-    MOTOR_PENALTY_FACTOR = 0.03
     XYZ_PENALTY_FACTOR = 25
+    DZ_MAX = 10
+    DZ_PENALTY = 100
 
     # PIDs for heuristic demo
     PID_X = 0.1
@@ -110,8 +111,10 @@ class _Lander(gym.Env, EzPickle):
 
         # Get penalty based on state and motors
         shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)) +
-                    self.MOTOR_PENALTY_FACTOR*np.sum(motors))
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
+
+        if (abs(state[d.STATE_Z_DOT]) > self.DZ_MAX):
+            shaping -= self.DZ_PENALTY
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)

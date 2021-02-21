@@ -30,8 +30,10 @@ def main():
     parser = make_parser()
 
     parser.add_argument('filename', metavar='FILENAME', help='.dat input file')
+
     parser.add_argument('--movie', default=None,
                         help='If specified, sets the output movie file name')
+
     args, viewangles = parse(parser)
 
     # Load net and environment name from pickled file
