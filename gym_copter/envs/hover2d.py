@@ -11,19 +11,18 @@ import numpy as np
 
 from gym_copter.envs.hover import _Hover, _make_parser
 from gym_copter.pidcontrollers import AnglePidController
+from gym_copter.pidcontrollers import PosHoldPidController
 
 
 class Hover2D(_Hover):
-
-    # Target angle PID for heuristic demo
-    PID_TARG = 0.1
 
     def __init__(self):
 
         _Hover.__init__(self, 6, 2)
 
         # Add a PID controller for heuristic demo
-        self.angle_pid = AnglePidController()
+        self.angle_pid = AnglePidController(X_Kp=0.01)
+        self.poshold_pid = PosHoldPidController(.0005, 0.005)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
@@ -66,6 +65,8 @@ class Hover2D(_Hover):
 
         phi_todo = (0 if nopid
                     else self.angle_pid.getDemand(y, dy, phi, dphi))
+
+        # phi_todo = (0 if nopid else self.poshold_pid.getDemand(dy))
 
         hover_todo = self.altpid.getDemand(z, dz)
 

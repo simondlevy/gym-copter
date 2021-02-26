@@ -1,5 +1,5 @@
 '''
-PID controllers
+PID controllers for heuristic demos
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -9,11 +9,14 @@ MIT License
 
 class _PidController:
 
-    def __init__(self, Kp, Ki, Kd):
+    def __init__(self, Kp, Ki, Kd, windup_max=0.2):
 
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
+
+        # Prevents integral windup
+        self.windupMax = windup_max
 
         # Accumulated values
         self.lastError = 0
@@ -23,9 +26,6 @@ class _PidController:
 
         # For deltaT-based controllers
         self.previousTime = 0
-
-        # Prevents integral windup
-        self.windupMax = 0
 
     def compute(self, target, actual):
 
@@ -38,9 +38,10 @@ class _PidController:
         # Compute I term
         iterm = 0
         if self.Ki > 0:  # optimization
+
             # avoid integral windup
-            self.errorI = _PidController.constrainAbs(self.errorI +
-                                                      error, self.windupMax)
+            self.errorI = _PidController.constrainAbs(self.errorI + error,
+                                                      self.windupMax)
             iterm = self.errorI * self.Ki
 
         # Compute D term
@@ -116,3 +117,14 @@ class AnglePidController:
 
         return ((phi-phi_targ)*self.Target_Kp
                 + phi*self.Phi_Kp - dphi*self.Phi_Kd)
+
+
+class PosHoldPidController(_PidController):
+
+    def __init__(self, Kp, Ki):
+
+        _PidController.__init__(self, Kp, Ki, 0)
+
+    def getDemand(self, vel):
+
+        return _PidController.compute(self, 0, vel)

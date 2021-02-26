@@ -23,7 +23,7 @@ from gym_copter.pidcontrollers import AltitudeHoldPidController
 class _Hover(gym.Env, EzPickle):
 
     # Physics
-    INITIAL_RANDOM_FORCE = 30
+    INITIAL_RANDOM_FORCE = 0
     INITIAL_ALTITUDE = 10
     BOUNDS = 10
     FRAMES_PER_SECOND = 50
@@ -77,8 +77,6 @@ class _Hover(gym.Env, EzPickle):
         # Abbreviation
         d = self.dynamics
         status = d.getStatus()
-
-        motors = np.zeros(4)
 
         motors = np.clip(action, 0, 1)    # stay in interval [0,1]
         d.setMotors(self._get_motors(motors))
@@ -171,7 +169,7 @@ class _Hover(gym.Env, EzPickle):
 
             sleep(1./self.FRAMES_PER_SECOND)
 
-            if (steps % 20 == 0) or done:
+            if False:  # (steps % 20 == 0) or done:
                 print('steps =  %03d    total_reward = %+0.2f' %
                       (steps, total_reward))
 

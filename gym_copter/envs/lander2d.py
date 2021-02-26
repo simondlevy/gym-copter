@@ -18,9 +18,6 @@ from gym_copter.pidcontrollers import AnglePidController
 
 class Lander2D(_Lander):
 
-    # Target angle PID for heuristic demo
-    PID_TARG = 0.1
-
     def __init__(self):
 
         _Lander.__init__(self, 6, 2)
