@@ -43,8 +43,6 @@ class _Lander(gym.Env, EzPickle):
     PID_DX = 0.1
     PID_PHI = 0.05
     PID_DPHI = 0.4
-    PID_Z = 1.15
-    PID_DZ = 1.33
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],

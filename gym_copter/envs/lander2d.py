@@ -62,7 +62,7 @@ class Lander2D(_Lander):
 
         phi_todo = 0 if nopid else self._angle_pid(y, dy, phi, dphi)
 
-        hover_todo = self._hover_pid(z, dz)
+        hover_todo = self.descent_pid.getDemand(z, dz)
 
         return hover_todo-phi_todo, hover_todo+phi_todo
 

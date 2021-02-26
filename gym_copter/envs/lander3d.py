@@ -73,7 +73,7 @@ class Lander3D(_Lander):
 
         theta_todo = 0 if nopid else self._angle_pid(x, dx, -theta, -dtheta)
 
-        hover_todo = self._hover_pid(z, dz)
+        hover_todo = self.descent_pid.getDemand(z, dz)
 
         t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
