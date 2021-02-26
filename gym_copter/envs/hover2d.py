@@ -21,8 +21,8 @@ class Hover2D(_Hover):
         _Hover.__init__(self, 6, 2)
 
         # Add a PID controller for heuristic demo
-        self.angle_pid = AnglePidController(X_Kp=0.01)
-        self.poshold_pid = PosHoldPidController(.0005, 0.005)
+        self.angle_pid = AnglePidController()
+        self.poshold_pid = PosHoldPidController(.005, 0.0005)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
@@ -66,9 +66,7 @@ class Hover2D(_Hover):
         # phi_todo = (0 if nopid
         #             else self.angle_pid.getDemand(y, dy, phi, dphi))
 
-        # phi_todo = (0 if nopid else self.poshold_pid.getDemand(dy))
-
-        phi_todo = 0
+        phi_todo = (0 if nopid else self.poshold_pid.getDemand(dy))
 
         hover_todo = self.altpid.getDemand(z, dz)
 

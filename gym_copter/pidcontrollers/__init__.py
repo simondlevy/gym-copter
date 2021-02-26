@@ -90,18 +90,15 @@ class AltitudeHoldPidController:
         return correction
 
 
-class DescentPidController:
+class PositionHoldPidController:
 
-    def __init__(self, Kp=1.15, Kd=1.33):
+    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=3, Kd_vel=0):
 
-        self.kP = Kp
-        self.kd = Kd
+        return
 
-        _PidController.__init__(self, Kp, 0, Kd)
+    def getDemand(self, vel):
 
-    def getDemand(self, z, dz):
-
-        return z*self.Kp + dz*self.Kd
+        return 0
 
 
 class AnglePidController:
@@ -123,12 +120,4 @@ class AnglePidController:
                 + phi*self.Phi_Kp - dphi*self.Phi_Kd)
 
 
-class PosHoldPidController(_PidController):
 
-    def __init__(self, Kp, Ki):
-
-        _PidController.__init__(self, Kp, Ki, 0)
-
-    def getDemand(self, vel):
-
-        return _PidController.compute(self, 0, vel)
