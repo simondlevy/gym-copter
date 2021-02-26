@@ -12,10 +12,10 @@ install:
 clean:
 	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/ *.csv
 
-2d:
+l2d:
 	python3 gym_copter/envs/lander2d.py --save pid.csv
 
-3d:
+l3d:
 	python3 gym_copter/envs/lander3d.py --save pid.csv
 
 plot:

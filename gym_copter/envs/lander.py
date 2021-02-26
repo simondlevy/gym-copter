@@ -17,6 +17,7 @@ from gym import spaces
 from gym.utils import EzPickle, seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+from gym_copter.pidcontrollers import DescentPidController, AnglePidController
 
 
 class _Lander(gym.Env, EzPickle):
@@ -73,6 +74,10 @@ class _Lander(gym.Env, EzPickle):
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
+
+        # Add PID controllers for heuristic demo
+        self.descent_pid = DescentPidController()
+        self.angle_pid = AnglePidController()
 
     def seed(self, seed=None):
 
