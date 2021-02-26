@@ -81,7 +81,7 @@ class TwoDRenderer:
         self.world.DestroyBody(self.lander)
         self.lander = None
 
-    def render(self, pose, spinning):
+    def render(self, mode, pose, spinning):
 
         # Draw ground as background
         self.viewer.draw_polygon(
@@ -168,7 +168,7 @@ class TwoDLanderRenderer(TwoDRenderer):
 
     def render(self, mode, pose, spinning):
 
-        TwoDRenderer.render(self, pose, spinning)
+        TwoDRenderer.render(self, mode, pose, spinning)
 
         # Draw flags
         for d in [-1, +1]:
