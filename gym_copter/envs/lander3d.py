@@ -15,6 +15,7 @@ from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
+from gym_copter.pidcontrollers import AnglePidController
 
 
 class Lander3D(_Lander):
@@ -32,6 +33,10 @@ class Lander3D(_Lander):
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
+
+        # Add PID controllers for heuristic demo
+        self.phi_pid = AnglePidController(Target_Kp=0.025)
+        self.theta_pid = AnglePidController(Target_Kp=0.025)
 
     def reset(self):
 
@@ -69,9 +74,10 @@ class Lander3D(_Lander):
         '''
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
 
-        phi_todo = 0 if nopid else self._angle_pid(y, dy, phi, dphi)
+        phi_todo = 0 if nopid else self.phi_pid.getDemand(y, dy, phi, dphi)
 
-        theta_todo = 0 if nopid else self._angle_pid(x, dx, -theta, -dtheta)
+        theta_todo = (0 if nopid
+                      else self.theta_pid.getDemand(x, dx, -theta, -dtheta))
 
         hover_todo = self.descent_pid.getDemand(z, dz)
 

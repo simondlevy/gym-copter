@@ -17,7 +17,7 @@ from gym import spaces
 from gym.utils import EzPickle, seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
-from gym_copter.pidcontrollers import DescentPidController, AnglePidController
+from gym_copter.pidcontrollers import DescentPidController
 
 
 class _Lander(gym.Env, EzPickle):
@@ -37,12 +37,6 @@ class _Lander(gym.Env, EzPickle):
     XYZ_PENALTY_FACTOR = 25
     DZ_MAX = 10
     DZ_PENALTY = 100
-
-    # PIDs for heuristic demo
-    PID_X = 0.1
-    PID_DX = 0.1
-    PID_PHI = 0.05
-    PID_DPHI = 0.4
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -73,9 +67,8 @@ class _Lander(gym.Env, EzPickle):
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
 
-        # Add PID controllers for heuristic demo
+        # Add PID controller for heuristic demo
         self.descent_pid = DescentPidController()
-        self.angle_pid = AnglePidController()
 
     def seed(self, seed=None):
 
@@ -250,17 +243,6 @@ class _Lander(gym.Env, EzPickle):
 
         # Return initial state
         return self.step(np.zeros(self.action_size))[0]
-
-    def _angle_pid(self, x, dx, phi, dphi):
-
-        phi_targ = x*self.PID_X + dx*self.PID_DX
-
-        return ((phi-phi_targ)*self.PID_TARG
-                + phi*self.PID_PHI - dphi*self.PID_DPHI)
-
-    def _hover_pid(self, z, dz):
-
-        return z*self.PID_Z + dz*self.PID_DZ
 
     def _randforce(self):
 
