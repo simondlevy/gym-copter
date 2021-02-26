@@ -67,7 +67,7 @@ class _PidController:
 
 class AltitudeHoldPidController:
 
-    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=0, Kd_vel=0, target=5):
+    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=3, Kd_vel=0, target=5):
 
         self.posPid = _PidController(Kp_pos, 0, 0)
         self.velPid = _PidController(Kp_vel, Ki_vel, Kd_vel)
@@ -83,7 +83,11 @@ class AltitudeHoldPidController:
         targetVelocity = self.posPid.compute(self.altitudeTarget, z)
 
         # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dz)
+        correction = self.velPid.compute(targetVelocity, dz)
+
+        # print('%+3.3f  %+3.3f  %+3.3f' % (targetVelocity, dz, correction))
+
+        return correction
 
 
 class DescentPidController:
