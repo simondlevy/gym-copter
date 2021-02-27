@@ -27,7 +27,7 @@ class _PidController:
         # For deltaT-based controllers
         self.previousTime = 0
 
-    def compute(self, target, actual):
+    def compute(self, target, actual, debug=False):
 
         # Compute error as scaled target minus actual
         error = target - actual
@@ -88,7 +88,7 @@ class AltitudeHoldPidController:
 
 class PositionHoldPidController:
 
-    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=3, Kd_vel=0, target=0):
+    def __init__(self, Kp_pos=0.0, Kp_vel=0.0, Ki_vel=0, Kd_vel=0, target=0):
 
         self.posPid = _PidController(Kp_pos, 0, 0)
         self.velPid = _PidController(Kp_vel, Ki_vel, Kd_vel)
@@ -98,7 +98,7 @@ class PositionHoldPidController:
     def getDemand(self, x, dx):
 
         # Target velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.target, x)
+        targetVelocity = self.posPid.compute(self.target, x, debug=True)
 
         # Run velocity PID controller to get correction
         correction = self.velPid.compute(targetVelocity, dx)
