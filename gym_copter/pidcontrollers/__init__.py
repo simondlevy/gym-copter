@@ -72,7 +72,7 @@ class AltitudeHoldPidController:
         self.posPid = _PidController(Kp_pos, 0, 0)
         self.velPid = _PidController(Kp_vel, Ki_vel, Kd_vel)
 
-        self.altitudeTarget = target
+        self.target = target
 
     def getDemand(self, z, dz):
 
@@ -80,25 +80,30 @@ class AltitudeHoldPidController:
         z, dz = -z, -dz
 
         # Target velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.altitudeTarget, z)
+        targetVelocity = self.posPid.compute(self.target, z)
 
         # Run velocity PID controller to get correction
-        correction = self.velPid.compute(targetVelocity, dz)
-
-        # print('%+3.3f  %+3.3f  %+3.3f' % (targetVelocity, dz, correction))
-
-        return correction
+        return self.velPid.compute(targetVelocity, dz)
 
 
 class PositionHoldPidController:
 
-    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=3, Kd_vel=0):
+    def __init__(self, Kp_pos=1.0, Kp_vel=0.2, Ki_vel=3, Kd_vel=0, target=0):
 
-        return
+        self.posPid = _PidController(Kp_pos, 0, 0)
+        self.velPid = _PidController(Kp_vel, Ki_vel, Kd_vel)
 
-    def getDemand(self, vel):
+        self.target = target
 
-        return 0
+    def getDemand(self, x, dx):
+
+        # Target velocity is a setpoint
+        targetVelocity = self.posPid.compute(self.target, x)
+
+        # Run velocity PID controller to get correction
+        correction = self.velPid.compute(targetVelocity, dx)
+
+        return correction
 
 
 class AnglePidController:

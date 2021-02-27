@@ -21,9 +21,6 @@ l3d:
 h2d:
 	python3 gym_copter/envs/hover2d.py --save pid.csv
 
-h3d:
-	python3 gym_copter/envs/hover3d.py --save pid.csv
-
 plot:
 	python3 utils/copter-plot.py pid.csv
 
