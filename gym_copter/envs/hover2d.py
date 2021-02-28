@@ -63,7 +63,8 @@ class Hover2D(_Hover):
 
         y, dy, z, dz, phi, dphi = s
 
-        phi_todo = (0 if nopid else self.poshold_pid.getDemand(y, dy))
+        # phi_todo = (0 if nopid else self.poshold_pid.getDemand(y, dy))
+        phi_todo = (0 if nopid else self.angle_pid.getDemand(y, dy, phi, dphi))
 
         hover_todo = self.altpid.getDemand(z, dz)
 

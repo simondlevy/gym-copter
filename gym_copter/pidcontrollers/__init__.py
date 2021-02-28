@@ -6,6 +6,8 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+import numpy as np
+
 
 class _PidController:
 
@@ -56,6 +58,12 @@ class _PidController:
 
         return pterm + iterm + dterm
 
+    def reset(self):
+
+        self.errorI = 0
+        self.lastError = 0
+        self.previousTime = 0
+
     @staticmethod
     def constrainMinMax(val, minval, maxval):
         return minval if val < minval else (maxval if val > maxval else val)
@@ -88,7 +96,9 @@ class AltitudeHoldPidController:
 
 class PositionHoldPidController:
 
-    def __init__(self, Kp_pos=0.0, Kp_vel=0.0, Ki_vel=0, Kd_vel=0, target=0):
+    def __init__(self,
+                 Kp_pos=1.0, Kp_vel=0.00001, Ki_vel=0.1, Kd_vel=1,
+                 target=0):
 
         self.posPid = _PidController(Kp_pos, 0, 0)
         self.velPid = _PidController(Kp_vel, Ki_vel, Kd_vel)
@@ -137,3 +147,75 @@ class DescentPidController:
     def getDemand(self, z, dz):
 
         return z*self.Kp + dz*self.Kd
+
+
+# Helper class
+class _AnglePidController(_PidController):
+
+    MAX_ANGLE_DEGREES = 45
+
+    def __init__(self, Kp):
+
+        _PidController.__init__(self, Kp, 0, 0)
+
+        # Maximum roll pitch demand is +/-0.5, so to convert demand to
+        # angle for error computation, we multiply by the folling amount:
+        self.demandMultiplier = 2 * np.radians(self.MAX_ANGLE_DEGREES)
+
+    def compute(self, demand, angle):
+
+        return _PidController.compute(demand*self.demandMultiplier, angle)
+
+
+class LevelPidController:
+
+    def __init__(self, Kp):
+
+        self.rollPid = _AnglePidController(Kp)
+        self.pitchPid = _AnglePidController(Kp)
+
+    def modifyDemands(self, phi, theta):
+
+        return (self.rollPid.compute(0, phi),
+                self.pitchPid.compute(0, theta))
+
+
+class _AngularVelocityPidController(_PidController):
+
+    # Arbitrary constants
+    BIG_DEGREES_PER_SECOND = 40
+    WINDUP_MAX = 6
+
+    def __init__(self, Kp, Ki, Kd):
+
+        _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
+
+        # Converted to radians from degrees in constructor for efficiency
+        self.bigAngularVelocity = 0
+
+        # Convert degree parameters to radians for use later
+        self.bigAngularVelocity = np.radians(self.BIG_DEGREES_PER_SECOND)
+
+    def compute(self, angularVelocity):
+
+        # Reset integral on quick angular velocity change
+        if abs(angularVelocity) > self.bigAngularVelocity:
+            self.reset()
+
+        return _PidController.compute(angularVelocity)
+
+
+class RatePidController(_PidController):
+
+    # Aribtrary constants
+    BIG_YAW_DEMAND = 0.1
+
+    def RatePidController(self, Kp, Ki, Kd):
+
+        # Rate mode uses a rate controller for roll, pitch
+        self.rollPid = _AngularVelocityPidController(Kp, Ki, Kd)
+        self.pitchPid = _AngularVelocityPidController(Kp, Ki, Kd)
+
+    def modifyDemands(self, dphi, dtheta):
+
+        return self.rollPid.compute(dphi), self.pitchPid.compute(dtheta)
