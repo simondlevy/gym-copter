@@ -155,9 +155,9 @@ class AnglePidController(_PidController):
 
         _PidController.__init__(self, Kp, 0, 0)
 
-    def compute(self, angle):
+    def getDemand(self, angle):
 
-        return _PidController.compute(0, angle)
+        return _PidController.compute(self, 0, angle)
 
 
 class AngularVelocityPidController(_PidController):

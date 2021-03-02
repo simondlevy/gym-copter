@@ -68,13 +68,16 @@ class Lander2D(_Lander):
 
         y, dy, z, dz, phi, dphi = s
 
-        phi_todo = (0 if nopid
-                    else self.target_pid.getDemand(y, dy, phi, dphi))
+        phi_todo = 0
+        rate_todo = 0
+        level_todo = 0
 
-        rate_todo = self.rate_pid.getDemand(dphi)
-        # level_todo = self.level_pid.getDemand(dphi)
+        if not nopid:
+            phi_todo = self.target_pid.getDemand(y, dy, phi, dphi)
+            rate_todo = self.rate_pid.getDemand(dphi)
+            level_todo = self.level_pid.getDemand(dphi)
 
-        print('%+3.3f %+3.3f' % (phi_todo, rate_todo))
+            print('%+3.3f %+3.3f  %+3.3f' % (phi_todo, rate_todo, level_todo))
 
         hover_todo = self.descent_pid.getDemand(z, dz)
 
