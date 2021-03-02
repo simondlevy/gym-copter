@@ -150,7 +150,7 @@ class DescentPidController:
 
 
 # Helper class
-class _AnglePidController(_PidController):
+class AnglePidController(_PidController):
 
     MAX_ANGLE_DEGREES = 45
 
@@ -165,19 +165,6 @@ class _AnglePidController(_PidController):
     def compute(self, demand, angle):
 
         return _PidController.compute(demand*self.demandMultiplier, angle)
-
-
-class LevelPidController:
-
-    def __init__(self, Kp=0):
-
-        self.rollPid = _AnglePidController(Kp)
-        self.pitchPid = _AnglePidController(Kp)
-
-    def getDemand(self, phi, theta):
-
-        return (self.rollPid.compute(0, phi),
-                self.pitchPid.compute(0, theta))
 
 
 class AngularVelocityPidController(_PidController):
