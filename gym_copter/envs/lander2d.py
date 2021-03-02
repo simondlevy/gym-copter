@@ -16,6 +16,7 @@ from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.pidcontrollers import TargetPidController
 from gym_copter.pidcontrollers import AnglePidController
 from gym_copter.pidcontrollers import AngularVelocityPidController
+from gym_copter.pidcontrollers import PositionHoldPidController
 
 
 class Lander2D(_Lander):
@@ -31,6 +32,7 @@ class Lander2D(_Lander):
         self.target_pid = TargetPidController()
         self.level_pid = AnglePidController()
         self.rate_pid = AngularVelocityPidController()
+        self.poshold_pid = PositionHoldPidController()
 
     def reset(self):
 
