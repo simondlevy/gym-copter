@@ -149,22 +149,15 @@ class DescentPidController:
         return z*self.Kp + dz*self.Kd
 
 
-# Helper class
 class AnglePidController(_PidController):
 
-    MAX_ANGLE_DEGREES = 45
-
-    def __init__(self, Kp):
+    def __init__(self, Kp=0):
 
         _PidController.__init__(self, Kp, 0, 0)
 
-        # Maximum roll pitch demand is +/-0.5, so to convert demand to
-        # angle for error computation, we multiply by the folling amount:
-        self.demandMultiplier = 2 * np.radians(self.MAX_ANGLE_DEGREES)
+    def compute(self, angle):
 
-    def compute(self, demand, angle):
-
-        return _PidController.compute(demand*self.demandMultiplier, angle)
+        return _PidController.compute(0, angle)
 
 
 class AngularVelocityPidController(_PidController):
