@@ -87,7 +87,7 @@ class AltitudeHoldPidController:
         # Negate for NED
         z, dz = -z, -dz
 
-        # Target velocity is a setpoint
+        # Combo velocity is a setpoint
         targetVelocity = self.posPid.compute(self.target, z)
 
         # Run velocity PID controller to get correction
@@ -107,7 +107,7 @@ class PositionHoldPidController:
 
     def getDemand(self, x, dx):
 
-        # Target velocity is a setpoint
+        # Combo velocity is a setpoint
         targetVelocity = self.posPid.compute(self.target, x, debug=True)
 
         # Run velocity PID controller to get correction
@@ -116,14 +116,14 @@ class PositionHoldPidController:
         return correction
 
 
-class TargetPidController:
+class ComboPidController:
 
-    def __init__(self, X_Kp=0.1, X_Kd=0.1, Target_Kp=0.1,
+    def __init__(self, X_Kp=0.1, X_Kd=0.1, Combo_Kp=0.1,
                  Phi_Kp=0.05, Phi_Kd=0.4):
 
         self.X_Kp = X_Kp
         self.X_Kd = X_Kd
-        self.Target_Kp = Target_Kp
+        self.Combo_Kp = Combo_Kp
         self.Phi_Kp = Phi_Kp
         self.Phi_Kd = Phi_Kd
 
@@ -131,7 +131,7 @@ class TargetPidController:
 
         phi_targ = x*self.X_Kp + dx*self.X_Kd
 
-        return ((phi-phi_targ)*self.Target_Kp
+        return ((phi-phi_targ)*self.Combo_Kp
                 + phi*self.Phi_Kp - dphi*self.Phi_Kd)
 
 
@@ -151,7 +151,7 @@ class DescentPidController:
 
 class AnglePidController(_PidController):
 
-    def __init__(self, Kp=0):
+    def __init__(self, Kp=0.1):
 
         _PidController.__init__(self, Kp, 0, 0)
 
@@ -166,7 +166,7 @@ class AngularVelocityPidController(_PidController):
     BIG_DEGREES_PER_SECOND = 40
     WINDUP_MAX = 6
 
-    def __init__(self, Kp=0, Ki=0, Kd=0):
+    def __init__(self, Kp=0.4, Ki=0, Kd=0):
 
         _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
 

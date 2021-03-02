@@ -15,7 +15,7 @@ from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import TargetPidController
+from gym_copter.pidcontrollers import ComboPidController
 
 
 class Lander3D(_Lander):
@@ -32,8 +32,8 @@ class Lander3D(_Lander):
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
         # Add PID controllers for heuristic demo
-        self.phi_pid = TargetPidController(Target_Kp=0.025)
-        self.theta_pid = TargetPidController(Target_Kp=0.025)
+        self.phi_pid = ComboPidController(Combo_Kp=0.025)
+        self.theta_pid = ComboPidController(Combo_Kp=0.025)
 
     def reset(self):
 
@@ -195,7 +195,7 @@ def main():
         threadfun = env.demo_pose
         threadargs = (x, y, z, phi, theta, viewer)
 
-    thread = threading.Thread(target=threadfun, args=threadargs)
+    thread = threading.Thread(combo=threadfun, args=threadargs)
 
     thread.start()
 
