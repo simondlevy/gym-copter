@@ -13,7 +13,9 @@ MIT License
 import numpy as np
 
 from gym_copter.envs.lander import _Lander, _make_parser
-from gym_copter.pidcontrollers import AnglePidController
+from gym_copter.pidcontrollers import TargetPidController
+# from gym_copter.pidcontrollers import LevelPidController
+from gym_copter.pidcontrollers import AngularVelocityPidController
 
 
 class Lander2D(_Lander):
@@ -25,8 +27,9 @@ class Lander2D(_Lander):
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
 
-        # Add PID controller for heuristic demo
-        self.angle_pid = AnglePidController()
+        # Add PID controllers for heuristic demo
+        self.target_pid = TargetPidController()
+        self.rate_pid = AngularVelocityPidController()
 
     def reset(self):
 
@@ -62,7 +65,13 @@ class Lander2D(_Lander):
 
         y, dy, z, dz, phi, dphi = s
 
-        phi_todo = 0 if nopid else self.angle_pid.getDemand(y, dy, phi, dphi)
+        phi_todo = (0 if nopid
+                    else self.target_pid.getDemand(y, dy, phi, dphi))
+
+        rate_todo = self.rate_pid.getDemand(dphi)
+        # level_todo = self.level_pid.getDemand(dphi)
+
+        print('%+3.3f %+3.3f' % (phi_todo, rate_todo))
 
         hover_todo = self.descent_pid.getDemand(z, dz)
 

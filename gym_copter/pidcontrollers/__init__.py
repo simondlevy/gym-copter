@@ -116,7 +116,7 @@ class PositionHoldPidController:
         return correction
 
 
-class AnglePidController:
+class TargetPidController:
 
     def __init__(self, X_Kp=0.1, X_Kd=0.1, Target_Kp=0.1,
                  Phi_Kp=0.05, Phi_Kd=0.4):
@@ -169,53 +169,34 @@ class _AnglePidController(_PidController):
 
 class LevelPidController:
 
-    def __init__(self, Kp):
+    def __init__(self, Kp=0):
 
         self.rollPid = _AnglePidController(Kp)
         self.pitchPid = _AnglePidController(Kp)
 
-    def modifyDemands(self, phi, theta):
+    def getDemand(self, phi, theta):
 
         return (self.rollPid.compute(0, phi),
                 self.pitchPid.compute(0, theta))
 
 
-class _AngularVelocityPidController(_PidController):
+class AngularVelocityPidController(_PidController):
 
     # Arbitrary constants
     BIG_DEGREES_PER_SECOND = 40
     WINDUP_MAX = 6
 
-    def __init__(self, Kp, Ki, Kd):
+    def __init__(self, Kp=0, Ki=0, Kd=0):
 
         _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
-
-        # Converted to radians from degrees in constructor for efficiency
-        self.bigAngularVelocity = 0
 
         # Convert degree parameters to radians for use later
         self.bigAngularVelocity = np.radians(self.BIG_DEGREES_PER_SECOND)
 
-    def compute(self, angularVelocity):
+    def getDemand(self, angularVelocity):
 
         # Reset integral on quick angular velocity change
         if abs(angularVelocity) > self.bigAngularVelocity:
             self.reset()
 
-        return _PidController.compute(angularVelocity)
-
-
-class RatePidController(_PidController):
-
-    # Aribtrary constants
-    BIG_YAW_DEMAND = 0.1
-
-    def RatePidController(self, Kp, Ki, Kd):
-
-        # Rate mode uses a rate controller for roll, pitch
-        self.rollPid = _AngularVelocityPidController(Kp, Ki, Kd)
-        self.pitchPid = _AngularVelocityPidController(Kp, Ki, Kd)
-
-    def modifyDemands(self, dphi, dtheta):
-
-        return self.rollPid.compute(dphi), self.pitchPid.compute(dtheta)
+        return _PidController.compute(self, 0, angularVelocity)
