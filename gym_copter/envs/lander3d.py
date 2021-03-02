@@ -195,7 +195,7 @@ def main():
         threadfun = env.demo_pose
         threadargs = (x, y, z, phi, theta, viewer)
 
-    thread = threading.Thread(combo=threadfun, args=threadargs)
+    thread = threading.Thread(target=threadfun, args=threadargs)
 
     thread.start()
 
