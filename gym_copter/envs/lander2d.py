@@ -13,7 +13,6 @@ MIT License
 import numpy as np
 
 from gym_copter.envs.lander import _Lander, _make_parser
-from gym_copter.pidcontrollers import ComboPidController
 from gym_copter.pidcontrollers import AnglePidController
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
@@ -29,7 +28,6 @@ class Lander2D(_Lander):
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
 
         # Add PID controllers for heuristic demo
-        self.combo_pid = ComboPidController()
         self.level_pid = AnglePidController()
         self.rate_pid = AngularVelocityPidController()
         self.poshold_pid = PositionHoldPidController()
@@ -69,9 +67,6 @@ class Lander2D(_Lander):
         y, dy, z, dz, phi, dphi = s
 
         phi_todo = 0
-        rate_todo = 0
-        level_todo = 0
-        pos_todo = 0
 
         if not nopid:
 
@@ -79,12 +74,7 @@ class Lander2D(_Lander):
             level_todo = self.level_pid.getDemand(dphi)
             pos_todo = self.poshold_pid.getDemand(y, dy)
 
-            # phi_todo = self.combo_pid.getDemand(y, dy, phi, dphi)
-
             phi_todo = rate_todo + level_todo + pos_todo
-
-            print('%+6.6f %+6.6f  %+6.6f | %+6.6f' %
-                  (phi_todo, rate_todo, level_todo, pos_todo))
 
         hover_todo = self.descent_pid.getDemand(z, dz)
 
