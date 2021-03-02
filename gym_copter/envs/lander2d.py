@@ -74,10 +74,15 @@ class Lander2D(_Lander):
         pos_todo = 0
 
         if not nopid:
-            phi_todo = self.combo_pid.getDemand(y, dy, phi, dphi)
+
             rate_todo = self.rate_pid.getDemand(dphi)
             level_todo = self.level_pid.getDemand(dphi)
             pos_todo = self.poshold_pid.getDemand(y, dy)
+
+            # phi_todo = self.combo_pid.getDemand(y, dy, phi, dphi)
+
+            phi_todo = rate_todo + level_todo + pos_todo
+
             print('%+6.6f %+6.6f  %+6.6f | %+6.6f' %
                   (phi_todo, rate_todo, level_todo, pos_todo))
 
