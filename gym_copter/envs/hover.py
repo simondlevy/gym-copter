@@ -33,6 +33,7 @@ class _Hover(gym.Env, EzPickle):
     MAX_ANGLE = 45
     YAW_PENALTY_FACTOR = 50
     XYZ_PENALTY_FACTOR = 25
+    MAX_STEPS = 400
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -121,6 +122,10 @@ class _Hover(gym.Env, EzPickle):
             # Crashed!
             done = True
             self.spinning = False
+
+        elif self.steps == self.MAX_STEPS:
+
+            done = True
 
         # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
@@ -212,6 +217,9 @@ class _Hover(gym.Env, EzPickle):
                                             0,                  # phi
                                             0,                  # theta
                                             0]))                # psi
+
+        # No steps yet
+        self.steps = 0
 
         # Return initial state
         return self.step(np.zeros(self.action_size))[0]
