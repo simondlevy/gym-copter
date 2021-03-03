@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander class
+3D Copter-Hover class
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -11,7 +11,7 @@ from time import sleep
 import numpy as np
 import threading
 
-from gym_copter.envs.lander import _Lander, _make_parser
+from gym_copter.envs.hover import _Hover, _make_parser
 from gym_copter.rendering.threed import ThreeDHoverRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
@@ -20,11 +20,11 @@ from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 
 
-class Lander3D(_Lander):
+class Hover3D(_Hover):
 
     def __init__(self, obs_size=10):
 
-        _Lander.__init__(self, obs_size, 4)
+        _Hover.__init__(self, obs_size, 4)
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
@@ -43,7 +43,7 @@ class Lander3D(_Lander):
 
     def reset(self):
 
-        return _Lander._reset(self)
+        return _Hover._reset(self)
 
     def render(self, mode='human'):
         '''
@@ -92,9 +92,9 @@ class Lander3D(_Lander):
             x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
             theta_todo = theta_rate_todo + theta_level_todo + x_pos_todo
 
-        descent_todo = self.descent_pid.getDemand(z, dz)
+        hover_todo = self.altpid.getDemand(z, dz)
 
-        t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
+        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
@@ -107,13 +107,13 @@ class Lander3D(_Lander):
         return state[:10]
 
 
-class LanderVisual(Lander3D):
+class HoverVisual(Hover3D):
 
     RES = 16
 
     def __init__(self, vs=VisionSensor(res=RES)):
 
-        Lander3D.__init__(self)
+        Hover3D.__init__(self)
 
         self.vs = vs
 
@@ -121,7 +121,7 @@ class LanderVisual(Lander3D):
 
     def step(self, action):
 
-        result = Lander3D.step(self, action)
+        result = Hover3D.step(self, action)
 
         x, y, z, phi, theta, psi = self.pose
 
@@ -140,13 +140,13 @@ class LanderVisual(Lander3D):
             self.vs.display_image(self.image)
 
 
-class LanderDVS(LanderVisual):
+class HoverDVS(HoverVisual):
 
     def __init__(self):
 
-        LanderVisual.__init__(self, vs=DVS(res=LanderVisual.RES))
+        HoverVisual.__init__(self, vs=DVS(res=HoverVisual.RES))
 
-# End of Lander3D classes -------------------------------------------------
+# End of Hover3D classes -------------------------------------------------
 
 
 def make_parser():
@@ -155,7 +155,7 @@ def make_parser():
     You can add your own arguments, then call parse() to get args.
     '''
 
-    # Start with general-purpose parser from _Lander superclass
+    # Start with general-purpose parser from _Hover superclass
     parser = _make_parser()
 
     # Add 3D-specific argument support
@@ -192,9 +192,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (LanderDVS() if args.dvs
-           else (LanderVisual() if args.vision
-                 else Lander3D()))
+    env = (HoverDVS() if args.dvs
+           else (HoverVisual() if args.vision
+                 else Hover3D()))
 
     if not args.nodisplay:
         viewer = ThreeDHoverRenderer(env, viewangles=viewangles)

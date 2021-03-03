@@ -143,8 +143,6 @@ class ThreeDRenderer:
         # We also support different frame rates
         self.fps = fps
 
-        self.radius = env.TARGET_RADIUS
-
         # Helps us handle window close
         self.open = True
 
@@ -265,6 +263,8 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 viewangles=viewangles,
                                 outfile=outfile,
                                 view_width=view_width)
+
+        self.radius = env.TARGET_RADIUS
 
         p = Circle((0, 0), env.TARGET_RADIUS, color='gray', alpha=0.5)
         self.axes.add_patch(p)
