@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 '''
-2D Copter-Lander, based on
-  https://github.com/openai/gym/blob/master/gym/envs/box2d/lunar_lander.py
-
-This version controls each motor separately
+2D Copter lander
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -24,13 +21,13 @@ class Lander2D(_Lander):
 
         _Lander.__init__(self, 6, 2)
 
-        # For generating CSV file
-        self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
-
         # Add PID controllers for heuristic demo
         self.level_pid = AnglePidController()
         self.rate_pid = AngularVelocityPidController()
         self.poshold_pid = PositionHoldPidController()
+
+        # For generating CSV file
+        self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
 
     def reset(self):
 

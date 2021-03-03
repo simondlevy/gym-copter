@@ -19,7 +19,7 @@ l3d:
 	python3 gym_copter/envs/lander3d.py
 
 h2d:
-	python3 gym_copter/envs/hover2d.py
+	python3 gym_copter/envs/hover2d.py --seed 0
 
 plot:
 	python3 utils/copter-plot.py pid.csv

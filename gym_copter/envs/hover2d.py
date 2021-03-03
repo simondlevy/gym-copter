@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
-2D Copter-hovering
+2D Copter hovering
 
-Copyright (C) 2019 Simon D. Levy
+Copyright (C) 2021 Simon D. Levy
 
 MIT License
 '''
@@ -11,6 +11,7 @@ import numpy as np
 
 from gym_copter.envs.hover import _Hover, _make_parser
 from gym_copter.pidcontrollers import AnglePidController
+from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 
 
@@ -20,8 +21,9 @@ class Hover2D(_Hover):
 
         _Hover.__init__(self, 6, 2)
 
-        # Add a PID controller for heuristic demo
-        self.angle_pid = AnglePidController()
+        # Add PID controllers for heuristic demo
+        self.level_pid = AnglePidController()
+        self.rate_pid = AngularVelocityPidController()
         self.poshold_pid = PositionHoldPidController()
 
         # For generating CSV file
@@ -63,8 +65,15 @@ class Hover2D(_Hover):
 
         y, dy, z, dz, phi, dphi = s
 
-        # phi_todo = (0 if nopid else self.poshold_pid.getDemand(y, dy))
-        phi_todo = (0 if nopid else self.angle_pid.getDemand(y, dy, phi, dphi))
+        phi_todo = 0
+
+        if not nopid:
+
+            rate_todo = self.rate_pid.getDemand(dphi)
+            level_todo = self.level_pid.getDemand(dphi)
+            pos_todo = self.poshold_pid.getDemand(y, dy)
+
+            phi_todo = rate_todo + level_todo + pos_todo
 
         hover_todo = self.altpid.getDemand(z, dz)
 
