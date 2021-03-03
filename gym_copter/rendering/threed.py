@@ -281,3 +281,16 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         ThreeDRenderer.render(self)
 
         return ThreeDRenderer._complete(self)
+
+
+class ThreeDHoverRenderer(ThreeDRenderer):
+
+    def __init__(self, env, viewangles=None, outfile=None, view_width=1):
+
+        ThreeDRenderer.__init__(self,
+                                env,
+                                lim=10,
+                                label='Hover',
+                                viewangles=viewangles,
+                                outfile=outfile,
+                                view_width=view_width)

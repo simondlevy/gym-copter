@@ -12,7 +12,7 @@ import numpy as np
 import threading
 
 from gym_copter.envs.lander import _Lander, _make_parser
-from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.threed import ThreeDHoverRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 from gym_copter.pidcontrollers import AnglePidController
@@ -197,7 +197,7 @@ def main():
                  else Lander3D()))
 
     if not args.nodisplay:
-        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
+        viewer = ThreeDHoverRenderer(env, viewangles=viewangles)
 
     threadfun = env.demo_heuristic
     threadargs = args.seed, args.nopid, args.csvfilename
