@@ -13,13 +13,13 @@ clean:
 	sudo rm -rf build/ dist/ *.egg-info __pycache__ */__pycache__ models/ visuals/ *.csv
 
 l2d:
-	python3 gym_copter/envs/lander2d.py --save pid.csv
+	python3 gym_copter/envs/lander2d.py
 
 l3d:
-	python3 gym_copter/envs/lander3d.py --save pid.csv
+	python3 gym_copter/envs/lander3d.py
 
 h2d:
-	python3 gym_copter/envs/hover2d.py --seed 1
+	python3 gym_copter/envs/hover2d.py
 
 plot:
 	python3 utils/copter-plot.py pid.csv

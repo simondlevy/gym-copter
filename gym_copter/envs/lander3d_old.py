@@ -15,9 +15,7 @@ from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import AnglePidController
-from gym_copter.pidcontrollers import AngularVelocityPidController
-from gym_copter.pidcontrollers import PositionHoldPidController
+from gym_copter.pidcontrollers import ComboPidController
 
 
 class Lander3D(_Lander):
@@ -34,12 +32,8 @@ class Lander3D(_Lander):
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
         # Add PID controllers for heuristic demo
-        self.phi_level_pid = AnglePidController()
-        self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_level_pid = AnglePidController()
-        self.theta_rate_pid = AngularVelocityPidController()
-        self.x_poshold_pid = PositionHoldPidController()
-        self.y_poshold_pid = PositionHoldPidController()
+        self.phi_pid = ComboPidController(Combo_Kp=0.025)
+        self.theta_pid = ComboPidController(Combo_Kp=0.025)
 
     def reset(self):
 
@@ -77,25 +71,14 @@ class Lander3D(_Lander):
         '''
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
 
-        phi_todo = 0
-        theta_todo = 0
+        phi_todo = 0 if nopid else self.phi_pid.getDemand(y, dy, phi, dphi)
 
-        if not nopid:
+        theta_todo = (0 if nopid
+                      else self.theta_pid.getDemand(x, dx, -theta, -dtheta))
 
-            phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
-            phi_level_todo = self.phi_level_pid.getDemand(dphi)
-            x_pos_todo = self.x_poshold_pid.getDemand(x, dx)
+        hover_todo = self.descent_pid.getDemand(z, dz)
 
-            theta_rate_todo = self.theta_rate_pid.getDemand(dphi)
-            theta_level_todo = self.theta_level_pid.getDemand(dphi)
-            y_pos_todo = self.y_poshold_pid.getDemand(y, dy)
-
-            phi_todo = phi_rate_todo + phi_level_todo + x_pos_todo
-            theta_todo = theta_rate_todo + theta_level_todo + y_pos_todo
-
-        descent_todo = self.descent_pid.getDemand(z, dz)
-
-        t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
+        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
