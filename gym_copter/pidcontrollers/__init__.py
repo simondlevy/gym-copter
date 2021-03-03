@@ -87,7 +87,7 @@ class AltitudeHoldPidController:
         # Negate for NED
         z, dz = -z, -dz
 
-        # Combo velocity is a setpoint
+        # Velocity is a setpoint
         targetVelocity = self.posPid.compute(self.target, z)
 
         # Run velocity PID controller to get correction
@@ -107,32 +107,13 @@ class PositionHoldPidController:
 
     def getDemand(self, x, dx):
 
-        # Combo velocity is a setpoint
+        # Velocity is a setpoint
         targetVelocity = self.posPid.compute(self.target, x, debug=True)
 
         # Run velocity PID controller to get correction
         correction = self.velPid.compute(targetVelocity, dx)
 
         return correction
-
-
-class ComboPidController:
-
-    def __init__(self, X_Kp=0.1, X_Kd=0.1, Combo_Kp=0.1,
-                 Phi_Kp=0.05, Phi_Kd=0.4):
-
-        self.X_Kp = X_Kp
-        self.X_Kd = X_Kd
-        self.Combo_Kp = Combo_Kp
-        self.Phi_Kp = Phi_Kp
-        self.Phi_Kd = Phi_Kd
-
-    def getDemand(self, x, dx, phi, dphi):
-
-        phi_targ = x*self.X_Kp + dx*self.X_Kd
-
-        return ((phi-phi_targ)*self.Combo_Kp
-                + phi*self.Phi_Kp - dphi*self.Phi_Kd)
 
 
 class DescentPidController:
