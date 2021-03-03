@@ -38,8 +38,8 @@ class Lander3D(_Lander):
         self.phi_rate_pid = AngularVelocityPidController()
         self.theta_level_pid = AnglePidController()
         self.theta_rate_pid = AngularVelocityPidController()
-        self.x_poshold_pid = PositionHoldPidController(Kp_pos=0.5, Ki_vel=0.1)
-        self.y_poshold_pid = PositionHoldPidController(Kp_pos=0.5, Ki_vel=0.1)
+        self.x_poshold_pid = PositionHoldPidController()
+        self.y_poshold_pid = PositionHoldPidController()
 
     def reset(self):
 
