@@ -31,9 +31,9 @@ class _Hover(gym.Env, EzPickle):
     # Reward shaping
     OUT_OF_BOUNDS_PENALTY = 100
     MAX_ANGLE = 45
-    YAW_PENALTY_FACTOR = 50
-    XYZ_PENALTY_FACTOR = 25
-    MAX_STEPS = 400
+    MAX_STEPS = 1000
+    # YAW_PENALTY_FACTOR = 50
+    # XYZ_PENALTY_FACTOR = 25
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -46,7 +46,6 @@ class _Hover(gym.Env, EzPickle):
         self.seed()
         self.viewer = None
         self.pose = None
-        self.prev_reward = None
         self.action_size = action_size
 
         # useful range is -1 .. +1, but spikes can be higher
@@ -94,14 +93,20 @@ class _Hover(gym.Env, EzPickle):
         self.pose = x, y, z, phi, theta, psi
 
         # Get penalty based on state
+        '''
         shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                     self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
 
         reward = ((shaping - self.prev_shaping)
                   if (self.prev_shaping is not None)
-                  else 0)
+                  else 1)
 
         self.prev_shaping = shaping
+        '''
+
+        # Simple reward: 1 point per successful step
+        # (no crash / out-of-bounds)
+        reward = 1
 
         # Assume we're not done yet
         done = False
@@ -123,9 +128,12 @@ class _Hover(gym.Env, EzPickle):
             done = True
             self.spinning = False
 
+        # Don't run forever!
         elif self.steps == self.MAX_STEPS:
 
             done = True
+
+        self.steps += 1
 
         # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
@@ -174,11 +182,15 @@ class _Hover(gym.Env, EzPickle):
 
             sleep(1./self.FRAMES_PER_SECOND)
 
-            if False:  # (steps % 20 == 0) or done:
+            if (steps % 20 == 0) or done:
                 print('steps =  %03d    total_reward = %+0.2f' %
                       (steps, total_reward))
 
             steps += 1
+
+            if (steps % 20 == 0) or done:
+                print('steps =  %03d    total_reward = %+0.2f' %
+                      (steps, total_reward))
 
             if done:
                 break
@@ -194,6 +206,8 @@ class _Hover(gym.Env, EzPickle):
         # Support for rendering
         self.pose = None
         self.spinning = False
+
+        # Support for reward shaping
         self.prev_shaping = None
 
         # Create dynamics model
@@ -218,7 +232,7 @@ class _Hover(gym.Env, EzPickle):
                                             0,                  # theta
                                             0]))                # psi
 
-        # No steps yet
+        # No steps or reward yet
         self.steps = 0
 
         # Return initial state

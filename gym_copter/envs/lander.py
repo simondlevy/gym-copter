@@ -217,6 +217,8 @@ class _Lander(gym.Env, EzPickle):
         # Support for rendering
         self.pose = None
         self.spinning = False
+
+        # Support for reward shaping
         self.prev_shaping = None
 
         # Create dynamics model
