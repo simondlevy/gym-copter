@@ -97,7 +97,7 @@ class AltitudeHoldPidController:
 class PositionHoldPidController:
 
     def __init__(self,
-                 Kp_pos=1.0, Kp_vel=0.00001, Ki_vel=0.1, Kd_vel=1,
+                 Kp_pos=1.0, Kp_vel=0.00001, Ki_vel=0.1, Kd_vel=4,
                  target=0):
 
         self.posPid = _PidController(Kp_pos, 0, 0)
@@ -147,7 +147,7 @@ class AngularVelocityPidController(_PidController):
     BIG_DEGREES_PER_SECOND = 40
     WINDUP_MAX = 6
 
-    def __init__(self, Kp=0.4, Ki=0, Kd=0):
+    def __init__(self, Kp=1.0, Ki=0, Kd=1):
 
         _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
 
