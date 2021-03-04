@@ -32,11 +32,9 @@ class Hover3D(_Hover):
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
-        KD = 0.5
-
         # Add PID controllers for heuristic demo
-        self.phi_rate_pid = AngularVelocityPidController(Kd=KD)
-        self.theta_rate_pid = AngularVelocityPidController(Kd=KD)
+        self.phi_rate_pid = AngularVelocityPidController()
+        self.theta_rate_pid = AngularVelocityPidController()
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
 
