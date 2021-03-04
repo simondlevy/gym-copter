@@ -109,36 +109,36 @@ class _Hover(gym.Env, EzPickle):
         reward = 1
 
         # Assume we're not done yet
-        done = False
+        self.done = False
 
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
-            done = True
+            self.done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
         # Lose bigly for excess roll or pitch
         elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
+            self.done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
         # It's all over if we crash
         elif status == d.STATUS_CRASHED:
 
             # Crashed!
-            done = True
+            self.done = True
             self.spinning = False
 
         # Don't run forever!
         elif self.steps == self.MAX_STEPS:
 
-            done = True
+            self.done = True
 
         self.steps += 1
 
         # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
                 reward,
-                done,
+                self.done,
                 {})
 
     def demo_heuristic(self, seed=None, nopid=False, csvfilename=None):
@@ -206,6 +206,7 @@ class _Hover(gym.Env, EzPickle):
         # Support for rendering
         self.pose = None
         self.spinning = False
+        self.done = False
 
         # Support for reward shaping
         self.prev_shaping = None

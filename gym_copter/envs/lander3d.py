@@ -51,12 +51,6 @@ class Lander3D(_Lander):
         '''
         return None
 
-    def done(self):
-
-        d = self.dynamics
-
-        return d.getStatus() != d.STATUS_AIRBORNE
-
     def demo_pose(self, args):
 
         x, y, z, phi, theta, viewer = args

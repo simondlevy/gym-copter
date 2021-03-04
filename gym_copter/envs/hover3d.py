@@ -15,7 +15,6 @@ from gym_copter.envs.hover import _Hover, _make_parser
 from gym_copter.rendering.threed import ThreeDHoverRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import AnglePidController
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 
@@ -33,11 +32,11 @@ class Hover3D(_Hover):
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
+        KD = 0.5
+
         # Add PID controllers for heuristic demo
-        self.phi_level_pid = AnglePidController()
-        self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_level_pid = AnglePidController()
-        self.theta_rate_pid = AngularVelocityPidController()
+        self.phi_rate_pid = AngularVelocityPidController(Kd=KD)
+        self.theta_rate_pid = AngularVelocityPidController(Kd=KD)
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
 
@@ -50,12 +49,6 @@ class Hover3D(_Hover):
         Returns None because we run viewer on a separate thread
         '''
         return None
-
-    def done(self):
-
-        d = self.dynamics
-
-        return d.getStatus() != d.STATUS_AIRBORNE
 
     def demo_pose(self, args):
 
@@ -83,14 +76,12 @@ class Hover3D(_Hover):
         if not nopid:
 
             phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
-            phi_level_todo = self.phi_level_pid.getDemand(phi)
             y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
-            phi_todo = phi_rate_todo + phi_level_todo + y_pos_todo
+            phi_todo = phi_rate_todo + y_pos_todo
 
             theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
-            theta_level_todo = self.theta_level_pid.getDemand(-theta)
             x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
-            theta_todo = theta_rate_todo + theta_level_todo + x_pos_todo
+            theta_todo = theta_rate_todo + x_pos_todo
 
         hover_todo = self.altpid.getDemand(z, dz)
 

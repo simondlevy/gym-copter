@@ -118,17 +118,14 @@ class _Lander(gym.Env, EzPickle):
 
         self.prev_shaping = shaping
 
-        # Assume we're not done yet
-        done = False
-
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
-            done = True
+            self.done = True
             reward -= self.OUT_OF_BOUNDS_PENALTY
 
         # Lose bigly for excess roll or pitch
         elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            done = True
+            self.done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
         else:
@@ -136,7 +133,7 @@ class _Lander(gym.Env, EzPickle):
             # It's all over once we're on the ground
             if status == d.STATUS_LANDED:
 
-                done = True
+                self.done = True
                 self.spinning = False
 
                 # Win bigly we land safely between the flags
@@ -147,13 +144,13 @@ class _Lander(gym.Env, EzPickle):
             elif status == d.STATUS_CRASHED:
 
                 # Crashed!
-                done = True
+                self.done = True
                 self.spinning = False
 
         # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
                 reward,
-                done,
+                self.done,
                 {})
 
     def demo_heuristic(self, seed=None, nopid=False, csvfilename=None):
@@ -217,6 +214,7 @@ class _Lander(gym.Env, EzPickle):
         # Support for rendering
         self.pose = None
         self.spinning = False
+        self.done = False
 
         # Support for reward shaping
         self.prev_shaping = None

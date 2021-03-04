@@ -210,7 +210,7 @@ class ThreeDRenderer:
 
     def render(self):
 
-        if self.env.done():
+        if self.env.done:
             self.close()
 
         self.copter.update(self.env.pose)
