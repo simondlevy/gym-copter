@@ -159,3 +159,14 @@ class AngularVelocityPidController(_PidController):
             self.reset()
 
         return _PidController.compute(self, 0, angularVelocity)
+
+
+class FlowHoldPid:
+
+    def __init__(self, Kp=0.1, Ki=0):
+
+        _PidController.__init__(self, Kp, Ki, 0)
+
+    def getDemand(self, inertialVelocity):
+
+        return 0.5 * _PidController.compute(self, 0, inertialVelocity)
