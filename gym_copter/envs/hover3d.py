@@ -8,7 +8,6 @@ MIT License
 '''
 
 from time import sleep
-# from numpy import cos, sin, degrees, radians
 from numpy import degrees, radians
 import threading
 
@@ -34,8 +33,9 @@ class Hover3D(_Hover):
                             'Phi', 'dPhi', 'Theta', 'dTheta', 'Psi', 'dPsi']
 
         # Add PID controllers for heuristic demo
-        self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_rate_pid = AngularVelocityPidController()
+        self.roll_rate_pid = AngularVelocityPidController()
+        self.pitch_rate_pid = AngularVelocityPidController()
+        self.yaw_rate_pid = AngularVelocityPidController()
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
 
@@ -67,27 +67,27 @@ class Hover3D(_Hover):
         '''
         PID controller
         '''
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, _ = state
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, _, dpsi = state
 
-        print(psi)
+        print(dpsi)
 
-        phi_todo = 0
-        theta_todo = 0
+        roll_todo = 0
+        pitch_todo = 0
 
         if not nopid:
 
-            phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
+            roll_rate_todo = self.roll_rate_pid.getDemand(dphi)
             y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
 
-            theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
+            pitch_rate_todo = self.pitch_rate_pid.getDemand(-dtheta)
             x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
 
-            phi_todo = phi_rate_todo + y_pos_todo
-            theta_todo = theta_rate_todo + x_pos_todo
+            roll_todo = roll_rate_todo + y_pos_todo
+            pitch_todo = pitch_rate_todo + x_pos_todo
 
         hover_todo = self.altpid.getDemand(z, dz)
 
-        t, r, p = (hover_todo+1)/2, phi_todo, theta_todo
+        t, r, p = (hover_todo+1)/2, roll_todo, pitch_todo
 
         return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
 
