@@ -69,10 +69,9 @@ class Hover3D(_Hover):
         '''
         x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, _, dpsi = state
 
-        print(dpsi)
-
         roll_todo = 0
         pitch_todo = 0
+        yaw_todo = 0
 
         if not nopid:
 
@@ -86,6 +85,10 @@ class Hover3D(_Hover):
             pitch_todo = pitch_rate_todo + x_pos_todo
 
         hover_todo = self.altpid.getDemand(z, dz)
+
+        yaw_todo = self.yaw_rate_pid.getDemand(dpsi)
+
+        print(dpsi, yaw_todo)
 
         t, r, p = (hover_todo+1)/2, roll_todo, pitch_todo
 
