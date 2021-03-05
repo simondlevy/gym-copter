@@ -21,7 +21,7 @@ from gym_copter.pidcontrollers import PositionHoldPidController
 
 class Hover3D(_Hover):
 
-    def __init__(self, obs_size=10):
+    def __init__(self, obs_size=12):
 
         _Hover.__init__(self, obs_size, 4)
 
@@ -30,7 +30,7 @@ class Hover3D(_Hover):
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
-                            'Phi', 'dPhi', 'Theta', 'dTheta']
+                            'Phi', 'dPhi', 'Theta', 'dTheta', 'Psi', 'dPsi']
 
         # Add PID controllers for heuristic demo
         self.phi_rate_pid = AngularVelocityPidController()
@@ -66,7 +66,9 @@ class Hover3D(_Hover):
         '''
         PID controller
         '''
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
+        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, _ = state
+
+        print(psi)
 
         phi_todo = 0
         theta_todo = 0
@@ -93,7 +95,7 @@ class Hover3D(_Hover):
 
     def _get_state(self, state):
 
-        return state[:10]
+        return state
 
 
 class HoverVisual(Hover3D):

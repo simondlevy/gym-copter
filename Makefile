@@ -22,7 +22,7 @@ h2d:
 	python3 gym_copter/envs/hover2d.py
 
 h3d:
-	python3 gym_copter/envs/hover3d.py --view 90,0
+	python3 gym_copter/envs/hover3d.py --view 90,0 --seed 5
 
 plot:
 	python3 utils/copter-plot.py pid.csv
