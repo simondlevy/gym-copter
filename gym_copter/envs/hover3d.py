@@ -8,7 +8,8 @@ MIT License
 '''
 
 from time import sleep
-import numpy as np
+# from numpy import cos, sin, degrees, radians
+from numpy import degrees, radians
 import threading
 
 from gym_copter.envs.hover import _Hover, _make_parser
@@ -26,7 +27,7 @@ class Hover3D(_Hover):
         _Hover.__init__(self, obs_size, 4)
 
         # Pre-convert max-angle degrees to radians
-        self.max_angle = np.radians(self.MAX_ANGLE)
+        self.max_angle = radians(self.MAX_ANGLE)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
@@ -77,10 +78,11 @@ class Hover3D(_Hover):
 
             phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
             y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
-            phi_todo = phi_rate_todo + y_pos_todo
 
             theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
             x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
+
+            phi_todo = phi_rate_todo + y_pos_todo
             theta_todo = theta_rate_todo + x_pos_todo
 
         hover_todo = self.altpid.getDemand(z, dz)
@@ -119,9 +121,9 @@ class HoverVisual(Hover3D):
         self.image = self.vs.getImage(x,
                                       y,
                                       max(-z, 1e-6),  # keep Z positive
-                                      np.degrees(phi),
-                                      np.degrees(theta),
-                                      np.degrees(psi))
+                                      degrees(phi),
+                                      degrees(theta),
+                                      degrees(psi))
 
         return result
 
