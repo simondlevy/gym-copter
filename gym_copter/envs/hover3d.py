@@ -83,16 +83,14 @@ class Hover3D(_Hover):
 
             roll_todo = roll_rate_todo + y_pos_todo
             pitch_todo = pitch_rate_todo + x_pos_todo
+            yaw_todo = self.yaw_rate_pid.getDemand(-dpsi)
 
         hover_todo = self.altpid.getDemand(z, dz)
 
-        yaw_todo = self.yaw_rate_pid.getDemand(dpsi)
+        t, r, p, y = (hover_todo+1)/2, roll_todo, pitch_todo, yaw_todo
 
-        print(dpsi, yaw_todo)
-
-        t, r, p = (hover_todo+1)/2, roll_todo, pitch_todo
-
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+        # Use mixer to set motors
+        return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]
 
     def _get_motors(self, motors):
 
