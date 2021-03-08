@@ -11,7 +11,8 @@ from time import sleep
 from numpy import degrees, radians
 import threading
 
-from gym_copter.envs.hover import _Hover, _make_parser
+from gym_copter.envs.utils import _make_parser
+from gym_copter.envs.hover import _Hover
 from gym_copter.rendering.threed import ThreeDHoverRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS

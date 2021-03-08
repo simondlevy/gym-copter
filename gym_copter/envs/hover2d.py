@@ -9,7 +9,8 @@ MIT License
 
 import numpy as np
 
-from gym_copter.envs.hover import _Hover, _make_parser
+from gym_copter.envs.utils import _make_parser
+from gym_copter.envs.hover import _Hover
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 

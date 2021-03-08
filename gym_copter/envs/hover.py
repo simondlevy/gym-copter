@@ -9,8 +9,6 @@ MIT License
 import numpy as np
 from numpy import radians
 from time import sleep
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 
 import gym
 from gym import spaces
@@ -239,20 +237,3 @@ class _Hover(gym.Env, EzPickle):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
                                  + self.INITIAL_RANDOM_FORCE)
-
-
-def _make_parser():
-
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
-
-    parser.add_argument('--nopid', action='store_true',
-                        help='Turn off PID control')
-
-    parser.add_argument('--save', dest='csvfilename',
-                        help='Save trajectory in CSV file')
-
-    return parser
