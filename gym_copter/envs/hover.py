@@ -30,10 +30,19 @@ class _Hover(_Task):
         d = self.dynamics
         status = d.getStatus()
 
-        motors = np.clip(action, 0, 1)    # stay in interval [0,1]
-        d.setMotors(self._get_motors(motors))
-        self.spinning = sum(motors) > 0
-        d.update()
+        motors = np.zeros(4)
+
+        # Stop motors after safe landing
+        if status == d.STATUS_LANDED:
+            d.setMotors(motors)
+            self.spinning = False
+
+        # In air, set motors from action
+        else:
+            motors = np.clip(action, 0, 1)    # stay in interval [0,1]
+            d.setMotors(self._get_motors(motors))
+            self.spinning = sum(motors) > 0
+            d.update()
 
         # Get new state from dynamics
         state = np.array(d.getState())
@@ -44,12 +53,13 @@ class _Hover(_Task):
         # Set pose for display
         self.pose = x, y, z, phi, theta, psi
 
-        # Simple reward: 1 point per successful step
-        # (no crash / out-of-bounds)
-        reward = 1
-
         # Assume we're not done yet
         self.done = False
+
+        # -----------------------------------------------------------------------
+        # Simple reward: 1 point per successful step (no crash / out-of-bounds)
+        reward = 1
+        # -----------------------------------------------------------------------
 
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
@@ -69,10 +79,8 @@ class _Hover(_Task):
             self.spinning = False
 
         # Don't run forever!
-        elif self.steps == self.MAX_STEPS:
-
+        if self.steps == self.MAX_STEPS:
             self.done = True
-
         self.steps += 1
 
         # Extract 2D or 3D components of state and rerturn them with the rest

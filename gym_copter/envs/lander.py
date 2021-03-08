@@ -59,6 +59,10 @@ class _Lander(_Task):
         # Set pose for display
         self.pose = x, y, z, phi, theta, psi
 
+        # Assume we're not done yet
+        self.done = False
+
+        # -----------------------------------------------------------------------
         # Get penalty based on state and motors
         shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
                     self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
@@ -72,6 +76,17 @@ class _Lander(_Task):
 
         self.prev_shaping = shaping
 
+        if status == d.STATUS_LANDED:
+
+            self.done = True
+            self.spinning = False
+
+            # Win bigly we land safely between the flags
+            if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
+
+                reward += self.INSIDE_RADIUS_BONUS
+        # -----------------------------------------------------------------------
+
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             self.done = True
@@ -82,24 +97,17 @@ class _Lander(_Task):
             self.done = True
             reward = -self.OUT_OF_BOUNDS_PENALTY
 
-        else:
+        # It's all over if we crash
+        elif status == d.STATUS_CRASHED:
 
-            # It's all over once we're on the ground
-            if status == d.STATUS_LANDED:
+            # Crashed!
+            self.done = True
+            self.spinning = False
 
-                self.done = True
-                self.spinning = False
-
-                # Win bigly we land safely between the flags
-                if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
-
-                    reward += self.INSIDE_RADIUS_BONUS
-
-            elif status == d.STATUS_CRASHED:
-
-                # Crashed!
-                self.done = True
-                self.spinning = False
+        # Don't run forever!
+        if self.steps == self.MAX_STEPS:
+            self.done = True
+        self.steps += 1
 
         # Extract 2D or 3D components of state and rerturn them with the rest
         return (np.array(self._get_state(state), dtype=np.float32),
