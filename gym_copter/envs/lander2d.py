@@ -7,8 +7,6 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-import numpy as np
-
 from gym_copter.envs.utils import _make_parser
 from gym_copter.envs.lander import _Lander
 from gym_copter.pidcontrollers import AngularVelocityPidController
@@ -74,11 +72,6 @@ class Lander2D(_Lander):
         hover_todo = self.descent_pid.getDemand(z, dz)
 
         return hover_todo-phi_todo, hover_todo+phi_todo
-
-    def _get_penalty(self, state, motors):
-
-        # Penalize distance from center and velocity
-        return self.PENALTY_FACTOR * np.sqrt(np.sum(state[0:4]**2))
 
 
 def main():
