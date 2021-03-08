@@ -47,18 +47,6 @@ class _Hover(_Task):
         # Set pose for display
         self.pose = x, y, z, phi, theta, psi
 
-        # Get penalty based on state
-        '''
-        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
-
-        reward = ((shaping - self.prev_shaping)
-                  if (self.prev_shaping is not None)
-                  else 1)
-
-        self.prev_shaping = shaping
-        '''
-
         # Simple reward: 1 point per successful step
         # (no crash / out-of-bounds)
         reward = 1
