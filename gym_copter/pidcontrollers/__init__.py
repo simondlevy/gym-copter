@@ -73,30 +73,9 @@ class _PidController:
         return _PidController.constrainMinMax(val, -maxval, +maxval)
 
 
-class AltitudeHoldPidController:
+class _SetPointPidController:
 
-    def __init__(self, Kp=0.2, Ki=3, Kd=0, target=5):
-
-        self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(Kp, Ki, Kd)
-
-        self.target = target
-
-    def getDemand(self, z, dz):
-
-        # Negate for NED
-        z, dz = -z, -dz
-
-        # Velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.target, z)
-
-        # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dz)
-
-
-class PositionHoldPidController:
-
-    def __init__(self, Kp=0.00001, Ki=0.1, Kd=4, target=0):
+    def __init__(self, Kp, Ki, Kd, target):
 
         self.posPid = _PidController(1, 0, 0)
         self.velPid = _PidController(Kp, Ki, Kd)
@@ -110,6 +89,25 @@ class PositionHoldPidController:
 
         # Run velocity PID controller to get correction
         return self.velPid.compute(targetVelocity, dx)
+
+
+class AltitudeHoldPidController(_SetPointPidController):
+
+    def __init__(self, Kp=0.2, Ki=3, Kd=0, target=5):
+
+        _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
+
+    def getDemand(self, z, dz):
+
+        # Negate for NED
+        return _SetPointPidController.getDemand(self, -z, -dz)
+
+
+class PositionHoldPidController(_SetPointPidController):
+
+    def __init__(self, Kp=0.00001, Ki=0.1, Kd=4, target=0):
+
+        _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
 
 
 class DescentPidController:
