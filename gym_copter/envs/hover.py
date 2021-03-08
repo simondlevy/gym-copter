@@ -21,7 +21,7 @@ from gym_copter.pidcontrollers import AltitudeHoldPidController
 class _Hover(gym.Env, EzPickle):
 
     # Physics
-    INITIAL_RANDOM_FORCE = 15
+    INITIAL_RANDOM_FORCE = 30
     INITIAL_ALTITUDE = 10
     BOUNDS = 10
     FRAMES_PER_SECOND = 50
