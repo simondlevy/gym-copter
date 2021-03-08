@@ -15,20 +15,17 @@ from gym import spaces
 from gym.utils import EzPickle, seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
-from gym_copter.pidcontrollers import AltitudeHoldPidController
 
 
-class _Hover(gym.Env, EzPickle):
+class _Task(gym.Env, EzPickle):
 
-    # Physics
     INITIAL_RANDOM_FORCE = 30
     INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
-
+    BOUNDS = 10
     OUT_OF_BOUNDS_PENALTY = 100
     MAX_ANGLE = 45
 
-    BOUNDS = 10
     MAX_STEPS = 1000
 
     metadata = {
@@ -58,9 +55,6 @@ class _Hover(gym.Env, EzPickle):
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
-
-        # Set up altitude-hold PID controller for heuristic demo
-        self.altpid = AltitudeHoldPidController()
 
     def seed(self, seed=None):
 
