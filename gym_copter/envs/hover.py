@@ -6,8 +6,6 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import numpy as np
-
 from gym_copter.pidcontrollers import AltitudeHoldPidController
 from gym_copter.envs.task import _Task
 
@@ -26,66 +24,5 @@ class _Hover(_Task):
 
     def _get_reward(self, status, state, d, x, y):
 
+        # Simple reward for each step we complete
         return 1
-
-    def step(self, action):
-
-        # Abbreviation
-        d = self.dynamics
-        status = d.getStatus()
-
-        motors = np.zeros(4)
-
-        # Stop motors after safe landing
-        if status == d.STATUS_LANDED:
-            d.setMotors(motors)
-            self.spinning = False
-
-        # In air, set motors from action
-        else:
-            motors = np.clip(action, 0, 1)    # stay in interval [0,1]
-            d.setMotors(self._get_motors(motors))
-            self.spinning = sum(motors) > 0
-            d.update()
-
-        # Get new state from dynamics
-        state = np.array(d.getState())
-
-        # Extract components from state
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
-
-        # Set pose for display
-        self.pose = x, y, z, phi, theta, psi
-
-        # Assume we're not done yet
-        self.done = False
-
-        reward = self._get_reward(status, state, d, x, y)
-
-        # Lose bigly if we go outside window
-        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
-            self.done = True
-            reward -= self.OUT_OF_BOUNDS_PENALTY
-
-        # Lose bigly for excess roll or pitch
-        elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
-            self.done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
-
-        # It's all over if we crash
-        elif status == d.STATUS_CRASHED:
-
-            # Crashed!
-            self.done = True
-            self.spinning = False
-
-        # Don't run forever!
-        if self.steps == self.MAX_STEPS:
-            self.done = True
-        self.steps += 1
-
-        # Extract 2D or 3D components of state and rerturn them with the rest
-        return (np.array(self._get_state(state), dtype=np.float32),
-                reward,
-                self.done,
-                {})
