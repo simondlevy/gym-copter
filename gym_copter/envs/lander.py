@@ -62,30 +62,7 @@ class _Lander(_Task):
         # Assume we're not done yet
         self.done = False
 
-        # -----------------------------------------------------------------------
-        # Get penalty based on state and motors
-        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
-
-        if (abs(state[d.STATE_Z_DOT]) > self.DZ_MAX):
-            shaping -= self.DZ_PENALTY
-
-        reward = ((shaping - self.prev_shaping)
-                  if (self.prev_shaping is not None)
-                  else 0)
-
-        self.prev_shaping = shaping
-
-        if status == d.STATUS_LANDED:
-
-            self.done = True
-            self.spinning = False
-
-            # Win bigly we land safely between the flags
-            if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
-
-                reward += self.INSIDE_RADIUS_BONUS
-        # -----------------------------------------------------------------------
+        reward = self._get_reward(status, state, d, x, y)
 
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
@@ -114,3 +91,30 @@ class _Lander(_Task):
                 reward,
                 self.done,
                 {})
+
+    def _get_reward(self, status, state, d, x, y):
+
+        # Get penalty based on state and motors
+        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
+
+        if (abs(state[d.STATE_Z_DOT]) > self.DZ_MAX):
+            shaping -= self.DZ_PENALTY
+
+        reward = ((shaping - self.prev_shaping)
+                  if (self.prev_shaping is not None)
+                  else 0)
+
+        self.prev_shaping = shaping
+
+        if status == d.STATUS_LANDED:
+
+            self.done = True
+            self.spinning = False
+
+            # Win bigly we land safely between the flags
+            if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
+
+                reward += self.INSIDE_RADIUS_BONUS
+
+        return reward

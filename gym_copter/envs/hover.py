@@ -1,5 +1,5 @@
 '''
-Superclass for 2D and 3D copter lander
+Superclass for 2D and 3D copter hover
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -23,6 +23,10 @@ class _Hover(_Task):
 
         # Set up altitude-hold PID controller for heuristic demo
         self.altpid = AltitudeHoldPidController()
+
+    def _get_reward(self, status, state, d, x, y):
+
+        return 1
 
     def step(self, action):
 
@@ -56,10 +60,7 @@ class _Hover(_Task):
         # Assume we're not done yet
         self.done = False
 
-        # -----------------------------------------------------------------------
-        # Simple reward: 1 point per successful step (no crash / out-of-bounds)
-        reward = 1
-        # -----------------------------------------------------------------------
+        reward = self._get_reward(status, state, d, x, y)
 
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
