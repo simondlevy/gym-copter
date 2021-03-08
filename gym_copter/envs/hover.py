@@ -7,9 +7,7 @@ MIT License
 '''
 
 import numpy as np
-from numpy import radians
 
-from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.pidcontrollers import AltitudeHoldPidController
 from gym_copter.envs.task import _Task
 
@@ -82,46 +80,3 @@ class _Hover(_Task):
                 reward,
                 self.done,
                 {})
-
-    def _reset(self, pose=(0, 0, _Task.INITIAL_ALTITUDE, 0, 0), perturb=True):
-
-        # Support for rendering
-        self.pose = None
-        self.spinning = False
-        self.done = False
-
-        # Support for reward shaping
-        self.prev_shaping = None
-
-        # Create dynamics model
-        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
-
-        # Set up initial conditions
-        state = np.zeros(12)
-        d = self.dynamics
-        state[d.STATE_X] = pose[0]
-        state[d.STATE_Y] = pose[1]
-        state[d.STATE_Z] = -pose[2]  # NED
-        state[d.STATE_PHI] = radians(pose[3])
-        state[d.STATE_THETA] = radians(pose[4])
-        self.dynamics.setState(state)
-
-        # Perturb with a random force
-        if perturb:
-            self.dynamics.perturb(np.array([self._randforce(),  # X
-                                            self._randforce(),  # Y
-                                            self._randforce(),  # Z
-                                            0,                  # phi
-                                            0,                  # theta
-                                            0]))                # psi
-
-        # No steps or reward yet
-        self.steps = 0
-
-        # Return initial state
-        return self.step(np.zeros(self.action_size))[0]
-
-    def _randforce(self):
-
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
-                                 + self.INITIAL_RANDOM_FORCE)
