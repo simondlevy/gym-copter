@@ -15,7 +15,6 @@ from gym_copter.envs.lander import _Lander, _make_parser
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import AnglePidController
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 
@@ -34,9 +33,7 @@ class Lander3D(_Lander):
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
         # Add PID controllers for heuristic demo
-        self.phi_level_pid = AnglePidController()
         self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_level_pid = AnglePidController()
         self.theta_rate_pid = AngularVelocityPidController()
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
@@ -77,14 +74,12 @@ class Lander3D(_Lander):
         if not nopid:
 
             phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
-            phi_level_todo = self.phi_level_pid.getDemand(phi)
             y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
-            phi_todo = phi_rate_todo + phi_level_todo + y_pos_todo
+            phi_todo = phi_rate_todo + y_pos_todo
 
             theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
-            theta_level_todo = self.theta_level_pid.getDemand(-theta)
             x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
-            theta_todo = theta_rate_todo + theta_level_todo + x_pos_todo
+            theta_todo = theta_rate_todo + x_pos_todo
 
         descent_todo = self.descent_pid.getDemand(z, dz)
 

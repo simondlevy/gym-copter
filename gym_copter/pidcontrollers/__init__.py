@@ -108,17 +108,6 @@ class DescentPidController:
         return z*self.Kp + dz*self.Kd
 
 
-class AnglePidController(_PidController):
-
-    def __init__(self, Kp=0.1):
-
-        _PidController.__init__(self, Kp, 0, 0)
-
-    def getDemand(self, angle):
-
-        return _PidController.compute(self, 0, angle)
-
-
 class AngularVelocityPidController(_PidController):
 
     # Arbitrary constants
