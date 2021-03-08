@@ -12,7 +12,6 @@ from time import sleep
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.pidcontrollers import DescentPidController
-
 from gym_copter.envs.task import _Task
 
 

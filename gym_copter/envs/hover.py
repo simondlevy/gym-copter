@@ -10,63 +10,22 @@ import numpy as np
 from numpy import radians
 from time import sleep
 
-import gym
-from gym import spaces
-from gym.utils import EzPickle, seeding
-
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
 from gym_copter.pidcontrollers import AltitudeHoldPidController
+from gym_copter.envs.task import _Task
 
 
-class _Hover(gym.Env, EzPickle):
-
-    # Physics
-    INITIAL_RANDOM_FORCE = 30
-    INITIAL_ALTITUDE = 10
-    FRAMES_PER_SECOND = 50
-
-    OUT_OF_BOUNDS_PENALTY = 100
-    MAX_ANGLE = 45
+class _Hover(_Task):
 
     BOUNDS = 10
     MAX_STEPS = 1000
 
-    metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': FRAMES_PER_SECOND
-    }
-
     def __init__(self, observation_size, action_size):
 
-        EzPickle.__init__(self)
-        self.seed()
-        self.viewer = None
-        self.pose = None
-        self.action_size = action_size
-
-        # useful range is -1 .. +1, but spikes can be higher
-        self.observation_space = spaces.Box(-np.inf,
-                                            +np.inf,
-                                            shape=(observation_size,),
-                                            dtype=np.float32)
-
-        # Action is two floats [throttle, roll]
-        self.action_space = spaces.Box(-1,
-                                       +1,
-                                       (action_size,),
-                                       dtype=np.float32)
-
-        # Pre-convert max-angle degrees to radians
-        self.max_angle = np.radians(self.MAX_ANGLE)
+        _Task.__init__(self, observation_size, action_size)
 
         # Set up altitude-hold PID controller for heuristic demo
         self.altpid = AltitudeHoldPidController()
-
-    def seed(self, seed=None):
-
-        np.random.seed(seed)
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
 
@@ -193,7 +152,7 @@ class _Hover(gym.Env, EzPickle):
             csvfile.close()
         return total_reward
 
-    def _reset(self, pose=(0, 0, INITIAL_ALTITUDE, 0, 0), perturb=True):
+    def _reset(self, pose=(0, 0, _Task.INITIAL_ALTITUDE, 0, 0), perturb=True):
 
         # Support for rendering
         self.pose = None
