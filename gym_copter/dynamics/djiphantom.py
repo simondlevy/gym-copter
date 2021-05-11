@@ -7,7 +7,6 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.dynamics import Parameters
 from gym_copter.dynamics.quadxap import QuadXAPDynamics
 
 
@@ -15,23 +14,24 @@ class DJIPhantomDynamics(QuadXAPDynamics):
 
     def __init__(self, framesPerSecond, g=QuadXAPDynamics.G):
 
-        params = Parameters(
+        # See Bouabdallah et al. (2004)
+        vparams = {
 
             # Estimated
-            5.E-06,  # b force constatnt [F=b*w^2]
-            2.E-06,  # d torque constant [T=d*w^2]
+            'B': 5.E-06,  # force constatnt [F=b*w^2]
+            'D': 2.E-06,  # torque constant [T=d*w^2]
 
             # https:#www.dji.com/phantom-4/info
-            1.380,  # mass [kg]
-            0.350,  # arm length [m]
+            'M': 1.380,  # mass [kg]
+            'L': 0.350,  # arm length [m]
 
             # Estimated
-            2,       # Ix [kg*m^2]
-            2,       # Iy [kg*m^2]
-            3,       # Iz [kg*m^2]
-            38E-04,  # Jr prop inertial [kg*m^2]
+            'Ix': 2,       # [kg*m^2]
+            'Iy': 2,       # [kg*m^2]
+            'Iz': 3,       # [kg*m^2]
+            'Jr': 38E-04,  # prop inertial [kg*m^2]
 
-            15000   # maxrpm
-            )
+            'maxrpm': 15000
+            }
 
-        QuadXAPDynamics.__init__(self, params, framesPerSecond, g)
+        QuadXAPDynamics.__init__(self, vparams, framesPerSecond, g)

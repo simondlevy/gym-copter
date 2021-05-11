@@ -30,25 +30,6 @@ MIT License
 import numpy as np
 
 
-class Parameters:
-    '''
-    Class for parameters from the table below Equation 3
-    '''
-
-    def __init__(self, B,  D,  M,  L,  Ix,  Iy,  Iz,  Jr, maxrpm):
-
-        self.B = B
-        self.D = D
-        self.M = M
-        self.L = L
-        self.Ix = Ix
-        self.Iy = Iy
-        self.Iz = Iz
-        self.Jr = Jr
-
-        self.maxrpm = maxrpm
-
-
 class MultirotorDynamics:
     '''
     Abstract class for multirotor dynamics.  You implementing class should
@@ -97,12 +78,22 @@ class MultirotorDynamics:
     LANDING_VEL_Y = 1.0
     LANDING_ANGLE = np.pi/4
 
-    def __init__(self, params, motorCount, framesPerSecond, g=G):
+    def __init__(self, vparams, motorCount, framesPerSecond, g=G):
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
         '''
-        self._p = params
+        self.B = vparams['B']
+        self.D = vparams['D']
+        self.M = vparams['M']
+        self.L = vparams['L']
+        self.Ix = vparams['Ix']
+        self.Iy = vparams['Iy']
+        self.Iz = vparams['Iz']
+        self.Jr = vparams['Jr']
+
+        self.maxrpm = vparams['maxrpm']
+
         self._motorCount = motorCount
         self._dt = 1. / framesPerSecond
         self.g = g
@@ -144,12 +135,12 @@ class MultirotorDynamics:
 
         # Overall thrust is sum of squared omegas
         omegas2 = self._omegas**2
-        self._U1 = np.sum(self._p.B * omegas2)
+        self._U1 = np.sum(self.B * omegas2)
 
         # Use the squared Omegas to implement the rest of Eqn. 6
-        self._U2 = self._p.L * self._p.B * self.u2(omegas2)
-        self._U3 = self._p.L * self._p.B * self.u3(omegas2)
-        self._U4 = self._p.D * self.u4(omegas2)
+        self._U2 = self.L * self.B * self.u2(omegas2)
+        self._U3 = self.L * self.B * self.u3(omegas2)
+        self._U4 = self.D * self.u4(omegas2)
 
     def update(self):
         '''
@@ -160,7 +151,7 @@ class MultirotorDynamics:
         # into the inertial frame.  Negate to use NED.
         euler = (self._x[6], self._x[8], self._x[10])
         accelNED = (MultirotorDynamics._bodyZToInertial(-self._U1 /
-                    self._p.M, euler))
+                    self.M, euler))
 
         # Compute net vertical acceleration by subtracting gravity
         netz = accelNED[2] + self.g
@@ -237,7 +228,7 @@ class MultirotorDynamics:
 
     def perturb(self, force):
 
-        self._perturb = force / self._p.M
+        self._perturb = force / self.M
 
     def _computeStateDerivative(self, accelNED, netz):
         '''
@@ -250,8 +241,6 @@ class MultirotorDynamics:
         phidot = self._x[self.STATE_PHI_DOT]
         thedot = self._x[self.STATE_THETA_DOT]
         psidot = self._x[self.STATE_PSI_DOT]
-
-        p = self._p
 
         self._dxdt[self.STATE_X] = self._x[self.STATE_X_DOT]
 
@@ -268,20 +257,20 @@ class MultirotorDynamics:
         self._dxdt[self.STATE_PHI] = phidot
 
         self._dxdt[self.STATE_PHI_DOT] = (
-            psidot*thedot*(p.Iy-p.Iz) / p.Ix-p.Jr / p.Ix*thedot*self._Omega
-            + self._U2 / p.Ix + self._perturb[3])
+            psidot*thedot*(self.Iy-self.Iz) / self.Ix-self.Jr / self.Ix*thedot*self._Omega
+            + self._U2 / self.Ix + self._perturb[3])
 
         self._dxdt[self.STATE_THETA] = thedot
 
         self._dxdt[self.STATE_THETA_DOT] = (
-                -(psidot*phidot*(p.Iz-p.Ix) / p.Iy + p.Jr /
-                  p.Iy*phidot*self._Omega + self._U3 / p.Iy) +
+                -(psidot*phidot*(self.Iz-self.Ix) / self.Iy + self.Jr /
+                  self.Iy*phidot*self._Omega + self._U3 / self.Iy) +
                 self._perturb[4])
 
         self._dxdt[self.STATE_PSI] = psidot
 
         self._dxdt[self.STATE_PSI_DOT] = (
-            thedot*phidot*(p.Ix-p.Iy)/p.Iz + self._U4/p.Iz + self._perturb[5])
+            thedot*phidot*(self.Ix-self.Iy)/self.Iz + self._U4/self.Iz + self._perturb[5])
 
     def _computeMotorSpeed(self, motorvals):
         '''
@@ -289,7 +278,7 @@ class MultirotorDynamics:
         motorval motor values in [0,1]
         return motor speed in rad/s
         '''
-        return np.array(motorvals) * self._p.maxrpm * np.pi / 30
+        return np.array(motorvals) * self.maxrpm * np.pi / 30
 
     def _bodyZToInertial(bodyZ, rotation):
         '''
