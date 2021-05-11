@@ -8,8 +8,8 @@ MIT License
 
 import numpy as np
 
-from gym_copter.pidcontrollers import DescentPidController
-from gym_copter.envs.task import _Task
+from pidcontrollers import DescentPidController
+from task import _Task
 
 
 class _Lander(_Task):

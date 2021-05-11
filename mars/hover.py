@@ -6,8 +6,8 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.pidcontrollers import AltitudeHoldPidController
-from gym_copter.envs.task import _Task
+from pidcontrollers import AltitudeHoldPidController
+from task import _Task
 
 
 class _Hover(_Task):

@@ -11,13 +11,11 @@ from time import sleep
 import numpy as np
 import threading
 
-from gym_copter.envs.utils import _make_parser
-from gym_copter.envs.lander import _Lander
-from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.sensors.vision.vs import VisionSensor
-from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import AngularVelocityPidController
-from gym_copter.pidcontrollers import PositionHoldPidController
+from utils import _make_parser
+from lander import _Lander
+from rendering.threed import ThreeDLanderRenderer
+from pidcontrollers import AngularVelocityPidController
+from pidcontrollers import PositionHoldPidController
 
 
 class Lander3D(_Lander):
@@ -96,45 +94,6 @@ class Lander3D(_Lander):
 
         return state[:10]
 
-
-class LanderVisual(Lander3D):
-
-    RES = 16
-
-    def __init__(self, vs=VisionSensor(res=RES)):
-
-        Lander3D.__init__(self)
-
-        self.vs = vs
-
-        self.image = None
-
-    def step(self, action):
-
-        result = Lander3D.step(self, action)
-
-        x, y, z, phi, theta, psi = self.pose
-
-        self.image = self.vs.getImage(x,
-                                      y,
-                                      max(-z, 1e-6),  # keep Z positive
-                                      np.degrees(phi),
-                                      np.degrees(theta),
-                                      np.degrees(psi))
-
-        return result
-
-    def render(self, mode='human'):
-
-        if self.image is not None:
-            self.vs.display_image(self.image)
-
-
-class LanderDVS(LanderVisual):
-
-    def __init__(self):
-
-        LanderVisual.__init__(self, vs=DVS(res=LanderVisual.RES))
 
 # End of Lander3D classes -------------------------------------------------
 
