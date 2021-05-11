@@ -10,14 +10,18 @@ import numpy as np
 from numpy import radians
 from time import sleep
 
+from dynamics.djiphantom import DJIPhantomDynamics
+
+'''
+XXX
 import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
+'''
 
-from dynamics.djiphantom import DJIPhantomDynamics
 
-
-class _Task(gym.Env, EzPickle):
+# class _Task(gym.Env, EzPickle):
+class _Task:
 
     INITIAL_RANDOM_FORCE = 30
     INITIAL_ALTITUDE = 10
@@ -35,12 +39,14 @@ class _Task(gym.Env, EzPickle):
 
     def __init__(self, observation_size, action_size):
 
-        EzPickle.__init__(self)
+        # EzPickle.__init__(self)
         self.seed()
         self.viewer = None
         self.pose = None
         self.action_size = action_size
 
+        '''
+        XXX
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf,
                                             +np.inf,
@@ -52,6 +58,7 @@ class _Task(gym.Env, EzPickle):
                                        +1,
                                        (action_size,),
                                        dtype=np.float32)
+        '''
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
@@ -59,7 +66,7 @@ class _Task(gym.Env, EzPickle):
     def seed(self, seed=None):
 
         np.random.seed(seed)
-        self.np_random, seed = seeding.np_random(seed)
+        # self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
     def step(self, action):
@@ -138,7 +145,7 @@ class _Task(gym.Env, EzPickle):
 
         dt = 1. / self.FRAMES_PER_SECOND
 
-        actsize = self.action_space.shape[0]
+        actsize = 4  # XXX self.action_space.shape[0]
 
         csvfile = None
         if csvfilename is not None:
@@ -175,7 +182,7 @@ class _Task(gym.Env, EzPickle):
                 break
 
         sleep(1)
-        self.close()
+        # XXX self.close()
         if csvfile is not None:
             csvfile.close()
         return total_reward
