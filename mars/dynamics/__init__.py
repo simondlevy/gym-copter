@@ -80,7 +80,8 @@ class MultirotorDynamics:
             vparams,
             motorCount,
             framesPerSecond,
-            wparams={'G': 9.80665}):
+            wparams={'G': 9.80655,  # Earth gravity
+                     'rho': 1.225}):  # Earth air density
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
@@ -95,6 +96,8 @@ class MultirotorDynamics:
         self.Iy = vparams['Iy']
         self.Iz = vparams['Iz']
         self.Jr = vparams['Jr']
+        self.S = .05*self.L *4
+        self.C_L = vparams['C_L']
 
         self.maxrpm = vparams['maxrpm']
 
@@ -103,6 +106,7 @@ class MultirotorDynamics:
 
         # World parameters
         self.G = wparams['G']
+        self.rho = wparams['rho']
 
         self._omegas = np.zeros(motorCount)
 
@@ -141,11 +145,21 @@ class MultirotorDynamics:
 
         # Overall thrust is sum of squared omegas
         omegas2 = self._omegas**2
-        self._U1 = np.sum(self.B * omegas2)
 
-        # Use the squared Omegas to implement the rest of Eqn. 6
-        self._U2 = self.L * self.B * self.u2(omegas2)
-        self._U3 = self.L * self.B * self.u3(omegas2)
+        # XXX - This code needs to be migrated into dynamics for a particular vehicle ------
+        # Velocity for all motor (Found on the mid section of each blade)
+
+        self._velocity = self._omegas*self.L/2
+        
+        # Lift created by all motors for all motor (following equation provided by professor Kuehner)
+
+        self._Lift = 0.5*self.rho*self.S*self.C_L*(self._velocity**2)
+        # -----------------------------------------------------------------------------------
+
+        #  Use Fluid Dynamics to acheive Lift, Roll, Pitch, Yaw 
+        self._U1= np.sum(self._Lift)
+        self._U2= self.u2(self._Lift)
+        self._U3= self.u3(self._Lift)
         self._U4 = self.D * self.u4(omegas2)
 
     def update(self):
