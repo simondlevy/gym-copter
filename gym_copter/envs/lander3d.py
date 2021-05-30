@@ -22,9 +22,9 @@ from gym_copter.pidcontrollers import PositionHoldPidController
 
 class Lander3D(_Lander):
 
-    def __init__(self, obs_size=10):
+    def __init__(self, vehicle_name, obs_size=10):
 
-        _Lander.__init__(self, obs_size, 4)
+        _Lander.__init__(self, obs_size, 4, vehicle_name)
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
@@ -182,12 +182,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    print(args.vehicle)
-    exit(0)
-
-    env = (LanderDVS() if args.dvs
+    env = (LanderDVS(args.vehicle) if args.dvs
            else (LanderVisual() if args.vision
-                 else Lander3D()))
+                 else Lander3D(args.vehicle)))
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)

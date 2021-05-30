@@ -15,9 +15,9 @@ class _Hover(_Task):
     BOUNDS = 10
     MAX_STEPS = 1000
 
-    def __init__(self, observation_size, action_size):
+    def __init__(self, observation_size, action_size, vehicle_name):
 
-        _Task.__init__(self, observation_size, action_size)
+        _Task.__init__(self, observation_size, action_size, vehicle_name)
 
         # Set up altitude-hold PID controller for heuristic demo
         self.altpid = AltitudeHoldPidController()

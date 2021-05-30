@@ -22,9 +22,9 @@ from gym_copter.pidcontrollers import PositionHoldPidController
 
 class Hover3D(_Hover):
 
-    def __init__(self, obs_size=12):
+    def __init__(self, vehicle_name, obs_size=12):
 
-        _Hover.__init__(self, obs_size, 4)
+        _Hover.__init__(self, obs_size, 4, vehicle_name)
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = radians(self.MAX_ANGLE)
@@ -187,9 +187,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (HoverDVS() if args.dvs
+    env = (HoverDVS(args.vehicle_name) if args.dvs
            else (HoverVisual() if args.vision
-                 else Hover3D()))
+                 else Hover3D(args.vehicle_name)))
 
     if not args.nodisplay:
         viewer = ThreeDHoverRenderer(env, viewangles=viewangles)

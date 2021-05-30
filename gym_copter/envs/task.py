@@ -33,7 +33,7 @@ class _Task(gym.Env, EzPickle):
         'video.frames_per_second': FRAMES_PER_SECOND
     }
 
-    def __init__(self, observation_size, action_size):
+    def __init__(self, observation_size, action_size, vehicle_name):
 
         EzPickle.__init__(self)
         self.seed()
