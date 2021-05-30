@@ -18,6 +18,9 @@ l2d:
 l3d:
 	python3 gym_copter/envs/lander3d.py
 
+drop:
+	python3 gym_copter/envs/drop3d.py
+
 h2d:
 	python3 gym_copter/envs/hover2d.py
 
