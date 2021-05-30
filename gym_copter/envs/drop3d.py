@@ -186,26 +186,12 @@ def main():
 
     args = parser.parse_args()
 
-    exit(0)
+    # threadfun = env.demo_heuristic
+    # threadargs = args.seed, args.nopid, args.csvfilename
+    # thread = threading.Thread(target=threadfun, args=threadargs)
+    # thread.start()
 
-    threadfun = env.demo_heuristic
-    threadargs = args.seed, args.nopid, args.csvfilename
-
-    if args.pose is not None:
-        try:
-            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
-        except Exception:
-            print('POSE must be x,y,z,phi,theta')
-            exit(1)
-        threadfun = env.demo_pose
-        threadargs = (x, y, z, phi, theta, viewer)
-
-    thread = threading.Thread(target=threadfun, args=threadargs)
-
-    thread.start()
-
-    if not args.nodisplay:
-        viewer.start()
+    # viewer.start()
 
 
 if __name__ == '__main__':

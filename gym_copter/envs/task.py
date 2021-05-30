@@ -1,10 +1,12 @@
 '''
-Superclass for 2D and 3D copter lander
+Abstract class for 2D and 3D copter environments
 
 Copyright (C) 2021 Simon D. Levy
 
 MIT License
 '''
+
+import abc
 
 import numpy as np
 from numpy import radians
@@ -222,3 +224,7 @@ class _Task(gym.Env, EzPickle):
 
         return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
                                  + self.INITIAL_RANDOM_FORCE)
+
+    @abc.abstractmethod
+    def _get_reward(self, status, state, d, x, y):
+        return

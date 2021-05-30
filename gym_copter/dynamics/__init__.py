@@ -159,13 +159,14 @@ class MultirotorDynamics:
         # Velocity for all motor (Found on the mid section of each blade)
 
         self._velocity = self._omegas*self.L/2
-        
-        # Lift created by all motors for all motor (following equation provided by professor Kuehner)
+
+        # Lift created by all motors for all motor (following equation provided
+        # by professor Kuehner)
 
         self._Lift = 0.5*self.rho*self.S*self.C_L*(self._velocity**2)
         # -----------------------------------------------------------------------------------
 
-        #  Use Fluid Dynamics to acheive Lift, Roll, Pitch, Yaw 
+        #  Use Fluid Dynamics to acheive Lift, Roll, Pitch, Yaw
         self._U1= np.sum(self._Lift)
         self._U2= self.u2(self._Lift)
         self._U3= self.u3(self._Lift)
