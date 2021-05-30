@@ -99,7 +99,7 @@ class MultirotorDynamics:
 
         # XXX
         # self.S = .05*self.L *4
-        # self.C_L = vparams['C_L']
+        # self.C_L = 0.4 #
 
         self.maxrpm = vparams['maxrpm']
 
@@ -155,7 +155,7 @@ class MultirotorDynamics:
         self._U4 = self.D * self.u4(omegas2)
 
         '''
-        XXX
+        XXX Ingenuity equations from Prof. Joel Kuehner
         # Velocity for all motor (Found on the mid section of each blade)
 
         self._velocity = self._omegas*self.L/2
@@ -169,7 +169,6 @@ class MultirotorDynamics:
         self._U1= np.sum(self._Lift)
         self._U2= self.u2(self._Lift)
         self._U3= self.u3(self._Lift)
-        self._U4 = self.D * self.u4(omegas2)
         '''
 
     def update(self):
