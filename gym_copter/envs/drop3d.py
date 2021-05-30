@@ -39,11 +39,23 @@ class _Lander(_Task):
         self.descent_pid = DescentPidController()
 
 
-class Lander3D(_Lander):
+class Lander3D(_Task):
 
-    def __init__(self, vehicle_name, obs_size=10):
+    TARGET_RADIUS = 2
+    YAW_PENALTY_FACTOR = 50
+    XYZ_PENALTY_FACTOR = 25
+    DZ_MAX = 10
+    DZ_PENALTY = 100
 
-        _Lander.__init__(self, obs_size, 4, vehicle_name)
+    INSIDE_RADIUS_BONUS = 100
+    BOUNDS = 10
+
+    def __init__(self, vehicle_name, observation_size=10):
+
+        _Task.__init__(self, observation_size, 4, vehicle_name)
+
+        # Add PID controller for heuristic demo
+        self.descent_pid = DescentPidController()
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
