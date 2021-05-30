@@ -96,6 +96,7 @@ class MultirotorDynamics:
         self.Iy = vparams['Iy']
         self.Iz = vparams['Iz']
         self.Jr = vparams['Jr']
+
         self.S = .05*self.L *4
         self.C_L = vparams['C_L']
 
