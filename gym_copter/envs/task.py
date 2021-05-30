@@ -227,4 +227,4 @@ class _Task(gym.Env, EzPickle):
 
     @abc.abstractmethod
     def _get_reward(self, status, state, d, x, y):
-        return
+        return 0
