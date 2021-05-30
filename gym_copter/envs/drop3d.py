@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 '''
-Test gravitational constants by dropping from a specified altitude
+3D Copter-Lander class
 
 Copyright (C) 2021 Simon D. Levy
 
 MIT License
 '''
-
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
 
 from time import sleep
 import numpy as np
@@ -170,28 +167,46 @@ def make_parser():
     return parser
 
 
+def parse(parser):
+    args = parser.parse_args()
+    viewangles = tuple((int(s) for s in args.view.split(',')))
+    return args, viewangles
+
+
 def main():
 
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser = make_parser()
 
-    parser.add_argument('--vehicle', required=False, default='Phantom',
-                        help='Vehicle name')
+    parser.add_argument('--freeze', dest='pose', required=False,
+                        default=None, help='Freeze in pose x,y,z,phi,theta')
 
-    parser.add_argument('--save', dest='csvfilename',
-                        help='Save trajectory in CSV file')
+    args, viewangles = parse(parser)
 
-    parser.add_argument('--height', type=float, dest='height', required=False,
-                        default=10, help='Starting altitude')
+    env = (LanderDVS(args.vehicle) if args.dvs
+           else (LanderVisual() if args.vision
+                 else Lander3D(args.vehicle)))
 
-    args = parser.parse_args()
+    if not args.nodisplay:
+        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
 
-    # threadfun = env.demo_heuristic
-    # threadargs = args.seed, args.nopid, args.csvfilename
-    # thread = threading.Thread(target=threadfun, args=threadargs)
-    # thread.start()
+    threadfun = env.demo_heuristic
+    threadargs = args.seed, args.nopid, args.csvfilename
 
-    # viewer.start()
+    if args.pose is not None:
+        try:
+            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
+        except Exception:
+            print('POSE must be x,y,z,phi,theta')
+            exit(1)
+        threadfun = env.demo_pose
+        threadargs = (x, y, z, phi, theta, viewer)
+
+    thread = threading.Thread(target=threadfun, args=threadargs)
+
+    thread.start()
+
+    if not args.nodisplay:
+        viewer.start()
 
 
 if __name__ == '__main__':
