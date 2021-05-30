@@ -13,6 +13,9 @@ def _make_parser():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
+    parser.add_argument('--vehicle', required=False, default='Phantom',
+                        help='Vehicle name')
+
     parser.add_argument('--seed', type=int, required=False, default=None,
                         help='Random seed for reproducibility')
 

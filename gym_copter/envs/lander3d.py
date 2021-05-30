@@ -182,6 +182,9 @@ def main():
 
     args, viewangles = parse(parser)
 
+    print(args.vehicle)
+    exit(0)
+
     env = (LanderDVS() if args.dvs
            else (LanderVisual() if args.vision
                  else Lander3D()))
