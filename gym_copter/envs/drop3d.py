@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander class
+Class for testing gravity by dropping
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -12,12 +12,59 @@ import numpy as np
 import threading
 
 from gym_copter.envs.utils import _make_parser
-from gym_copter.envs.lander import _Lander
+# from gym_copter.envs.lander import _Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.sensors.vision.vs import VisionSensor
-from gym_copter.sensors.vision.dvs import DVS
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
+
+from gym_copter.pidcontrollers import DescentPidController
+from gym_copter.envs.task import _Task
+
+
+class _Lander(_Task):
+
+    TARGET_RADIUS = 2
+    YAW_PENALTY_FACTOR = 50
+    XYZ_PENALTY_FACTOR = 25
+    DZ_MAX = 10
+    DZ_PENALTY = 100
+
+    INSIDE_RADIUS_BONUS = 100
+    BOUNDS = 10
+
+    def __init__(self, observation_size, action_size, vehicle_name):
+
+        _Task.__init__(self, observation_size, action_size, vehicle_name)
+
+        # Add PID controller for heuristic demo
+        self.descent_pid = DescentPidController()
+
+    def _get_reward(self, status, state, d, x, y):
+
+        # Get penalty based on state and motors
+        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
+
+        if (abs(state[d.STATE_Z_DOT]) > self.DZ_MAX):
+            shaping -= self.DZ_PENALTY
+
+        reward = ((shaping - self.prev_shaping)
+                  if (self.prev_shaping is not None)
+                  else 0)
+
+        self.prev_shaping = shaping
+
+        if status == d.STATUS_LANDED:
+
+            self.done = True
+            self.spinning = False
+
+            # Win bigly we land safely between the flags
+            if np.sqrt(x**2+y**2) < self.TARGET_RADIUS:
+
+                reward += self.INSIDE_RADIUS_BONUS
+
+        return reward
 
 
 class Lander3D(_Lander):
@@ -97,48 +144,6 @@ class Lander3D(_Lander):
         return state[:10]
 
 
-class LanderVisual(Lander3D):
-
-    RES = 16
-
-    def __init__(self, vs=VisionSensor(res=RES)):
-
-        Lander3D.__init__(self)
-
-        self.vs = vs
-
-        self.image = None
-
-    def step(self, action):
-
-        result = Lander3D.step(self, action)
-
-        x, y, z, phi, theta, psi = self.pose
-
-        self.image = self.vs.getImage(x,
-                                      y,
-                                      max(-z, 1e-6),  # keep Z positive
-                                      np.degrees(phi),
-                                      np.degrees(theta),
-                                      np.degrees(psi))
-
-        return result
-
-    def render(self, mode='human'):
-
-        if self.image is not None:
-            self.vs.display_image(self.image)
-
-
-class LanderDVS(LanderVisual):
-
-    def __init__(self):
-
-        LanderVisual.__init__(self, vs=DVS(res=LanderVisual.RES))
-
-# End of Lander3D classes -------------------------------------------------
-
-
 def make_parser():
     '''
     Exported function to support command-line parsing in scripts.
@@ -182,9 +187,7 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (LanderDVS(args.vehicle) if args.dvs
-           else (LanderVisual() if args.vision
-                 else Lander3D(args.vehicle)))
+    env = Lander3D(args.vehicle)
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
