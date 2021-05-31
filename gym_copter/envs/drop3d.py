@@ -59,9 +59,6 @@ def main():
     parser.add_argument('--nodisplay', action='store_true',
                         help='Suppress display')
 
-    parser.add_argument('--freeze', dest='pose', required=False,
-                        default=None, help='Freeze in pose x,y,z,phi,theta')
-
     args = parser.parse_args()
     viewangles = tuple((int(s) for s in args.view.split(',')))
 
