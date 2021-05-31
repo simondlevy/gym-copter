@@ -187,9 +187,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (HoverDVS(args.vehicle_name) if args.dvs
+    env = (HoverDVS(args.vehicle) if args.dvs
            else (HoverVisual() if args.vision
-                 else Hover3D(args.vehicle_name)))
+                 else Hover3D(args.vehicle)))
 
     if not args.nodisplay:
         viewer = ThreeDHoverRenderer(env, viewangles=viewangles)

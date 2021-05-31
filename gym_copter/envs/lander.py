@@ -23,7 +23,7 @@ class _Lander(_Task):
     INSIDE_RADIUS_BONUS = 100
     BOUNDS = 10
 
-    def __init__(self, observation_size, action_size, vehicle_name):
+    def __init__(self, observation_size, action_size, vehicle_name='Phantom'):
 
         _Task.__init__(self, observation_size, action_size, vehicle_name)
 

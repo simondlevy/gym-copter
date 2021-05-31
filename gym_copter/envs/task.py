@@ -109,12 +109,12 @@ class _Task(gym.Env, EzPickle):
         # Lose bigly if we go outside window
         if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
             self.done = True
-            reward -= self.OUT_OF_BOUNDS_PENALTY
+            reward -= self.out_of_bounds_penalty
 
         # Lose bigly for excess roll or pitch
         elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
             self.done = True
-            reward = -self.OUT_OF_BOUNDS_PENALTY
+            reward = -self.out_of_bounds_penalty
 
         # It's all over if we crash
         elif status == d.STATUS_CRASHED:
