@@ -18,7 +18,7 @@ class Drop3D(_Task):
 
     def __init__(self, vehicle_name):
 
-        _Task.__init__(self, 10, 4, vehicle_name)
+        _Task.__init__(self, 10, 4, vehicle_name, initial_random_force=0)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
