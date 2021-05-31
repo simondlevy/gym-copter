@@ -54,20 +54,6 @@ class Drop3D(_Task):
         '''
         return None
 
-    def demo_pose(self, args):
-
-        x, y, z, phi, theta, viewer = args
-
-        while viewer.is_open():
-
-            self._reset(pose=(x, y, z, phi, theta), perturb=False)
-
-            self.render()
-
-            sleep(.01)
-
-        self.close()
-
     def heuristic(self, state, nopid):
         '''
         PID controller
@@ -115,25 +101,10 @@ def make_parser():
     parser.add_argument('--view', required=False, default='30,120',
                         help='Elevation, azimuth for view perspective')
 
-    group = parser.add_mutually_exclusive_group()
-
-    group.add_argument('--vision', action='store_true',
-                       help='Use vision sensor')
-
-    group.add_argument('--dvs', action='store_true',
-                       help='Use Dynamic Vision Sensor')
-
-    group.add_argument('--nodisplay', action='store_true',
-                       help='Suppress display')
+    parser.add_argument('--nodisplay', action='store_true',
+                        help='Suppress display')
 
     return parser
-
-
-def parse(parser):
-    args = parser.parse_args()
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-    return args, viewangles
-
 
 def main():
 
@@ -142,7 +113,8 @@ def main():
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
 
-    args, viewangles = parse(parser)
+    args = parser.parse_args()
+    viewangles = tuple((int(s) for s in args.view.split(',')))
 
     env = Drop3D(args.vehicle)
 
@@ -151,16 +123,6 @@ def main():
 
     threadfun = env.demo_heuristic
     threadargs = args.seed, args.nopid, args.csvfilename
-
-    if args.pose is not None:
-        try:
-            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
-        except Exception:
-            print('POSE must be x,y,z,phi,theta')
-            exit(1)
-        threadfun = env.demo_pose
-        threadargs = (x, y, z, phi, theta, viewer)
-
     thread = threading.Thread(target=threadfun, args=threadargs)
 
     thread.start()
