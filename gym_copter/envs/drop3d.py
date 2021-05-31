@@ -88,11 +88,7 @@ class Drop3D(_Task):
         return state[:10]
 
 
-def make_parser():
-    '''
-    Exported function to support command-line parsing in scripts.
-    You can add your own arguments, then call parse() to get args.
-    '''
+def main():
 
     parser = _make_parser()
 
@@ -103,12 +99,6 @@ def make_parser():
 
     parser.add_argument('--nodisplay', action='store_true',
                         help='Suppress display')
-
-    return parser
-
-def main():
-
-    parser = make_parser()
 
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
