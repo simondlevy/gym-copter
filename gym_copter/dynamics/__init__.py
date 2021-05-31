@@ -97,10 +97,6 @@ class MultirotorDynamics:
         self.Iz = vparams['Iz']
         self.Jr = vparams['Jr']
 
-        # XXX
-        # self.S = .05*self.L *4
-        # self.C_L = 0.4 #
-
         self.maxrpm = vparams['maxrpm']
 
         self._motorCount = motorCount
@@ -145,32 +141,17 @@ class MultirotorDynamics:
         # Compute overall torque from omegas before squaring
         self._Omega = self.u4(self._omegas)
 
-        # Overall thrust is sum of squared omegas
-        omegas2 = self._omegas**2
-        self._U1 = np.sum(self.B * omegas2)
+        # Compute individual motor thrusts are as air density times square of
+        # motor speed
+        omegas2 = self.rho * self._omegas**2
+
+        # Overall thrust is proportional to sum of squared omegas
+        self._U1 = self.B * np.sum(omegas2)
 
         # Use the squared Omegas to implement the rest of Eqn. 6
         self._U2 = self.L * self.B * self.u2(omegas2)
         self._U3 = self.L * self.B * self.u3(omegas2)
         self._U4 = self.D * self.u4(omegas2)
-
-        '''
-        XXX Ingenuity equations from Prof. Joel Kuehner
-        # Velocity for all motor (Found on the mid section of each blade)
-
-        self._velocity = self._omegas*self.L/2
-
-        # Lift created by all motors for all motor (following equation provided
-        # by professor Kuehner)
-
-        lift = 0.5*self.rho*self.S*self.C_L*(self._velocity**2)
-        # -----------------------------------------------------------------------------------
-
-        #  Use Fluid Dynamics to acheive Lift, Roll, Pitch, Yaw
-        self._U1= np.sum(lift)
-        self._U2= self.u2(lift)
-        self._U3= self.u3(lift)
-        '''
 
     def update(self):
         '''
