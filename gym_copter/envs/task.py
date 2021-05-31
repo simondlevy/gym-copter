@@ -25,7 +25,6 @@ class _Task(gym.Env, EzPickle):
     INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
     BOUNDS = 10
-    OUT_OF_BOUNDS_PENALTY = 100
     MAX_ANGLE = 45
 
     MAX_STEPS = 1000
@@ -36,7 +35,8 @@ class _Task(gym.Env, EzPickle):
     }
 
     def __init__(self, observation_size, action_size, vehicle_name,
-                 initial_random_force=30):
+                 initial_random_force=30,
+                 out_of_bounds_penalty=100):
 
         EzPickle.__init__(self)
         self.seed()
@@ -62,7 +62,9 @@ class _Task(gym.Env, EzPickle):
         # Support different vehicles
         self.vehicle_name = vehicle_name
 
+        # Grab remaining settings
         self.initial_random_force = initial_random_force
+        self.out_of_bounds_penalty = out_of_bounds_penalty
 
     def seed(self, seed=None):
 
