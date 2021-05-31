@@ -22,14 +22,7 @@ from gym_copter.envs.task import _Task
 
 class Drop3D(_Task):
 
-    # TARGET_RADIUS = 2
-    # YAW_PENALTY_FACTOR = 50
-    # XYZ_PENALTY_FACTOR = 25
-    # DZ_MAX = 10
-    # DZ_PENALTY = 100
-
-    # INSIDE_RADIUS_BONUS = 100
-    # BOUNDS = 10
+    TARGET_RADIUS = 2
 
     def __init__(self, vehicle_name, observation_size=10):
 
