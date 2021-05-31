@@ -17,6 +17,7 @@ from gym import spaces
 from gym.utils import EzPickle, seeding
 
 from gym_copter.dynamics.djiphantom import DJIPhantomDynamics
+from gym_copter.dynamics.ingenuity import IngenuityDynamics
 
 
 class _Task(gym.Env, EzPickle):
@@ -57,6 +58,9 @@ class _Task(gym.Env, EzPickle):
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(self.MAX_ANGLE)
+
+        # Support different vehicles
+        self.vehicle_name = vehicle_name
 
     def seed(self, seed=None):
 
@@ -194,6 +198,12 @@ class _Task(gym.Env, EzPickle):
 
         # Create dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
+        if self.vehicle_name == 'Phantom':
+            pass
+        elif self.vehicle_name == 'Ingenuity':
+            self.dynamics = IngenuityDynamics(self.FRAMES_PER_SECOND)
+        else:
+            print('Unsupported vehicle %s; defaulting to DJI Phantom ' % self.vehicle_name)
 
         # Set up initial conditions
         state = np.zeros(12)
