@@ -22,7 +22,6 @@ from gym_copter.dynamics.ingenuity import IngenuityDynamics
 
 class _Task(gym.Env, EzPickle):
 
-    INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
 
     metadata = {
@@ -35,7 +34,8 @@ class _Task(gym.Env, EzPickle):
                  out_of_bounds_penalty=100,
                  max_steps=1000,
                  max_angle=45,
-                 bounds=10):
+                 bounds=10,
+                 initial_altitude=10):
 
         EzPickle.__init__(self)
         self.seed()
@@ -66,6 +66,7 @@ class _Task(gym.Env, EzPickle):
         self.out_of_bounds_penalty = out_of_bounds_penalty
         self.max_steps = max_steps
         self.bounds = bounds
+        self.initial_altitude = initial_altitude
 
     def seed(self, seed=None):
 
@@ -191,7 +192,10 @@ class _Task(gym.Env, EzPickle):
             csvfile.close()
         return total_reward
 
-    def _reset(self, pose=(0, 0, INITIAL_ALTITUDE, 0, 0), perturb=True):
+    def _reset(self, pose=None, perturb=True):
+
+        if pose is None:
+            pose = (0, 0, self.initial_altitude, 0, 0)
 
         # Support for rendering
         self.pose = None
@@ -208,7 +212,8 @@ class _Task(gym.Env, EzPickle):
         elif self.vehicle_name == 'Ingenuity':
             self.dynamics = IngenuityDynamics(self.FRAMES_PER_SECOND)
         else:
-            print('Unsupported vehicle %s; defaulting to DJI Phantom ' % self.vehicle_name)
+            print('Unsupported vehicle %s; defaulting to DJI Phantom ' %
+                  self.vehicle_name)
 
         # Set up initial conditions
         state = np.zeros(12)
