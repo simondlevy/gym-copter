@@ -24,7 +24,6 @@ class _Task(gym.Env, EzPickle):
 
     INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
-    BOUNDS = 10
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -35,7 +34,8 @@ class _Task(gym.Env, EzPickle):
                  initial_random_force=30,
                  out_of_bounds_penalty=100,
                  max_steps=1000,
-                 max_angle=45):
+                 max_angle=45,
+                 bounds=10):
 
         EzPickle.__init__(self)
         self.seed()
@@ -65,6 +65,7 @@ class _Task(gym.Env, EzPickle):
         self.initial_random_force = initial_random_force
         self.out_of_bounds_penalty = out_of_bounds_penalty
         self.max_steps = max_steps
+        self.bounds = bounds
 
     def seed(self, seed=None):
 
@@ -107,7 +108,7 @@ class _Task(gym.Env, EzPickle):
         reward = self._get_reward(status, state, d, x, y)
 
         # Lose bigly if we go outside window
-        if abs(x) >= self.BOUNDS or abs(y) >= self.BOUNDS:
+        if abs(x) >= self.bounds or abs(y) >= self.bounds:
             self.done = True
             reward -= self.out_of_bounds_penalty
 
