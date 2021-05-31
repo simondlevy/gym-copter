@@ -12,9 +12,6 @@ from gym_copter.envs.task import _Task
 
 class _Hover(_Task):
 
-    BOUNDS = 10
-    MAX_STEPS = 1000
-
     def __init__(self, observation_size, action_size, vehicle_name='Phantom'):
 
         _Task.__init__(self, observation_size, action_size, vehicle_name)
