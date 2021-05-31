@@ -22,15 +22,6 @@ from gym_copter.envs.task import _Task
 
 class _Lander(_Task):
 
-    TARGET_RADIUS = 2
-    YAW_PENALTY_FACTOR = 50
-    XYZ_PENALTY_FACTOR = 25
-    DZ_MAX = 10
-    DZ_PENALTY = 100
-
-    INSIDE_RADIUS_BONUS = 100
-    BOUNDS = 10
-
     def __init__(self, observation_size, action_size, vehicle_name):
 
         _Task.__init__(self, observation_size, action_size, vehicle_name)
