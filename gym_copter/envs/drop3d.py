@@ -30,7 +30,7 @@ class _Lander(_Task):
         self.descent_pid = DescentPidController()
 
 
-class Lander3D(_Task):
+class Drop3D(_Task):
 
     TARGET_RADIUS = 2
     YAW_PENALTY_FACTOR = 50
@@ -162,7 +162,7 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = Lander3D(args.vehicle)
+    env = Drop3D(args.vehicle)
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
