@@ -25,9 +25,6 @@ class _Task(gym.Env, EzPickle):
     INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
     BOUNDS = 10
-    MAX_ANGLE = 45
-
-    MAX_STEPS = 1000
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -36,7 +33,9 @@ class _Task(gym.Env, EzPickle):
 
     def __init__(self, observation_size, action_size, vehicle_name,
                  initial_random_force=30,
-                 out_of_bounds_penalty=100):
+                 out_of_bounds_penalty=100,
+                 max_steps=1000,
+                 max_angle=45):
 
         EzPickle.__init__(self)
         self.seed()
@@ -57,7 +56,7 @@ class _Task(gym.Env, EzPickle):
                                        dtype=np.float32)
 
         # Pre-convert max-angle degrees to radians
-        self.max_angle = np.radians(self.MAX_ANGLE)
+        self.max_angle = np.radians(max_angle)
 
         # Support different vehicles
         self.vehicle_name = vehicle_name
@@ -65,6 +64,7 @@ class _Task(gym.Env, EzPickle):
         # Grab remaining settings
         self.initial_random_force = initial_random_force
         self.out_of_bounds_penalty = out_of_bounds_penalty
+        self.max_steps = max_steps
 
     def seed(self, seed=None):
 
@@ -124,7 +124,7 @@ class _Task(gym.Env, EzPickle):
             self.spinning = False
 
         # Don't run forever!
-        if self.steps == self.MAX_STEPS:
+        if self.steps == self.max_steps:
             self.done = True
         self.steps += 1
 

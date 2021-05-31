@@ -26,9 +26,6 @@ class Hover3D(_Hover):
 
         _Hover.__init__(self, obs_size, 4, vehicle_name)
 
-        # Pre-convert max-angle degrees to radians
-        self.max_angle = radians(self.MAX_ANGLE)
-
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta', 'Psi', 'dPsi']

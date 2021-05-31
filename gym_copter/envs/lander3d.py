@@ -26,9 +26,6 @@ class Lander3D(_Lander):
 
         _Lander.__init__(self, obs_size, 4, vehicle_name)
 
-        # Pre-convert max-angle degrees to radians
-        self.max_angle = np.radians(self.MAX_ANGLE)
-
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
