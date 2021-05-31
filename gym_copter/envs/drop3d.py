@@ -28,21 +28,9 @@ class Drop3D(_Task):
 
         _Task.__init__(self, observation_size, 4, vehicle_name)
 
-        # Add PID controller for heuristic demo
-        self.descent_pid = DescentPidController()
-
-        # Pre-convert max-angle degrees to radians
-        self.max_angle = np.radians(self.MAX_ANGLE)
-
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
-
-        # Add PID controllers for heuristic demo
-        self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_rate_pid = AngularVelocityPidController()
-        self.x_poshold_pid = PositionHoldPidController()
-        self.y_poshold_pid = PositionHoldPidController()
 
     def reset(self):
 
@@ -55,29 +43,8 @@ class Drop3D(_Task):
         return None
 
     def heuristic(self, state, nopid):
-        '''
-        PID controller
-        '''
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
 
-        phi_todo = 0
-        theta_todo = 0
-
-        if not nopid:
-
-            phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
-            y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
-            phi_todo = phi_rate_todo + y_pos_todo
-
-            theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
-            x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
-            theta_todo = theta_rate_todo + x_pos_todo
-
-        descent_todo = self.descent_pid.getDemand(z, dz)
-
-        t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
-
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+        return [0, 0, 0, 0]
 
     def _get_motors(self, motors):
 
