@@ -21,6 +21,9 @@ l3d:
 drop:
 	python3 gym_copter/envs/drop3d.py
 
+mars:
+	python3 gym_copter/envs/drop3d.py --vehicle Ingenuity
+
 h2d:
 	python3 gym_copter/envs/hover2d.py
 
