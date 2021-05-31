@@ -7,26 +7,18 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from time import sleep
-import numpy as np
 import threading
 
 from gym_copter.envs.utils import _make_parser
-from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.pidcontrollers import AngularVelocityPidController
-from gym_copter.pidcontrollers import PositionHoldPidController
-
-from gym_copter.pidcontrollers import DescentPidController
+from gym_copter.rendering.threed import ThreeDRenderer
 from gym_copter.envs.task import _Task
 
 
 class Drop3D(_Task):
 
-    TARGET_RADIUS = 2
+    def __init__(self, vehicle_name):
 
-    def __init__(self, vehicle_name, observation_size=10):
-
-        _Task.__init__(self, observation_size, 4, vehicle_name)
+        _Task.__init__(self, 10, 4, vehicle_name)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
@@ -76,7 +68,7 @@ def main():
     env = Drop3D(args.vehicle)
 
     if not args.nodisplay:
-        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
+        viewer = ThreeDRenderer(env, lim=10, viewangles=viewangles)
 
     threadfun = env.demo_heuristic
     threadargs = args.seed, args.nopid, args.csvfilename
