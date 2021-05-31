@@ -22,7 +22,6 @@ from gym_copter.dynamics.ingenuity import IngenuityDynamics
 
 class _Task(gym.Env, EzPickle):
 
-    INITIAL_RANDOM_FORCE = 30
     INITIAL_ALTITUDE = 10
     FRAMES_PER_SECOND = 50
     BOUNDS = 10
@@ -36,7 +35,8 @@ class _Task(gym.Env, EzPickle):
         'video.frames_per_second': FRAMES_PER_SECOND
     }
 
-    def __init__(self, observation_size, action_size, vehicle_name):
+    def __init__(self, observation_size, action_size, vehicle_name,
+                 initial_random_force=30):
 
         EzPickle.__init__(self)
         self.seed()
@@ -61,6 +61,8 @@ class _Task(gym.Env, EzPickle):
 
         # Support different vehicles
         self.vehicle_name = vehicle_name
+
+        self.initial_random_force = initial_random_force
 
     def seed(self, seed=None):
 
@@ -232,8 +234,8 @@ class _Task(gym.Env, EzPickle):
 
     def _randforce(self):
 
-        return np.random.uniform(-self.INITIAL_RANDOM_FORCE,
-                                 + self.INITIAL_RANDOM_FORCE)
+        return np.random.uniform(-self.initial_random_force,
+                                 + self.initial_random_force)
 
     @abc.abstractmethod
     def _get_reward(self, status, state, d, x, y):
