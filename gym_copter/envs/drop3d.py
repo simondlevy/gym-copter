@@ -20,16 +20,6 @@ from gym_copter.pidcontrollers import DescentPidController
 from gym_copter.envs.task import _Task
 
 
-class _Lander(_Task):
-
-    def __init__(self, observation_size, action_size, vehicle_name):
-
-        _Task.__init__(self, observation_size, action_size, vehicle_name)
-
-        # Add PID controller for heuristic demo
-        self.descent_pid = DescentPidController()
-
-
 class Drop3D(_Task):
 
     TARGET_RADIUS = 2
@@ -63,7 +53,7 @@ class Drop3D(_Task):
 
     def reset(self):
 
-        return _Lander._reset(self)
+        return _Task._reset(self)
 
     def render(self, mode='human'):
         '''
@@ -125,7 +115,6 @@ def make_parser():
     You can add your own arguments, then call parse() to get args.
     '''
 
-    # Start with general-purpose parser from _Lander superclass
     parser = _make_parser()
 
     # Add 3D-specific argument support
