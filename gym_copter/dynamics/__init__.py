@@ -349,3 +349,35 @@ class MultirotorDynamics:
         sps = np.sin(psi)
 
         return cph, cth, cps, sph, sth, sps
+
+    @abc.abstractmethod
+    def _getThrusts(self, u1, u2, u3):
+        '''
+        Depends on vehicle type (fixed-pitch blades or collective pitch)
+        '''
+        return
+
+    @abc.abstractmethod
+    def _u2(self,  o):
+        '''
+        Roll right. Depends on vehicle type (fixed-pitch blades or collective
+        pitch) and layout (quad, hex, etc.)
+        '''
+        return
+
+    @abc.abstractmethod
+    def _u3(self,  o):
+        '''
+        Pitch forward. Depends on vehicle type (fixed-pitch blades or
+        collective pitch) and layout (quad, hex, etc.)
+        '''
+        return
+
+
+    @abc.abstractmethod
+    def _u4(self,  o):
+        '''
+        Yaw clockwise. Depends on vehicle type (fixed-pitch blades or
+        collective pitch) and layout (quad, hex, etc.)
+        '''
+        return
