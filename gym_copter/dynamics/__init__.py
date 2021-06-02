@@ -99,8 +99,6 @@ class MultirotorDynamics:
         self._motorCount = motorCount
         self._dt = 1. / framesPerSecond
 
-        self._omegas = np.zeros(motorCount)
-
         # Always start at location (0,0,0) with zero velocities
         self._x = np.zeros(12)
         self._dxdt = np.zeros(12)
@@ -134,11 +132,11 @@ class MultirotorDynamics:
         '''
 
         # Convert the  motor values to radians per second
-        self._omegas = self._computeMotorSpeed(motorvals)
+        omegas = self._computeMotorSpeed(motorvals)
 
         # Compute individual motor thrusts are as air density times square of
         # motor speed
-        omegas2 = self.rho * self._omegas**2
+        omegas2 = self.rho * omegas**2
 
         # Overall thrust, as well as pitch and roll, depend on vehicle type
         self._U1, self._U2, self._U3 = self._getThrusts(np.sum(omegas2),
