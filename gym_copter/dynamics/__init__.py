@@ -94,10 +94,6 @@ class MultirotorDynamics:
         self.Iz = vparams['Iz']   # moment of intertia Z
         self.Jr = vparams['Jr']   # rotor inertia
 
-        # Vehicle parameters for vehicles with fixed-pitch rotors
-        self.B = vparams['B']  # thrust coefficient
-        self.L = vparams['L']  # arm length
-
         self.maxrpm = vparams['maxrpm']
 
         self._motorCount = motorCount
