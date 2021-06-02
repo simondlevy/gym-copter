@@ -76,11 +76,7 @@ class MultirotorDynamics:
     LANDING_VEL_Y = 1.0
     LANDING_ANGLE = np.pi/4
 
-    def __init__(
-            self,
-            vparams,
-            motorCount,
-            framesPerSecond):
+    def __init__( self, vparams, motorCount, framesPerSecond):
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
