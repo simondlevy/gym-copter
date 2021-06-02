@@ -130,7 +130,7 @@ class MultirotorDynamics:
         # No perturbation yet
         self._perturb = np.zeros(6)
 
-    def setWorldparams(self, g, rho):
+    def setWorldParams(self, g, rho):
 
         self.g = g
         self.rho = rho

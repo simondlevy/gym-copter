@@ -69,5 +69,3 @@ class IngenuityDynamics(CoaxialDynamics):
         
         # World parameters for Mars
         self.setWorldParams(3.721, 0.017)
-
-
