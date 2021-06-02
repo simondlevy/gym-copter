@@ -80,13 +80,15 @@ class MultirotorDynamics:
             self,
             vparams,
             motorCount,
-            framesPerSecond,
-            wparams={'G': 9.80655,  # Earth gravity
-                     'rho': 1.225}):  # Earth air density
+            framesPerSecond):
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
         '''
+
+        # World params, overridable by setWorldParams()
+        self.g = 8.80665  # gravity
+        self.rho = 1.225  # air density
 
         # Vehicle parameters [see Bouabdallah et al. 2004]
         self.D = vparams['D']     # drag coefficient
@@ -104,10 +106,6 @@ class MultirotorDynamics:
 
         self._motorCount = motorCount
         self._dt = 1. / framesPerSecond
-
-        # World parameters
-        self.G = wparams['G']
-        self.rho = wparams['rho']
 
         self._omegas = np.zeros(motorCount)
 
@@ -127,10 +125,15 @@ class MultirotorDynamics:
 
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = (
-            MultirotorDynamics._bodyZToInertial(-self.G, (0, 0, 0)))
+            MultirotorDynamics._bodyZToInertial(-self.g, (0, 0, 0)))
 
         # No perturbation yet
         self._perturb = np.zeros(6)
+
+    def setWorldparams(self, g, rho):
+
+        self.g = g
+        self.rho = rho
 
     def setMotors(self, motorvals):
         '''
@@ -163,7 +166,7 @@ class MultirotorDynamics:
                     self.M, euler))
 
         # Compute net vertical acceleration by subtracting gravity
-        netz = accelNED[2] + self.G
+        netz = accelNED[2] + self.g
 
         # If we're not airborne, we become airborne when downward acceleration
         # has become negative

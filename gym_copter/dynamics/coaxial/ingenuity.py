@@ -13,9 +13,9 @@ from gym_copter.dynamics import MultirotorDynamics
 # XXX This isn't really coaxial dynamics; its quadcopterX
 class CoaxialDynamics(MultirotorDynamics):
 
-    def __init__(self, vparams, framesPerSecond, wparams):
+    def __init__(self, vparams, framesPerSecond):
 
-        MultirotorDynamics.__init__(self, vparams, 4, framesPerSecond, wparams)
+        MultirotorDynamics.__init__(self, vparams, 4, framesPerSecond)
 
     def _u2(self,  o):
         '''
@@ -65,8 +65,9 @@ class IngenuityDynamics(CoaxialDynamics):
             'maxrpm': 15000
             }
 
+        CoaxialDynamics.__init__(self, vparams, framesPerSecond)
+        
         # World parameters for Mars
-        wparams = {'G': 3.721,    # Gravity
-                   'rho': 0.017}   # Air density
+        self.setWorldParams(3.721, 0.017)
 
-        CoaxialDynamics.__init__(self, vparams, framesPerSecond, wparams)
+
