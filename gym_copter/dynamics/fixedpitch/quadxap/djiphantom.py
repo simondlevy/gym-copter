@@ -7,7 +7,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.dynamics.quadxap import QuadXAPDynamics
+from gym_copter.dynamics.fixedpitch.quadxap import QuadXAPDynamics
 
 
 class DJIPhantomDynamics(QuadXAPDynamics):

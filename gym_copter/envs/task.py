@@ -16,7 +16,7 @@ import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
 
-from gym_copter.dynamics.fixedpitch.djiphantom import DJIPhantomDynamics
+from gym_copter.dynamics.fixedpitch.quadxap.djiphantom import DJIPhantomDynamics
 from gym_copter.dynamics.coaxial.ingenuity import IngenuityDynamics
 
 

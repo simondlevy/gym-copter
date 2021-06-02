@@ -6,4 +6,11 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+from gym_copter.dynamics import MultirotorDynamics
 
+
+class FixedPitchDynamics(MultirotorDynamics):
+
+    def _getThrusts(self, u1, u2, u3):
+
+        return self.B * u1, self.L * self.B * u2, self.L * self.B * u3

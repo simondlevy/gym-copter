@@ -28,6 +28,7 @@ MIT License
 '''
 
 import numpy as np
+import abc
 
 
 class MultirotorDynamics:
@@ -88,14 +89,16 @@ class MultirotorDynamics:
         '''
 
         # Vehicle parameters [see Bouabdallah et al. 2004]
-        self.B = vparams['B']
-        self.D = vparams['D']
-        self.M = vparams['M']
-        self.L = vparams['L']
-        self.Ix = vparams['Ix']
-        self.Iy = vparams['Iy']
-        self.Iz = vparams['Iz']
-        self.Jr = vparams['Jr']
+        self.D = vparams['D']     # drag coefficient
+        self.M = vparams['M']     # mass
+        self.Ix = vparams['Ix']   # moment of intertia X
+        self.Iy = vparams['Iy']   # moment of intertia Y
+        self.Iz = vparams['Iz']   # moment of intertia Z
+        self.Jr = vparams['Jr']   # rotor inertia
+
+        # Vehicle parameters for vehicles with fixed-pitch rotors
+        self.B = vparams['B']  # thrust coefficient
+        self.L = vparams['L']  # arm length
 
         self.maxrpm = vparams['maxrpm']
 
@@ -138,20 +141,15 @@ class MultirotorDynamics:
         # Convert the  motor values to radians per second
         self._omegas = self._computeMotorSpeed(motorvals)
 
-        # Compute overall torque from omegas before squaring
-        self._Omega = self.u4(self._omegas)
-
         # Compute individual motor thrusts are as air density times square of
         # motor speed
         omegas2 = self.rho * self._omegas**2
 
-        # Overall thrust is proportional to sum of squared omegas
-        self._U1 = self.B * np.sum(omegas2)
+        # Overall thrust, as well as pitch and roll, depend on vehicle type
+        self._U1, self._U2, self._U3 = self._getThrusts(np.sum(omegas2), self._u2(omegas2), self._u3(omegas2))
 
-        # Use the squared Omegas to implement the rest of Eqn. 6
-        self._U2 = self.L * self.B * self.u2(omegas2)
-        self._U3 = self.L * self.B * self.u3(omegas2)
-        self._U4 = self.D * self.u4(omegas2)
+        # Compute yaw torque
+        self._U4 = self.D * self._u4(omegas2)
 
     def update(self):
         '''
