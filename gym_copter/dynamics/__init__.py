@@ -149,7 +149,9 @@ class MultirotorDynamics:
         omegas2 = self.rho * self._omegas**2
 
         # Overall thrust, as well as pitch and roll, depend on vehicle type
-        self._U1, self._U2, self._U3 = self._getThrusts(np.sum(omegas2), self._u2(omegas2), self._u3(omegas2))
+        self._U1, self._U2, self._U3 = self._getThrusts(np.sum(omegas2),
+                                                        self._u2(omegas2),
+                                                        self._u3(omegas2))
 
         # Compute yaw torque
         self._U4 = self.D * self._u4(omegas2)
@@ -375,7 +377,6 @@ class MultirotorDynamics:
         collective pitch) and layout (quad, hex, etc.)
         '''
         return
-
 
     @abc.abstractmethod
     def _u4(self,  o):
