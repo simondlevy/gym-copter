@@ -14,9 +14,9 @@ class CoaxialDynamics(MultirotorDynamics):
     Order is: rotor1, rotor2, servo1, servo2.
     '''
 
-    def __init__(self, vparams, framesPerSecond):
+    def __init__(self, vparams, framesPerSecond, wparams):
 
-        MultirotorDynamics.__init__(self, vparams, framesPerSecond)
+        MultirotorDynamics.__init__(self, vparams, framesPerSecond, wparams)
 
     def _u2(self,  o):
         '''
@@ -38,5 +38,4 @@ class CoaxialDynamics(MultirotorDynamics):
 
     def _getThrusts(self, u1, u2, u3):
 
-        # return self.B * u1, self.L * self.B * u2, self.L * self.B * u3
         return u1, u2, u3  # XXX

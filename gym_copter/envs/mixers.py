@@ -24,4 +24,4 @@ def coaxmix(t, r, p, y):
     Order is: rotor1, rotor2, servo1, servo2.
     '''
 
-    return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]  # XXX
+    return t+y, t-y, r, p
