@@ -88,7 +88,7 @@ class Hover3D(_Hover):
         t, r, p, y = (hover_todo+1)/2, roll_todo, pitch_todo, yaw_todo
 
         # Use mixer to set motors
-        return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]
+        return self.mixer(t, r, p, y)
 
     def _get_motors(self, motors):
 

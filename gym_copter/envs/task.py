@@ -20,6 +20,8 @@ from gym_copter.dynamics.fixedpitch.quadxap.djiphantom \
         import DJIPhantomDynamics
 from gym_copter.dynamics.coaxial.ingenuity import IngenuityDynamics
 
+from mixers import quadmix, coaxmix
+
 
 class _Task(gym.Env, EzPickle):
 
@@ -208,10 +210,12 @@ class _Task(gym.Env, EzPickle):
 
         # Create dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
+        self.mixer = quadmix
         if self.vehicle_name == 'Phantom':
             pass
         elif self.vehicle_name == 'Ingenuity':
             self.dynamics = IngenuityDynamics(self.FRAMES_PER_SECOND)
+            self.mixer = coaxmix
         else:
             print('Unsupported vehicle %s; defaulting to DJI Phantom ' %
                   self.vehicle_name)
