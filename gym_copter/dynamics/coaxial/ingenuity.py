@@ -36,7 +36,5 @@ class IngenuityDynamics(CoaxialDynamics):
             'maxrpm': 15000
             }
 
-        CoaxialDynamics.__init__(self, vparams, framesPerSecond)
-
-        # World parameters for Mars
-        self.setWorldParams(3.721, 0.017)
+        CoaxialDynamics.__init__(self, vparams, framesPerSecond,
+                                 wparams={'g': 3.721, 'rho': 0.017})

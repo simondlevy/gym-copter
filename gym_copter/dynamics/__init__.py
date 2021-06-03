@@ -76,15 +76,12 @@ class MultirotorDynamics:
     LANDING_VEL_Y = 1.0
     LANDING_ANGLE = np.pi/4
 
-    def __init__( self, vparams, framesPerSecond):
+    def __init__(self, vparams, framesPerSecond,
+                 wparams={'g': 9.80665, 'rho': 1.225}):
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
         '''
-
-        # World params, overridable by setWorldParams()
-        self.g = 8.80665  # gravity
-        self.rho = 1.225  # air density
 
         # Vehicle parameters [see Bouabdallah et al. 2004]
         self.D = vparams['D']     # drag coefficient
@@ -93,6 +90,10 @@ class MultirotorDynamics:
         self.Iy = vparams['Iy']   # moment of intertia Y
         self.Iz = vparams['Iz']   # moment of intertia Z
         self.Jr = vparams['Jr']   # rotor inertia
+
+        # World parameters
+        self.g = wparams['g']
+        self.rho = wparams['rho']
 
         self.maxrpm = vparams['maxrpm']
 
@@ -118,11 +119,6 @@ class MultirotorDynamics:
 
         # No perturbation yet
         self._perturb = np.zeros(6)
-
-    def setWorldParams(self, g, rho):
-
-        self.g = g
-        self.rho = rho
 
     def setMotors(self, motorvals):
         '''
