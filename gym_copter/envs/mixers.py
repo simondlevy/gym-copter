@@ -16,9 +16,12 @@ def quadxapmix(t, r, p, y):
     2ccw  4cw
     '''
 
-    return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]
+    return t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y
 
 
 def coaxmix(t, r, p, y):
+    '''
+    Order is: rotor1, rotor2, servo1, servo2.
+    '''
 
     return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]  # XXX
