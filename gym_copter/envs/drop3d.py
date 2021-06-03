@@ -9,7 +9,7 @@ MIT License
 
 import threading
 
-from gym_copter.envs.utils import _make_parser
+from gym_copter.envs.parsing import _make_parser
 from gym_copter.rendering.threed import ThreeDRenderer
 from gym_copter.envs.task import _Task
 

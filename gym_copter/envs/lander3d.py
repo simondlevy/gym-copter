@@ -11,7 +11,7 @@ from time import sleep
 import numpy as np
 import threading
 
-from gym_copter.envs.utils import _make_parser
+from gym_copter.envs.parsing import _make_parser
 from gym_copter.envs.lander import _Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.sensors.vision.vs import VisionSensor
