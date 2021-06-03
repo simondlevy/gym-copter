@@ -11,9 +11,9 @@ from gym_copter.dynamics import MultirotorDynamics
 
 class FixedPitchDynamics(MultirotorDynamics):
 
-    def __init__(self, vparams, motorCount, framesPerSecond):
+    def __init__(self, vparams, framesPerSecond):
 
-        MultirotorDynamics.__init__(self, vparams, motorCount, framesPerSecond)
+        MultirotorDynamics.__init__(self, vparams, framesPerSecond)
 
         self.B = vparams['B']  # thrust coefficient
         self.L = vparams['L']  # arm length

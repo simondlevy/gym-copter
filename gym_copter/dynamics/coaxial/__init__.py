@@ -13,7 +13,7 @@ class CoaxialDynamics(MultirotorDynamics):
 
     def __init__(self, vparams, framesPerSecond):
 
-        MultirotorDynamics.__init__(self, vparams, 2, framesPerSecond)
+        MultirotorDynamics.__init__(self, vparams, framesPerSecond)
 
     def _u2(self,  o):
         '''

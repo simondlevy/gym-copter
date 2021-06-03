@@ -20,7 +20,7 @@ class QuadXAPDynamics(FixedPitchDynamics):
 
     def __init__(self, params, framesPerSecond):
 
-        FixedPitchDynamics.__init__(self, params, 4, framesPerSecond)
+        FixedPitchDynamics.__init__(self, params, framesPerSecond)
 
     def _u2(self,  o):
         '''
