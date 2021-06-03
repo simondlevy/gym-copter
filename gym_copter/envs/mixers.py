@@ -7,7 +7,14 @@ MIT License
 '''
 
 
-def quadmix(t, r, p, y):
+def quadxapmix(t, r, p, y):
+    '''
+    3cw   1ccw
+       \ /
+        ^
+       / \
+    2ccw  4cw
+    '''
 
     return [t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y]
 

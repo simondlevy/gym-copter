@@ -10,6 +10,9 @@ from gym_copter.dynamics import MultirotorDynamics
 
 
 class CoaxialDynamics(MultirotorDynamics):
+    '''
+    Order is: rotor1, rotor2, servo1, servo2.
+    '''
 
     def __init__(self, vparams, framesPerSecond):
 
@@ -19,19 +22,19 @@ class CoaxialDynamics(MultirotorDynamics):
         '''
         roll right
         '''
-        return 0  # XXX
+        return o[2]
 
     def _u3(self,  o):
         '''
         pitch forward
         '''
-        return 0  # XXX
+        return o[3]
 
     def _u4(self,  o):
         '''
         yaw cw
         '''
-        return (o[0] - o[1])
+        return o[0] - o[1]
 
     def _getThrusts(self, u1, u2, u3):
 
