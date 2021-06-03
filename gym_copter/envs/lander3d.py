@@ -83,7 +83,8 @@ class Lander3D(_Lander):
 
         t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
 
-        return [t-r-p, t+r+p, t+r-p, t-r+p]  # use mixer to set motors
+        # Use mixer to set motors
+        return [t-r-p, t+r+p, t+r-p, t-r+p]
 
     def _get_motors(self, motors):
 

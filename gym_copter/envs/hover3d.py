@@ -8,7 +8,7 @@ MIT License
 '''
 
 from time import sleep
-from numpy import degrees, radians
+from numpy import degrees
 import threading
 
 from gym_copter.envs.utils import _make_parser
