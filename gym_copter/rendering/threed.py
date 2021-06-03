@@ -49,6 +49,15 @@ class _Vehicle:
         # For render() support
         self.fig = None
 
+        # Create points for arms
+        self.v2 = self.VEHICLE_SIZE / 2
+        self.rs = np.linspace(0, self.v2)
+
+        # Create points for propellers
+        a = np.linspace(-np.pi, +np.pi)
+        self.px = self.PROPELLER_RADIUS * np.sin(a)
+        self.py = self.PROPELLER_RADIUS * np.cos(a)
+
     def update(self, pose):
 
         x, y, z, phi, theta, psi = pose
@@ -69,14 +78,6 @@ class _Vehicle:
             self.traj_line.set_data(self.xs, self.ys)
             self.traj_line.set_3d_properties(self.zs)
 
-        # Create points for arms
-        v2 = self.VEHICLE_SIZE / 2
-        rs = np.linspace(0, v2)
-
-        # Create points for propellers
-        px = self.PROPELLER_RADIUS * np.sin(np.linspace(-np.pi, +np.pi))
-        py = self.PROPELLER_RADIUS * np.cos(np.linspace(-np.pi, +np.pi))
-
         # Loop over arms and propellers
         for j in range(4):
 
@@ -86,12 +87,13 @@ class _Vehicle:
             self._set_axes(x, y, z,
                            phi, theta, psi,
                            self.arms_lines[j],
-                           dx*rs, dy*rs, 0)
+                           dx*self.rs, dy*self.rs, 0)
 
             self._set_axes(x, y, z,
                            phi, theta, psi,
                            self.props_lines[j],
-                           dx*v2+px, dy*v2+py, self.PROPELLER_OFFSET)
+                           dx*self.v2+self.px, dy*self.v2+self.py,
+                           self.PROPELLER_OFFSET)
 
     def _set_axes(self, x, y, z, phi, theta, psi, axis, xs, ys, dz):
 
