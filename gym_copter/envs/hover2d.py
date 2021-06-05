@@ -41,9 +41,13 @@ class Hover2D(_Hover):
         if self.viewer is None:
             self.viewer = TwoDRenderer()
 
-        self.viewer.render(mode, self.pose, self.spinning)
+        retval = None
 
-        return self.viewer._complete(mode)
+        if self.steps % 2:
+            self.viewer.render(mode, self.pose, self.spinning)
+            retval = self.viewer._complete(mode)
+
+        return retval
 
     def close(self):
         if self.viewer is not None:

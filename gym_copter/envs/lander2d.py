@@ -41,7 +41,7 @@ class Lander2D(_Lander):
         if self.viewer is None:
             self.viewer = TwoDLanderRenderer(self.TARGET_RADIUS)
 
-        return self.viewer.render(mode, self.pose, self.spinning)
+        return None if (self.steps%2) else self.viewer.render(mode, self.pose, self.spinning)
 
     def close(self):
         if self.viewer is not None:
