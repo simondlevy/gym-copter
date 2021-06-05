@@ -14,6 +14,7 @@ import threading
 from gym_copter.envs.parsing import _make_parser
 from gym_copter.envs.lander import _Lander
 from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 from gym_copter.pidcontrollers import AngularVelocityPidController
@@ -37,6 +38,8 @@ class Lander3D(_Lander):
         self.y_poshold_pid = PositionHoldPidController()
 
         self.prev = None
+
+        self.viewer = HUD(self)
 
     def reset(self):
 
