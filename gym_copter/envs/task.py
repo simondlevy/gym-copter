@@ -21,7 +21,7 @@ from gym_copter.dynamics import Dynamics, djiphantom_params
 
 class _Task(gym.Env, EzPickle):
 
-    FRAMES_PER_SECOND = 50
+    FRAMES_PER_SECOND = 100
 
     metadata = {
         'render.modes': ['human', 'rgb_array'],

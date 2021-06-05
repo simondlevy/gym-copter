@@ -141,6 +141,7 @@ class ThreeDRenderer:
 
         # Environment will share position with renderer
         self.env = env
+        self.env.viewer = self
 
         # We also support different frame rates
         self.fps = fps
