@@ -20,7 +20,6 @@ setup(
               'gym_copter.dynamics',
               'gym_copter.dynamics.fixedpitch',
               'gym_copter.dynamics.fixedpitch.quadxap',
-              'gym_copter.dynamics.coaxial',
               'gym_copter.rendering',
               'gym_copter.pidcontrollers',
               'gym_copter.sensors',
