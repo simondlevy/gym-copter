@@ -22,9 +22,9 @@ from gym_copter.pidcontrollers import PositionHoldPidController
 
 class Lander3D(_Lander):
 
-    def __init__(self, vehicle_name, obs_size=10):
+    def __init__(self, obs_size=10):
 
-        _Lander.__init__(self, obs_size, 4, vehicle_name)
+        _Lander.__init__(self, obs_size, 4)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
@@ -83,8 +83,8 @@ class Lander3D(_Lander):
 
         t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
 
-        # Use mixer to set motors (with zero yaw)
-        return self.mixer(t, r, p, 0)
+        # Use mixer to set motors
+        return t-r-p, t+r+p, t+r-p, t-r+p
 
     def _get_motors(self, motors):
 
@@ -180,9 +180,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (LanderDVS(args.vehicle) if args.dvs
+    env = (LanderDVS() if args.dvs
            else (LanderVisual() if args.vision
-                 else Lander3D(args.vehicle)))
+                 else Lander3D()))
 
     if not args.nodisplay:
         viewer = ThreeDLanderRenderer(env, viewangles=viewangles)

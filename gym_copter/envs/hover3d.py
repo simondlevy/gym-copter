@@ -22,9 +22,9 @@ from gym_copter.pidcontrollers import PositionHoldPidController
 
 class Hover3D(_Hover):
 
-    def __init__(self, vehicle_name, obs_size=12):
+    def __init__(self, obs_size=12):
 
-        _Hover.__init__(self, obs_size, 4, vehicle_name)
+        _Hover.__init__(self, obs_size, 4)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
@@ -88,7 +88,7 @@ class Hover3D(_Hover):
         t, r, p, y = (hover_todo+1)/2, roll_todo, pitch_todo, yaw_todo
 
         # Use mixer to set motors
-        return self.mixer(t, r, p, y)
+        return t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y
 
     def _get_motors(self, motors):
 
@@ -184,9 +184,9 @@ def main():
 
     args, viewangles = parse(parser)
 
-    env = (HoverDVS(args.vehicle) if args.dvs
+    env = (HoverDVS(args) if args.dvs
            else (HoverVisual() if args.vision
-                 else Hover3D(args.vehicle)))
+                 else Hover3D()))
 
     if not args.nodisplay:
         viewer = ThreeDHoverRenderer(env, viewangles=viewangles)

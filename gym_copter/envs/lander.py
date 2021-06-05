@@ -22,9 +22,9 @@ class _Lander(_Task):
 
     INSIDE_RADIUS_BONUS = 100
 
-    def __init__(self, observation_size, action_size, vehicle_name='Phantom'):
+    def __init__(self, observation_size, action_size):
 
-        _Task.__init__(self, observation_size, action_size, vehicle_name)
+        _Task.__init__(self, observation_size, action_size)
 
         # Add PID controller for heuristic demo
         self.descent_pid = DescentPidController()

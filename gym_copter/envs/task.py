@@ -18,9 +18,6 @@ from gym.utils import EzPickle, seeding
 
 from gym_copter.dynamics.fixedpitch.quadxap.djiphantom \
         import DJIPhantomDynamics
-from gym_copter.dynamics.coaxial.ingenuity import IngenuityDynamics
-
-from mixers import quadxapmix, coaxmix
 
 
 class _Task(gym.Env, EzPickle):
@@ -32,7 +29,7 @@ class _Task(gym.Env, EzPickle):
         'video.frames_per_second': FRAMES_PER_SECOND
     }
 
-    def __init__(self, observation_size, action_size, vehicle_name,
+    def __init__(self, observation_size, action_size,
                  initial_random_force=30,
                  out_of_bounds_penalty=100,
                  max_steps=1000,
@@ -60,9 +57,6 @@ class _Task(gym.Env, EzPickle):
 
         # Pre-convert max-angle degrees to radians
         self.max_angle = np.radians(max_angle)
-
-        # Support different vehicles
-        self.vehicle_name = vehicle_name
 
         # Grab remaining settings
         self.initial_random_force = initial_random_force
@@ -210,15 +204,6 @@ class _Task(gym.Env, EzPickle):
 
         # Create dynamics model
         self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
-        self.mixer = quadxapmix
-        if self.vehicle_name == 'Phantom':
-            pass
-        elif self.vehicle_name == 'Ingenuity':
-            self.dynamics = IngenuityDynamics(self.FRAMES_PER_SECOND)
-            self.mixer = coaxmix
-        else:
-            print('Unsupported vehicle %s; defaulting to DJI Phantom ' %
-                  self.vehicle_name)
 
         # Set up initial conditions
         state = np.zeros(12)
