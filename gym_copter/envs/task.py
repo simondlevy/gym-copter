@@ -16,8 +16,7 @@ import gym
 from gym import spaces
 from gym.utils import EzPickle, seeding
 
-from gym_copter.dynamics.fixedpitch.quadxap.djiphantom \
-        import DJIPhantomDynamics
+from gym_copter.dynamics import Dynamics, djiphantom_params
 
 
 class _Task(gym.Env, EzPickle):
@@ -203,7 +202,7 @@ class _Task(gym.Env, EzPickle):
         self.prev_shaping = None
 
         # Create dynamics model
-        self.dynamics = DJIPhantomDynamics(self.FRAMES_PER_SECOND)
+        self.dynamics = Dynamics(djiphantom_params, self.FRAMES_PER_SECOND)
 
         # Set up initial conditions
         state = np.zeros(12)

@@ -28,22 +28,18 @@ MIT License
 '''
 
 import numpy as np
-import abc
 
 
-class MultirotorDynamics:
+class Dynamics:
     '''
-    Abstract class for multirotor dynamics.  You implementing class should
-    define the following methods:
+    Dynamics class for quad-X frames using ArduPilot motor layout:
 
-        # roll right
-        u2(omega^2)
+    3cw   1ccw
 
-        # pitch forward
-        u3(omega^2)
+        ^
 
-        # yaw cw
-        u4(omega^2)
+    2ccw  4cw
+
     '''
 
     '''
@@ -76,26 +72,27 @@ class MultirotorDynamics:
     LANDING_VEL_Y = 1.0
     LANDING_ANGLE = np.pi/4
 
-    def __init__(self, vparams, framesPerSecond,
-                 wparams={'g': 9.80665, 'rho': 1.225}):
+    # Graviational constant
+    G = 9.80665
+
+    def __init__(self, params, framesPerSecond):
+
         '''
         Constructor initializes kinematic pose, with flag for whether we're
         airbone (helps with testing gravity).
         '''
 
         # Vehicle parameters [see Bouabdallah et al. 2004]
-        self.D = vparams['D']     # drag coefficient
-        self.M = vparams['M']     # mass
-        self.Ix = vparams['Ix']   # moment of intertia X
-        self.Iy = vparams['Iy']   # moment of intertia Y
-        self.Iz = vparams['Iz']   # moment of intertia Z
-        self.Jr = vparams['Jr']   # rotor inertia
+        self.D = params['D']     # drag coefficient
+        self.M = params['M']     # mass
+        self.Ix = params['Ix']   # moment of intertia X
+        self.Iy = params['Iy']   # moment of intertia Y
+        self.Iz = params['Iz']   # moment of intertia Z
+        self.Jr = params['Jr']   # rotor inertia
+        self.B = params['B']     # thrust coefficient
+        self.L = params['L']     # arm length
 
-        # World parameters
-        self.g = wparams['g']
-        self.rho = wparams['rho']
-
-        self.maxrpm = vparams['maxrpm']
+        self.maxrpm = params['maxrpm']
 
         self._dt = 1. / framesPerSecond
 
@@ -115,7 +112,7 @@ class MultirotorDynamics:
 
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = (
-            MultirotorDynamics._bodyZToInertial(-self.g, (0, 0, 0)))
+            Dynamics._bodyZToInertial(-self.G, (0, 0, 0)))
 
         # No perturbation yet
         self._perturb = np.zeros(6)
@@ -131,12 +128,12 @@ class MultirotorDynamics:
 
         # Compute individual motor thrusts are as air density times square of
         # motor speed
-        omegas2 = self.rho * omegas**2
+        omegas2 = omegas**2
 
-        # Overall thrust, as well as pitch and roll, depend on vehicle type
-        self._U1, self._U2, self._U3 = self._getThrusts(np.sum(omegas2),
-                                                        self._u2(omegas2),
-                                                        self._u3(omegas2))
+        # Compute overall thrust, plus roll and pitch
+        self._U1 = self.B * np.sum(omegas2)
+        self._U2 = self.L * self.B * self._u2(omegas2)
+        self._U3 = self.L * self.B * self._u3(omegas2)
 
         # Compute yaw torque
         self._U4 = self.D * self._u4(omegas2)
@@ -149,11 +146,11 @@ class MultirotorDynamics:
         # Use the current Euler angles to rotate the orthogonal thrust vector
         # into the inertial frame.  Negate to use NED.
         euler = (self._x[6], self._x[8], self._x[10])
-        accelNED = (MultirotorDynamics._bodyZToInertial(-self._U1 /
+        accelNED = (Dynamics._bodyZToInertial(-self._U1 /
                     self.M, euler))
 
         # Compute net vertical acceleration by subtracting gravity
-        netz = accelNED[2] + self.g
+        netz = accelNED[2] + self.G
 
         # If we're not airborne, we become airborne when downward acceleration
         # has become negative
@@ -229,6 +226,24 @@ class MultirotorDynamics:
 
         self._perturb = force / self.M
 
+    def _u2(self,  o):
+        '''
+        roll right
+        '''
+        return (o[1] + o[2]) - (o[0] + o[3])
+
+    def _u3(self,  o):
+        '''
+        pitch forward
+        '''
+        return (o[1] + o[3]) - (o[0] + o[2])
+
+    def _u4(self,  o):
+        '''
+        yaw cw
+        '''
+        return (o[0] + o[1]) - (o[2] + o[3])
+
     def _computeStateDerivative(self, accelNED, netz):
         '''
         Implements Equation 12 computing temporal first derivative of state.
@@ -285,7 +300,7 @@ class MultirotorDynamics:
         _bodyToInertial method optimized for body X=Y=0
         '''
 
-        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
+        cph, cth, cps, sph, sth, sps = Dynamics._sincos(rotation)
 
         # This is the rightmost column of the body-to-inertial rotation matrix
         R = np.array([sph*sps+cph*cps*sth, cph*sps*sth-cps*sph, cph*cth])
@@ -294,7 +309,7 @@ class MultirotorDynamics:
 
     def _inertialToBody(inertial, rotation):
 
-        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
+        cph, cth, cps, sph, sth, sps = Dynamics._sincos(rotation)
 
         R = [[cps*cth, cth*sps, -sth],
              [cps*sph*sth-cph*sps, cph*cps+sph*sps*sth, cth*sph],
@@ -310,7 +325,7 @@ class MultirotorDynamics:
            http:www.chrobotics.com/library/understanding-euler-angles
         '''
 
-        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(rotation)
+        cph, cth, cps, sph, sth, sps = Dynamics._sincos(rotation)
 
         R = [[cps*cth, cps*sph*sth-cph*sps, sph*sps + cph*cps*sth],
              [cth*sps, cph*cps+sph*sps*sth, cph*sps*sth-cps*sph],
@@ -320,7 +335,7 @@ class MultirotorDynamics:
 
     def _eulerToQuaternion(euler):
 
-        cph, cth, cps, sph, sth, sps = MultirotorDynamics._sincos(euler/2)
+        cph, cth, cps, sph, sth, sps = Dynamics._sincos(euler/2)
 
         return [[cph * cth * cps + sph * sth * sps],
                 [cph * sth * sps - sph * cth * cps],
@@ -340,33 +355,22 @@ class MultirotorDynamics:
 
         return cph, cth, cps, sph, sth, sps
 
-    @abc.abstractmethod
-    def _getThrusts(self, u1, u2, u3):
-        '''
-        Depends on vehicle type (fixed-pitch blades or collective pitch)
-        '''
-        return
 
-    @abc.abstractmethod
-    def _u2(self,  o):
-        '''
-        Roll right. Depends on vehicle type (fixed-pitch blades or collective
-        pitch) and layout (quad, hex, etc.)
-        '''
-        return
+djiphantom_params = {
 
-    @abc.abstractmethod
-    def _u3(self,  o):
-        '''
-        Pitch forward. Depends on vehicle type (fixed-pitch blades or
-        collective pitch) and layout (quad, hex, etc.)
-        '''
-        return
+    # Estimated
+    'B': 5.E-06,  # force constatnt [F=b*w^2]
+    'D': 2.E-06,  # torque constant [T=d*w^2]
 
-    @abc.abstractmethod
-    def _u4(self,  o):
-        '''
-        Yaw clockwise. Depends on vehicle type (fixed-pitch blades or
-        collective pitch) and layout (quad, hex, etc.)
-        '''
-        return
+    # https:#www.dji.com/phantom-4/info
+    'M': 1.380,  # mass [kg]
+    'L': 0.350,  # arm length [m]
+
+    # Estimated
+    'Ix': 2,       # [kg*m^2]
+    'Iy': 2,       # [kg*m^2]
+    'Iz': 3,       # [kg*m^2]
+    'Jr': 38E-04,  # prop inertial [kg*m^2]
+
+    'maxrpm': 15000
+}

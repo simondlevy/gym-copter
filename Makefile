@@ -56,8 +56,7 @@ flake:
 	flake8 setup.py
 	flake8 utils/*.py
 	flake8 gym_copter/__init__.py
-	flake8 gym_copter/dynamics/*.py
-	flake8 gym_copter/dynamics/fixedpitch/*.py
+	flake8 gym_copter/dynamics/__init__.py
 	flake8 gym_copter/rendering/*.py
 	flake8 gym_copter/envs/*.py
 	flake8 gym_copter/sensors/*.py
