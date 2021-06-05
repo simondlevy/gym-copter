@@ -13,7 +13,7 @@ import threading
 
 from gym_copter.envs.parsing import _make_parser
 from gym_copter.envs.lander import _Lander
-from gym_copter.rendering.threed import ThreeDLanderRenderer
+from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 from gym_copter.pidcontrollers import AngularVelocityPidController
@@ -165,12 +165,6 @@ def make_parser():
     return parser
 
 
-def parse(parser):
-    args = parser.parse_args()
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-    return args, viewangles
-
-
 def main():
 
     parser = make_parser()
@@ -178,14 +172,14 @@ def main():
     parser.add_argument('--freeze', dest='pose', required=False,
                         default=None, help='Freeze in pose x,y,z,phi,theta')
 
-    args, viewangles = parse(parser)
+    args = parser.parse(args)
 
     env = (LanderDVS() if args.dvs
            else (LanderVisual() if args.vision
                  else Lander3D()))
 
-    viewer = (None if args.nodisplay
-              else ThreeDLanderRenderer(env, viewangles=viewangles))
+    if not args.nodisplay:
+        viewer = HUD(env)
 
     threadfun = env.demo_heuristic
     threadargs = args.seed, args.nopid, args.csvfilename
@@ -203,7 +197,7 @@ def main():
 
     thread.start()
 
-    if viewer is not None:
+    if not args.nodisplay:
         viewer.start()
 
 
