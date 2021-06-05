@@ -7,7 +7,7 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from time import sleep
+from time import time, sleep
 from numpy import degrees
 import threading
 
@@ -37,6 +37,8 @@ class Hover3D(_Hover):
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
 
+        self.prev = None
+
     def reset(self):
 
         return _Hover._reset(self)
@@ -46,7 +48,12 @@ class Hover3D(_Hover):
         Returns None because we run viewer on a separate thread
         '''
 
-        sleep(1./self.FRAMES_PER_SECOND)
+        if self.prev is not None:
+            dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
+            if dt > 0:
+                sleep(dt)
+
+        self.prev = time()
 
         return self.viewer.render(mode)
 
