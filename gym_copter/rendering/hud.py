@@ -178,7 +178,8 @@ class HUD:
     def render(self, mode):
 
         # Get state from environment's dynamics
-        state = self.env.dynamics.getState()
+        dynamics = self.env.dynamics
+        state = dynamics.getState()
 
         # Extract pitch, roll, heading, converting them from radians to degrees
         pitch, roll, heading = np.degrees(state[6:12:2])
@@ -342,9 +343,8 @@ class HUD:
                                  color=HUD.POINTER_COLOR)
 
         # Add a time display at bottom
-        t = 0
         HUD._add_label(self.viewer,
-                       Label('Time: %3.2f' % t,
+                       Label('Time: %3.2f' %  dynamics.getTime(),
                              x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
                              font_size=HUD.LARGE_FONT_SIZE,
                              color=(*HUD.FONT_COLOR, 255),

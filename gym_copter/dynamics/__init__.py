@@ -95,6 +95,7 @@ class Dynamics:
         self.maxrpm = params['maxrpm']
 
         self._dt = 1. / framesPerSecond
+        self._ticks = 0
 
         # Always start at location (0,0,0) with zero velocities
         self._x = np.zeros(12)
@@ -192,6 +193,9 @@ class Dynamics:
         # Reset instantaneous perturbation
         self._perturb = np.zeros(6)
 
+        # Update time
+        self._ticks += 1
+
     def getState(self):
         '''
         Returns a copy of the state vector as a tuple
@@ -206,6 +210,10 @@ class Dynamics:
         self._status = (self.STATUS_AIRBORNE
                         if self._x[self.STATE_Z] < 0
                         else self.STATUS_LANDED)
+
+    def getTime(self):
+
+        return self._ticks * self._dt
 
     def getStatus(self):
 

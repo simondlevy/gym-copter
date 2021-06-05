@@ -42,6 +42,8 @@ class Lander3D(_Lander):
 
     def render(self, mode='human'):
 
+        sleep(1./self.FRAMES_PER_SECOND)
+
         return self.viewer.render(mode)
 
     def demo_pose(self, args):

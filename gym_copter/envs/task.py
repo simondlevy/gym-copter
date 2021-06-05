@@ -10,7 +10,7 @@ import abc
 
 import numpy as np
 from numpy import radians
-from time import sleep
+from time import time, sleep
 
 import gym
 from gym import spaces
@@ -153,6 +153,8 @@ class _Task(gym.Env, EzPickle):
                                           for k in range(1, actsize+1)]))
             csvfile.write(',' + ','.join(self.STATE_NAMES) + '\n')
 
+        start = time()
+
         while True:
 
             action = self.heuristic(state, nopid)
@@ -169,13 +171,11 @@ class _Task(gym.Env, EzPickle):
 
             self.render()
 
-            sleep(1./self.FRAMES_PER_SECOND)
-
             steps += 1
 
             if (steps % 20 == 0) or done:
-                print('steps =  %04d    total_reward = %+0.2f' %
-                      (steps, total_reward))
+                print('time = %3.3f   steps =  %04d    total_reward = %+0.2f' %
+                      (time()-start, steps, total_reward))
 
             if done:
                 break

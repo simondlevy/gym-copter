@@ -8,11 +8,12 @@ MIT License
 '''
 
 from gym_copter.envs.hover3d import Hover3D
+from gym_copter.envs.lander3d import Lander3D
 from gym_copter.rendering.hud import HUD
 
 def main():
 
-    env = Hover3D()
+    env = Lander3D()
 
     HUD(env)
 
