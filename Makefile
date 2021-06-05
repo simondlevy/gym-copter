@@ -43,9 +43,6 @@ vs:
 dvs:
 	python3 gym_copter/envs/lander3d.py --dvs
 
-pose:
-	python3 gym_copter/envs/lander3d.py --visual --freeze="1, 0, 5, 30, 0"
-
 commit:
 	git commit -a
 
