@@ -1,5 +1,6 @@
 <img src="media/lander3d.gif" height=250 align="left">
 <img src="media/lander2d.gif" height=180 align="top">
+<img src="media/hud2.gif" height=180 align="top">
 
 <br><br>
 
