@@ -11,8 +11,7 @@ OpenAI Gym environment for reinforcement learning with multicopters.
 * Pure Python / Cross-platform
 
 * Uses realistic multirotor dynamics
-([Bouabdallah et al. 2004](https://infoscience.epfl.ch/record/97532/files/325.pdf)) that can be
-subclassed for a particular vehicle configuration (quad, hex, octo, etc.)
+([Bouabdallah et al. 2004](https://infoscience.epfl.ch/record/97532/files/325.pdf)) 
 
 * Supports rendering via a Heads-Up Display (HUD) similar to Mission Planner / QGroundControl.
 
