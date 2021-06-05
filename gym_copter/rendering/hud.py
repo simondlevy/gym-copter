@@ -263,18 +263,15 @@ class HUD:
         # Display heading
         d = HUD.HEADING_TICK_SPACING * HUD.HEADING_TICK_COUNT
         for i in range(HUD.HEADING_TICK_COUNT):
-            label = Label(('%d' % (i*360//HUD.HEADING_TICK_COUNT)).center(3))
-            x = (HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d
-            '''
-            HUD._add_label(self.viewer,
-                           label=label,
+
+            HUD._add_label(self.viewer, 
+                    Label(('%d' % (i*360//HUD.HEADING_TICK_COUNT)).center(3),
                            font_size=HUD.FONT_SIZE,
-                           x=x,
+                           x=(HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d,
                            y=HUD.H-HUD.HEADING_LABEL_Y_OFFSET,
                            color=(*HUD.FONT_COLOR, 255),
                            anchor_x='center',
-                           anchor_y='center')
-            '''
+                           anchor_y='center'))
 
         # Display altitude at right (negate to accommodate NED)
         HUD._vertical_display(self.viewer,
