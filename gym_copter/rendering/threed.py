@@ -212,6 +212,11 @@ class ThreeDRenderer:
 
     def render(self):
 
+        # Actual rendering is done on a separate thread
+        return None
+
+    def display(self):
+
         if self.env.done:
             self.close()
 
@@ -240,7 +245,7 @@ class ThreeDRenderer:
         try:
 
             # Update the copter animation with vehicle pose
-            self.render()
+            self.display()
 
             # Draw everything
             self.fig.canvas.draw()
@@ -278,9 +283,9 @@ class ThreeDLanderRenderer(ThreeDRenderer):
         self.target_y = np.cos(pts)
         self.target_z = np.zeros(len(self.target_x))
 
-    def render(self):
+    def display(self):
 
-        ThreeDRenderer.render(self)
+        ThreeDRenderer.display(self)
 
         return ThreeDRenderer._complete(self)
 
