@@ -13,7 +13,7 @@ from gym_copter.rendering.hud import HUD
 
 def main():
 
-    env = Lander3D()
+    env = Hover3D()
 
     HUD(env)
 

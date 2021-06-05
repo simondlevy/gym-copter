@@ -43,7 +43,9 @@ class TwoDRenderer:
     PROP_COLOR = 0.0, 0.0, 0.0
     OUTLINE_COLOR = 0.0, 0.0, 0.0
 
-    def __init__(self):
+    def __init__(self, env):
+
+        self.env = env
 
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0,
@@ -160,11 +162,9 @@ class TwoDLanderRenderer(TwoDRenderer):
 
     FLAG_COLOR = 0.8, 0.0, 0.0
 
-    def __init__(self, landing_radius):
+    def __init__(self, env):
 
-        TwoDRenderer.__init__(self)
-
-        self.landing_radius = landing_radius
+        TwoDRenderer.__init__(self, env)
 
     def render(self, mode, pose, spinning):
 
@@ -174,7 +174,7 @@ class TwoDLanderRenderer(TwoDRenderer):
         for d in [-1, +1]:
             flagy1 = self.GROUND_Z
             flagy2 = flagy1 + 50/self.SCALE
-            x = d*self.landing_radius + self.VIEWPORT_W/self.SCALE/2
+            x = d*self.env.TARGET_RADIUS + self.VIEWPORT_W/self.SCALE/2
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)],
                                       color=(1, 1, 1))
             self.viewer.draw_polygon([(x, flagy2),

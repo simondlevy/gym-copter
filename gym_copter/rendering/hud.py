@@ -177,6 +177,9 @@ class HUD:
 
     def render(self, mode):
 
+        if self.env.steps % 40:
+            return None
+
         # Get state from environment's dynamics
         dynamics = self.env.dynamics
         state = dynamics.getState()
@@ -344,7 +347,7 @@ class HUD:
 
         # Add a time display at bottom
         HUD._add_label(self.viewer,
-                       Label('Time: %3.2f' %  dynamics.getTime(),
+                       Label('Time: %3.2f' % dynamics.getTime(),
                              x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
                              font_size=HUD.LARGE_FONT_SIZE,
                              color=(*HUD.FONT_COLOR, 255),
