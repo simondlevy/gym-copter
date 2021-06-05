@@ -45,7 +45,7 @@ class Hover3D(_Hover):
         '''
         Returns None because we run viewer on a separate thread
         '''
-        return None
+        return self.viewer.render(mode)
 
     def demo_pose(self, args):
 
