@@ -36,17 +36,20 @@ class Lander3D(_Lander):
         self.x_poshold_pid = PositionHoldPidController()
         self.y_poshold_pid = PositionHoldPidController()
 
+        self.prev = None
+
     def reset(self):
 
         return _Lander._reset(self)
 
     def render(self, mode='human'):
 
-        # t = time() - self.start
-        # print('%3.3f  %3.3f' % (1/self.FRAMES_PER_SECOND, t/self.steps))
+        if self.prev is not None:
+            dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
+            if dt > 0:
+                sleep(dt)
 
-        sleep(.00925)
-        # sleep(1/self.FRAMES_PER_SECOND)
+        self.prev = time()
 
         return self.viewer.render(mode)
 
