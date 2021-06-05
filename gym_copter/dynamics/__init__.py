@@ -103,13 +103,6 @@ class Dynamics:
         # Start on ground
         self._status = self.STATUS_LANDED
 
-        # Values computed in Equation 6
-        self._U1 = 0     # total thrust
-        self._U2 = 0     # roll thrust right
-        self._U3 = 0     # pitch thrust forward
-        self._U4 = 0     # yaw thrust clockwise
-        self._Omega = 0  # torque clockwise
-
         # Initialize inertial frame acceleration in NED coordinates
         self._inertialAccel = (
             Dynamics._bodyZToInertial(-self.G, (0, 0, 0)))
@@ -117,37 +110,33 @@ class Dynamics:
         # No perturbation yet
         self._perturb = np.zeros(6)
 
-    def setMotors(self, motorvals):
+    def update(self, motorvals):
         '''
-        Uses motor values to implement Equation 6.
-        motorvals in interval [0,1]
+        Implements Equations 6 and 12 from Bouabdallah et al. (2004)
         '''
 
         # Convert the  motor values to radians per second
-        omegas = self._computeMotorSpeed(motorvals)
+        omegas = np.array(motorvals) * self.maxrpm * np.pi / 30
 
         # Compute individual motor thrusts are as air density times square of
         # motor speed
         omegas2 = omegas**2
 
         # Compute overall thrust, plus roll and pitch
-        self._U1 = self.B * np.sum(omegas2)
-        self._U2 = self.L * self.B * self._u2(omegas2)
-        self._U3 = self.L * self.B * self._u3(omegas2)
+        U1 = self.B * np.sum(omegas2)
+        U2 = self.L * self.B * self._u2(omegas2)
+        U3 = self.L * self.B * self._u3(omegas2)
 
         # Compute yaw torque
-        self._U4 = self.D * self._u4(omegas2)
+        U4 = self.D * self._u4(omegas2)
 
-    def update(self):
-        '''
-        Updates state.
-        '''
+        # Ignore Omega ("disturbance") part of Equation 6 for now
+        Omega = 0
 
         # Use the current Euler angles to rotate the orthogonal thrust vector
         # into the inertial frame.  Negate to use NED.
         euler = (self._x[6], self._x[8], self._x[10])
-        accelNED = (Dynamics._bodyZToInertial(-self._U1 /
-                    self.M, euler))
+        accelNED = Dynamics._bodyZToInertial(-U1 / self.M, euler)
 
         # Compute net vertical acceleration by subtracting gravity
         netz = accelNED[2] + self.G
@@ -187,7 +176,7 @@ class Dynamics:
                 return
 
             # Compute the state derivatives using Equation 12
-            self._computeStateDerivative(accelNED, netz)
+            self._computeStateDerivative(accelNED, netz, U2, U3, U4, Omega)
 
             # Add instantaneous perturbation
             self._dxdt[1::2] += self._perturb
@@ -244,7 +233,7 @@ class Dynamics:
         '''
         return (o[0] + o[1]) - (o[2] + o[3])
 
-    def _computeStateDerivative(self, accelNED, netz):
+    def _computeStateDerivative(self, accelNED, netz, U2, U3, U4, Omega):
         '''
         Implements Equation 12 computing temporal first derivative of state.
         Should fill _dxdx[0..11] with appropriate values.
@@ -272,28 +261,20 @@ class Dynamics:
 
         self._dxdt[self.STATE_PHI_DOT] = (
             psidot*thedot*(self.Iy-self.Iz) / self.Ix-self.Jr /
-            self.Ix*thedot*self._Omega + self._U2 / self.Ix + self._perturb[3])
+            self.Ix*thedot*Omega + U2 / self.Ix + self._perturb[3])
 
         self._dxdt[self.STATE_THETA] = thedot
 
         self._dxdt[self.STATE_THETA_DOT] = (
                 -(psidot*phidot*(self.Iz-self.Ix) / self.Iy + self.Jr /
-                  self.Iy*phidot*self._Omega + self._U3 / self.Iy) +
+                  self.Iy*phidot*Omega + U3 / self.Iy) +
                 self._perturb[4])
 
         self._dxdt[self.STATE_PSI] = psidot
 
         self._dxdt[self.STATE_PSI_DOT] = (
             thedot*phidot*(self.Ix-self.Iy)/self.Iz +
-            self._U4/self.Iz + self._perturb[5])
-
-    def _computeMotorSpeed(self, motorvals):
-        '''
-        Computes motor speed base on motor value
-        motorval motor values in [0,1]
-        return motor speed in rad/s
-        '''
-        return np.array(motorvals) * self.maxrpm * np.pi / 30
+            U4/self.Iz + self._perturb[5])
 
     def _bodyZToInertial(bodyZ, rotation):
         '''

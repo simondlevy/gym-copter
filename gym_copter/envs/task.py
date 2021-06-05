@@ -80,15 +80,13 @@ class _Task(gym.Env, EzPickle):
 
         # Stop motors after safe landing
         if status == d.STATUS_LANDED:
-            d.setMotors(motors)
             self.spinning = False
 
         # In air, set motors from action
         else:
             motors = np.clip(action, 0, 1)    # stay in interval [0,1]
-            d.setMotors(self._get_motors(motors))
             self.spinning = sum(motors) > 0
-            d.update()
+            d.update(self._get_motors(motors))
 
         # Get new state from dynamics
         state = np.array(d.getState())
