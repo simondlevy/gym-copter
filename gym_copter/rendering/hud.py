@@ -177,12 +177,8 @@ class HUD:
 
     def render(self, mode):
 
-
-        print(self)
-
-        # state = self.env.getState()
-        # print(state)
-        return
+        # Get state from environment's dynamics
+        state = self.env.dynamics.getState()
 
         # Extract pitch, roll, heading, converting them from radians to degrees
         pitch, roll, heading = np.degrees(state[6:12:2])
@@ -269,6 +265,7 @@ class HUD:
         for i in range(HUD.HEADING_TICK_COUNT):
             label = Label(('%d' % (i*360//HUD.HEADING_TICK_COUNT)).center(3))
             x = (HUD.W/2 - heading*d/360 + HUD.HEADING_TICK_SPACING*i) % d
+            '''
             HUD._add_label(self.viewer,
                            label=label,
                            font_size=HUD.FONT_SIZE,
@@ -277,6 +274,7 @@ class HUD:
                            color=(*HUD.FONT_COLOR, 255),
                            anchor_x='center',
                            anchor_y='center')
+            '''
 
         # Display altitude at right (negate to accommodate NED)
         HUD._vertical_display(self.viewer,
@@ -345,6 +343,7 @@ class HUD:
                                  color=HUD.POINTER_COLOR)
 
         # Add a time display at bottom
+        '''
         HUD._add_label(self.viewer,
                        Label('Time: %3.2f' % t,
                              x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
@@ -352,6 +351,7 @@ class HUD:
                              color=(*HUD.FONT_COLOR, 255),
                              anchor_x='center',
                              anchor_y='center'))
+        '''
 
         return self.viewer.render(return_rgb_array=True)
 
