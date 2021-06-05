@@ -160,7 +160,10 @@ class HUD:
                              color=(*HUD.FONT_COLOR, 255),
                              anchor_x='center', anchor_y='center'))
 
-    def __init__(self):
+    def __init__(self, env):
+
+        self.env = env
+        self.env.viewer = self
 
         self.viewer = rendering.Viewer(HUD.W, HUD.H)
 
@@ -172,7 +175,14 @@ class HUD:
         sky.set_color(*HUD.SKY_COLOR)
         self.viewer.add_geom(sky)
 
-    def display(self, mode, state, t):
+    def render(self, mode):
+
+
+        print(self)
+
+        # state = self.env.getState()
+        # print(state)
+        return
 
         # Extract pitch, roll, heading, converting them from radians to degrees
         pitch, roll, heading = np.degrees(state[6:12:2])

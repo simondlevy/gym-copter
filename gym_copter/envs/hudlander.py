@@ -14,7 +14,9 @@ def main():
 
     env = Lander3D()
 
-    hud = HUD()
+    HUD(env)
+
+    env.demo_heuristic() 
 
 if __name__ == '__main__':
 

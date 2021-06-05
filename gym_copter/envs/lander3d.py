@@ -41,10 +41,8 @@ class Lander3D(_Lander):
         return _Lander._reset(self)
 
     def render(self, mode='human'):
-        '''
-        Returns None because we run viewer on a separate thread
-        '''
-        return None
+
+        return self.viewer.render(mode)
 
     def demo_pose(self, args):
 

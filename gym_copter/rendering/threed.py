@@ -210,7 +210,7 @@ class ThreeDRenderer:
         plt.close(self.fig)
         exit(0)
 
-    def render(self):
+    def render(self, mode):
 
         # Actual rendering is done on a separate thread
         return None

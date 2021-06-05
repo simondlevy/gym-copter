@@ -18,17 +18,14 @@ l2d:
 l3d:
 	python3 gym_copter/envs/lander3d.py
 
-drop:
-	python3 gym_copter/envs/drop3d.py
-
-mars:
-	python3 gym_copter/envs/drop3d.py --vehicle Ingenuity
-
 h2d:
 	python3 gym_copter/envs/hover2d.py
 
 h3d:
 	python3 gym_copter/envs/hover3d.py
+
+hud:
+	python3 gym_copter/envs/hudlander.py
 
 plot:
 	python3 utils/copter-plot.py pid.csv
