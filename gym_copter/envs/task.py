@@ -29,7 +29,8 @@ class _Task(gym.Env, EzPickle):
     }
 
     def __init__(self, observation_size, action_size,
-                 initial_random_force=30,
+                 # initial_random_force=30,
+                 initial_random_force=0,
                  out_of_bounds_penalty=100,
                  max_steps=1000,
                  max_angle=45,
@@ -153,8 +154,6 @@ class _Task(gym.Env, EzPickle):
                                           for k in range(1, actsize+1)]))
             csvfile.write(',' + ','.join(self.STATE_NAMES) + '\n')
 
-        start = time()
-
         while True:
 
             action = self.heuristic(state, nopid)
@@ -174,8 +173,8 @@ class _Task(gym.Env, EzPickle):
             steps += 1
 
             if (steps % 20 == 0) or done:
-                print('time = %3.3f   steps =  %04d    total_reward = %+0.2f' %
-                      (time()-start, steps, total_reward))
+                print('time = %3.2f   steps =  %04d    total_reward = %+0.2f' %
+                      (time()-self.start, steps, total_reward))
 
             if done:
                 break
@@ -223,6 +222,9 @@ class _Task(gym.Env, EzPickle):
 
         # No steps or reward yet
         self.steps = 0
+
+        # Helps synchronize rendering to dynamics
+        self.start = time()
 
         # Return initial state
         return self.step(np.zeros(self.action_size))[0]

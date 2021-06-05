@@ -7,7 +7,7 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from time import sleep
+from time import time, sleep
 import numpy as np
 import threading
 
@@ -42,7 +42,11 @@ class Lander3D(_Lander):
 
     def render(self, mode='human'):
 
-        sleep(1./self.FRAMES_PER_SECOND)
+        # t = time() - self.start
+        # print('%3.3f  %3.3f' % (1/self.FRAMES_PER_SECOND, t/self.steps))
+
+        sleep(.00925)
+        # sleep(1/self.FRAMES_PER_SECOND)
 
         return self.viewer.render(mode)
 
