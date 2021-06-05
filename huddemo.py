@@ -9,10 +9,11 @@ MIT License
 
 from gym_copter.envs.lander3d import Lander3D
 from gym_copter.rendering.hud import HUD
+import gym
 
 def main():
 
-    env = Lander3D()
+    env = gym.make('gym_copter:Lander3D-v0')
 
     HUD(env)
 

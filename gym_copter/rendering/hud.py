@@ -162,6 +162,7 @@ class HUD:
 
     def __init__(self, env):
 
+        env = env.unwrapped
         self.env = env
         self.env.viewer = self
 
