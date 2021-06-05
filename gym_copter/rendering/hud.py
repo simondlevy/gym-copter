@@ -340,7 +340,7 @@ class HUD:
                                  color=HUD.POINTER_COLOR)
 
         # Add a time display at bottom
-        '''
+        t = 100
         HUD._add_label(self.viewer,
                        Label('Time: %3.2f' % t,
                              x=HUD.TIME_LABEL_X, y=HUD.TIME_LABEL_Y,
@@ -348,7 +348,6 @@ class HUD:
                              color=(*HUD.FONT_COLOR, 255),
                              anchor_x='center',
                              anchor_y='center'))
-        '''
 
         return self.viewer.render(return_rgb_array=True)
 
