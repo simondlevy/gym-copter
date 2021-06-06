@@ -59,32 +59,6 @@ class Lander3D(_Lander):
 
         self.close()
 
-    def heuristic(self, state, nopid):
-        '''
-        PID controller
-        '''
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
-
-        phi_todo = 0
-        theta_todo = 0
-
-        if not nopid:
-
-            phi_rate_todo = self.phi_rate_pid.getDemand(dphi)
-            y_pos_todo = self.x_poshold_pid.getDemand(y, dy)
-            phi_todo = phi_rate_todo + y_pos_todo
-
-            theta_rate_todo = self.theta_rate_pid.getDemand(-dtheta)
-            x_pos_todo = self.y_poshold_pid.getDemand(x, dx)
-            theta_todo = theta_rate_todo + x_pos_todo
-
-        descent_todo = self.descent_pid.getDemand(z, dz)
-
-        t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
-
-        # Use mixer to set motors
-        return t-r-p, t+r+p, t+r-p, t-r+p
-
     def _get_motors(self, motors):
 
         return motors
