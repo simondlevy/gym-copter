@@ -12,7 +12,7 @@ from time import time, sleep
 import numpy as np
 import gym
 
-from parsing import _make_parser
+from parsing import make_parser
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
@@ -92,7 +92,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
 def main():
 
-    parser = _make_parser()
+    parser = make_parser()
 
     args = parser.parse_args()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Hover class
+Heuristic demo for 3D Copter hovering
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -11,11 +11,7 @@ from time import time, sleep
 from numpy import degrees
 import threading
 
-from gym_copter.envs.parsing import _make_parser
-from gym_copter.envs.hover import _Hover
-from gym_copter.rendering.threed import ThreeDHoverRenderer
-from gym_copter.sensors.vision.vs import VisionSensor
-from gym_copter.sensors.vision.dvs import DVS
+from parsing import _make_parser
 from gym_copter.pidcontrollers import AngularVelocityPidController
 from gym_copter.pidcontrollers import PositionHoldPidController
 

@@ -8,7 +8,7 @@ import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
 
-def _make_parser():
+def make_parser():
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
