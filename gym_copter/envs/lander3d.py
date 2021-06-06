@@ -9,16 +9,11 @@ MIT License
 
 from time import time, sleep
 import numpy as np
-import threading
 
-from gym_copter.envs.parsing import _make_parser
 from gym_copter.envs.lander import _Lander
-from gym_copter.rendering.threed import ThreeDLanderRenderer
 from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
-from gym_copter.pidcontrollers import AngularVelocityPidController
-from gym_copter.pidcontrollers import PositionHoldPidController
 
 
 class Lander3D(_Lander):
@@ -30,12 +25,6 @@ class Lander3D(_Lander):
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
-
-        # Add PID controllers for heuristic demo
-        self.phi_rate_pid = AngularVelocityPidController()
-        self.theta_rate_pid = AngularVelocityPidController()
-        self.x_poshold_pid = PositionHoldPidController()
-        self.y_poshold_pid = PositionHoldPidController()
 
         self.prev = None
 
@@ -143,80 +132,3 @@ class LanderDVS(LanderVisual):
     def __init__(self):
 
         LanderVisual.__init__(self, vs=DVS(res=LanderVisual.RES))
-
-# End of Lander3D classes -------------------------------------------------
-
-
-def make_parser():
-    '''
-    Exported function to support command-line parsing in scripts.
-    You can add your own arguments, then call parse() to get args.
-    '''
-
-    # Start with general-purpose parser from _Lander superclass
-    parser = _make_parser()
-
-    # Add 3D-specific argument support
-
-    parser.add_argument('--view', required=False, default='30,120',
-                        help='Elevation, azimuth for view perspective')
-
-    group = parser.add_mutually_exclusive_group()
-
-    group.add_argument('--vision', action='store_true',
-                       help='Use vision sensor')
-
-    group.add_argument('--dvs', action='store_true',
-                       help='Use Dynamic Vision Sensor')
-
-    group.add_argument('--nodisplay', action='store_true',
-                       help='Suppress display')
-
-    return parser
-
-
-def parse(parser):
-    args = parser.parse_args()
-    viewangles = tuple((int(s) for s in args.view.split(',')))
-    return args, viewangles
-
-
-def main():
-
-    parser = make_parser()
-
-    parser.add_argument('--freeze', dest='pose', required=False,
-                        default=None, help='Freeze in pose x,y,z,phi,theta')
-
-    args, viewangles = parse(parser)
-
-    env = (LanderDVS() if args.dvs
-           else (LanderVisual() if args.vision
-                 else Lander3D()))
-
-    viewer = (None if args.nodisplay
-              else ThreeDLanderRenderer(env, viewangles=viewangles))
-
-    threadfun = env.demo_heuristic
-    threadargs = args.seed, args.nopid, args.csvfilename
-
-    if args.pose is not None:
-        try:
-            x, y, z, phi, theta = (float(s) for s in args.pose.split(','))
-        except Exception:
-            print('POSE must be x,y,z,phi,theta')
-            exit(1)
-        threadfun = env.demo_pose
-        threadargs = (x, y, z, phi, theta, viewer)
-
-    thread = threading.Thread(target=threadfun, args=threadargs)
-
-    thread.start()
-
-    if viewer is not None:
-        viewer.start()
-
-
-if __name__ == '__main__':
-
-    main()

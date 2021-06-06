@@ -11,6 +11,7 @@ from time import time, sleep
 
 import numpy as np
 import gym
+from gym import wrappers
 
 from parsing import make_parser
 from pidcontrollers import AngularVelocityPidController
@@ -72,8 +73,6 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
             csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
 
-        env.render()
-
         steps += 1
 
         if (steps % 20 == 0) or done:
@@ -98,7 +97,11 @@ def main():
 
     env = gym.make('gym_copter:Lander2D-v0')
 
+    env = wrappers.Monitor(env, 'movie/', force=True)
+
     demo_heuristic(env, seed=args.seed, csvfilename=args.csvfilename)
+
+    env.close()
 
 
 if __name__ == '__main__':

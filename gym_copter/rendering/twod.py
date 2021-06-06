@@ -45,7 +45,9 @@ class TwoDRenderer:
 
     def __init__(self, env):
 
+        env = env.unwrapped
         self.env = env
+        self.env.viewer = self
 
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0,
@@ -85,6 +87,8 @@ class TwoDRenderer:
 
     def render(self, mode, pose, spinning):
 
+        print(pose)
+
         # Draw ground as background
         self.viewer.draw_polygon(
             [(0, 0),
@@ -120,6 +124,9 @@ class TwoDRenderer:
                 self._show_fixture(k, self.PROP_COLOR)
 
         self.props_visible = (not spinning or ((self.props_visible + 1) % 3))
+
+        
+        return self.viewer.render(return_rgb_array=True)
 
     def _complete(self, mode):
 

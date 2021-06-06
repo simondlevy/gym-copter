@@ -178,9 +178,6 @@ class HUD:
 
     def render(self, mode):
 
-        # if self.env.steps % 40:
-        #    return None
-
         # Get state from environment's dynamics
         dynamics = self.env.dynamics
         state = dynamics.getState()
