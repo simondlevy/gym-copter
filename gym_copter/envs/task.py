@@ -130,60 +130,6 @@ class _Task(gym.Env, EzPickle):
                 self.done,
                 {})
 
-    def demo_heuristic(self, seed=None, nopid=False, csvfilename=None):
-        '''
-        csvfile arg will only be added by 3D scripts.
-        '''
-
-        self.seed(seed)
-        np.random.seed(seed)
-
-        total_reward = 0
-        steps = 0
-        state = self.reset()
-
-        dt = 1. / self.FRAMES_PER_SECOND
-
-        actsize = self.action_space.shape[0]
-
-        csvfile = None
-        if csvfilename is not None:
-            csvfile = open(csvfilename, 'w')
-            csvfile.write('t,' + ','.join([('m%d' % k)
-                                          for k in range(1, actsize+1)]))
-            csvfile.write(',' + ','.join(self.STATE_NAMES) + '\n')
-
-        while True:
-
-            action = self.heuristic(state, nopid)
-            state, reward, done, _ = self.step(action)
-            total_reward += reward
-
-            if csvfile is not None:
-
-                csvfile.write('%f' % (dt * steps))
-
-                csvfile.write((',%f' * actsize) % tuple(action))
-
-                csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
-
-            self.render()
-
-            steps += 1
-
-            if (steps % 20 == 0) or done:
-                print('time = %3.2f   steps =  %04d    total_reward = %+0.2f' %
-                      (time()-self.start, steps, total_reward))
-
-            if done:
-                break
-
-        sleep(1)
-        self.close()
-        if csvfile is not None:
-            csvfile.close()
-        return total_reward
-
     def _reset(self, pose=None, perturb=True):
 
         if pose is None:

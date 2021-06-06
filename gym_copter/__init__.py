@@ -8,7 +8,7 @@ from gym.envs.registration import register
 
 # 2D lander
 register(
-    id='Lander-v0',
+    id='Lander2D-v0',
     entry_point='gym_copter.envs:Lander2D',
     max_episode_steps=400
 )
