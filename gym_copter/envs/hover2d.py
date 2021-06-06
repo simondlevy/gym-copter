@@ -59,32 +59,3 @@ class Hover2D(_Hover):
     def _get_motors(self, motors):
 
         return [motors[0], motors[1], motors[1], motors[0]]
-
-    def heuristic(self, s, nopid):
-
-        y, dy, z, dz, phi, dphi = s
-
-        phi_todo = 0
-
-        if not nopid:
-
-            rate_todo = self.rate_pid.getDemand(dphi)
-            pos_todo = self.poshold_pid.getDemand(y, dy)
-
-            phi_todo = rate_todo + pos_todo
-
-        hover_todo = self.altpid.getDemand(z, dz)
-
-        return hover_todo-phi_todo, hover_todo+phi_todo
-
-
-def main():
-    parser = _make_parser()
-    args = parser.parse_args()
-    Hover2D().demo_heuristic(seed=args.seed,
-                             nopid=args.nopid,
-                             csvfilename=args.csvfilename)
-
-
-if __name__ == '__main__':
-    main()
