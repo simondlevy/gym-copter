@@ -95,11 +95,15 @@ def demo2d(envname, heuristic, pidcontrollers):
 
     parser = _make_parser()
 
+    parser.add_argument('--movie', 
+                        help='Save movie in an MP4 file')
+
     args = parser.parse_args()
 
     env = gym.make(envname)
 
-    env = wrappers.Monitor(env, 'movie/', force=True)
+    if args.movie is not None:
+        env = wrappers.Monitor(env, args.movie, force=True)
 
     _demo_heuristic(env, heuristic, pidcontrollers,
                     seed=args.seed, csvfilename=args.csvfilename)
