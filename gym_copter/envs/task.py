@@ -10,7 +10,7 @@ import abc
 
 import numpy as np
 from numpy import radians
-from time import time, sleep
+from time import time
 
 import gym
 from gym import spaces

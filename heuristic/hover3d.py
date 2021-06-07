@@ -13,13 +13,13 @@ from time import sleep
 import numpy as np
 import threading
 
+from gym_copter.rendering.threed import ThreeDHoverRenderer
+
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
 from parsing import make_parser
-
-from gym_copter.rendering.threed import ThreeDHoverRenderer
 
 
 def heuristic(env,

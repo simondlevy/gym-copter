@@ -8,10 +8,8 @@ MIT License
 
 from time import time, sleep
 from numpy import degrees
-import threading
 
 from gym_copter.envs.hover import _Hover
-from gym_copter.rendering.threed import ThreeDHoverRenderer
 from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS

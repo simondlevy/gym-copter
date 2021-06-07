@@ -6,10 +6,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.envs.parsing import _make_parser
 from gym_copter.envs.lander import _Lander
-from gym_copter.pidcontrollers import AngularVelocityPidController
-from gym_copter.pidcontrollers import PositionHoldPidController
 
 
 class Lander2D(_Lander):
