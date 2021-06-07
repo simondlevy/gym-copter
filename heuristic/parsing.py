@@ -23,17 +23,3 @@ def make_parser():
                         help='Save trajectory in CSV file')
 
     return parser
-
-def parse3d():
-
-    parser = make_parser()
-
-    group = parser.add_mutually_exclusive_group()
-
-    group.add_argument('--hud', action='store_true',
-                       help='Use heads-up display')
-
-    group.add_argument('--view', required=False, default='30,120',
-                       help='Elevation, azimuth for view perspective')
-
-    return parser.parse_args()
