@@ -218,7 +218,8 @@ class ThreeDRenderer:
 
     def close(self):
 
-        plt.close(self.fig)
+        if self.outfile is None:
+            plt.close(self.fig)
 
     def render(self, mode):
 

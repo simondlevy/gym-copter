@@ -144,6 +144,7 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
                           _demo_heuristic,
                           (heuristic, pidcontrollers,
                            args.seed, args.csvfilename),
-                          viewangles=viewangles)
+                          viewangles=viewangles,
+                          outfile='movie.mp4' if args.movie else None)
 
         viewer.start()
