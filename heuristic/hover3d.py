@@ -83,15 +83,17 @@ def main():
 
         env.use_hud()
 
-        demo_heuristic(env, heuristic, pidcontrollers, args.seed, args.csvfilename)
+        demo_heuristic(env, heuristic, pidcontrollers,
+                       args.seed, args.csvfilename)
 
     else:
 
         viewangles = tuple((int(s) for s in args.view.split(',')))
 
-        viewer = ThreeDHoverRenderer(env, 
+        viewer = ThreeDHoverRenderer(env,
                                      demo_heuristic,
-                                     (heuristic, pidcontrollers, args.seed, args.csvfilename),
+                                     (heuristic, pidcontrollers,
+                                      args.seed, args.csvfilename),
                                      viewangles=viewangles)
 
         viewer.start()
