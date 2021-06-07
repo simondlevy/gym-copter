@@ -25,8 +25,6 @@ class Hover3D(_Hover):
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta', 'Psi', 'dPsi']
 
-        self.prev = None
-
     def reset(self):
 
         return _Hover._reset(self)
@@ -36,13 +34,6 @@ class Hover3D(_Hover):
         self.viewer = HUD(self)
 
     def render(self, mode='human'):
-
-        if self.prev is not None:
-            dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
-            if dt > 0:
-                sleep(dt)
-
-        self.prev = time()
 
         return None if self.viewer is None else self.viewer.render(mode)
 
