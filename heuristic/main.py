@@ -18,9 +18,6 @@ from argparse import ArgumentDefaultsHelpFormatter
 
 
 def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
-    '''
-    csvfile arg will only be added by 3D scripts.
-    '''
 
     env.seed(seed)
     np.random.seed(seed)
@@ -88,22 +85,25 @@ def _make_parser():
     parser.add_argument('--save', dest='csvfilename',
                         help='Save trajectory in CSV file')
 
+    parser.add_argument('--movie', action='store_true',
+                        help='Save movie in an MP4 file')
+
     return parser
+
+
+def _wrap(args, env):
+
+    return (env if args.movie is None
+            else wrappers.Monitor(env, 'movie/', force=True))
 
 
 def demo2d(envname, heuristic, pidcontrollers):
 
     parser = _make_parser()
 
-    parser.add_argument('--movie', 
-                        help='Save movie in an MP4 file')
-
     args = parser.parse_args()
 
-    env = gym.make(envname)
-
-    if args.movie is not None:
-        env = wrappers.Monitor(env, args.movie, force=True)
+    env = _wrap(args, gym.make(envname))
 
     _demo_heuristic(env, heuristic, pidcontrollers,
                     seed=args.seed, csvfilename=args.csvfilename)
@@ -128,6 +128,8 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
     args = parser.parse_args()
 
     if args.hud:
+
+        env = _wrap(args, env)
 
         env.use_hud()
 
