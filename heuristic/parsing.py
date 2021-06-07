@@ -24,7 +24,7 @@ def make_parser():
 
     return parser
 
-def make_3d_parser():
+def parse3d():
 
     parser = make_parser()
 
@@ -36,4 +36,4 @@ def make_3d_parser():
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
 
-    return parser
+    return parser.parse_args()

@@ -15,7 +15,7 @@ from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
-from parsing import make_3d_parser
+from parsing import parse3d
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 
@@ -53,9 +53,7 @@ def heuristic(env, state, pidcontrollers):
 
 def main():
 
-    parser = make_3d_parser()
-
-    args = parser.parse_args()
+    args = parse3d()
 
     env = gym.make('gym_copter:Lander3D-v0')
 
