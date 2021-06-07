@@ -28,15 +28,17 @@ class Lander3D(_Lander):
 
         self.prev = None
 
-        self.viewer = HUD(self)
+        self.viewer = None
 
     def reset(self):
 
         return _Lander._reset(self)
 
-    def render(self, mode='human'):
+    def use_hud(self):
 
-        print(str(self) + ' render')
+        self.viewer = HUD(self)
+
+    def render(self, mode='human'):
 
         if self.prev is not None:
             dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
@@ -45,7 +47,7 @@ class Lander3D(_Lander):
 
         self.prev = time()
 
-        return self.viewer.render(mode)
+        return None if self.viewer is None else self.viewer.render(mode)
 
     def demo_pose(self, args):
 

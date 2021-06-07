@@ -127,23 +127,28 @@ def main():
 
     parser = make_parser()
 
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument('--hud', action='store_true',
+                        help='Use heads-up display')
+
+    group.add_argument('--view', required=False, default='30,120',
+                        help='Elevation, azimuth for view perspective')
+
     args = parser.parse_args()
 
     env = gym.make('gym_copter:Lander3D-v0')
 
-    threadfun = demo_heuristic
-    threadargs = env,  args.seed, args.csvfilename
-
-    threadfun(*threadargs)
-    exit(0)
-
-    thread = threading.Thread(target=threadfun, args=threadargs)
-
-    thread.start()
-
-    viewer = ThreeDLanderRenderer(env, viewangles=args.viewangles)
-
-    viewer.start()
+    if args.hud:
+        env.use_hud()
+        demo_heuristic(env, args.seed, args.csvfilename)
+    else:
+        viewangles = tuple((int(s) for s in args.view.split(',')))
+        thread = threading.Thread(target=demo_heuristic,
+                                  args=(env, args.seed, args.csvfilename))
+        thread.start()
+        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
+        viewer.start()
 
 
 if __name__ == '__main__':
