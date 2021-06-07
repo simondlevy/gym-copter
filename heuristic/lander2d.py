@@ -16,7 +16,7 @@ from gym import wrappers
 from parsing import make_parser
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
-from pidcontrollers import AltitudeHoldPidController
+from pidcontrollers import DescentPidController
 
 
 def heuristic(state, rate_pid, poshold_pid, descent_pid):
@@ -42,7 +42,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     rate_pid = AngularVelocityPidController()
     pos_pid = PositionHoldPidController()
-    alt_pid = AltitudeHoldPidController()
+    des_pid = DescentPidController()
 
     total_reward = 0
     steps = 0
@@ -61,7 +61,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     while True:
 
-        action = heuristic(state, rate_pid, pos_pid, alt_pid)
+        action = heuristic(state, rate_pid, pos_pid, des_pid)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
