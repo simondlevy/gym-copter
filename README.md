@@ -21,7 +21,7 @@ OpenAI Gym environment for reinforcement learning with multicopters.
 ```
 % pip3 install gym
 % python3 setup.py install
-% python3 gym_copter/envs/lander2d.py
+% python3 heuristic/lander2d.py
 ```
 (On Linux you will probably need to run pip3 with <tt>sudo</tt>.)
 
