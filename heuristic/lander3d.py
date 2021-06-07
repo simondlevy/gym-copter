@@ -11,7 +11,6 @@ import gym
 
 from time import sleep
 import numpy as np
-import threading
 
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
@@ -53,7 +52,7 @@ def heuristic(env,
     return t-r-p, t+r+p, t+r-p, t-r+p
 
 
-def demo_heuristic(env, viewer, seed=None, csvfilename=None):
+def demo_heuristic(env, seed=None, csvfilename=None):
     '''
     csvfile arg will only be added by 3D scripts.
     '''
@@ -120,8 +119,6 @@ def demo_heuristic(env, viewer, seed=None, csvfilename=None):
     env.close()
     if csvfile is not None:
         csvfile.close()
-    if viewer is not None:
-        viewer.close()
     return total_reward
 
 
@@ -142,14 +139,20 @@ def main():
     env = gym.make('gym_copter:Lander3D-v0')
 
     if args.hud:
+
         env.use_hud()
-        demo_heuristic(env, None, args.seed, args.csvfilename)
+
+        demo_heuristic(env, args.seed, args.csvfilename)
+
     else:
+
         viewangles = tuple((int(s) for s in args.view.split(',')))
-        viewer = ThreeDLanderRenderer(env, viewangles=viewangles)
-        thread = threading.Thread(target=demo_heuristic,
-                                  args=(env, viewer, args.seed, args.csvfilename))
-        thread.start()
+
+        viewer = ThreeDLanderRenderer(env,
+                                      demo_heuristic,
+                                      (env, args.seed, args.csvfilename),
+                                      viewangles=viewangles)
+
         viewer.start()
 
 

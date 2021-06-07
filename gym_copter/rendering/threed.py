@@ -7,6 +7,7 @@ MIT License
 '''
 
 import time
+from threading import Thread
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
@@ -131,6 +132,8 @@ class ThreeDRenderer:
 
     def __init__(self,
                  env,
+                 threadfun,
+                 threadargs,
                  view_width=1,
                  lim=50,
                  fps=50,
@@ -138,6 +141,8 @@ class ThreeDRenderer:
                  showtraj=False,
                  viewangles=(30, 120),
                  outfile=None):
+
+        self.thread = Thread(target=threadfun, args=threadargs)
 
         # Environment will share position with renderer
         self.env = env
@@ -183,6 +188,8 @@ class ThreeDRenderer:
         self.copter = _Vehicle(self.axes, showtraj)
 
     def start(self):
+
+        self.thread.start()
 
         # Instantiate the animator
         interval = int(1000/self.fps)
@@ -262,10 +269,13 @@ class ThreeDLanderRenderer(ThreeDRenderer):
     # Number of target points (arbitrary)
     TARGET_POINTS = 250
 
-    def __init__(self, env, viewangles=None, outfile=None, view_width=1):
+    def __init__(self, env, threadfun, threadargs,
+                 viewangles=None, outfile=None, view_width=1):
 
         ThreeDRenderer.__init__(self,
                                 env,
+                                threadfun,
+                                threadargs,
                                 lim=10,
                                 label='Lander',
                                 viewangles=viewangles,
