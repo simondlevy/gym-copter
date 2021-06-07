@@ -132,8 +132,6 @@ class _Task(gym.Env, EzPickle):
 
     def close(self):
 
-        print('task: ' + str(self) + ' ' + str(self.viewer))
-
         gym.Env.close(self)
         self.viewer.close()
 
