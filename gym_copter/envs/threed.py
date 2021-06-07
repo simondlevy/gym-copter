@@ -6,6 +6,8 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
+from time import sleep
+
 from gym_copter.rendering.hud import HUD
 
 

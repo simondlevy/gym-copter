@@ -21,18 +21,18 @@ from pidcontrollers import AltitudeHoldPidController
 from parsing import make_parser
 
 
-def heuristic(env,
-              state,
-              roll_rate_pid,
-              pitch_rate_pid,
-              yaw_rate_pid,
-              x_poshold_pid,
-              y_poshold_pid,
-              althold_pid):
+def heuristic(env, state, pidcontrollers):
     '''
     PID controller
     '''
     x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, _, dpsi = state
+
+    (roll_rate_pid,
+     pitch_rate_pid,
+     yaw_rate_pid,
+     x_poshold_pid,
+     y_poshold_pid,
+     althold_pid) = pidcontrollers
 
     roll_todo = 0
     pitch_todo = 0
@@ -56,17 +56,10 @@ def heuristic(env,
     return t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y
 
 
-def demo_heuristic(env, seed=None, csvfilename=None):
+def demo_heuristic(env, pidcontrollers, seed=None, csvfilename=None):
     '''
     csvfile arg will only be added by 3D scripts.
     '''
-
-    roll_rate_pid = AngularVelocityPidController()
-    pitch_rate_pid = AngularVelocityPidController()
-    yaw_rate_pid = AngularVelocityPidController()
-    x_poshold_pid = PositionHoldPidController()
-    y_poshold_pid = PositionHoldPidController()
-    althold_pid = AltitudeHoldPidController()
 
     env.seed(seed)
     np.random.seed(seed)
@@ -88,14 +81,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     while True:
 
-        action = heuristic(env,
-                           state,
-                           roll_rate_pid,
-                           pitch_rate_pid,
-                           yaw_rate_pid,
-                           x_poshold_pid,
-                           y_poshold_pid,
-                           althold_pid)
+        action = heuristic(env, state, pidcontrollers)
 
         state, reward, done, _ = env.step(action)
         total_reward += reward
@@ -121,11 +107,10 @@ def demo_heuristic(env, seed=None, csvfilename=None):
         if done:
             break
 
-    sleep(1)
     env.close()
+
     if csvfile is not None:
         csvfile.close()
-    return total_reward
 
 
 def main():
@@ -144,19 +129,28 @@ def main():
 
     env = gym.make('gym_copter:Hover3D-v0')
 
+    pidcontrollers = (
+                      AngularVelocityPidController(),
+                      AngularVelocityPidController(),
+                      AngularVelocityPidController(),
+                      PositionHoldPidController(),
+                      PositionHoldPidController(),
+                      AltitudeHoldPidController()
+                     )
+
     if args.hud:
 
         env.use_hud()
 
-        demo_heuristic(env, args.seed, args.csvfilename)
+        demo_heuristic(env, pidcontrollers, args.seed, args.csvfilename)
 
     else:
 
         viewangles = tuple((int(s) for s in args.view.split(',')))
 
-        viewer = ThreeDHoverRenderer(env,
-                                     demo_heuristic,
-                                     (args.seed, args.csvfilename),
+        viewer = ThreeDHoverRenderer(env, demo_heuristic,
+                                     (pidcontrollers,
+                                      args.seed, args.csvfilename),
                                      viewangles=viewangles)
 
         viewer.start()

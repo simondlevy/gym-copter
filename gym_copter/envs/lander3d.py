@@ -7,7 +7,6 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from time import time, sleep
 import numpy as np
 
 from gym_copter.envs.threed import _ThreeD
