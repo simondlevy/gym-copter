@@ -9,14 +9,13 @@ MIT License
 
 import gym
 
-from gym_copter.rendering.threed import ThreeDHoverRenderer
+from demo3d import demo3d
 
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
-from parsing import parse3d
-from heuristic import demo_heuristic
+from gym_copter.rendering.threed import ThreeDHoverRenderer
 
 
 def heuristic(env, state, pidcontrollers):
@@ -56,8 +55,6 @@ def heuristic(env, state, pidcontrollers):
 
 def main():
 
-    args = parse3d()
-
     env = gym.make('gym_copter:Hover3D-v0')
 
     pidcontrollers = (
@@ -69,24 +66,7 @@ def main():
                       AltitudeHoldPidController()
                      )
 
-    if args.hud:
-
-        env.use_hud()
-
-        demo_heuristic(env, heuristic, pidcontrollers,
-                       args.seed, args.csvfilename)
-
-    else:
-
-        viewangles = tuple((int(s) for s in args.view.split(',')))
-
-        viewer = ThreeDHoverRenderer(env,
-                                     demo_heuristic,
-                                     (heuristic, pidcontrollers,
-                                      args.seed, args.csvfilename),
-                                     viewangles=viewangles)
-
-        viewer.start()
+    demo3d(env, heuristic, pidcontrollers, ThreeDHoverRenderer)
 
 
 if __name__ == '__main__':
