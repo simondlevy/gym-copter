@@ -15,7 +15,7 @@ from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
-from parsing import make_parser
+from parsing import make_3d_parser
 from heuristic import demo_heuristic
 
 
@@ -56,15 +56,7 @@ def heuristic(env, state, pidcontrollers):
 
 def main():
 
-    parser = make_parser()
-
-    group = parser.add_mutually_exclusive_group()
-
-    group.add_argument('--hud', action='store_true',
-                       help='Use heads-up display')
-
-    group.add_argument('--view', required=False, default='30,120',
-                       help='Elevation, azimuth for view perspective')
+    parser = make_3d_parser()
 
     args = parser.parse_args()
 
