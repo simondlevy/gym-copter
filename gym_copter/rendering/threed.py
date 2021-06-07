@@ -146,7 +146,7 @@ class ThreeDRenderer:
                  outfile=None):
 
         # Create thread for running main code
-        self.thread = Thread(target=threadfun, args=threadargs)
+        self.thread = Thread(target=threadfun, args=((env,) + threadargs))
 
         # Environment will share position with renderer
         self.env = env.unwrapped
@@ -220,6 +220,7 @@ class ThreeDRenderer:
 
         sleep(.75)
         plt.close(self.fig)
+        exit(0)
 
     def render(self, mode):
 

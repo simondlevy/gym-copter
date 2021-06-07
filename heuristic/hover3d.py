@@ -156,7 +156,7 @@ def main():
 
         viewer = ThreeDHoverRenderer(env,
                                      demo_heuristic,
-                                     (env, args.seed, args.csvfilename),
+                                     (args.seed, args.csvfilename),
                                      viewangles=viewangles)
 
         viewer.start()
