@@ -220,6 +220,8 @@ class ThreeDRenderer:
 
         if self.outfile is None:
             plt.close(self.fig)
+        else:
+            print('Saving %s ...' % self.outfile)
 
     def render(self, mode):
 
