@@ -1,6 +1,9 @@
 '''
 3D quadcopter rendering using matplotlib
 
+Supports running step() on auxiliary thread so main thread can be used for
+rendering
+
 Copyright (C) 2019 Simon D. Levy
 
 MIT License
@@ -142,10 +145,11 @@ class ThreeDRenderer:
                  viewangles=(30, 120),
                  outfile=None):
 
+        # Create thread for running main code
         self.thread = Thread(target=threadfun, args=threadargs)
 
         # Environment will share position with renderer
-        self.env = env
+        self.env = env.unwrapped
         self.env.viewer = self
 
         # We also support different frame rates

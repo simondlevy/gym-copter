@@ -354,6 +354,10 @@ class HUD:
 
         return self.viewer.render(return_rgb_array=True)
 
+    def close(self):
+
+        return
+
     def isOpen(self):
 
         return self.viewer.isopen

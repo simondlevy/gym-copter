@@ -130,6 +130,13 @@ class _Task(gym.Env, EzPickle):
                 self.done,
                 {})
 
+    def close(self):
+
+        print('task: ' + str(self) + ' ' + str(self.viewer))
+
+        gym.Env.close(self)
+        self.viewer.close()
+
     def _reset(self, pose=None, perturb=True):
 
         if pose is None:

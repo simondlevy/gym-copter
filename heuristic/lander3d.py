@@ -117,6 +117,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     sleep(1)
     env.close()
+    print('loop: ' + str(env) + ' ' + str(env.viewer))
     if csvfile is not None:
         csvfile.close()
     return total_reward
