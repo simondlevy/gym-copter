@@ -18,7 +18,7 @@ from pidcontrollers import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
 
-def heuristic(env, state, pidcontrollers):
+def heuristic(state, pidcontrollers):
 
     y, dy, z, dz, phi, dphi = state
 
@@ -46,11 +46,9 @@ def main():
 
     env = wrappers.Monitor(env, 'movie/', force=True)
 
-    pidcontrollers = (
-        AngularVelocityPidController(),
-        PositionHoldPidController(),
-        DescentPidController(),
-    )
+    pidcontrollers = (AngularVelocityPidController(),
+                      PositionHoldPidController(),
+                      DescentPidController())
 
     demo_heuristic(env, heuristic, pidcontrollers,
                    seed=args.seed, csvfilename=args.csvfilename)

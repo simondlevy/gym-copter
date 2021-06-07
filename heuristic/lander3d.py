@@ -18,7 +18,7 @@ from pidcontrollers import DescentPidController
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 
 
-def heuristic(env, state, pidcontrollers):
+def heuristic(state, pidcontrollers):
     '''
     PID controller
     '''

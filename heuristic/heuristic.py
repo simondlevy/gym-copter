@@ -35,7 +35,7 @@ def demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
 
     while True:
 
-        action = fun(env, state, pidcontrollers)
+        action = fun(state, pidcontrollers)
 
         state, reward, done, _ = env.step(action)
         total_reward += reward
