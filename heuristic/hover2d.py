@@ -95,7 +95,7 @@ def main():
 
     args = parser.parse_args()
 
-    env = gym.make('gym_copter:Lander2D-v0')
+    env = gym.make('gym_copter:Hover2D-v0')
 
     env = wrappers.Monitor(env, 'movie/', force=True)
 

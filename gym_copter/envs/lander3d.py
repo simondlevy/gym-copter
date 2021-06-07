@@ -36,6 +36,8 @@ class Lander3D(_Lander):
 
     def render(self, mode='human'):
 
+        print(str(self) + ' render')
+
         if self.prev is not None:
             dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
             if dt > 0:

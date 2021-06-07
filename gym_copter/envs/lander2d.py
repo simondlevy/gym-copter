@@ -35,6 +35,8 @@ class Lander2D(_Lander):
 
     def render(self, mode='human'):
 
+        print(str(self) + ' render')
+
         from gym_copter.rendering.twod import TwoDLanderRenderer
 
         # Create viewer if not done yet
