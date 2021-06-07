@@ -145,14 +145,20 @@ def main():
     env = gym.make('gym_copter:Hover3D-v0')
 
     if args.hud:
+
         env.use_hud()
+
         demo_heuristic(env, args.seed, args.csvfilename)
+
     else:
+
         viewangles = tuple((int(s) for s in args.view.split(',')))
-        thread = threading.Thread(target=demo_heuristic,
-                                  args=(env, args.seed, args.csvfilename))
-        thread.start()
-        viewer = ThreeDHoverRenderer(env, viewangles=viewangles)
+
+        viewer = ThreeDHoverRenderer(env,
+                                     demo_heuristic,
+                                     (env, args.seed, args.csvfilename),
+                                     viewangles=viewangles)
+
         viewer.start()
 
 

@@ -306,10 +306,13 @@ class ThreeDLanderRenderer(ThreeDRenderer):
 
 class ThreeDHoverRenderer(ThreeDRenderer):
 
-    def __init__(self, env, viewangles=None, outfile=None, view_width=1):
+    def __init__(self, env, threadfun, threadargs,
+                 viewangles=None, outfile=None, view_width=1):
 
         ThreeDRenderer.__init__(self,
                                 env,
+                                threadfun,
+                                threadargs,
                                 lim=10,
                                 label='Hover',
                                 viewangles=viewangles,
