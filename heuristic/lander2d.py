@@ -13,6 +13,8 @@ import numpy as np
 import gym
 from gym import wrappers
 
+from heuristic import demo_heuristic
+
 from parsing import make_parser
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
@@ -34,59 +36,6 @@ def heuristic(state, rate_pid, poshold_pid, descent_pid):
 
     return hover_todo-phi_todo, hover_todo+phi_todo
 
-
-def demo_heuristic(env, seed=None, csvfilename=None):
-
-    env.seed(seed)
-    np.random.seed(seed)
-
-    rate_pid = AngularVelocityPidController()
-    pos_pid = PositionHoldPidController()
-    descent_pid = DescentPidController()
-
-    total_reward = 0
-    steps = 0
-    state = env.reset()
-
-    dt = 1. / env.FRAMES_PER_SECOND
-
-    actsize = env.action_space.shape[0]
-
-    csvfile = None
-    if csvfilename is not None:
-        csvfile = open(csvfilename, 'w')
-        csvfile.write('t,' + ','.join([('m%d' % k)
-                                      for k in range(1, actsize+1)]))
-        csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
-
-    while True:
-
-        action = heuristic(state, rate_pid, pos_pid, descent_pid)
-        state, reward, done, _ = env.step(action)
-        total_reward += reward
-
-        if csvfile is not None:
-
-            csvfile.write('%f' % (dt * steps))
-
-            csvfile.write((',%f' * actsize) % tuple(action))
-
-            csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
-
-        steps += 1
-
-        if (steps % 20 == 0) or done:
-            print('time = %3.2f   steps =  %04d    total_reward = %+0.2f' %
-                  (time()-env.start, steps, total_reward))
-
-        if done:
-            break
-
-    sleep(1)
-    env.close()
-    if csvfile is not None:
-        csvfile.close()
-    return total_reward
 
 
 def main():
