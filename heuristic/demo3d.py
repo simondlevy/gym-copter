@@ -29,7 +29,8 @@ def demo3d(env, heuristic, pidcontrollers, renderer):
 
         env.use_hud()
 
-        demo_heuristic(env, heuristic, pidcontrollers, args.seed, args.csvfilename)
+        demo_heuristic(env, heuristic, pidcontrollers,
+                       args.seed, args.csvfilename)
 
     else:
 

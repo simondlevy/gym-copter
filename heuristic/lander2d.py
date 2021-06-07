@@ -7,9 +7,6 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from time import time, sleep
-
-import numpy as np
 import gym
 from gym import wrappers
 
@@ -21,9 +18,11 @@ from pidcontrollers import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
 
-def heuristic(state, rate_pid, poshold_pid, descent_pid):
+def heuristic(env, state, pidcontrollers):
 
     y, dy, z, dz, phi, dphi = state
+
+    rate_pid, poshold_pid, descent_pid = pidcontrollers
 
     phi_todo = 0
 
@@ -37,7 +36,6 @@ def heuristic(state, rate_pid, poshold_pid, descent_pid):
     return hover_todo-phi_todo, hover_todo+phi_todo
 
 
-
 def main():
 
     parser = make_parser()
@@ -48,7 +46,14 @@ def main():
 
     env = wrappers.Monitor(env, 'movie/', force=True)
 
-    demo_heuristic(env, seed=args.seed, csvfilename=args.csvfilename)
+    pidcontrollers = (
+        AngularVelocityPidController(),
+        PositionHoldPidController(),
+        DescentPidController(),
+    )
+
+    demo_heuristic(env, heuristic, pidcontrollers,
+                   seed=args.seed, csvfilename=args.csvfilename)
 
     env.close()
 
