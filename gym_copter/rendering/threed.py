@@ -218,9 +218,7 @@ class ThreeDRenderer:
 
     def close(self):
 
-        time.sleep(1)
         plt.close(self.fig)
-        exit(0)
 
     def render(self, mode):
 
