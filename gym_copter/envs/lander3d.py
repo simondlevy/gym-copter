@@ -26,8 +26,6 @@ class Lander3D(_Lander):
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
                             'Phi', 'dPhi', 'Theta', 'dTheta']
 
-        self.prev = None
-
         self.viewer = None
 
     def reset(self):
@@ -39,13 +37,6 @@ class Lander3D(_Lander):
         self.viewer = HUD(self)
 
     def render(self, mode='human'):
-
-        if self.prev is not None:
-            dt = 1/self.FRAMES_PER_SECOND - 3.0 * (time()-self.prev)
-            if dt > 0:
-                sleep(dt)
-
-        self.prev = time()
 
         return None if self.viewer is None else self.viewer.render(mode)
 
