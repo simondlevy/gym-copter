@@ -7,9 +7,7 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import gym
-
-from demo3d import demo3d
+from main import demo3d
 
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
@@ -51,8 +49,6 @@ def heuristic(state, pidcontrollers):
 
 def main():
 
-    env = gym.make('gym_copter:Lander3D-v0')
-
     pidcontrollers = (
                       AngularVelocityPidController(),
                       AngularVelocityPidController(),
@@ -61,7 +57,8 @@ def main():
                       DescentPidController()
                      )
 
-    demo3d(env, heuristic, pidcontrollers, ThreeDLanderRenderer)
+    demo3d('gym_copter:Lander3D-v0', heuristic,
+           pidcontrollers, ThreeDLanderRenderer)
 
 
 if __name__ == '__main__':

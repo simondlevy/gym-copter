@@ -13,6 +13,7 @@ from pidcontrollers import DescentPidController
 
 from main import demo2d
 
+
 def heuristic(state, pidcontrollers):
 
     y, dy, z, dz, phi, dphi = state
@@ -29,6 +30,7 @@ def heuristic(state, pidcontrollers):
     hover_todo = descent_pid.getDemand(z, dz)
 
     return hover_todo-phi_todo, hover_todo+phi_todo
+
 
 def main():
 
