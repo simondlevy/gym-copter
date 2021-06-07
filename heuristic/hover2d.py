@@ -7,15 +7,11 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import gym
-from gym import wrappers
-
-from heuristic import demo_heuristic
-
-from parsing import make_parser
 from pidcontrollers import AltitudeHoldPidController
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
+
+from main import demo2d
 
 
 def heuristic(state, pidcontrollers):
@@ -34,25 +30,7 @@ def heuristic(state, pidcontrollers):
     return hover_todo-phi_todo, hover_todo+phi_todo
 
 
-def main():
-
-    parser = make_parser()
-
-    args = parser.parse_args()
-
-    env = gym.make('gym_copter:Hover2D-v0')
-
-    env = wrappers.Monitor(env, 'movie/', force=True)
-
-    pidcontrollers = (AngularVelocityPidController(),
-                      PositionHoldPidController(),
-                      AltitudeHoldPidController())
-
-    demo_heuristic(env, heuristic, pidcontrollers,
-                   seed=args.seed, csvfilename=args.csvfilename)
-
-    env.close()
-
-
-if __name__ == '__main__':
-    main()
+demo2d('gym_copter:Hover2D-v0', heuristic,
+       (AngularVelocityPidController(),
+        PositionHoldPidController(),
+        AltitudeHoldPidController()))

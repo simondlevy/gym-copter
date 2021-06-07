@@ -1,14 +1,33 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander heuristic demo
+3D Copter-Lander heuristic demo support
 
 Copyright (C) 2021 Simon D. Levy
 
 MIT License
 '''
 
+import gym
+from gym import wrappers
+
 from parsing import make_parser
 from heuristic import demo_heuristic
+
+
+def demo2d(envname, heuristic, pidcontrollers):
+    
+    parser = make_parser()
+
+    args = parser.parse_args()
+
+    env = gym.make(envname)
+
+    env = wrappers.Monitor(env, 'movie/', force=True)
+
+    demo_heuristic(env, heuristic, pidcontrollers,
+                   seed=args.seed, csvfilename=args.csvfilename)
+
+    env.close()
 
 
 def demo3d(env, heuristic, pidcontrollers, renderer):
