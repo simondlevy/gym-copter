@@ -9,9 +9,6 @@ MIT License
 
 import gym
 
-from time import sleep
-import numpy as np
-
 from gym_copter.rendering.threed import ThreeDHoverRenderer
 
 from pidcontrollers import AngularVelocityPidController
@@ -19,6 +16,7 @@ from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
 from parsing import make_parser
+from heuristic import demo_heuristic
 
 
 def heuristic(env, state, pidcontrollers):
@@ -56,63 +54,6 @@ def heuristic(env, state, pidcontrollers):
     return t-r-p-y, t+r+p-y, t+r-p+y, t-r+p+y
 
 
-def demo_heuristic(env, pidcontrollers, seed=None, csvfilename=None):
-    '''
-    csvfile arg will only be added by 3D scripts.
-    '''
-
-    env.seed(seed)
-    np.random.seed(seed)
-
-    total_reward = 0
-    steps = 0
-    state = env.reset()
-
-    dt = 1. / env.FRAMES_PER_SECOND
-
-    actsize = env.action_space.shape[0]
-
-    csvfile = None
-    if csvfilename is not None:
-        csvfile = open(csvfilename, 'w')
-        csvfile.write('t,' + ','.join([('m%d' % k)
-                                      for k in range(1, actsize+1)]))
-        csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
-
-    while True:
-
-        action = heuristic(env, state, pidcontrollers)
-
-        state, reward, done, _ = env.step(action)
-        total_reward += reward
-
-        if csvfile is not None:
-
-            csvfile.write('%f' % (dt * steps))
-
-            csvfile.write((',%f' * actsize) % tuple(action))
-
-            csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
-
-        env.render()
-
-        sleep(1./env.FRAMES_PER_SECOND)
-
-        steps += 1
-
-        if (steps % 20 == 0) or done:
-            print('steps =  %04d    total_reward = %+0.2f' %
-                  (steps, total_reward))
-
-        if done:
-            break
-
-    env.close()
-
-    if csvfile is not None:
-        csvfile.close()
-
-
 def main():
 
     parser = make_parser()
@@ -142,15 +83,15 @@ def main():
 
         env.use_hud()
 
-        demo_heuristic(env, pidcontrollers, args.seed, args.csvfilename)
+        demo_heuristic(env, heuristic, pidcontrollers, args.seed, args.csvfilename)
 
     else:
 
         viewangles = tuple((int(s) for s in args.view.split(',')))
 
-        viewer = ThreeDHoverRenderer(env, demo_heuristic,
-                                     (pidcontrollers,
-                                      args.seed, args.csvfilename),
+        viewer = ThreeDHoverRenderer(env, 
+                                     demo_heuristic,
+                                     (heuristic, pidcontrollers, args.seed, args.csvfilename),
                                      viewangles=viewangles)
 
         viewer.start()
