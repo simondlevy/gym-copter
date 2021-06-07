@@ -115,7 +115,6 @@ def demo_heuristic(env, seed=None, csvfilename=None):
         if done:
             break
 
-    sleep(1)
     env.close()
     if csvfile is not None:
         csvfile.close()

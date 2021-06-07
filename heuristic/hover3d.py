@@ -11,7 +11,6 @@ import gym
 
 from time import sleep
 import numpy as np
-import threading
 
 from gym_copter.rendering.threed import ThreeDHoverRenderer
 

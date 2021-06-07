@@ -9,7 +9,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-import time
+from time import sleep
 from threading import Thread
 import numpy as np
 from matplotlib import pyplot as plt
@@ -218,6 +218,7 @@ class ThreeDRenderer:
 
     def close(self):
 
+        sleep(.75)
         plt.close(self.fig)
 
     def render(self, mode):
