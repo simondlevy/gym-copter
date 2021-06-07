@@ -12,6 +12,7 @@ import threading
 
 from gym_copter.envs.hover import _Hover
 from gym_copter.rendering.threed import ThreeDHoverRenderer
+from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 
@@ -31,6 +32,10 @@ class Hover3D(_Hover):
     def reset(self):
 
         return _Hover._reset(self)
+
+    def use_hud(self):
+
+        self.viewer = HUD(self)
 
     def render(self, mode='human'):
 
