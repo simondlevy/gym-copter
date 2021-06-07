@@ -87,8 +87,6 @@ class TwoDRenderer:
 
     def render(self, mode, pose, spinning):
 
-        print(pose)
-
         # Draw ground as background
         self.viewer.draw_polygon(
             [(0, 0),

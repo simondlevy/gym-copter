@@ -36,16 +36,14 @@ class Hover2D(_Hover):
 
     def render(self, mode='human'):
 
-        print('Hover2D.render')
-
         from gym_copter.rendering.twod import TwoDRenderer
 
         # Create viewer if not done yet
         if self.viewer is None:
             self.viewer = TwoDRenderer(self)
 
-        self.viewer.render(mode, self.pose, self.spinning)
-        return self.viewer._complete(mode)
+        return self.viewer.render(mode, self.pose, self.spinning)
+        # return self.viewer._complete(mode)
 
     def close(self):
         if self.viewer is not None:
