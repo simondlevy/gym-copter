@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 3D Copter-Hover class
 

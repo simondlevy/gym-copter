@@ -11,7 +11,7 @@ import Box2D
 from Box2D.b2 import fixtureDef, polygonShape
 
 
-class TwoDRenderer:
+class _TwoDRenderer:
 
     VIEWPORT_W, VIEWPORT_H = 600, 400
     SCALE = 30.0
@@ -123,13 +123,6 @@ class TwoDRenderer:
 
         self.props_visible = (not spinning or ((self.props_visible + 1) % 3))
 
-        
-        return self.viewer.render(return_rgb_array=True)
-
-    def _complete(self, mode):
-
-        return self.viewer.render(return_rgb_array=mode == 'rgb_array')
-
     def _show_fixture(self, index, color):
         fixture = self.lander.fixtures[index]
         trans = fixture.body.transform
@@ -163,17 +156,30 @@ class TwoDRenderer:
         ]
 
 
-class TwoDLanderRenderer(TwoDRenderer):
+class TwoDHoverRenderer(_TwoDRenderer):
+
+    def __init__(self, env):
+
+        _TwoDRenderer.__init__(self, env)
+
+    def render(self, mode, pose, spinning):
+
+        _TwoDRenderer.render(self, mode, pose, spinning)
+
+        return self.viewer.render(return_rgb_array=True)
+
+
+class TwoDLanderRenderer(_TwoDRenderer):
 
     FLAG_COLOR = 0.8, 0.0, 0.0
 
     def __init__(self, env):
 
-        TwoDRenderer.__init__(self, env)
+        _TwoDRenderer.__init__(self, env)
 
     def render(self, mode, pose, spinning):
 
-        TwoDRenderer.render(self, mode, pose, spinning)
+        _TwoDRenderer.render(self, mode, pose, spinning)
 
         # Draw flags
         for d in [-1, +1]:
@@ -188,4 +194,4 @@ class TwoDLanderRenderer(TwoDRenderer):
                                        flagy2-5/self.SCALE)],
                                      color=self.FLAG_COLOR)
 
-        return TwoDRenderer._complete(self, mode)
+        return self.viewer.render(return_rgb_array=mode == 'rgb_array')

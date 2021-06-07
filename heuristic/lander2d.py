@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
-Heuristic demo for 2D Copter hovering
+2D Copter lander
 
-Copyright (C) 2021 Simon D. Levy
+Copyright (C) 2019 Simon D. Levy
 
 MIT License
 '''
@@ -14,21 +14,23 @@ import gym
 from gym import wrappers
 
 from parsing import make_parser
-from pidcontrollers import AltitudeHoldPidController
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
+from pidcontrollers import AltitudeHoldPidController
 
 
-def heuristic(state, rate_pid, pos_pid, alt_pid):
+def heuristic(state, rate_pid, poshold_pid, descent_pid):
 
     y, dy, z, dz, phi, dphi = state
 
+    phi_todo = 0
+
     rate_todo = rate_pid.getDemand(dphi)
-    pos_todo = pos_pid.getDemand(y, dy)
+    pos_todo = poshold_pid.getDemand(y, dy)
 
     phi_todo = rate_todo + pos_todo
 
-    hover_todo = alt_pid.getDemand(z, dz)
+    hover_todo = descent_pid.getDemand(z, dz)
 
     return hover_todo-phi_todo, hover_todo+phi_todo
 
@@ -93,7 +95,7 @@ def main():
 
     args = parser.parse_args()
 
-    env = gym.make('gym_copter:Hover2D-v0')
+    env = gym.make('gym_copter:Lander2D-v0')
 
     env = wrappers.Monitor(env, 'movie/', force=True)
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 2D Copter hovering
 
@@ -20,10 +19,6 @@ class Hover2D(_Hover):
 
         _Hover.__init__(self, 6, 2)
 
-        # Add PID controllers for heuristic demo
-        self.rate_pid = AngularVelocityPidController()
-        self.poshold_pid = PositionHoldPidController()
-
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
 
@@ -36,11 +31,11 @@ class Hover2D(_Hover):
 
     def render(self, mode='human'):
 
-        from gym_copter.rendering.twod import TwoDRenderer
+        from gym_copter.rendering.twod import TwoDHoverRenderer
 
         # Create viewer if not done yet
         if self.viewer is None:
-            self.viewer = TwoDRenderer(self)
+            self.viewer = TwoDHoverRenderer(self)
 
         return self.viewer.render(mode, self.pose, self.spinning)
         # return self.viewer._complete(mode)
