@@ -10,17 +10,18 @@ MIT License
 from time import time, sleep
 import numpy as np
 
+from gym_copter.envs.threed import _ThreeD
 from gym_copter.envs.lander import _Lander
-from gym_copter.rendering.hud import HUD
 from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 
 
-class Lander3D(_Lander):
+class Lander3D(_Lander, _ThreeD):
 
     def __init__(self, obs_size=10):
 
         _Lander.__init__(self, obs_size, 4)
+        _ThreeD.__init__(self)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Y', 'dY', 'Z', 'dZ',
@@ -32,35 +33,21 @@ class Lander3D(_Lander):
 
         return _Lander._reset(self)
 
-    def use_hud(self):
-
-        self.viewer = HUD(self)
-
-    def render(self, mode='human'):
-
-        return None if self.viewer is None else self.viewer.render(mode)
-
-    def demo_pose(self, args):
-
-        x, y, z, phi, theta, viewer = args
-
-        while viewer.is_open():
-
-            self._reset(pose=(x, y, z, phi, theta), perturb=False)
-
-            self.render()
-
-            sleep(.01)
-
-        self.close()
-
-    def _get_motors(self, motors):
-
-        return motors
-
     def _get_state(self, state):
 
         return state[:10]
+
+    def use_hud(self):
+
+        _ThreeD.use_hud(self)
+
+    def render(self, mode='human'):
+
+        return _ThreeD.render(self, mode)
+
+    def demo_pose(self, args):
+
+        _ThreeD.demo_pose(self, args)
 
 
 class LanderVisual(Lander3D):
