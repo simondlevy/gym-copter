@@ -42,7 +42,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     rate_pid = AngularVelocityPidController()
     pos_pid = PositionHoldPidController()
-    des_pid = DescentPidController()
+    descent_pid = DescentPidController()
 
     total_reward = 0
     steps = 0
@@ -61,7 +61,7 @@ def demo_heuristic(env, seed=None, csvfilename=None):
 
     while True:
 
-        action = heuristic(state, rate_pid, pos_pid, des_pid)
+        action = heuristic(state, rate_pid, pos_pid, descent_pid)
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
