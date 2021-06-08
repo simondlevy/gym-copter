@@ -5,7 +5,8 @@
 <br><br>
 
 # gym-copter
-OpenAI Gym environment for reinforcement learning with multicopters.  
+OpenAI Gym environment for reinforcement learning with multicopters, as described 
+[here](https://simondlevy.academic.wlu.edu/files/publications/LM2020_011_final_v2.pdf).
 
 ## Features:
 
@@ -35,13 +36,15 @@ evolve a neural controller for your copter.
 
 ## Supported environments
 
-* **Lander-v0** 2D [LunarLander](https://gym.openai.com/envs/LunarLander-v2/)-style challenge
+* **Lander2D-v0** 2D [LunarLander](https://gym.openai.com/envs/LunarLander-v2/)-style challenge
 
 * **Lander3D-v0** 3D lander with reward proportional on proximity of touchdown to center
 
-* **Lander3DHardcore-v0** 3D lander with big reward for landing inside circle
+* **Hover2D-v0** reward for staying aloft and inside window, 2D version
 
-## Similar projects
+* **Hover3D-v0** reward for staying aloft and inside window, 3D version
+
+### Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
 
