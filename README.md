@@ -40,9 +40,9 @@ evolve a neural controller for your copter.
 
 * **Lander3D-v0** 3D lander with reward proportional on proximity of touchdown to center
 
-* **Hover2D-v0** reward for staying aloft and inside window, 2D version
+* **Hover2D-v0** reward for staying aloft inside window, 2D version
 
-* **Hover3D-v0** reward for staying aloft and inside window, 3D version
+* **Hover3D-v0** reward for staying aloft inside window, 3D version
 
 ### Similar projects
 
