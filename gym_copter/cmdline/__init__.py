@@ -33,6 +33,11 @@ def make_parser():
 
     return parser
 
+def parse_view_angles(args):
+
+    return tuple((int(s) for s in args.view.split(',')))
+
+
 
 def wrap(args, env):
 

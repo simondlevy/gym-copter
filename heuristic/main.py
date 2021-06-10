@@ -12,7 +12,7 @@ import numpy as np
 
 import gym
 
-from gym_copter.cmdline import make_parser, make_parser_3d, wrap
+from gym_copter.cmdline import make_parser, make_parser_3d, wrap, parse_view_angles
 
 
 def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
@@ -83,11 +83,6 @@ def demo2d(envname, heuristic, pidcontrollers):
     env.close()
 
 
-def parse_viewangles(args):
-
-    return tuple((int(s) for s in args.view.split(',')))
-
-
 def demo3d(envname, heuristic, pidcontrollers, renderer):
 
     env = gym.make(envname)
@@ -111,7 +106,7 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
                           _demo_heuristic,
                           (heuristic, pidcontrollers,
                            args.seed, args.csvfilename),
-                          viewangles=parse_viewangles(args),
+                          viewangles=parse_view_angles(args),
                           outfile='movie.mp4' if args.movie else None)
 
         viewer.start()

@@ -6,7 +6,7 @@ import gym
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
-from gym_copter.cmdline import make_parser_3d
+from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
@@ -83,12 +83,12 @@ def main():
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
     args = parser.parse_args()
-    viewangles = tuple((int(s) for s in args.view.split(',')))
+    viewangles = parse_view_angles(args)
 
     p2 = make_parser_3d()
     p2.add_argument('filename', metavar='FILENAME', help='input file')
     a2 = p2.parse_args()
-    v2 = tuple((int(s) for s in a2.view.split(',')))
+    v2 = parse_view_angles(a2)
 
     print(args, viewangles)
     print(a2, v2)
