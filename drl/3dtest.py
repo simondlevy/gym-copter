@@ -6,6 +6,8 @@ import gym
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
+from gym_copter.cmdline import make_parser_3d
+
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
 
@@ -82,6 +84,15 @@ def main():
                        help='Elevation, azimuth for view perspective')
     args = parser.parse_args()
     viewangles = tuple((int(s) for s in args.view.split(',')))
+
+    p2 = make_parser_3d()
+    p2.add_argument('filename', metavar='FILENAME', help='input file')
+    a2 = p2.parse_args()
+    v2 = tuple((int(s) for s in a2.view.split(',')))
+
+    print(args, viewangles)
+    print(a2, v2)
+    exit(0)
 
     # Load network, environment name, and number of hidden units from pickled
     # file

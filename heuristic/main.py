@@ -83,6 +83,11 @@ def demo2d(envname, heuristic, pidcontrollers):
     env.close()
 
 
+def parse_viewangles(args):
+
+    return tuple((int(s) for s in args.view.split(',')))
+
+
 def demo3d(envname, heuristic, pidcontrollers, renderer):
 
     env = gym.make(envname)
@@ -102,13 +107,11 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
 
     else:
 
-        viewangles = tuple((int(s) for s in args.view.split(',')))
-
         viewer = renderer(env,
                           _demo_heuristic,
                           (heuristic, pidcontrollers,
                            args.seed, args.csvfilename),
-                          viewangles=viewangles,
+                          viewangles=parse_viewangles(args),
                           outfile='movie.mp4' if args.movie else None)
 
         viewer.start()
