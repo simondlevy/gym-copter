@@ -71,7 +71,7 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
 
 def demo2d(envname, heuristic, pidcontrollers):
 
-    parser, env = make_parser(envname)
+    parser = make_parser()
 
     args = parser.parse_args()
 
@@ -85,7 +85,9 @@ def demo2d(envname, heuristic, pidcontrollers):
 
 def demo3d(envname, heuristic, pidcontrollers, renderer):
 
-    parser, env = make_parser_3d(envname)
+    env = gym.make(envname)
+
+    parser = make_parser_3d()
 
     args = parser.parse_args()
 

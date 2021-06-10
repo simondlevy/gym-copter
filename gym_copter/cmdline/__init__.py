@@ -14,7 +14,7 @@ import gym
 from gym import wrappers
 
 
-def make_parser(envname):
+def make_parser():
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -31,7 +31,7 @@ def make_parser(envname):
     parser.add_argument('--movie', action='store_true',
                         help='Save movie in an MP4 file')
 
-    return parser, gym.make(envname)
+    return parser
 
 
 def wrap(args, env):
@@ -40,9 +40,9 @@ def wrap(args, env):
             else wrappers.Monitor(env, 'movie/', force=True))
 
 
-def make_parser_3d(envname):
+def make_parser_3d():
 
-    parser, env = make_parser(envname)
+    parser = make_parser()
 
     group = parser.add_mutually_exclusive_group()
 
@@ -52,4 +52,4 @@ def make_parser_3d(envname):
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
 
-    return parser, env
+    return parser

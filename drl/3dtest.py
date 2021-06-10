@@ -3,8 +3,7 @@ import numpy as np
 import torch
 import gym
 
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
+from gym_copter.cmdline import make_parser_3d, wrap
 
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
