@@ -19,6 +19,7 @@ setup(
               'gym_copter.dynamics',
               'gym_copter.envs',
               'gym_copter.rendering',
+              'gym_copter.cmdline',
               'gym_copter.sensors',
               'gym_copter.sensors.vision'],
     author='Simon D. Levy',

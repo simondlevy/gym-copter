@@ -11,10 +11,8 @@ from time import sleep
 import numpy as np
 
 import gym
-from gym import wrappers
 
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
+from gym_copter.cmdline import make_parser, make_parser_3d, wrap
 
 
 def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
@@ -71,39 +69,13 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
         csvfile.close()
 
 
-def _make_parser():
-
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
-
-    parser.add_argument('--nopid', action='store_true',
-                        help='Turn off lateral PID control')
-
-    parser.add_argument('--save', dest='csvfilename',
-                        help='Save trajectory in CSV file')
-
-    parser.add_argument('--movie', action='store_true',
-                        help='Save movie in an MP4 file')
-
-    return parser
-
-
-def _wrap(args, env):
-
-    return (env if args.movie is None
-            else wrappers.Monitor(env, 'movie/', force=True))
-
-
 def demo2d(envname, heuristic, pidcontrollers):
 
-    parser = _make_parser()
+    parser, env = make_parser(envname)
 
     args = parser.parse_args()
 
-    env = _wrap(args, gym.make(envname))
+    env = wrap(args, gym.make(envname))
 
     _demo_heuristic(env, heuristic, pidcontrollers,
                     seed=args.seed, csvfilename=args.csvfilename)
@@ -113,23 +85,13 @@ def demo2d(envname, heuristic, pidcontrollers):
 
 def demo3d(envname, heuristic, pidcontrollers, renderer):
 
-    env = gym.make(envname)
-
-    parser = _make_parser()
-
-    group = parser.add_mutually_exclusive_group()
-
-    group.add_argument('--hud', action='store_true',
-                       help='Use heads-up display')
-
-    group.add_argument('--view', required=False, default='30,120',
-                       help='Elevation, azimuth for view perspective')
+    parser, env = make_parser_3d(envname)
 
     args = parser.parse_args()
 
     if args.hud:
 
-        env = _wrap(args, env)
+        env = wrap(args, env)
 
         env.use_hud()
 
