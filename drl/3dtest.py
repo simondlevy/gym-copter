@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-import threading
-
 import numpy as np
 import torch
-
 import gym
+
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 
 from ac_gym import model
 from ac_gym.td3 import TD3, eval_policy
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.envs.lander3d import make_parser, parse
 
 
 def report(reward, steps, movie):
@@ -21,7 +20,7 @@ def report(reward, steps, movie):
         print('Saving movie %s ...' % movie)
 
 
-def run_td3(parts, env, nhid, movie):
+def run_td3(env, parts, nhid, movie):
 
     policy = TD3(
             env.observation_space.shape[0],
@@ -68,14 +67,23 @@ def run_other(parts, env, nhid, movie):
 
 def main():
 
-    # Make a command-line parser with --view enabled
-    parser = make_parser()
+    # Make a command-line parser
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('filename', metavar='FILENAME', help='input file')
     parser.add_argument('--movie', default=None,
                         help='If specified, sets the output movie file name')
     parser.add_argument('--seed', default=None, type=int,
                         help='Sets Gym, PyTorch and Numpy seeds')
-    args, viewangles = parse(parser)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--hud', action='store_true',
+                       help='Use heads-up display')
+
+    group.add_argument('--view', required=False, default='30,120',
+                       help='Elevation, azimuth for view perspective')
+
+    args = parser.parse_args()
+    viewangles = tuple((int(s) for s in args.view.split(',')))
 
     # Load network, environment name, and number of hidden units from pickled
     # file
@@ -96,12 +104,11 @@ def main():
     if args.movie is not None:
         print('Running episode ...')
 
-    # Start the network-evaluation episode on a separate thread
-    thread = threading.Thread(target=fun, args=(parts, env, nhid, args.movie))
-    thread.start()
-
     # Begin 3D rendering on main thread
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
+    renderer = ThreeDLanderRenderer(env,
+                                    fun,
+                                    (parts, nhid, args.movie),
+                                    viewangles=viewangles,
                                     outfile=args.movie)
     renderer.start()
 
