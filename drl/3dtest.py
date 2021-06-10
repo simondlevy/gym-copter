@@ -78,10 +78,8 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--hud', action='store_true',
                        help='Use heads-up display')
-
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
-
     args = parser.parse_args()
     viewangles = tuple((int(s) for s in args.view.split(',')))
 
