@@ -18,7 +18,7 @@ This will run the [TD3](https://arxiv.org/pdf/1802.09477.pdf) algorithm on the 2
 Once learning finishes, you can test out your evolved network by doing:
 
 ```
-% python3 [DIR]/ac-test.py models/td3-gym_copter\:Lander2D-v0+00200.057.dat
+% python3 [DIR]/ac-test.py models/td3-gym_copter\:Lander2D-v0+<fitness>.dat
 ```
 
 where ```<fitness>``` is the fitness of your evolved network.
