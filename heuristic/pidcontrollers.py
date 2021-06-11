@@ -7,7 +7,7 @@ MIT License
 '''
 
 
-class _PidController:
+class _PiController:
 
     def __init__(self, Kp, Ki, windup_max=0.2):
 
@@ -35,8 +35,8 @@ class _PidController:
             self.errorI += error
 
             # avoid integral windup
-            self.errorI = _PidController.constrainAbs(self.errorI,
-                                                      self.windupMax)
+            self.errorI = _PiController.constrainAbs(self.errorI,
+                                                     self.windupMax)
             iterm = self.errorI * self.Ki
 
         return pterm + iterm
@@ -51,37 +51,25 @@ class _PidController:
 
     @staticmethod
     def constrainAbs(val, maxval):
-        return _PidController.constrainMinMax(val, -maxval, +maxval)
+        return _PiController.constrainMinMax(val, -maxval, +maxval)
 
 
-class _SetPointPidController:
-
-    def __init__(self, Kp, Ki, target):
-
-        self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(Kp, Ki, 0)
-
-        self.target = target
-
-    def getDemand(self, x, dx):
-
-        # Velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.target, x)
-
-        # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dx)
-
-
-class AltitudeHoldPidController(_SetPointPidController):
+class AltitudeHoldPidController:
 
     def __init__(self, Kp=0.2, Ki=3, target=5):
 
-        _SetPointPidController.__init__(self, Kp, Ki, target)
+        self.posPid = _PiController(1, 0, 0)
+        self.velPid = _PiController(Kp, Ki, 0)
+
+        self.target = target
 
     def getDemand(self, z, dz):
 
-        # Negate for NED
-        return _SetPointPidController.getDemand(self, -z, -dz)
+        # Velocity is a setpoint (negated for NED => ENU)
+        targetVelocity = self.posPid.compute(self.target, -z)
+
+        # Run velocity PID controller to get correction (negate for NED => ENU)
+        return self.velPid.compute(targetVelocity, -dz)
 
 
 class PositionHoldPidController:
