@@ -35,8 +35,7 @@ class _PiController:
             self.errorI += error
 
             # avoid integral windup
-            self.errorI = _PiController.constrainAbs(self.errorI,
-                                                     self.windupMax)
+            self.errorI = _PiController.constrain(self.errorI, self.windupMax)
             iterm = self.errorI * self.Ki
 
         return pterm + iterm
@@ -46,12 +45,8 @@ class _PiController:
         self.errorI = 0
 
     @staticmethod
-    def constrainMinMax(val, minval, maxval):
-        return minval if val < minval else (maxval if val > maxval else val)
-
-    @staticmethod
-    def constrainAbs(val, maxval):
-        return _PiController.constrainMinMax(val, -maxval, +maxval)
+    def constrain(val, lim):
+        return -lim if val < -lim else (+lim if val > +lim else val)
 
 
 class AltitudeHoldPidController:
