@@ -18,12 +18,8 @@ from gym_copter.rendering.threed import ThreeDLanderRenderer
 from neat_gym import eval_net
 
 
-def eval_with_movie(env, net):  # , render, report, seed, movie, csvfilename):
-    eval_net(net, env, render=True)  # ,
-    #         seed=seed, render=render, report=report, csvfilename=csvfilename)
-    #if movie is not None:
-    #    print('Saving %s ...' % movie)
-
+def eval_with_movie(env, net, seed):
+    eval_net(net, env, render=True, seed=seed)
 
 def main():
 
@@ -49,7 +45,7 @@ def main():
     # render, report = True, True
     renderer = ThreeDLanderRenderer(env,
                                     eval_with_movie,
-                                    (net,),
+                                    (net, args.seed),
                                     viewangles=viewangles,
                                     outfile=movie_name)
     renderer.start()
