@@ -9,9 +9,9 @@ MIT License
 import numpy as np
 
 
-class _DController:
+class PositionHoldPidController:
 
-    def __init__(self, Kd):
+    def __init__(self, Kd=4):
 
         self.Kd = Kd
 
@@ -20,7 +20,10 @@ class _DController:
         self.deltaError1 = 0
         self.deltaError2 = 0
 
-    def compute(self, target, actual):
+    def getDemand(self, x, dx):
+
+        target = -x
+        actual = dx
 
         # Compute error as scaled target minus actual
         error = target - actual
@@ -32,15 +35,3 @@ class _DController:
         self.lastError = error
 
         return dterm
-
-
-class PositionHoldPidController:
-
-    def __init__(self, Kd=4):
-
-        self.velPid = _DController(Kd)
-
-    def getDemand(self, x, dx):
-
-        # Run velocity PID controller to get correction
-        return self.velPid.compute(-x, dx)
