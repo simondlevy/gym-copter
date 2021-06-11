@@ -73,36 +73,6 @@ class _PidController:
         return _PidController.constrainMinMax(val, -maxval, +maxval)
 
 
-class _SetPointPidController:
-
-    def __init__(self, Kp, Ki, Kd, target):
-
-        self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(Kp, Ki, Kd)
-
-        self.target = target
-
-    def getDemand(self, x, dx):
-
-        # Velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.target, x)
-
-        # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dx)
-
-
-class AltitudeHoldPidController(_SetPointPidController):
-
-    def __init__(self, Kp=0.2, Ki=3, Kd=0, target=5):
-
-        _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
-
-    def getDemand(self, z, dz):
-
-        # Negate for NED
-        return _SetPointPidController.getDemand(self, -z, -dz)
-
-
 class PositionHoldPidController:
 
     def __init__(self, Kp=0.0, Ki=0.0, Kd=4, target=0):
@@ -119,38 +89,3 @@ class PositionHoldPidController:
 
         # Run velocity PID controller to get correction
         return self.velPid.compute(targetVelocity, dx)
-
-class DescentPidController:
-
-    def __init__(self, Kp=1.15, Kd=1.33):
-
-        self.kP = Kp
-        self.kd = Kd
-
-        _PidController.__init__(self, Kp, 0, Kd)
-
-    def getDemand(self, z, dz):
-
-        return z*self.Kp + dz*self.Kd
-
-
-class AngularVelocityPidController(_PidController):
-
-    # Arbitrary constants
-    BIG_DEGREES_PER_SECOND = 40
-    WINDUP_MAX = 6
-
-    def __init__(self, Kp=1.0, Ki=0, Kd=0):
-
-        _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
-
-        # Convert degree parameters to radians for use later
-        self.bigAngularVelocity = np.radians(self.BIG_DEGREES_PER_SECOND)
-
-    def getDemand(self, angularVelocity):
-
-        # Reset integral on quick angular velocity change
-        if abs(angularVelocity) > self.bigAngularVelocity:
-            self.reset()
-
-        return _PidController.compute(self, 0, angularVelocity)
