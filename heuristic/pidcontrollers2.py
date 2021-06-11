@@ -103,11 +103,22 @@ class AltitudeHoldPidController(_SetPointPidController):
         return _SetPointPidController.getDemand(self, -z, -dz)
 
 
-class PositionHoldPidController(_SetPointPidController):
+class PositionHoldPidController:
 
     def __init__(self, Kp=0.0, Ki=0.0, Kd=4, target=0):
 
-        _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
+        self.posPid = _PidController(1, 0, 0)
+        self.velPid = _PidController(Kp, Ki, Kd)
+
+        self.target = target
+
+    def getDemand(self, x, dx):
+
+        # Velocity is a setpoint
+        targetVelocity = self.posPid.compute(self.target, x)
+
+        # Run velocity PID controller to get correction
+        return self.velPid.compute(targetVelocity, dx)
 
 class DescentPidController:
 
