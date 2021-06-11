@@ -21,7 +21,7 @@ def heuristic(state, pidcontrollers):
     rate_pid, pos_pid, alt_pid = pidcontrollers
 
     rate_todo = rate_pid.getDemand(dphi)
-    pos_todo = pos_pid.getDemand(dy)
+    pos_todo = pos_pid.getDemand(y, dy)
 
     phi_todo = rate_todo + pos_todo
 
