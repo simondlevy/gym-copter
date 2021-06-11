@@ -18,10 +18,6 @@ def report(reward, steps, movie):
 
     print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
 
-    if movie is not None:
-        print('Saving movie %s ...' % movie)
-
-
 def run_td3(env, parts, nhid, movie):
 
     policy = TD3(
@@ -34,7 +30,7 @@ def run_td3(env, parts, nhid, movie):
 
     report(*eval_policy(policy,
                         env,
-                        render=(movie is None),
+                        render=(not movie),
                         eval_episodes=1),
            movie)
 
@@ -70,29 +66,10 @@ def run_other(parts, env, nhid, movie):
 def main():
 
     # Make a command-line parser
-    parser = argparse.ArgumentParser(
-            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser = make_parser_3d()
     parser.add_argument('filename', metavar='FILENAME', help='input file')
-    parser.add_argument('--movie', default=None,
-                        help='If specified, sets the output movie file name')
-    parser.add_argument('--seed', default=None, type=int,
-                        help='Sets Gym, PyTorch and Numpy seeds')
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument('--hud', action='store_true',
-                       help='Use heads-up display')
-    group.add_argument('--view', required=False, default='30,120',
-                       help='Elevation, azimuth for view perspective')
     args = parser.parse_args()
     viewangles = parse_view_angles(args)
-
-    p2 = make_parser_3d()
-    p2.add_argument('filename', metavar='FILENAME', help='input file')
-    a2 = p2.parse_args()
-    v2 = parse_view_angles(a2)
-
-    print(args, viewangles)
-    print(a2, v2)
-    exit(0)
 
     # Load network, environment name, and number of hidden units from pickled
     # file
@@ -110,15 +87,18 @@ def main():
     # We use a different evaluator functions for TD3 vs. other algorithms
     fun = run_td3 if 'td3' in args.filename else run_other
 
-    if args.movie is not None:
+    movie_name = None
+
+    if args.movie:
         print('Running episode ...')
+        movie_name = 'movie.mp4'
 
     # Begin 3D rendering on main thread
     renderer = ThreeDLanderRenderer(env,
                                     fun,
-                                    (parts, nhid, args.movie),
+                                    (parts, nhid, movie_name),
                                     viewangles=viewangles,
-                                    outfile=args.movie)
+                                    outfile=movie_name)
     renderer.start()
 
 

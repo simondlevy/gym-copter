@@ -35,7 +35,8 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
                                       for k in range(1, actsize+1)]))
         csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
 
-    while True:
+    for _ in range(200):
+    # while True:
 
         action = fun(state, pidcontrollers)
 

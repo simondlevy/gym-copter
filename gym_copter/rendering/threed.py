@@ -191,6 +191,8 @@ class ThreeDRenderer:
         # Create a representation of the copter
         self.copter = _Vehicle(self.axes, showtraj)
 
+        self.closed = False
+
     def start(self):
 
         self.thread.start()
@@ -221,7 +223,11 @@ class ThreeDRenderer:
         if self.outfile is None:
             plt.close(self.fig)
         else:
-            print('Saving %s ...' % self.outfile)
+            if not self.closed:
+                print('Saving %s ...' % self.outfile)
+            self.closed = True
+
+        self.closed = True
 
     def render(self, mode):
 
