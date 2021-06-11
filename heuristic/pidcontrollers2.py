@@ -9,19 +9,20 @@ MIT License
 import numpy as np
 
 
+class DescentPidController:
+
+    def __init__(self, Kp=1.15, Kd=1.33):
+
+        self.Kp = Kp
+        self.Kd = Kd
+
+    def getDemand(self, z, dz):
+
+        return z*self.Kp + dz*self.Kd
+
+
 class AngularVelocityPidController:
 
     def getDemand(self, angularVelocity):
 
         return -angularVelocity
-
-
-class PositionHoldPidController:
-
-    def __init__(self, Kd=0.1):
-
-        self.Kd = Kd
-
-    def getDemand(self, _x, dx):
-
-        return -dx * self.Kd

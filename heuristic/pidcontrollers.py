@@ -113,10 +113,8 @@ class DescentPidController:
 
     def __init__(self, Kp=1.15, Kd=1.33):
 
-        self.kP = Kp
-        self.kd = Kd
-
-        _PidController.__init__(self, Kp, 0, Kd)
+        self.Kp = Kp
+        self.Kd = Kd
 
     def getDemand(self, z, dz):
 
