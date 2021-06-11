@@ -69,7 +69,7 @@ class PositionHoldPidController:
     def getDemand(self, x, dx):
 
         # Velocity is a setpoint
-        targetVelocity = self.posPid.compute(0, x)
+        targetVelocity = -x  # self.posPid.compute(0, x)
 
         # Run velocity PID controller to get correction
         return self.velPid.compute(targetVelocity, dx)
