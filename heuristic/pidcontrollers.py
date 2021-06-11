@@ -7,67 +7,48 @@ MIT License
 '''
 
 
-class _PiController:
+class AltitudeHoldPidController:
 
-    def __init__(self, Kp, Ki, windup_max=0.2):
+    def __init__(self, Kp=0.2, Ki=3, target=5, windupMax=0.2):
 
         self.Kp = Kp
         self.Ki = Ki
 
+        self.target = target
+
         # Prevents integral windup
-        self.windupMax = windup_max
+        self.windupMax = windupMax
 
         # Error integral
         self.errorI = 0
 
-    def compute(self, target, actual):
+    def getDemand(self, z, dz):
+
+        # Negate for NED => ENU
+        z, dz = -z, -dz
+
+        # Velocity is a setpoint
+        targetVelocity = self.target - z
 
         # Compute error as scaled target minus actual
-        error = target - actual
+        error = targetVelocity - dz
 
         # Compute P term
         pterm = error * self.Kp
 
         # Compute I term
-        iterm = 0
-        if self.Ki > 0:  # optimization
+        self.errorI += error
 
-            self.errorI += error
-
-            # avoid integral windup
-            self.errorI = _PiController.constrain(self.errorI, self.windupMax)
-            iterm = self.errorI * self.Ki
+        # avoid integral windup
+        self.errorI = AltitudeHoldPidController.constrain(self.errorI,
+                                                          self.windupMax)
+        iterm = self.errorI * self.Ki
 
         return pterm + iterm
-
-    def reset(self):
-
-        self.errorI = 0
 
     @staticmethod
     def constrain(val, lim):
         return -lim if val < -lim else (+lim if val > +lim else val)
-
-
-class AltitudeHoldPidController:
-
-    def __init__(self, Kp=0.2, Ki=3, target=5):
-
-        self.velPid = _PiController(Kp, Ki)
-
-        self.target = target
-
-    def getDemand(self, z, dz):
-
-
-        print(-z)
-
-
-        # Velocity is a setpoint (negated for NED => ENU)
-        targetVelocity = self.target + z
-
-        # Run velocity PID controller to get correction (negate for NED => ENU)
-        return self.velPid.compute(targetVelocity, -dz)
 
 
 class PositionHoldPidController:
