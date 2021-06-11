@@ -10,9 +10,10 @@ MIT License
 import threading
 import pickle
 
+from gym_copter.cmdline import make_parser_3d, parse_view_angles
+
 import gym
 from gym_copter.rendering.threed import ThreeDLanderRenderer
-from gym_copter.envs.lander3d import make_parser, parse
 
 from neat_gym import eval_net
 
@@ -26,17 +27,13 @@ def eval_with_movie(net, env, render, report, seed, movie, csvfilename):
 
 def main():
 
-    # Make a command-line parser with --view enabled
-    parser = make_parser()
+    # Make a command-line parser
+    parser = make_parser_3d()
+    parser.add_argument('filename', metavar='FILENAME', help='input file')
+    args = parser.parse_args()
+    viewangles = parse_view_angles(args)
 
-    parser.add_argument('filename', metavar='FILENAME', help='.dat input file')
-
-    parser.add_argument('--movie', default=None,
-                        help='If specified, sets the output movie file name')
-
-    args, viewangles = parse(parser)
-
-    # Load net and environment name from pickled file
+     # Load net and environment name from pickled file
     net, env_name = pickle.load(open(args.filename, 'rb'))
 
     # Make environment from name
@@ -44,6 +41,8 @@ def main():
 
     if args.movie is not None:
         print('Running episode ...')
+
+    exit(0)
 
     # Start the network-evaluation episode on a separate thread
     render, report = True, True
