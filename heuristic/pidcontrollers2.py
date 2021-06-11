@@ -22,11 +22,7 @@ class PositionHoldPidController:
 
     def getDemand(self, x, dx):
 
-        target = -x
-        actual = dx
-
-        # Compute error as scaled target minus actual
-        error = target - actual
+        error = -x - dx
 
         deltaError = error - self.lastError
         dterm = ((self.deltaError1 + self.deltaError2 + deltaError) * self.Kd)
