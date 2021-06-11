@@ -16,7 +16,7 @@ no_fitness_termination = False
 #generations = 1
 
 [Gym]
-environment = gym_copter:Lander-v0
+environment = gym_copter:Lander2D-v0
 episode_reps = 10
 
 [Novelty]

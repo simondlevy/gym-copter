@@ -14,11 +14,11 @@ To try this out for yourself, you should do the following:
 
 2. Clone and install the [NEAT-Gym](https://github.com/simondlevy/NEAT-Gym) repository.
 
-3. Run ```python3 [DIR]/neat-evolve.py --env gym_copter:Lander2D-v0```
+3. Run ```python3 [DIR]/neat-evolve.py config/lander2d
 
 where ```[DIR``` is the directory in which you put NEAT-Gym; for example:
 
-```python3 /home/levy/NEAT-Gym/neat-evolve.py --env gym_copter:Lander2D-v0```
+```python3 /home/levy/NEAT-Gym/neat-evolve.py config/lander2d
 
 This will run neat-python using the [parallel fitness
 evaluator](https://neat-python.readthedocs.io/en/latest/module_summaries.html#parallel),
