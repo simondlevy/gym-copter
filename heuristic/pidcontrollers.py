@@ -77,10 +77,10 @@ class _PidController:
 
 class _SetPointPidController:
 
-    def __init__(self, Kp, Ki, Kd, target):
+    def __init__(self, Kp, Ki, target):
 
         self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(Kp, Ki, Kd)
+        self.velPid = _PidController(Kp, Ki, 0)
 
         self.target = target
 
@@ -95,9 +95,9 @@ class _SetPointPidController:
 
 class AltitudeHoldPidController(_SetPointPidController):
 
-    def __init__(self, Kp=0.2, Ki=3, Kd=0, target=5):
+    def __init__(self, Kp=0.2, Ki=3, target=5):
 
-        _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
+        _SetPointPidController.__init__(self, Kp, Ki, target)
 
     def getDemand(self, z, dz):
 
