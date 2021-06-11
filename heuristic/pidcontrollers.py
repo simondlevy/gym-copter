@@ -6,8 +6,6 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-import numpy as np
-
 
 class _PidController:
 
