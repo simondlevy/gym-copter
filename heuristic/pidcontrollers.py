@@ -111,12 +111,8 @@ class _DController:
 
         # Accumulated values
         self.lastError = 0
-        self.errorI = 0
         self.deltaError1 = 0
         self.deltaError2 = 0
-
-        # For deltaT-based controllers
-        self.previousTime = 0
 
     def compute(self, target, actual):
 
