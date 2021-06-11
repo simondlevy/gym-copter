@@ -9,11 +9,13 @@
 
 [NEAT]
 fitness_criterion      = max
-fitness_threshold      = 300
+# fitness_threshold      = 300
+fitness_threshold      = 0
 pop_size               = 960
 reset_on_extinction    = False
 no_fitness_termination = False
 checkpoint             = True
+generations = 1
 
 [Gym]
 environment = gym_copter:Lander3D-v0
