@@ -9,7 +9,7 @@ MIT License
 
 from main import demo3d
 
-from pidcontrollers2 import AngularVelocityPidController
+from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 

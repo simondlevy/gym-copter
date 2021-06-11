@@ -8,8 +8,8 @@ MIT License
 '''
 
 from pidcontrollers import AltitudeHoldPidController
-from pidcontrollers2 import AngularVelocityPidController
-from pidcontrollers2 import PositionHoldPidController
+from pidcontrollers import AngularVelocityPidController
+from pidcontrollers import PositionHoldPidController
 
 from main import demo2d
 

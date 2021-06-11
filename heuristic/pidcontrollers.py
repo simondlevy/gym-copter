@@ -109,6 +109,7 @@ class PositionHoldPidController(_SetPointPidController):
 
         _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
 
+
 class DescentPidController:
 
     def __init__(self, Kp=1.15, Kd=1.33):
@@ -121,23 +122,8 @@ class DescentPidController:
         return z*self.Kp + dz*self.Kd
 
 
-class AngularVelocityPidController(_PidController):
-
-    # Arbitrary constants
-    BIG_DEGREES_PER_SECOND = 40
-    WINDUP_MAX = 6
-
-    def __init__(self, Kp=1.0, Ki=0, Kd=0):
-
-        _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
-
-        # Convert degree parameters to radians for use later
-        self.bigAngularVelocity = np.radians(self.BIG_DEGREES_PER_SECOND)
+class AngularVelocityPidController:
 
     def getDemand(self, angularVelocity):
 
-        # Reset integral on quick angular velocity change
-        if abs(angularVelocity) > self.bigAngularVelocity:
-            self.reset()
-
-        return _PidController.compute(self, 0, angularVelocity)
+        return -angularVelocity
