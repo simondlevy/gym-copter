@@ -130,7 +130,8 @@ class AngularVelocityPidController(_PidController):
     BIG_DEGREES_PER_SECOND = 40
     WINDUP_MAX = 6
 
-    def __init__(self, Kp=1.0, Ki=0, Kd=1):
+    # def __init__(self, Kp=1.0, Ki=0, Kd=1):
+    def __init__(self, Kp=1.0, Ki=0, Kd=0):
 
         _PidController.__init__(self, Kp, Ki, Kd, self.WINDUP_MAX)
 
