@@ -41,8 +41,10 @@ class _PidController:
         iterm = 0
         if self.Ki > 0:  # optimization
 
+            self.errorI += error
+
             # avoid integral windup
-            self.errorI = _PidController.constrainAbs(self.errorI + error,
+            self.errorI = _PidController.constrainAbs(self.errorI,
                                                       self.windupMax)
             iterm = self.errorI * self.Ki
 
