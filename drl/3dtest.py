@@ -3,9 +3,6 @@ import numpy as np
 import torch
 import gym
 
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter
-
 from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
 from ac_gym import model
@@ -17,6 +14,7 @@ from gym_copter.rendering.threed import ThreeDLanderRenderer
 def report(reward, steps, movie):
 
     print('Got a reward of %+0.3f in %d steps.' % (reward, steps))
+
 
 def run_td3(env, parts, nhid, movie):
 
