@@ -9,6 +9,20 @@ MIT License
 import numpy as np
 
 
+class _PController:
+
+    def __init__(self, Kp):
+
+        self.Kp = Kp
+
+    def compute(self, target, actual, debug=False):
+
+        # Compute error as scaled target minus actual
+        error = target - actual
+
+        # Compute P term
+        return error * self.Kp
+
 class _PidController:
 
     def __init__(self, Kp, Kd):
@@ -49,7 +63,7 @@ class PositionHoldPidController:
 
     def __init__(self, Kd=4):
 
-        self.posPid = _PidController(1, 0)
+        self.posPid = _PController(1)
         self.velPid = _PidController(0, Kd)
 
     def getDemand(self, x, dx):
