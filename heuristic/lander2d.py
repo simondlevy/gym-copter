@@ -7,7 +7,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from pidcontrollers import AngularVelocityPidController
+from pidcontrollers2 import AngularVelocityPidController
 from pidcontrollers2 import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
