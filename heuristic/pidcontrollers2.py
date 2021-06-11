@@ -90,87 +90,6 @@ class _SetPointPidController:
         # Run velocity PID controller to get correction
         return self.velPid.compute(targetVelocity, dx)
 
-class _PidController2:
-
-    def __init__(self, Kp, Ki, Kd, windup_max=0.2):
-
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-
-        # Prevents integral windup
-        self.windupMax = windup_max
-
-        # Accumulated values
-        self.lastError = 0
-        self.errorI = 0
-        self.deltaError1 = 0
-        self.deltaError2 = 0
-
-        # For deltaT-based controllers
-        self.previousTime = 0
-
-    def compute(self, target, actual, debug=False):
-
-        # Compute error as scaled target minus actual
-        error = target - actual
-
-        # Compute P term
-        pterm = error * self.Kp
-
-        # Compute I term
-        iterm = 0
-        if self.Ki > 0:  # optimization
-
-            # avoid integral windup
-            self.errorI = _PidController.constrainAbs(self.errorI + error,
-                                                      self.windupMax)
-            iterm = self.errorI * self.Ki
-
-        # Compute D term
-        dterm = 0
-        if self.Kd > 0:  # optimization
-            deltaError = error - self.lastError
-            dterm = ((self.deltaError1 + self.deltaError2 + deltaError)
-                     * self.Kd)
-            self.deltaError2 = self.deltaError1
-            self.deltaError1 = deltaError
-            self.lastError = error
-
-        return pterm + iterm + dterm
-
-    def reset(self):
-
-        self.errorI = 0
-        self.lastError = 0
-        self.previousTime = 0
-
-    @staticmethod
-    def constrainMinMax(val, minval, maxval):
-        return minval if val < minval else (maxval if val > maxval else val)
-
-    @staticmethod
-    def constrainAbs(val, maxval):
-        return _PidController.constrainMinMax(val, -maxval, +maxval)
-
-
-class _SetPointPidController2:
-
-    def __init__(self, Kp, Ki, Kd, target):
-
-        self.posPid = _PidController2(1, 0, 0)
-        self.velPid = _PidController2(Kp, Ki, Kd)
-
-        self.target = target
-
-    def getDemand(self, x, dx):
-
-        # Velocity is a setpoint
-        targetVelocity = self.posPid.compute(self.target, x)
-
-        # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dx)
-
 
 class AltitudeHoldPidController(_SetPointPidController):
 
@@ -189,13 +108,6 @@ class PositionHoldPidController(_SetPointPidController):
     def __init__(self, Kp=0.0, Ki=0.0, Kd=4, target=0):
 
         _SetPointPidController.__init__(self, Kp, Ki, Kd, target)
-
-class PositionHoldPidController2(_SetPointPidController2):
-
-    def __init__(self, Kp=0, Ki=0, Kd=4, target=0):
-
-        _SetPointPidController2.__init__(self, Kp, Ki, Kd, target)
-
 
 class DescentPidController:
 
