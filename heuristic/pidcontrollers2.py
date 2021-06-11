@@ -9,11 +9,10 @@ MIT License
 import numpy as np
 
 
-class _PidController:
+class _DController:
 
-    def __init__(self, Kp, Kd):
+    def __init__(self, Kd):
 
-        self.Kp = Kp
         self.Kd = Kd
 
         # Accumulated values
@@ -21,35 +20,25 @@ class _PidController:
         self.deltaError1 = 0
         self.deltaError2 = 0
 
-        # For deltaT-based controllers
-        self.previousTime = 0
-
-    def compute(self, target, actual, debug=False):
+    def compute(self, target, actual):
 
         # Compute error as scaled target minus actual
         error = target - actual
 
-        # Compute P term
-        pterm = error * self.Kp
+        deltaError = error - self.lastError
+        dterm = ((self.deltaError1 + self.deltaError2 + deltaError) * self.Kd)
+        self.deltaError2 = self.deltaError1
+        self.deltaError1 = deltaError
+        self.lastError = error
 
-        # Compute D term
-        dterm = 0
-        if self.Kd > 0:  # optimization
-            deltaError = error - self.lastError
-            dterm = ((self.deltaError1 + self.deltaError2 + deltaError)
-                     * self.Kd)
-            self.deltaError2 = self.deltaError1
-            self.deltaError1 = deltaError
-            self.lastError = error
-
-        return pterm + dterm
+        return dterm
 
 
 class PositionHoldPidController:
 
     def __init__(self, Kd=4):
 
-        self.velPid = _PidController(0, Kd)
+        self.velPid = _DController(Kd)
 
     def getDemand(self, x, dx):
 
