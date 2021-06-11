@@ -20,7 +20,7 @@ class _PiController:
         # Error integral
         self.errorI = 0
 
-    def compute(self, target, actual, debug=False):
+    def compute(self, target, actual):
 
         # Compute error as scaled target minus actual
         error = target - actual
