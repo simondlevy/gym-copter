@@ -75,10 +75,10 @@ class _PidController:
 
 class PositionHoldPidController:
 
-    def __init__(self, Kp=0.0, Ki=0.0, Kd=4, target=0):
+    def __init__(self, Kd=4, target=0):
 
         self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(Kp, Ki, Kd)
+        self.velPid = _PidController(0, 0, Kd)
 
         self.target = target
 
