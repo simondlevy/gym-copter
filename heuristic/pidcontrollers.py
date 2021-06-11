@@ -11,23 +11,16 @@ import numpy as np
 
 class _PidController:
 
-    def __init__(self, Kp, Ki, Kd, windup_max=0.2):
+    def __init__(self, Kp, Ki, windup_max=0.2):
 
         self.Kp = Kp
         self.Ki = Ki
-        self.Kd = Kd
 
         # Prevents integral windup
         self.windupMax = windup_max
 
-        # Accumulated values
-        self.lastError = 0
+        # Error integral
         self.errorI = 0
-        self.deltaError1 = 0
-        self.deltaError2 = 0
-
-        # For deltaT-based controllers
-        self.previousTime = 0
 
     def compute(self, target, actual, debug=False):
 
@@ -48,23 +41,11 @@ class _PidController:
                                                       self.windupMax)
             iterm = self.errorI * self.Ki
 
-        # Compute D term
-        dterm = 0
-        if self.Kd > 0:  # optimization
-            deltaError = error - self.lastError
-            dterm = ((self.deltaError1 + self.deltaError2 + deltaError)
-                     * self.Kd)
-            self.deltaError2 = self.deltaError1
-            self.deltaError1 = deltaError
-            self.lastError = error
-
-        return pterm + iterm + dterm
+        return pterm + iterm
 
     def reset(self):
 
         self.errorI = 0
-        self.lastError = 0
-        self.previousTime = 0
 
     @staticmethod
     def constrainMinMax(val, minval, maxval):
