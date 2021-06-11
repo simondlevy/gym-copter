@@ -11,18 +11,13 @@ import numpy as np
 
 class _PidController:
 
-    def __init__(self, Kp, Ki, Kd, windup_max=0.2):
+    def __init__(self, Kp, Kd):
 
         self.Kp = Kp
-        self.Ki = Ki
         self.Kd = Kd
-
-        # Prevents integral windup
-        self.windupMax = windup_max
 
         # Accumulated values
         self.lastError = 0
-        self.errorI = 0
         self.deltaError1 = 0
         self.deltaError2 = 0
 
@@ -37,15 +32,6 @@ class _PidController:
         # Compute P term
         pterm = error * self.Kp
 
-        # Compute I term
-        iterm = 0
-        if self.Ki > 0:  # optimization
-
-            # avoid integral windup
-            self.errorI = _PidController.constrainAbs(self.errorI + error,
-                                                      self.windupMax)
-            iterm = self.errorI * self.Ki
-
         # Compute D term
         dterm = 0
         if self.Kd > 0:  # optimization
@@ -56,11 +42,10 @@ class _PidController:
             self.deltaError1 = deltaError
             self.lastError = error
 
-        return pterm + iterm + dterm
+        return pterm + dterm
 
     def reset(self):
 
-        self.errorI = 0
         self.lastError = 0
         self.previousTime = 0
 
@@ -77,8 +62,8 @@ class PositionHoldPidController:
 
     def __init__(self, Kd=4):
 
-        self.posPid = _PidController(1, 0, 0)
-        self.velPid = _PidController(0, 0, Kd)
+        self.posPid = _PidController(1, 0)
+        self.velPid = _PidController(0, Kd)
 
     def getDemand(self, x, dx):
 
