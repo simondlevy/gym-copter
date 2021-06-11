@@ -64,15 +64,11 @@ class PositionHoldPidController:
 
         error = -x - dx
 
-        deltaError = error - self.lastError
-
         dterm = (error - self.lastError) * self.Kd
 
         self.lastError = error
 
         return dterm
-
-##############################################################################
 
 
 class DescentPidController:
