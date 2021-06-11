@@ -53,7 +53,6 @@ class AltitudeHoldPidController:
 
     def __init__(self, Kp=0.2, Ki=3, target=5):
 
-        self.posPid = _PiController(1, 0, 0)
         self.velPid = _PiController(Kp, Ki, 0)
 
         self.target = target
@@ -61,7 +60,7 @@ class AltitudeHoldPidController:
     def getDemand(self, z, dz):
 
         # Velocity is a setpoint (negated for NED => ENU)
-        targetVelocity = self.posPid.compute(self.target, -z)
+        targetVelocity = self.target + z
 
         # Run velocity PID controller to get correction (negate for NED => ENU)
         return self.velPid.compute(targetVelocity, -dz)
