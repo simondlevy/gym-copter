@@ -10,7 +10,7 @@ MIT License
 from main import demo3d
 
 from pidcontrollers2 import AngularVelocityPidController
-from pidcontrollers2 import PositionHoldPidController
+from pidcontrollers import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
 from gym_copter.rendering.threed import ThreeDHoverRenderer
@@ -34,10 +34,10 @@ def heuristic(state, pidcontrollers):
     yaw_todo = 0
 
     roll_rate_todo = roll_rate_pid.getDemand(dphi)
-    y_pos_todo = x_poshold_pid.getDemand(dy)
+    y_pos_todo = x_poshold_pid.getDemand(y, dy)
 
     pitch_rate_todo = pitch_rate_pid.getDemand(-dtheta)
-    x_pos_todo = y_poshold_pid.getDemand(dx)
+    x_pos_todo = y_poshold_pid.getDemand(x, dx)
 
     roll_todo = roll_rate_todo + y_pos_todo
     pitch_todo = pitch_rate_todo + x_pos_todo
