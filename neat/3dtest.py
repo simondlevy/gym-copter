@@ -18,11 +18,11 @@ from gym_copter.rendering.threed import ThreeDLanderRenderer
 from neat_gym import eval_net
 
 
-def eval_with_movie(net, env, render, report, seed, movie, csvfilename):
-    eval_net(net, env,
-             seed=seed, render=render, report=report, csvfilename=csvfilename)
-    if movie is not None:
-        print('Saving %s ...' % movie)
+def eval_with_movie(env, net):  # , render, report, seed, movie, csvfilename):
+    eval_net(net, env, render=True)  # ,
+    #         seed=seed, render=render, report=report, csvfilename=csvfilename)
+    #if movie is not None:
+    #    print('Saving %s ...' % movie)
 
 
 def main():
@@ -39,26 +39,19 @@ def main():
     # Make environment from name
     env = gym.make(env_name)
 
-    if args.movie is not None:
+    movie_name = None
+
+    if args.movie:
         print('Running episode ...')
-
-    exit(0)
-
-    # Start the network-evaluation episode on a separate thread
-    render, report = True, True
-    thread = threading.Thread(target=eval_with_movie,
-                              args=(net,
-                                    env,
-                                    render,
-                                    report,
-                                    args.seed,
-                                    args.movie,
-                                    args.csvfilename))
-    thread.start()
+        movie_name = 'movie.mp4'
 
     # Begin 3D rendering on main thread
-    renderer = ThreeDLanderRenderer(env, viewangles=viewangles,
-                                    outfile=args.movie)
+    # render, report = True, True
+    renderer = ThreeDLanderRenderer(env,
+                                    eval_with_movie,
+                                    (net,),
+                                    viewangles=viewangles,
+                                    outfile=movie_name)
     renderer.start()
 
 
