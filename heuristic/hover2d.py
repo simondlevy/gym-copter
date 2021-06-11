@@ -7,9 +7,9 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from pidcontrollers import AltitudeHoldPidController
-from pidcontrollers import AngularVelocityPidController
-from pidcontrollers import PositionHoldPidController2
+from pidcontrollers2 import AltitudeHoldPidController
+from pidcontrollers2 import AngularVelocityPidController
+from pidcontrollers2 import PositionHoldPidController2
 
 from main import demo2d
 
