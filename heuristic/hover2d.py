@@ -9,7 +9,7 @@ MIT License
 
 from pidcontrollers import AltitudeHoldPidController
 from pidcontrollers import AngularVelocityPidController
-from pidcontrollers import PositionHoldPidController
+from pidcontrollers import PositionHoldPidController2
 
 from main import demo2d
 
@@ -32,5 +32,5 @@ def heuristic(state, pidcontrollers):
 
 demo2d('gym_copter:Hover2D-v0', heuristic,
        (AngularVelocityPidController(),
-        PositionHoldPidController(),
+        PositionHoldPidController2(),
         AltitudeHoldPidController()))
