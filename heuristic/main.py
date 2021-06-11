@@ -15,7 +15,7 @@ import gym
 from gym_copter.cmdline import make_parser, make_parser_3d, wrap, parse_view_angles
 
 
-def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
+def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None, nopid=False):
 
     env.seed(seed)
     np.random.seed(seed)
@@ -37,7 +37,7 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None):
 
     while True:
 
-        action = fun(state, pidcontrollers)
+        action = np.zeros(actsize) if nopid else fun(state, pidcontrollers) 
 
         state, reward, done, _ = env.step(action)
         total_reward += reward
@@ -78,7 +78,8 @@ def demo2d(envname, heuristic, pidcontrollers):
     env = wrap(args, gym.make(envname))
 
     _demo_heuristic(env, heuristic, pidcontrollers,
-                    seed=args.seed, csvfilename=args.csvfilename)
+                    seed=args.seed, csvfilename=args.csvfilename, 
+                    nopid=args.nopid)
 
     env.close()
 
@@ -98,14 +99,14 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
         env.use_hud()
 
         _demo_heuristic(env, heuristic, pidcontrollers,
-                        args.seed, args.csvfilename)
+                        args.seed, args.csvfilename, args.nopid)
 
     else:
 
         viewer = renderer(env,
                           _demo_heuristic,
                           (heuristic, pidcontrollers,
-                           args.seed, args.csvfilename),
+                           args.seed, args.csvfilename, args.nopid),
                           viewangles=parse_view_angles(args),
                           outfile='movie.mp4' if args.movie else None)
 

@@ -34,10 +34,10 @@ def heuristic(state, pidcontrollers):
     yaw_todo = 0
 
     roll_rate_todo = roll_rate_pid.getDemand(dphi)
-    y_pos_todo = x_poshold_pid.getDemand(y, dy)
+    y_pos_todo = x_poshold_pid.getDemand(dy)
 
     pitch_rate_todo = pitch_rate_pid.getDemand(-dtheta)
-    x_pos_todo = y_poshold_pid.getDemand(x, dx)
+    x_pos_todo = y_poshold_pid.getDemand(dx)
 
     roll_todo = roll_rate_todo + y_pos_todo
     pitch_todo = pitch_rate_todo + x_pos_todo

@@ -10,7 +10,7 @@ MIT License
 from main import demo3d
 
 from pidcontrollers import AngularVelocityPidController
-from pidcontrollers import PositionHoldPidController
+from pidcontrollers2 import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
@@ -32,11 +32,11 @@ def heuristic(state, pidcontrollers):
     theta_todo = 0
 
     phi_rate_todo = phi_rate_pid.getDemand(dphi)
-    y_pos_todo = x_poshold_pid.getDemand(y, dy)
+    y_pos_todo = x_poshold_pid.getDemand(dy)
     phi_todo = phi_rate_todo + y_pos_todo
 
     theta_rate_todo = theta_rate_pid.getDemand(-dtheta)
-    x_pos_todo = y_poshold_pid.getDemand(x, dx)
+    x_pos_todo = y_poshold_pid.getDemand(dx)
     theta_todo = theta_rate_todo + x_pos_todo
 
     descent_todo = descent_pid.getDemand(z, dz)

@@ -8,7 +8,7 @@ MIT License
 '''
 
 from pidcontrollers import AngularVelocityPidController
-from pidcontrollers import PositionHoldPidController
+from pidcontrollers2 import PositionHoldPidController
 from pidcontrollers import DescentPidController
 
 from main import demo2d
@@ -23,7 +23,7 @@ def heuristic(state, pidcontrollers):
     phi_todo = 0
 
     rate_todo = rate_pid.getDemand(dphi)
-    pos_todo = poshold_pid.getDemand(y, dy)
+    pos_todo = poshold_pid.getDemand(dy)
 
     phi_todo = rate_todo + pos_todo
 

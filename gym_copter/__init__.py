@@ -17,7 +17,7 @@ register(
 register(
     id='Hover2D-v0',
     entry_point='gym_copter.envs:Hover2D',
-    max_episode_steps=800
+    max_episode_steps=1000
 )
 
 # 3D lander
@@ -31,5 +31,5 @@ register(
 register(
     id='Hover3D-v0',
     entry_point='gym_copter.envs:Hover3D',
-    max_episode_steps=800
+    max_episode_steps=1000
 )

@@ -11,21 +11,10 @@ import numpy as np
 
 class PositionHoldPidController:
 
-    def __init__(self, Kd=4):
+    def __init__(self, Kd=0.1):
 
         self.Kd = Kd
 
-        # Accumulated values
-        self.lastError = 0
+    def getDemand(self, dx):
 
-    def getDemand(self, x, dx):
-
-        error = -x - dx
-
-        deltaError = error - self.lastError
-
-        dterm = deltaError * self.Kd
-
-        self.lastError = error
-
-        return dterm
+        return -dx * self.Kd
