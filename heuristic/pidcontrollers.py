@@ -103,11 +103,22 @@ class AltitudeHoldPidController(_SetPointPidController):
         return _SetPointPidController.getDemand(self, -z, -dz)
 
 
+class _PController:
+
+    def __init__(self, Kp):
+
+        self.Kp = Kp
+
+    def compute(self, target, actual):
+
+        return (target - actual) * self.Kp
+
+
 class PositionHoldPidController:
 
     def __init__(self, Kd=4, target=0):
 
-        self.posPid = _PidController(1, 0, 0)
+        self.posPid = _PController(1)
         self.velPid = _PidController(0, 0, Kd)
 
         self.target = target
