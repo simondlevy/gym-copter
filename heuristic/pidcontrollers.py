@@ -103,19 +103,47 @@ class AltitudeHoldPidController(_SetPointPidController):
         return _SetPointPidController.getDemand(self, -z, -dz)
 
 
+class _DController:
+
+    def __init__(self, Kd):
+
+        self.Kd = Kd
+
+        # Accumulated values
+        self.lastError = 0
+        self.errorI = 0
+        self.deltaError1 = 0
+        self.deltaError2 = 0
+
+        # For deltaT-based controllers
+        self.previousTime = 0
+
+    def compute(self, target, actual):
+
+        # Compute error as scaled target minus actual
+        error = target - actual
+
+        # Compute D term
+        deltaError = error - self.lastError
+        dterm = ((self.deltaError1 + self.deltaError2 + deltaError)
+                 * self.Kd)
+        self.deltaError2 = self.deltaError1
+        self.deltaError1 = deltaError
+        self.lastError = error
+
+        return dterm
+
+
 class PositionHoldPidController:
 
-    def __init__(self, Kd=4, target=0):
+    def __init__(self, Kd=4):
 
-        self.velPid = _PidController(0, 0, Kd)
+        self.velPid = _DController(Kd)
 
     def getDemand(self, x, dx):
 
-        # Velocity is a setpoint
-        targetVelocity = -x
-
         # Run velocity PID controller to get correction
-        return self.velPid.compute(targetVelocity, dx)
+        return self.velPid.compute(-x, dx)
 
 
 
