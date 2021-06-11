@@ -17,7 +17,6 @@ class PositionHoldPidController:
 
         # Accumulated values
         self.lastError = 0
-        self.deltaError1 = 0
 
     def getDemand(self, x, dx):
 
@@ -25,9 +24,8 @@ class PositionHoldPidController:
 
         deltaError = error - self.lastError
 
-        dterm = (self.deltaError1 + deltaError) * self.Kd
+        dterm = deltaError * self.Kd
 
-        self.deltaError1 = deltaError
         self.lastError = error
 
         return dterm
