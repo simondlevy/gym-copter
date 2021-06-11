@@ -10,7 +10,7 @@ MIT License
 from main import demo3d
 
 from pidcontrollers import AngularVelocityPidController
-from pidcontrollers import PositionHoldPidController
+from pidcontrollers2 import PositionHoldPidController
 from pidcontrollers import AltitudeHoldPidController
 
 from gym_copter.rendering.threed import ThreeDHoverRenderer
