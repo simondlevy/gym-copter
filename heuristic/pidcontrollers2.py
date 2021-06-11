@@ -44,19 +44,6 @@ class _PidController:
 
         return pterm + dterm
 
-    def reset(self):
-
-        self.lastError = 0
-        self.previousTime = 0
-
-    @staticmethod
-    def constrainMinMax(val, minval, maxval):
-        return minval if val < minval else (maxval if val > maxval else val)
-
-    @staticmethod
-    def constrainAbs(val, maxval):
-        return _PidController.constrainMinMax(val, -maxval, +maxval)
-
 
 class PositionHoldPidController:
 
