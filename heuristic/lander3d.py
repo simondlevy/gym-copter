@@ -11,7 +11,6 @@ from main import demo3d
 
 from pidcontrollers import PositionHoldPidController
 from pidcontrollers import DescentPidController
-from pidcontrollers import AngularVelocityPidController
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 
@@ -20,28 +19,17 @@ def heuristic(state, pidcontrollers):
     '''
     PID controller
     '''
-    (phi_rate_pid,
-     theta_rate_pid,
-     x_poshold_pid,
-     y_poshold_pid,
-     descent_pid) = pidcontrollers
+    x_poshold_pid, y_poshold_pid, descent_pid = pidcontrollers
 
-    x, dx, y, dy, z, dz, phi, dphi, theta, dtheta = state
+    x, dx, y, dy, z, dz, _, _, _, _ = state
 
-    phi_todo = 0
-    theta_todo = 0
-
-    phi_rate_todo = phi_rate_pid.getDemand(dphi)
     y_pos_todo = x_poshold_pid.getDemand(y, dy)
-    phi_todo = phi_rate_todo + y_pos_todo
 
-    theta_rate_todo = theta_rate_pid.getDemand(-dtheta)
     x_pos_todo = y_poshold_pid.getDemand(x, dx)
-    theta_todo = theta_rate_todo + x_pos_todo
 
     descent_todo = descent_pid.getDemand(z, dz)
 
-    t, r, p = (descent_todo+1)/2, phi_todo, theta_todo
+    t, r, p = (descent_todo+1)/2, y_pos_todo, x_pos_todo
 
     # Use mixer to set motors
     return t-r-p, t+r+p, t+r-p, t-r+p
@@ -49,13 +37,9 @@ def heuristic(state, pidcontrollers):
 
 def main():
 
-    pidcontrollers = (
-                      AngularVelocityPidController(),
-                      AngularVelocityPidController(),
+    pidcontrollers = (PositionHoldPidController(),
                       PositionHoldPidController(),
-                      PositionHoldPidController(),
-                      DescentPidController()
-                     )
+                      DescentPidController())
 
     demo3d('gym_copter:Lander3D-v0', heuristic,
            pidcontrollers, ThreeDLanderRenderer)
