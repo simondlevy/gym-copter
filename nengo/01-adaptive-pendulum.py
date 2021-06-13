@@ -161,9 +161,11 @@ with nengo.Network(seed=3) as model:
     # computed as a mapping between the current angle of the pendulum, and
     # an additional control signal (u_extra) added to the control signal (u).
     # The error signal used for the adaptive ensemble is simply -u.
-    # nengo.Connection(env.q, adapt_ens.input, synapse=None)
-    # nengo.Connection(env.u, adapt_ens.error, transform=-1)
-    # nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
+    '''
+    nengo.Connection(env.q, adapt_ens.input, synapse=None)
+    nengo.Connection(env.u, adapt_ens.error, transform=-1)
+    nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
+    '''
 
     # Extra mass to add to the pendulum. To demonstrate the adaptive
     # controller.
