@@ -24,7 +24,7 @@ def heuristic(state, pidcontrollers):
 
     (roll_rate_pid,
      pitch_rate_pid,
-     yaw_rate_pid,
+     # yaw_rate_pid,
      x_poshold_pid,
      y_poshold_pid,
      althold_pid) = pidcontrollers
@@ -41,7 +41,7 @@ def heuristic(state, pidcontrollers):
 
     roll_todo = roll_rate_todo + y_pos_todo
     pitch_todo = pitch_rate_todo + x_pos_todo
-    yaw_todo = yaw_rate_pid.getDemand(-dpsi)
+    # yaw_todo = yaw_rate_pid.getDemand(-dpsi)
 
     hover_todo = althold_pid.getDemand(z, dz)
 
@@ -56,7 +56,7 @@ def main():
     pidcontrollers = (
                       AngularVelocityPidController(),
                       AngularVelocityPidController(),
-                      AngularVelocityPidController(),
+                      # AngularVelocityPidController(),
                       PositionHoldPidController(),
                       PositionHoldPidController(),
                       AltitudeHoldPidController()

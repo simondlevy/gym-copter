@@ -6,6 +6,20 @@ MIT License
 
 from gym.envs.registration import register
 
+# 1D lander
+register(
+    id='Lander1D-v0',
+    entry_point='gym_copter.envs:Lander1D',
+    max_episode_steps=400
+)
+
+# 1D hover
+register(
+    id='Hover1D-v0',
+    entry_point='gym_copter.envs:Hover1D',
+    max_episode_steps=1000
+)
+
 # 2D lander
 register(
     id='Lander2D-v0',
