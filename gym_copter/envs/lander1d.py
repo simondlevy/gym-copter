@@ -31,7 +31,7 @@ class Lander1D(_Lander):
 
         # Create viewer if not done yet
         if self.viewer is None:
-            self.viewer = TwoDLanderRenderer(self)
+            self.viewer = TwoDLanderRenderer(self, one_d=True)
 
         return self.viewer.render(mode, self.pose, self.spinning)
 

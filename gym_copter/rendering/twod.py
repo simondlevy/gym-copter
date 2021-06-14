@@ -43,11 +43,12 @@ class _TwoDRenderer:
     PROP_COLOR = 0.0, 0.0, 0.0
     OUTLINE_COLOR = 0.0, 0.0, 0.0
 
-    def __init__(self, env):
+    def __init__(self, env, one_d=False):
 
         env = env.unwrapped
         self.env = env
         self.env.viewer = self
+        self.one_d = one_d
 
         self.viewer = rendering.Viewer(self.VIEWPORT_W, self.VIEWPORT_H)
         self.viewer.set_bounds(0,
@@ -86,6 +87,10 @@ class _TwoDRenderer:
         self.lander = None
 
     def render(self, mode, pose, spinning):
+
+        # Handle 1D rendering by zeroing-out Y component of pose
+        if self.one_d:
+            pose = pose[0], 0, pose[2], pose[3]
 
         # Draw ground as background
         self.viewer.draw_polygon(
@@ -158,9 +163,9 @@ class _TwoDRenderer:
 
 class TwoDHoverRenderer(_TwoDRenderer):
 
-    def __init__(self, env):
+    def __init__(self, env, one_d=False):
 
-        _TwoDRenderer.__init__(self, env)
+        _TwoDRenderer.__init__(self, env, one_d=one_d)
 
     def render(self, mode, pose, spinning):
 
@@ -173,9 +178,9 @@ class TwoDLanderRenderer(_TwoDRenderer):
 
     FLAG_COLOR = 0.8, 0.0, 0.0
 
-    def __init__(self, env):
+    def __init__(self, env, one_d=False):
 
-        _TwoDRenderer.__init__(self, env)
+        _TwoDRenderer.__init__(self, env, one_d=one_d)
 
     def render(self, mode, pose, spinning):
 

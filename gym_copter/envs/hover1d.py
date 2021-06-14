@@ -31,7 +31,7 @@ class Hover1D(_Hover):
 
         # Create viewer if not done yet
         if self.viewer is None:
-            self.viewer = TwoDHoverRenderer(self)
+            self.viewer = TwoDHoverRenderer(self, one_d=True)
 
         return self.viewer.render(mode, self.pose, self.spinning)
         # return self.viewer._complete(mode)
