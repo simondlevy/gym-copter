@@ -199,9 +199,10 @@ class TwoDLanderRenderer(_TwoDRenderer):
                                       color=(1, 1, 1))
             # Pennant
             if not self.one_d:
+                wind = self.env.initial_random_x
                 self.viewer.draw_polygon([(x, flagy2),
                                           (x, flagy2-10/self.SCALE),
-                                          (x + 25/self.SCALE,
+                                          (x + wind * 25/self.SCALE,
                                            flagy2-5/self.SCALE)],
                                          color=self.FLAG_COLOR)
 
