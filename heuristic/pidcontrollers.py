@@ -7,20 +7,24 @@ MIT License
 '''
 
 
+def _constrain(val, lim):
+    return -lim if val < -lim else (+lim if val > +lim else val)
+
+
 class AltitudeHoldPidController:
 
-    def __init__(self, Kp=0.2, Ki=3, target=5, windupMax=0.2):
+    def __init__(self, k_p=0.2, k_i=3, k_targ=5, k_windup=0.2):
 
-        self.Kp = Kp
-        self.Ki = Ki
+        self.k_p = k_p
+        self.k_i = k_i
 
-        self.target = target
+        self.k_targ = k_targ
 
         # Prevents integral windup
-        self.windupMax = windupMax
+        self.k_windup = k_windup
 
         # Error integral
-        self.errorI = 0
+        self.ei = 0
 
     def getDemand(self, z, dz):
 
@@ -28,27 +32,18 @@ class AltitudeHoldPidController:
         z, dz = -z, -dz
 
         # Velocity is a setpoint
-        targetVelocity = self.target - z
+        dz_targ = self.k_targ - z
 
         # Compute error as scaled target minus actual
-        error = targetVelocity - dz
-
-        # Compute P term
-        pterm = error * self.Kp
+        e = dz_targ - dz
 
         # Compute I term
-        self.errorI += error
+        self.ei += e
 
         # avoid integral windup
-        self.errorI = AltitudeHoldPidController.constrain(self.errorI,
-                                                          self.windupMax)
-        iterm = self.errorI * self.Ki
+        self.ei = _constrain(self.ei, self.k_windup)
 
-        return pterm + iterm
-
-    @staticmethod
-    def constrain(val, lim):
-        return -lim if val < -lim else (+lim if val > +lim else val)
+        return e * self.k_p + self.ei * self.k_i
 
 
 class PositionHoldPidController:
@@ -73,14 +68,14 @@ class PositionHoldPidController:
 
 class DescentPidController:
 
-    def __init__(self, Kp=1.15, Kd=1.33):
+    def __init__(self, k_p=1.15, Kd=1.33):
 
-        self.Kp = Kp
+        self.k_p = k_p
         self.Kd = Kd
 
     def getDemand(self, z, dz):
 
-        return z*self.Kp + dz*self.Kd
+        return z*self.k_p + dz*self.Kd
 
 
 class AngularVelocityPidController:
