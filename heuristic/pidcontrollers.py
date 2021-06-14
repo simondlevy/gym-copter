@@ -13,12 +13,12 @@ def _constrain(val, lim):
 
 class AltitudeHoldPidController:
 
-    def __init__(self, k_p=0.2, k_i=3, k_targ=5, k_windup=0.2):
+    def __init__(self, k_p=0.2, k_i=3, k_tgt=5, k_windup=0.2):
 
         self.k_p = k_p
         self.k_i = k_i
 
-        self.k_targ = k_targ
+        self.k_tgt = k_tgt
 
         # Prevents integral windup
         self.k_windup = k_windup
@@ -32,10 +32,10 @@ class AltitudeHoldPidController:
         z, dz = -z, -dz
 
         # Velocity is a setpoint
-        dz_targ = self.k_targ - z
+        dz_tgt = self.k_tgt - z
 
         # Compute error as scaled target minus actual
-        e = dz_targ - dz
+        e = dz_tgt - dz
 
         # Compute I term
         self.ei += e
