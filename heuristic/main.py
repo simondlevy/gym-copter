@@ -12,10 +12,12 @@ import numpy as np
 
 import gym
 
-from gym_copter.cmdline import make_parser, make_parser_3d, wrap, parse_view_angles
+from gym_copter.cmdline import (make_parser, make_parser_3d,
+                                wrap, parse_view_angles)
 
 
-def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None, nopid=False):
+def _demo_heuristic(env, fun, pidcontrollers,
+                    seed=None, csvfilename=None, nopid=False):
 
     env.seed(seed)
     np.random.seed(seed)
@@ -37,7 +39,7 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None, nopid
 
     while True:
 
-        action = np.zeros(actsize) if nopid else fun(state, pidcontrollers) 
+        action = np.zeros(actsize) if nopid else fun(state, pidcontrollers)
 
         state, reward, done, _ = env.step(action)
         total_reward += reward
@@ -69,7 +71,7 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None, nopid
         csvfile.close()
 
 
-def demo2d(envname, heuristic, pidcontrollers):
+def demo(envname, heuristic, pidcontrollers):
 
     parser = make_parser()
 
@@ -78,7 +80,7 @@ def demo2d(envname, heuristic, pidcontrollers):
     env = wrap(args, gym.make(envname))
 
     _demo_heuristic(env, heuristic, pidcontrollers,
-                    seed=args.seed, csvfilename=args.csvfilename, 
+                    seed=args.seed, csvfilename=args.csvfilename,
                     nopid=args.nopid)
 
     env.close()

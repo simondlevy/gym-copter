@@ -10,7 +10,7 @@ MIT License
 from pidcontrollers import DescentPidController
 from pidcontrollers import PositionHoldPidController
 
-from main import demo2d
+from main import demo
 
 
 def heuristic(state, pidcontrollers):
@@ -28,8 +28,8 @@ def heuristic(state, pidcontrollers):
 
 def main():
 
-    demo2d('gym_copter:Lander2D-v0', heuristic,
-           (PositionHoldPidController(), DescentPidController()))
+    demo('gym_copter:Lander2D-v0', heuristic,
+         (PositionHoldPidController(), DescentPidController()))
 
 
 main()

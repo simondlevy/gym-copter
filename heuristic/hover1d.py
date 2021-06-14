@@ -11,7 +11,7 @@ from pidcontrollers import AltitudeHoldPidController
 from pidcontrollers import AngularVelocityPidController
 from pidcontrollers import PositionHoldPidController
 
-from main import demo2d
+from main import demo
 
 
 def heuristic(state, pidcontrollers):
@@ -30,7 +30,7 @@ def heuristic(state, pidcontrollers):
     return hover_todo-phi_todo, hover_todo+phi_todo
 
 
-demo2d('gym_copter:Hover2D-v0', heuristic,
-       (AngularVelocityPidController(),
-        PositionHoldPidController(),
-        AltitudeHoldPidController()))
+demo('gym_copter:Hover2D-v0', heuristic,
+     (AngularVelocityPidController(),
+      PositionHoldPidController(),
+      AltitudeHoldPidController()))

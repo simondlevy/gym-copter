@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-2D Copter lander
+1D Copter lander
 
 Copyright (C) 2019 Simon D. Levy
 
@@ -8,28 +8,21 @@ MIT License
 '''
 
 from pidcontrollers import DescentPidController
-from pidcontrollers import PositionHoldPidController
-
-from main import demo2d
+from main import demo1d
 
 
 def heuristic(state, pidcontrollers):
 
-    y, dy, z, dz, phi, dphi = state
+    z, dz = state
 
-    poshold_pid, descent_pid = pidcontrollers
+    descent_pid = pidcontrollers[0]
 
-    pos_todo = poshold_pid.getDemand(y, dy)
-
-    hover_todo = descent_pid.getDemand(z, dz)
-
-    return hover_todo-pos_todo, hover_todo+pos_todo
+    return descent_pid.getDemand(z, dz)
 
 
 def main():
 
-    demo2d('gym_copter:Lander2D-v0', heuristic,
-           (PositionHoldPidController(), DescentPidController()))
+    demo1d('gym_copter:Lander1D-v0', heuristic, (DescentPidController(),))
 
 
 main()
