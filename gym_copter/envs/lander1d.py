@@ -46,4 +46,4 @@ class Lander1D(_Lander):
 
     def _get_motors(self, motors):
 
-        return [motors[0], motors[1], motors[1], motors[0]]
+        return [motors[0], motors[0], motors[0], motors[0]]

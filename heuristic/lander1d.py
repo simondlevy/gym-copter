@@ -17,7 +17,7 @@ def heuristic(state, pidcontrollers):
 
     descent_pid = pidcontrollers[0]
 
-    return descent_pid.getDemand(z, dz)
+    return (descent_pid.getDemand(z, dz),)
 
 
 def main():

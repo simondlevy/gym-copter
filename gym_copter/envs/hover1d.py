@@ -16,7 +16,7 @@ class Hover1D(_Hover):
         _Hover.__init__(self, 2, 1)
 
         # For generating CSV file
-        self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
+        self.STATE_NAMES = ['Z', 'dZ']
 
     def reset(self):
 
@@ -43,8 +43,8 @@ class Hover1D(_Hover):
 
     def _get_state(self, state):
 
-        return state[2:8]
+        return state[4:6]
 
     def _get_motors(self, motors):
 
-        return [motors[0], motors[1], motors[1], motors[0]]
+        return [motors[0], motors[0], motors[0], motors[0]]

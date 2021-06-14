@@ -188,12 +188,3 @@ class _Task(gym.Env, EzPickle):
     @abc.abstractmethod
     def _get_reward(self, status, state, d, x, y):
         return 0
-
-    @abc.abstractmethod
-    def _get_motors(self, motors):
-        '''
-        We always need four motor values for dynamics, so this method
-        allows subclasses to re-use motors if there are fewer than
-        four (e.g., 2D, 1D)
-        '''
-        return None
