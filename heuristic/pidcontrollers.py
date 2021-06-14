@@ -31,11 +31,8 @@ class AltitudeHoldPidController:
         # Negate for NED => ENU
         z, dz = -z, -dz
 
-        # Velocity is a setpoint
-        dz_tgt = self.k_tgt - z
-
         # Compute error as scaled target minus actual
-        e = dz_tgt - dz
+        e = (self.k_tgt - z) - dz
 
         # Compute I term
         self.ei += e
