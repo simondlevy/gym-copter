@@ -9,8 +9,7 @@ MIT License
 
 from main import demo3d
 
-from pidcontrollers import PositionHoldPidController
-from pidcontrollers import DescentPidController
+from pidcontrollers import PositionHoldPidController, DescentPidController
 
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 

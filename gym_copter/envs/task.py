@@ -29,7 +29,7 @@ class _Task(gym.Env, EzPickle):
     }
 
     def __init__(self, observation_size, action_size,
-                 initial_random_force=100,  # 30,
+                 initial_random_force=30,
                  out_of_bounds_penalty=100,
                  max_steps=1000,
                  max_angle=45,

@@ -7,8 +7,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from pidcontrollers import DescentPidController
-from pidcontrollers import PositionHoldPidController
+from pidcontrollers import DescentPidController, PositionHoldPidController
 
 from main import demo
 
