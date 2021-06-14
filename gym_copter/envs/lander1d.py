@@ -9,14 +9,14 @@ MIT License
 from gym_copter.envs.lander import _Lander
 
 
-class Lander2D(_Lander):
+class Lander1D(_Lander):
 
     def __init__(self):
 
-        _Lander.__init__(self, 6, 2)
+        _Lander.__init__(self, 2, 1)
 
         # For generating CSV file
-        self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']
+        self.STATE_NAMES = ['Z', 'dZ']
 
     def reset(self):
 
@@ -42,7 +42,7 @@ class Lander2D(_Lander):
 
     def _get_state(self, state):
 
-        return state[2:8]
+        return state[4:6]
 
     def _get_motors(self, motors):
 

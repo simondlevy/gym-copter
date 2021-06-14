@@ -42,8 +42,6 @@ def _demo_heuristic(env, fun, pidcontrollers, seed=None, csvfilename=None, nopid
         state, reward, done, _ = env.step(action)
         total_reward += reward
 
-        print(done)
-
         if csvfile is not None:
 
             csvfile.write('%f' % (dt * steps))

@@ -29,10 +29,6 @@ class Hover3D(_Hover, _ThreeD):
 
         return _Hover._reset(self)
 
-    def _get_motors(self, motors):
-
-        return motors
-
     def _get_state(self, state):
 
         return state
