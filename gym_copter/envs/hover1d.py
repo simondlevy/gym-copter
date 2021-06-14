@@ -9,11 +9,11 @@ MIT License
 from gym_copter.envs.hover import _Hover
 
 
-class Hover2D(_Hover):
+class Hover1D(_Hover):
 
     def __init__(self):
 
-        _Hover.__init__(self, 6, 2)
+        _Hover.__init__(self, 2, 1)
 
         # For generating CSV file
         self.STATE_NAMES = ['X', 'dX', 'Z', 'dZ', 'Phi', 'dPhi']

@@ -2,6 +2,7 @@
 *.swp
 *.mp4
 *.csv
+*.pyc
 __pycache__/
 build/
 dist/

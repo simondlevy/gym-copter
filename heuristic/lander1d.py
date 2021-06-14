@@ -8,7 +8,7 @@ MIT License
 '''
 
 from pidcontrollers import DescentPidController
-from main import demo1d
+from main import demo
 
 
 def heuristic(state, pidcontrollers):
@@ -22,7 +22,7 @@ def heuristic(state, pidcontrollers):
 
 def main():
 
-    demo1d('gym_copter:Lander1D-v0', heuristic, (DescentPidController(),))
+    demo('gym_copter:Lander1D-v0', heuristic, (DescentPidController(),))
 
 
 main()
