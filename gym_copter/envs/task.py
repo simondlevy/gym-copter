@@ -162,14 +162,22 @@ class _Task(gym.Env, EzPickle):
         state[d.STATE_THETA] = radians(pose[4])
         self.dynamics.setState(state)
 
+        # We'll use X-axis perturbation for flag direction in 2D renderer
+        self.initial_random_x = 0
+
         # Perturb with a random force
         if perturb:
-            self.dynamics.perturb(np.array([self._randforce(),  # X
-                                            self._randforce(),  # Y
-                                            self._randforce(),  # Z
-                                            0,                  # phi
-                                            0,                  # theta
-                                            0]))                # psi
+
+            perturbation = (self._randforce(),  # X
+                            self._randforce(),  # Y
+                            self._randforce(),  # Z
+                            0,                  # phi
+                            0,                  # theta
+                            0)                  # psi
+
+            self.dynamics.perturb(np.array(perturbation))
+
+            self.initial_random_x = perturbation[0]
 
         # No steps or reward yet
         self.steps = 0

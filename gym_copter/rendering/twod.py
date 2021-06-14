@@ -188,15 +188,21 @@ class TwoDLanderRenderer(_TwoDRenderer):
 
         # Draw flags
         for d in [-1, +1]:
+
             flagy1 = self.GROUND_Z
             flagy2 = flagy1 + 50/self.SCALE
+
             x = d*self.env.TARGET_RADIUS + self.VIEWPORT_W/self.SCALE/2
+
+            # Pole
             self.viewer.draw_polyline([(x, flagy1), (x, flagy2)],
                                       color=(1, 1, 1))
-            self.viewer.draw_polygon([(x, flagy2),
-                                      (x, flagy2-10/self.SCALE),
-                                      (x + 25/self.SCALE,
-                                       flagy2-5/self.SCALE)],
-                                     color=self.FLAG_COLOR)
+            # Pennant
+            if not self.one_d:
+                self.viewer.draw_polygon([(x, flagy2),
+                                          (x, flagy2-10/self.SCALE),
+                                          (x + 25/self.SCALE,
+                                           flagy2-5/self.SCALE)],
+                                         color=self.FLAG_COLOR)
 
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
