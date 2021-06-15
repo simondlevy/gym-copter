@@ -8,7 +8,7 @@ MIT License
 
 import numpy as np
 
-class Plant:
+class Copter:
     def __init__(
         self,
         mass=4.0,
