@@ -3,17 +3,6 @@ import logging
 import nengo
 import numpy as np
 
-# from nengo_fpga.networks import FpgaPesEnsembleNetwork
-
-# Set the nengo logging level to 'info' to display all of the information
-# coming back over the ssh connection.
-# logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
-
-# ---------------- BOARD SELECT ----------------------- #
-# Change this to your desired device name
-# board = "de1"
-# ---------------- BOARD SELECT ----------------------- #
-
 
 # Pendulum object. Handles the logic and simulation of the pendulum.
 class Pendulum:
