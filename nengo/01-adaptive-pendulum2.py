@@ -131,20 +131,6 @@ with nengo.Network(seed=3) as model:
     k_d = 0.2
     nengo.Connection(dq_diff, env.u, transform=k_d, synapse=None)
 
-    # PES Ensemble to compute the adaptive control signal to compensate for
-    # unknown variables introduced into the environment.
-
-    # <<<<<<<<<<<<<<<<<<<  NengoFPGA Code <<<<<<<<<<<<<<<<<<<
-    # adapt_ens = FpgaPesEnsembleNetwork(
-    #     board,
-    #     n_neurons=1000,
-    #     dimensions=1,
-    #     learning_rate=1e-5,
-    #     function=lambda x: [0],
-    #     label="pes ensemble",
-    # )
-    # <<<<<<<<<<<<<<<<<<<  NengoFPGA Code <<<<<<<<<<<<<<<<<<<
-
     # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
     with nengo.Network() as adapt_ens:
         n_neurons = 1000
@@ -171,6 +157,7 @@ with nengo.Network(seed=3) as model:
 
         # Connect the error into the learning rule
         nengo.Connection(adapt_ens.error, conn.learning_rule)
+
     # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
 
     # Compute the adaptive control signal. The adaptive control signal is

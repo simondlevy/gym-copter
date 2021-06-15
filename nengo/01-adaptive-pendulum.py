@@ -1,18 +1,5 @@
-import logging
-
 import nengo
 import numpy as np
-
-# from nengo_fpga.networks import FpgaPesEnsembleNetwork
-
-# Set the nengo logging level to 'info' to display all of the information
-# coming back over the ssh connection.
-logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
-
-# ---------------- BOARD SELECT ----------------------- #
-# Change this to your desired device name
-# board = "de1"
-# ---------------- BOARD SELECT ----------------------- #
 
 
 # Pendulum object. Handles the logic and simulation of the pendulum.
@@ -143,25 +130,6 @@ with nengo.Network(seed=3) as model:
 
     k_d = 0.2
     nengo.Connection(dq_diff, env.u, transform=k_d, synapse=None)
-
-    # PES Ensemble to compute the adaptive control signal to compensate for
-    # unknown variables introduced into the environment.
-    # adapt_ens = FpgaPesEnsembleNetwork(
-    #     board,
-    #     n_neurons=1000,
-    #     dimensions=1,
-    #     learning_rate=1e-5,
-    #     function=lambda x: [0],
-    #     label="pes ensemble",
-    # )
-
-    # Compute the adaptive control signal. The adaptive control signal is
-    # computed as a mapping between the current angle of the pendulum, and
-    # an additional control signal (u_extra) added to the control signal (u).
-    # The error signal used for the adaptive ensemble is simply -u.
-    # nengo.Connection(env.q, adapt_ens.input, synapse=None)
-    # nengo.Connection(env.u, adapt_ens.error, transform=-1)
-    # nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
 
     # Extra mass to add to the pendulum. To demonstrate the adaptive
     # controller.
