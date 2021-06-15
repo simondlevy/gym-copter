@@ -28,24 +28,24 @@ class PlantNetwork(nengo.Network):
                 func._nengo_html_ = self.env.generate_html(desired=x[1])
                 return (self.env.theta, self.env.dtheta)
 
-            self.pendulum = nengo.Node(func, size_in=3, label="Object")
+            self.plant = nengo.Node(func, size_in=3, label="Object")
 
             self.q_target = nengo.Node(None, size_in=1, label="Target")
-            nengo.Connection(self.q_target, self.pendulum[1], synapse=None)
+            nengo.Connection(self.q_target, self.plant[1], synapse=None)
 
             self.u = nengo.Node(None, size_in=1, label="Control Signal")
-            nengo.Connection(self.u, self.pendulum[0], synapse=0)
+            nengo.Connection(self.u, self.plant[0], synapse=0)
             self.u_extra = nengo.Node(None, size_in=1,
                                       label="Adaptive Control Signal")
-            nengo.Connection(self.u_extra, self.pendulum[0], synapse=0)
+            nengo.Connection(self.u_extra, self.plant[0], synapse=0)
 
             self.q = nengo.Node(None, size_in=1, label="Pos (q)")
             self.dq = nengo.Node(None, size_in=1, label="Pos Deriv (dq)")
-            nengo.Connection(self.pendulum[0], self.q, synapse=None)
-            nengo.Connection(self.pendulum[1], self.dq, synapse=None)
+            nengo.Connection(self.plant[0], self.q, synapse=None)
+            nengo.Connection(self.plant[1], self.dq, synapse=None)
 
             self.extra_mass = nengo.Node(None, size_in=1, label="Extra Force")
-            nengo.Connection(self.extra_mass, self.pendulum[2], synapse=None)
+            nengo.Connection(self.extra_mass, self.plant[2], synapse=None)
 
 
 # Nengo network proper
