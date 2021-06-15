@@ -54,8 +54,8 @@ class Pendulum:
             self.theta = np.clip(self.theta, self.bounds[0], self.bounds[1])
         self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
 
-    def set_extra_mass(self, mass):
-        self.extra_mass = mass
+    def set_extra_force(self, force):
+        self.extra_mass = force
 
     def generate_html(self, desired):
         len0 = 40 * self.length
