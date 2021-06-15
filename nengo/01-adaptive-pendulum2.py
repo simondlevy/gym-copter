@@ -1,5 +1,3 @@
-import logging
-
 import nengo
 import numpy as np
 
