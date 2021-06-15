@@ -115,7 +115,21 @@ class PendulumNetwork(nengo.Network):
 
 # Nengo network proper
 with nengo.Network(seed=3) as model:
+
     env = PendulumNetwork(mass=4, max_torque=100, seed=1)
+
+    # FPGA-equivalent adaptive PES network courtesy of Xuan Choo =====================
+
+    model.input = nengo.Node(size_in=1)
+    model.error = nengo.Node(size_in=1)
+    model.output = nengo.Node(size_in=1)
+    ens = nengo.Ensemble(1000, 1)
+    conn = nengo.Connection(model.input, ens, synapse=None)
+    conn.learning_rule_type = nengo.PES(learning_rate=1e-4)
+    nengo.Connection(model.error, conn.learning_rule)
+    nengo.Connection(ens, model.output, synapse=None)
+
+    # ================================================================================
 
     # The target angle for the pendulum (q)
     q_target = nengo.Node(np.sin, label="Target Pendulum Angle")
@@ -161,11 +175,9 @@ with nengo.Network(seed=3) as model:
     # computed as a mapping between the current angle of the pendulum, and
     # an additional control signal (u_extra) added to the control signal (u).
     # The error signal used for the adaptive ensemble is simply -u.
-    '''
-    nengo.Connection(env.q, adapt_ens.input, synapse=None)
-    nengo.Connection(env.u, adapt_ens.error, transform=-1)
-    nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
-    '''
+    # nengo.Connection(env.q, adapt_ens.input, synapse=None)
+    # nengo.Connection(env.u, adapt_ens.error, transform=-1)
+    # nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
 
     # Extra mass to add to the pendulum. To demonstrate the adaptive
     # controller.
