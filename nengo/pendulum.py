@@ -12,12 +12,12 @@ import numpy as np
 class Plant:
     def __init__(
         self,
-        mass=1.0,
+        mass=4.0,
         length=1.0,
         dt=0.001,
         g=10.0,
         seed=None,
-        max_torque=2,
+        max_torque=100,
         max_speed=8,
         limit=2.0,
         bounds=None,

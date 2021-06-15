@@ -51,7 +51,7 @@ class PlantNetwork(nengo.Network):
 # Nengo network proper
 with nengo.Network(seed=3) as model:
 
-    env = PlantNetwork(mass=4, max_torque=100, seed=1)
+    env = PlantNetwork(seed=1)
 
     # The target (q)
     q_target = nengo.Node(np.sin, label="Target")
@@ -119,3 +119,4 @@ with nengo.Network(seed=3) as model:
     # Extra force to add to the system to demonstrate the adaptive controller
     extra_force = nengo.Node(None, size_in=1, label="Extra Force")
     nengo.Connection(extra_force, env.extra_force, synapse=None)
+
