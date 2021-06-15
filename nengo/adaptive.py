@@ -25,13 +25,12 @@ with nengo.Network(seed=3) as model:
     nengo.Connection(q_target, dq_target, synapse=None, transform=1000)
     nengo.Connection(q_target, dq_target, synapse=0, transform=-1000)
 
-    # The difference between the target angle and the actual angle of the
-    # pendulum
+    # The difference between the target and the actual
     q_diff = nengo.Ensemble(n_neurons=100, dimensions=1)
     nengo.Connection(env.q_target, q_diff, synapse=None)
     nengo.Connection(env.q, q_diff, synapse=None, transform=-1)
 
-    # The difference between the target dq and the pendulum's dq
+    # The difference between the target dq and the actual dq
     dq_diff = nengo.Ensemble(n_neurons=100, dimensions=1)
     nengo.Connection(dq_target, dq_diff, synapse=None)
     nengo.Connection(env.dq, dq_diff, synapse=None, transform=-1)
@@ -73,14 +72,13 @@ with nengo.Network(seed=3) as model:
     # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
 
     # Compute the adaptive control signal. The adaptive control signal is
-    # computed as a mapping between the current angle of the pendulum, and
+    # computed as a mapping between the current value of the system and
     # an additional control signal (u_extra) added to the control signal (u).
     # The error signal used for the adaptive ensemble is simply -u.
     nengo.Connection(env.q, adapt_ens.input, synapse=None)
     nengo.Connection(env.u, adapt_ens.error, transform=-1)
     nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
 
-    # Extra mass to add to the pendulum. To demonstrate the adaptive
-    # controller.
-    extra_mass = nengo.Node(None, size_in=1, label="Extra Mass")
+    # Extra force to add to the system to demonstrate the adaptive controller
+    extra_mass = nengo.Node(None, size_in=1, label="Extra Force")
     nengo.Connection(extra_mass, env.extra_mass, synapse=None)
