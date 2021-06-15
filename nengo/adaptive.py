@@ -9,7 +9,7 @@ MIT License
 import nengo
 import numpy as np
 
-from pendulum import Pendulum
+from pendulum import Plant
 
 
 class PlantNetwork(nengo.Network):
@@ -18,7 +18,7 @@ class PlantNetwork(nengo.Network):
 
         nengo.Network.__init__(self, label=label)
 
-        self.env = Pendulum(**kwargs)
+        self.env = Plant(**kwargs)
 
         with self:
 
@@ -53,7 +53,7 @@ with nengo.Network(seed=3) as model:
 
     env = PlantNetwork(mass=4, max_torque=100, seed=1)
 
-    # The target angle for the pendulum (q)
+    # The target (q)
     q_target = nengo.Node(np.sin, label="Target")
     nengo.Connection(q_target, env.q_target, synapse=None)
 

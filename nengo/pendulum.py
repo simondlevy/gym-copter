@@ -8,9 +8,8 @@ MIT License
 
 import numpy as np
 
-
 # Pendulum object. Handles the logic and simulation of the pendulum.
-class Pendulum:
+class Plant:
     def __init__(
         self,
         mass=1.0,
