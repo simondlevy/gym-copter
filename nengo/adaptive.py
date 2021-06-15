@@ -9,7 +9,8 @@ MIT License
 import nengo
 import numpy as np
 
-from pendulum import Plant
+# from pendulum import Plant
+from copter import Plant
 
 
 class PlantNetwork(nengo.Network):
