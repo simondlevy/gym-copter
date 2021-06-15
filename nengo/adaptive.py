@@ -44,8 +44,8 @@ class PlantNetwork(nengo.Network):
             nengo.Connection(self.plant[0], self.q, synapse=None)
             nengo.Connection(self.plant[1], self.dq, synapse=None)
 
-            self.extra_mass = nengo.Node(None, size_in=1, label="Extra Force")
-            nengo.Connection(self.extra_mass, self.plant[2], synapse=None)
+            self.extra_force = nengo.Node(None, size_in=1, label="Extra Force")
+            nengo.Connection(self.extra_force, self.plant[2], synapse=None)
 
 
 # Nengo network proper
@@ -117,5 +117,5 @@ with nengo.Network(seed=3) as model:
     nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
 
     # Extra force to add to the system to demonstrate the adaptive controller
-    extra_mass = nengo.Node(None, size_in=1, label="Extra Force")
-    nengo.Connection(extra_mass, env.extra_mass, synapse=None)
+    extra_force = nengo.Node(None, size_in=1, label="Extra Force")
+    nengo.Connection(extra_force, env.extra_force, synapse=None)
