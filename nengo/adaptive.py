@@ -102,6 +102,7 @@ class PendulumNetwork(nengo.Network):
 
 # Nengo network proper
 with nengo.Network(seed=3) as model:
+
     env = PendulumNetwork(mass=4, max_torque=100, seed=1)
 
     # The target angle for the pendulum (q)
