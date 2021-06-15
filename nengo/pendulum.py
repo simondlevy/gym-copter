@@ -1,3 +1,11 @@
+'''
+Pendulum classes for Nengo adaptive controller
+
+Copyright (C) 2021 Xuan Choo, Simon D. Levy
+
+MIT License
+'''
+
 import nengo
 import numpy as np
 
@@ -61,7 +69,8 @@ class Pendulum:
         return """
         <svg width="100%" height="100%" viewbox="0 0 100 100">
             <line x1="{x1}" y1="{y1}" x2="{x3}" y2="{y3}" style="stroke:blue"/>
-            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" style="stroke:black"/>
+            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"
+            style="stroke:black"/>
         </svg>
         """.format(
             x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3
@@ -88,11 +97,13 @@ class PendulumNetwork(nengo.Network):
 
             self.u = nengo.Node(None, size_in=1, label="Control Signal")
             nengo.Connection(self.u, self.pendulum[0], synapse=0)
-            self.u_extra = nengo.Node(None, size_in=1, label="Adaptive Control Signal")
+            self.u_extra = nengo.Node(None, size_in=1,
+                                      label="Adaptive Control Signal")
             nengo.Connection(self.u_extra, self.pendulum[0], synapse=0)
 
             self.q = nengo.Node(None, size_in=1, label="Pendulum Pos (q)")
-            self.dq = nengo.Node(None, size_in=1, label="Pendulum Pos Deriv (dq)")
+            self.dq = nengo.Node(None, size_in=1,
+                                 label="Pendulum Pos Deriv (dq)")
             nengo.Connection(self.pendulum[0], self.q, synapse=None)
             nengo.Connection(self.pendulum[1], self.dq, synapse=None)
 

@@ -1,3 +1,11 @@
+'''
+Nengo adaptive controller with PES learning
+
+Copyright (C) 2021 Xuan Choo, Simon D. Levy
+
+MIT License
+'''
+
 import nengo
 import numpy as np
 
@@ -47,8 +55,8 @@ with nengo.Network(seed=3) as model:
         adapt_ens.error = nengo.Node(size_in=1)
         adapt_ens.output = nengo.Node(size_in=1)
 
-        # Connection to output node (note, weights initialized to zero using the
-        # function argument)
+        # Connection to output node (note, weights initialized to zero using
+        # the function argument)
         conn = nengo.Connection(
             adapt_ens.input,
             adapt_ens.output,
