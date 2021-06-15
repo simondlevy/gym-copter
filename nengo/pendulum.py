@@ -1,12 +1,11 @@
 '''
-Pendulum classes for Nengo adaptive controller
+Pendulum class for Nengo adaptive controller
 
 Copyright (C) 2021 Xuan Choo, Simon D. Levy
 
 MIT License
 '''
 
-import nengo
 import numpy as np
 
 
@@ -75,37 +74,3 @@ class Pendulum:
         """.format(
             x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3
         )
-
-
-class PendulumNetwork(nengo.Network):
-    def __init__(self, label=None, **kwargs):
-        super(PendulumNetwork, self).__init__(label=label)
-        self.env = Pendulum(**kwargs)
-
-        with self:
-
-            def func(t, x):
-                self.env.set_extra_mass(x[2])
-                self.env.step(x[0])
-                func._nengo_html_ = self.env.generate_html(desired=x[1])
-                return (self.env.theta, self.env.dtheta)
-
-            self.pendulum = nengo.Node(func, size_in=3, label="Pendulum Obj")
-
-            self.q_target = nengo.Node(None, size_in=1, label="Target Pos")
-            nengo.Connection(self.q_target, self.pendulum[1], synapse=None)
-
-            self.u = nengo.Node(None, size_in=1, label="Control Signal")
-            nengo.Connection(self.u, self.pendulum[0], synapse=0)
-            self.u_extra = nengo.Node(None, size_in=1,
-                                      label="Adaptive Control Signal")
-            nengo.Connection(self.u_extra, self.pendulum[0], synapse=0)
-
-            self.q = nengo.Node(None, size_in=1, label="Pendulum Pos (q)")
-            self.dq = nengo.Node(None, size_in=1,
-                                 label="Pendulum Pos Deriv (dq)")
-            nengo.Connection(self.pendulum[0], self.q, synapse=None)
-            nengo.Connection(self.pendulum[1], self.dq, synapse=None)
-
-            self.extra_mass = nengo.Node(None, size_in=1, label="Extra Mass")
-            nengo.Connection(self.extra_mass, self.pendulum[2], synapse=None)

@@ -9,15 +9,52 @@ MIT License
 import nengo
 import numpy as np
 
-from pendulum import PendulumNetwork
+from pendulum import Pendulum
+
+
+class PlantNetwork(nengo.Network):
+
+    def __init__(self, label=None, **kwargs):
+
+        nengo.Network.__init__(self, label=label)
+
+        self.env = Pendulum(**kwargs)
+
+        with self:
+
+            def func(t, x):
+                self.env.set_extra_mass(x[2])
+                self.env.step(x[0])
+                func._nengo_html_ = self.env.generate_html(desired=x[1])
+                return (self.env.theta, self.env.dtheta)
+
+            self.pendulum = nengo.Node(func, size_in=3, label="Object")
+
+            self.q_target = nengo.Node(None, size_in=1, label="Target")
+            nengo.Connection(self.q_target, self.pendulum[1], synapse=None)
+
+            self.u = nengo.Node(None, size_in=1, label="Control Signal")
+            nengo.Connection(self.u, self.pendulum[0], synapse=0)
+            self.u_extra = nengo.Node(None, size_in=1,
+                                      label="Adaptive Control Signal")
+            nengo.Connection(self.u_extra, self.pendulum[0], synapse=0)
+
+            self.q = nengo.Node(None, size_in=1, label="Pos (q)")
+            self.dq = nengo.Node(None, size_in=1, label="Pos Deriv (dq)")
+            nengo.Connection(self.pendulum[0], self.q, synapse=None)
+            nengo.Connection(self.pendulum[1], self.dq, synapse=None)
+
+            self.extra_mass = nengo.Node(None, size_in=1, label="Extra Force")
+            nengo.Connection(self.extra_mass, self.pendulum[2], synapse=None)
+
 
 # Nengo network proper
 with nengo.Network(seed=3) as model:
 
-    env = PendulumNetwork(mass=4, max_torque=100, seed=1)
+    env = PlantNetwork(mass=4, max_torque=100, seed=1)
 
     # The target angle for the pendulum (q)
-    q_target = nengo.Node(np.sin, label="Target Pendulum Angle")
+    q_target = nengo.Node(np.sin, label="Target")
     nengo.Connection(q_target, env.q_target, synapse=None)
 
     # The derivative of the target angle signal (dq)
