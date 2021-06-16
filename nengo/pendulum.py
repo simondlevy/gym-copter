@@ -1,5 +1,5 @@
 '''
-Copter class for Nengo adaptive controller
+Pendulum class for Nengo adaptive controller
 
 Copyright (C) 2021 Xuan Choo, Simon D. Levy
 
@@ -11,7 +11,7 @@ import numpy as np
 from adaptive import run
 
 
-class Copter:
+class Pendulum:
     def __init__(
         self,
         mass=4.0,
@@ -79,4 +79,4 @@ class Copter:
 
 with nengo.Network(seed=3) as model:
 
-    env = run(Copter)
+    env = run(Pendulum)
