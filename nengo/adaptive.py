@@ -62,12 +62,12 @@ def run(plant):
     nengo.Connection(q_target, dq_target, synapse=0, transform=-1000)
 
     # The difference between the target and the actual
-    q_diff = nengo.Ensemble(n_neurons=100, dimensions=1)
+    q_diff = nengo.Ensemble(n_neurons=100, dimensions=1, label='q_diff')
     nengo.Connection(env.q_target, q_diff, synapse=None)
     nengo.Connection(env.q, q_diff, synapse=None, transform=-1)
 
     # The difference between the target dq and the actual dq
-    dq_diff = nengo.Ensemble(n_neurons=100, dimensions=1)
+    dq_diff = nengo.Ensemble(n_neurons=100, dimensions=1, label='dq_diff')
     nengo.Connection(dq_target, dq_diff, synapse=None)
     nengo.Connection(env.dq, dq_diff, synapse=None, transform=-1)
 
@@ -81,8 +81,8 @@ def run(plant):
     def zero(x):
         return [0]
 
-    # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
     with nengo.Network() as adapt_ens:
+
         n_neurons = 1000
         dimensions = 1
         learning_rate = 1e-5
@@ -92,6 +92,7 @@ def run(plant):
         adapt_ens.input = nengo.Ensemble(n_neurons, dimensions)
         adapt_ens.error = nengo.Node(size_in=1)
         adapt_ens.output = nengo.Node(size_in=1)
+        adapt_ens.label = 'pes ensemble'
 
         # Connection to output node (note, weights initialized to zero using
         # the function argument)
@@ -107,8 +108,6 @@ def run(plant):
 
         # Connect the error into the learning rule
         nengo.Connection(adapt_ens.error, conn.learning_rule)
-
-    # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
 
     # Compute the adaptive control signal. The adaptive control signal is
     # computed as a mapping between the current value of the system and
