@@ -37,6 +37,7 @@ class Pendulum:
 
         self.name = 'Pendulum'
         self.q_name = 'Angle'
+        self.force_name = 'Extra Force'
 
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)

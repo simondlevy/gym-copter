@@ -37,7 +37,7 @@ class Copter:
 
         self.name = 'Copter'
         self.q_name = 'Position'
-        self.property = 'Position'
+        self.force_name = 'Wind Force'
 
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)

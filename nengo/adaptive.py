@@ -119,7 +119,8 @@ def run(plant):
     nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
 
     # Extra force to add to the system to demonstrate the adaptive controller
-    extra_force = nengo.Node(None, size_in=1, label='Extra Force')
+    extra_force = nengo.Node(None, size_in=1,
+                             label=env.env.force_name)
     nengo.Connection(extra_force, env.extra_force, synapse=None)
 
     return env
