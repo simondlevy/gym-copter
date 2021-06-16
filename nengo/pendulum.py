@@ -66,13 +66,13 @@ class Pendulum:
         y2 = y1 - len0 * np.cos(self.theta)
         x3 = x1 + len0 * np.sin(desired)
         y3 = y1 - len0 * np.cos(desired)
-        return """
-        <svg width="100%" height="100%" viewbox="0 0 100 100">
-            <line x1="{x1}" y1="{y1}" x2="{x3}" y2="{y3}" style="stroke:blue"/>
-            <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"
-            style="stroke:black"/>
+        return '''
+        <svg width='100%' height='100%' viewbox='0 0 100 100'>
+            <line x1='{x1}' y1='{y1}' x2='{x3}' y2='{y3}' style='stroke:blue'/>
+            <line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}'
+            style='stroke:black'/>
         </svg>
-        """.format(
+        '''.format(
             x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3
         )
 
