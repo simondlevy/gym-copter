@@ -26,7 +26,8 @@ class PlantNetwork(nengo.Network):
                 func._nengo_html_ = self.env.generate_html(desired=x[1])
                 return (self.env.theta, self.env.dtheta)
 
-            self.plant = nengo.Node(func, size_in=3, label='Object')
+            self.plant = nengo.Node(func, size_in=3,
+                                    label=(self.env.name + ' Object'))
 
             self.q_target = nengo.Node(None, size_in=1, label='Target')
             nengo.Connection(self.q_target, self.plant[1], synapse=None)
@@ -51,7 +52,8 @@ def run(plant):
     env = PlantNetwork(plant, seed=1)
 
     # The target (q)
-    q_target = nengo.Node(np.sin, label='Target')
+    q_target = nengo.Node(np.sin,
+                          label=('Target ' + env.env.name + env.env.q_name))
     nengo.Connection(q_target, env.q_target, synapse=None)
 
     # The derivative of the target angle signal (dq)

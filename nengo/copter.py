@@ -35,6 +35,10 @@ class Copter:
         self.bounds = bounds
         self.reset(seed)
 
+        self.name = 'Copter'
+        self.q_name = 'Position'
+        self.property = 'Position'
+
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)

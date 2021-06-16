@@ -35,6 +35,9 @@ class Pendulum:
         self.bounds = bounds
         self.reset(seed)
 
+        self.name = 'Pendulum'
+        self.q_name = 'Angle'
+
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)
