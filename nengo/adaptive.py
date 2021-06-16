@@ -76,12 +76,15 @@ def run(plant):
     k_d = 0.2
     nengo.Connection(dq_diff, env.u, transform=k_d, synapse=None)
 
+    def zero(x):
+        return [0]
+
     # >>>>>>>>>>>>>>>>>>>  Regular Nengo Code >>>>>>>>>>>>>>>>>>>
     with nengo.Network() as adapt_ens:
         n_neurons = 1000
         dimensions = 1
         learning_rate = 1e-5
-        output_func = lambda x: [0]
+        output_func = zero
 
         # Inputs and outputs from the `adapt_ens` network
         adapt_ens.input = nengo.Ensemble(n_neurons, dimensions)
