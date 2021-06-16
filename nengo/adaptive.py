@@ -57,7 +57,7 @@ def run(plant):
     nengo.Connection(q_target, env.q_target, synapse=None)
 
     # The derivative of the target angle signal (dq)
-    dq_target = nengo.Node(None, size_in=1)
+    dq_target = nengo.Node(None, size_in=1, label='dq')
     nengo.Connection(q_target, dq_target, synapse=None, transform=1000)
     nengo.Connection(q_target, dq_target, synapse=0, transform=-1000)
 
