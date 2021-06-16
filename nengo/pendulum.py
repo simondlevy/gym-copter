@@ -1,15 +1,17 @@
 '''
-Pendulum class for Nengo adaptive controller
+Copter class for Nengo adaptive controller
 
 Copyright (C) 2021 Xuan Choo, Simon D. Levy
 
 MIT License
 '''
 
+import nengo
 import numpy as np
+from adaptive import run
 
-# Pendulum object. Handles the logic and simulation of the pendulum.
-class Pendulum:
+
+class Copter:
     def __init__(
         self,
         mass=4.0,
@@ -73,3 +75,8 @@ class Pendulum:
         """.format(
             x1=x1, y1=y1, x2=x2, y2=y2, x3=x3, y3=y3
         )
+
+
+with nengo.Network(seed=3) as model:
+
+    env = run(Copter)

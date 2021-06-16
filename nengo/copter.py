@@ -6,7 +6,10 @@ Copyright (C) 2021 Xuan Choo, Simon D. Levy
 MIT License
 '''
 
+import nengo
 import numpy as np
+from adaptive import run
+
 
 class Copter:
     def __init__(
@@ -60,3 +63,8 @@ class Copter:
         Copter is simulated externally
         '''
         return None
+
+
+with nengo.Network(seed=3) as model:
+
+    run(Copter)
