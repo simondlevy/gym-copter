@@ -7,30 +7,69 @@ MIT License
 '''
 
 import nengo
-import numpy as np
 import gym
 
 from adaptive import run
 
 
+def _constrain(val, lim):
+    return -lim if val < -lim else (+lim if val > +lim else val)
+
+
+class _AltitudeHoldPidController:
+
+    def __init__(self, k_p=0.2, k_i=3, k_tgt=5, k_windup=0.2):
+
+        self.k_p = k_p
+        self.k_i = k_i
+
+        self.k_tgt = k_tgt
+
+        # Prevents integral windup
+        self.k_windup = k_windup
+
+        # Error integral
+        self.ei = 0
+
+    def getDemand(self, z, dz):
+
+        # Negate for NED => ENU
+        z, dz = -z, -dz
+
+        # Compute error as scaled target minus actual
+        e = (self.k_tgt - z) - dz
+
+        # Compute I term
+        self.ei += e
+
+        # avoid integral windup
+        self.ei = _constrain(self.ei, self.k_windup)
+
+        return e * self.k_p + self.ei * self.k_i
+
+
 class Copter:
 
-    def __init__( self, seed=None):
+    def __init__(self, seed=None):
 
         self.env = gym.make('gym_copter:Hover2D-v0')
         self.reset(seed)
 
     def reset(self, seed):
 
-        self.env.reset()
+        self.state = self.env.reset()
+
+        self.alt_pid = _AltitudeHoldPidController()
 
     def step(self, u):
 
         self.env.render()
 
-        state, reward, done, _ = self.env.step([0,0])
+        _y, _dy, z, dz, _phi, _dphi = self.state
 
-        print(state)
+        hover_todo = self.alt_pid.getDemand(z, dz)
+
+        self.state, _reward, _done, _ = self.env.step([hover_todo, hover_todo])
 
         return 0, 0
 
