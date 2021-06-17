@@ -27,6 +27,8 @@ class Copter:
         limit=2.0,
         bounds=None,
     ):
+        self.env = gym.make('gym_copter:Hover1D-v0')
+
         self.mass = mass
         self.length = length
         self.dt = dt
@@ -38,19 +40,21 @@ class Copter:
         self.bounds = bounds
         self.reset(seed)
 
-        self.env = gym.make('gym_copter:Hover1D-v0')
-
     def reset(self, seed):
 
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)
         self.dtheta = self.rng.uniform(-1, 1)
 
+        self.env.reset()
+
     def step(self, u):
 
-        u = np.clip(u, -1, 1) * self.max_torque
+        state, reward, done, _ = self.env.step([0])
 
-        print(u)
+        print(state)
+
+        u = np.clip(u, -1, 1) * self.max_torque
 
         mass = self.mass + self.extra_mass
         self.dtheta += (
