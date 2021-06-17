@@ -12,11 +12,11 @@ import numpy as np
 
 class PlantNetwork(nengo.Network):
 
-    def __init__(self, plant, label, **kwargs):
+    def __init__(self, env, label, **kwargs):
 
         nengo.Network.__init__(self, label=label)
 
-        self.env = plant(**kwargs)
+        self.env = env(**kwargs)
 
         with self:
 
@@ -46,9 +46,9 @@ class PlantNetwork(nengo.Network):
             nengo.Connection(self.extra_force, self.plant[2], synapse=None)
 
 
-def run(plant, name, q_name, force_name):
+def run(env, name, q_name, force_name):
 
-    net = PlantNetwork(plant, name, seed=1)
+    net = PlantNetwork(env, name, seed=1)
 
     # The target (q)
     q_target = nengo.Node(np.sin, label=('Target ' + name + q_name))
