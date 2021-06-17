@@ -55,6 +55,8 @@ class Pendulum:
             self.theta = np.clip(self.theta, self.bounds[0], self.bounds[1])
         self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
 
+        return self.theta, self.dtheta
+
     def set_extra_force(self, force):
         self.extra_mass = force
 

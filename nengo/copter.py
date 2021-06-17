@@ -48,9 +48,9 @@ class Copter:
 
     def step(self, u):
 
-        print(self.env)
-
         u = np.clip(u, -1, 1) * self.max_torque
+
+        print(u)
 
         mass = self.mass + self.extra_mass
         self.dtheta += (
@@ -63,6 +63,8 @@ class Copter:
         if self.bounds:
             self.theta = np.clip(self.theta, self.bounds[0], self.bounds[1])
         self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
+
+        return self.theta, self.dtheta
 
     def set_extra_force(self, force):
 

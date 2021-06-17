@@ -22,9 +22,9 @@ class PlantNetwork(nengo.Network):
 
             def func(t, x):
                 self.env.set_extra_force(x[2])
-                self.env.step(x[0])
+                y, dy = self.env.step(x[0])
                 func._nengo_html_ = self.env.generate_html(desired=x[1])
-                return (self.env.theta, self.env.dtheta)
+                return y, dy
 
             self.plant = nengo.Node(func, size_in=3, label=(label + ' Object'))
 
