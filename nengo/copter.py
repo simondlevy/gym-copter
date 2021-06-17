@@ -8,10 +8,13 @@ MIT License
 
 import nengo
 import numpy as np
+import gym
+
 from adaptive import run
 
 
 class Copter:
+
     def __init__(
         self,
         mass=4.0,
@@ -35,12 +38,18 @@ class Copter:
         self.bounds = bounds
         self.reset(seed)
 
+        self.env = gym.make('gym_copter:Hover1D-v0')
+
     def reset(self, seed):
+
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)
         self.dtheta = self.rng.uniform(-1, 1)
 
     def step(self, u):
+
+        print(self.env)
+
         u = np.clip(u, -1, 1) * self.max_torque
 
         mass = self.mass + self.extra_mass
@@ -56,6 +65,7 @@ class Copter:
         self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
 
     def set_extra_force(self, force):
+
         self.extra_mass = force
 
     def generate_html(self, desired):
