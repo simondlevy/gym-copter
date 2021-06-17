@@ -17,7 +17,7 @@ class Copter:
 
     def __init__( self, seed=None):
 
-        self.env = gym.make('gym_copter:Hover1D-v0')
+        self.env = gym.make('gym_copter:Hover2D-v0')
         self.reset(seed)
 
     def reset(self, seed):
@@ -28,7 +28,7 @@ class Copter:
 
         self.env.render()
 
-        state, reward, done, _ = self.env.step([0])
+        state, reward, done, _ = self.env.step([0,0])
 
         print(state)
 
