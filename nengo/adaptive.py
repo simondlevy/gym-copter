@@ -48,11 +48,11 @@ class PlantNetwork(nengo.Network):
 
 def run(plant, name, q_name, force_name):
 
-    env = PlantNetwork(plant, name, seed=1)
+    net = PlantNetwork(plant, name, seed=1)
 
     # The target (q)
     q_target = nengo.Node(np.sin, label=('Target ' + name + q_name))
-    nengo.Connection(q_target, env.q_target, synapse=None)
+    nengo.Connection(q_target, net.q_target, synapse=None)
 
     # The derivative of the target angle signal (dq)
     dq_target = nengo.Node(None, size_in=1, label='dq')
@@ -61,20 +61,20 @@ def run(plant, name, q_name, force_name):
 
     # The difference between the target and the actual
     q_diff = nengo.Ensemble(n_neurons=100, dimensions=1, label='q_diff')
-    nengo.Connection(env.q_target, q_diff, synapse=None)
-    nengo.Connection(env.q, q_diff, synapse=None, transform=-1)
+    nengo.Connection(net.q_target, q_diff, synapse=None)
+    nengo.Connection(net.q, q_diff, synapse=None, transform=-1)
 
     # The difference between the target dq and the actual dq
     dq_diff = nengo.Ensemble(n_neurons=100, dimensions=1, label='dq_diff')
     nengo.Connection(dq_target, dq_diff, synapse=None)
-    nengo.Connection(env.dq, dq_diff, synapse=None, transform=-1)
+    nengo.Connection(net.dq, dq_diff, synapse=None, transform=-1)
 
     # Compute the control signal (u) where u = k_p * q + k_d * dq
     k_p = 1.0
-    nengo.Connection(q_diff, env.u, transform=k_p, synapse=None)
+    nengo.Connection(q_diff, net.u, transform=k_p, synapse=None)
 
     k_d = 0.2
-    nengo.Connection(dq_diff, env.u, transform=k_d, synapse=None)
+    nengo.Connection(dq_diff, net.u, transform=k_d, synapse=None)
 
     def zero(x):
         return [0]
@@ -111,12 +111,12 @@ def run(plant, name, q_name, force_name):
     # computed as a mapping between the current value of the system and
     # an additional control signal (u_extra) added to the control signal (u).
     # The error signal used for the adaptive ensemble is simply -u.
-    nengo.Connection(env.q, adapt_ens.input, synapse=None)
-    nengo.Connection(env.u, adapt_ens.error, transform=-1)
-    nengo.Connection(adapt_ens.output, env.u_extra, synapse=None)
+    nengo.Connection(net.q, adapt_ens.input, synapse=None)
+    nengo.Connection(net.u, adapt_ens.error, transform=-1)
+    nengo.Connection(adapt_ens.output, net.u_extra, synapse=None)
 
     # Extra force to add to the system to demonstrate the adaptive controller
     extra_force = nengo.Node(None, size_in=1, label=force_name)
-    nengo.Connection(extra_force, env.extra_force, synapse=None)
+    nengo.Connection(extra_force, net.extra_force, synapse=None)
 
-    return env
+    return net

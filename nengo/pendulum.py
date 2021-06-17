@@ -79,4 +79,4 @@ class Pendulum:
 
 with nengo.Network(seed=3) as model:
 
-    env = run(Pendulum, 'Pendulum', 'Angle', 'Extra Force')
+    net = run(Pendulum, 'Pendulum', 'Angle', 'Extra Force')
