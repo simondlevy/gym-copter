@@ -50,6 +50,8 @@ class Copter:
 
     def step(self, u):
 
+        self.env.render()
+
         state, reward, done, _ = self.env.step([0])
 
         print(state)
