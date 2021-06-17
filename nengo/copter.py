@@ -35,10 +35,6 @@ class Copter:
         self.bounds = bounds
         self.reset(seed)
 
-        self.name = 'Copter'
-        self.q_name = 'Position'
-        self.force_name = 'Wind Force'
-
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)
@@ -71,4 +67,4 @@ class Copter:
 
 with nengo.Network(seed=3) as model:
 
-    run(Copter)
+    run(Copter, 'Copter', 'Position', 'Wind Force')

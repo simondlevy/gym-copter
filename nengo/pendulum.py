@@ -35,10 +35,6 @@ class Pendulum:
         self.bounds = bounds
         self.reset(seed)
 
-        self.name = 'Pendulum'
-        self.q_name = 'Angle'
-        self.force_name = 'Extra Force'
-
     def reset(self, seed):
         self.rng = np.random.RandomState(seed=seed)
         self.theta = self.rng.uniform(-self.limit, self.limit)
@@ -83,4 +79,4 @@ class Pendulum:
 
 with nengo.Network(seed=3) as model:
 
-    env = run(Pendulum)
+    env = run(Pendulum, 'Pendulum', 'Angle', 'Extra Force')
