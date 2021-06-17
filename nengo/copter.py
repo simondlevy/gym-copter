@@ -15,36 +15,12 @@ from adaptive import run
 
 class Copter:
 
-    def __init__(
-        self,
-        mass=4.0,
-        length=1.0,
-        dt=0.001,
-        g=10.0,
-        seed=None,
-        max_torque=100,
-        max_speed=8,
-        limit=2.0,
-        bounds=None,
-    ):
-        self.env = gym.make('gym_copter:Hover1D-v0')
+    def __init__( self, seed=None):
 
-        self.mass = mass
-        self.length = length
-        self.dt = dt
-        self.g = g
-        self.max_torque = max_torque
-        self.max_speed = max_speed
-        self.limit = limit
-        self.extra_mass = 0
-        self.bounds = bounds
+        self.env = gym.make('gym_copter:Hover1D-v0')
         self.reset(seed)
 
     def reset(self, seed):
-
-        self.rng = np.random.RandomState(seed=seed)
-        self.theta = self.rng.uniform(-self.limit, self.limit)
-        self.dtheta = self.rng.uniform(-1, 1)
 
         self.env.reset()
 
@@ -56,21 +32,7 @@ class Copter:
 
         print(state)
 
-        u = np.clip(u, -1, 1) * self.max_torque
-
-        mass = self.mass + self.extra_mass
-        self.dtheta += (
-            -3 * self.g / (2 * self.length) * np.sin(self.theta + np.pi)
-            + 3.0 / (mass * self.length ** 2) * u
-        ) * self.dt
-        self.theta += self.dtheta * self.dt
-        self.dtheta = np.clip(self.dtheta, -self.max_speed, self.max_speed)
-
-        if self.bounds:
-            self.theta = np.clip(self.theta, self.bounds[0], self.bounds[1])
-        self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
-
-        return self.theta, self.dtheta
+        return 0, 0
 
     def set_extra_force(self, force):
 
