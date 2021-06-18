@@ -8,6 +8,7 @@ MIT License
 
 import nengo
 import gym
+import numpy as np
 
 from adaptive import run
 
@@ -25,13 +26,20 @@ class Copter:
 
     def step(self, u):
 
+        u = np.clip(u, 0, 1)
+
         self.env.render()
 
         z, dz, = self.state
 
-        self.state, _reward, _done, _ = self.env.step((0,0))
+        # Negate for NED => ENU
+        z, dz = -z, -dz
 
-        return 0, 0
+        print('%f | %+3.3f   %+3.3f' % (u, z, dz))
+
+        self.state, _reward, _done, _info = self.env.step((u,))
+
+        return z, dz
 
     def set_extra_force(self, force):
 
