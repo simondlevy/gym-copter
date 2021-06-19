@@ -81,7 +81,7 @@ def _demo_heuristic(env, fun, pidcontrollers,
                                       for k in range(1, actsize+1)]))
         csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
 
-    while True:
+    while steps < 500:
 
         action = np.zeros(actsize) if nopid else fun(state, pidcontrollers)
 
