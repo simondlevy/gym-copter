@@ -9,6 +9,7 @@ MIT License
 
 from time import sleep
 import gym
+import numpy as np
 
 
 def _constrain(val, lim):
@@ -52,6 +53,11 @@ class AltitudeHoldPidController:
 
         # Compute demand u
         u = e * self.k_p + self.ei * self.k_i
+
+        # Constrain u to interval [0,1].  This is done automatically
+        # by our gym environment, but we do it here to avoid writing
+        # out-of-bound values to the CSV file.
+        u = np.clip(u, 0, 1)
 
         # Write current values to CSV file
         self.csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
