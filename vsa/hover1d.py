@@ -8,11 +8,7 @@ MIT License
 '''
 
 from time import sleep
-import numpy as np
-
 import gym
-
-from gym_copter.cmdline import make_parser
 
 
 def _constrain(val, lim):
@@ -33,6 +29,12 @@ class AltitudeHoldPidController:
 
         # Error integral
         self.ei = 0
+
+        # Start CSV file
+        filename = ('kp=%2.2f_Ki=%2.2f_k_tgt=%2.2f_k_windup=%2.2f.csv' %
+                    (k_p, k_i, k_tgt, k_windup))
+        self.csvfile = open(filename, 'w')
+        self.csvfile.write('z,dz, e, ei, u')
 
     def getDemand(self, z, dz):
 
@@ -60,41 +62,18 @@ def heuristic(state, pidcontrollers):
     return (alt_pid.getDemand(z, dz),)
 
 
-def _demo_heuristic(env, fun, pidcontrollers,
-                    seed=None, csvfilename=None, nopid=False):
-
-    env.seed(seed)
-    np.random.seed(seed)
+def _demo_heuristic(env, fun, pidcontrollers):
 
     total_reward = 0
     steps = 0
     state = env.reset()
 
-    dt = 1. / env.FRAMES_PER_SECOND
-
-    actsize = env.action_space.shape[0]
-
-    csvfile = None
-    if csvfilename is not None:
-        csvfile = open(csvfilename, 'w')
-        csvfile.write('t,' + ','.join([('m%d' % k)
-                                      for k in range(1, actsize+1)]))
-        csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
-
     while steps < 500:
 
-        action = np.zeros(actsize) if nopid else fun(state, pidcontrollers)
+        action = fun(state, pidcontrollers)
 
         state, reward, done, _ = env.step(action)
         total_reward += reward
-
-        if csvfile is not None:
-
-            csvfile.write('%f' % (dt * steps))
-
-            csvfile.write((',%f' * actsize) % tuple(action))
-
-            csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
 
         env.render()
 
@@ -111,21 +90,12 @@ def _demo_heuristic(env, fun, pidcontrollers,
 
     env.close()
 
-    if csvfile is not None:
-        csvfile.close()
-
 
 def demo(envname, heuristic, pidcontrollers):
 
-    parser = make_parser()
-
-    args = parser.parse_args()
-
     env = gym.make(envname)
 
-    _demo_heuristic(env, heuristic, pidcontrollers,
-                    seed=args.seed, csvfilename=args.csvfilename,
-                    nopid=args.nopid)
+    _demo_heuristic(env, heuristic, pidcontrollers)
 
     env.close()
 
