@@ -34,7 +34,7 @@ class AltitudeHoldPidController:
         filename = ('kp=%2.2f_Ki=%2.2f_k_tgt=%2.2f_k_windup=%2.2f.csv' %
                     (k_p, k_i, k_tgt, k_windup))
         self.csvfile = open(filename, 'w')
-        self.csvfile.write('z,dz, e, ei, u')
+        self.csvfile.write('z,dz,e,ei,u\n')
 
     def getDemand(self, z, dz):
 
@@ -47,10 +47,17 @@ class AltitudeHoldPidController:
         # Compute I term
         self.ei += e
 
-        # avoid integral windup
+        # Avoid integral windup
         self.ei = _constrain(self.ei, self.k_windup)
 
-        return e * self.k_p + self.ei * self.k_i
+        # Compute demand u
+        u = e * self.k_p + self.ei * self.k_i
+
+        # Write current values to CSV file
+        self.csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
+                           (z, dz, e, self.ei, u))
+
+        return u
 
 
 def heuristic(state, pidcontrollers):
