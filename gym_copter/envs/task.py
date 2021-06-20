@@ -1,5 +1,5 @@
 '''
-Abstract class for 2D and 3D copter environments
+Abstract class for copter environments
 
 Copyright (C) 2021 Simon D. Levy
 
@@ -63,6 +63,10 @@ class _Task(gym.Env, EzPickle):
         self.max_steps = max_steps
         self.bounds = bounds
         self.initial_altitude = initial_altitude
+
+    def set_altitude(self, altitude):
+
+        self.initial_altitude = altitude
 
     def seed(self, seed=None):
 

@@ -108,6 +108,8 @@ def main():
 
     env = gym.make('gym_copter:Hover1D-v0')
 
+    env.set_altitude(3)
+
     _demo_heuristic(env, heuristic, (AltitudeHoldPidController(),))
 
 
