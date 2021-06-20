@@ -18,7 +18,7 @@ def _constrain(val, lim):
 
 def main():
 
-    k_start = 10
+    k_start = 3
     k_p = 0.2
     k_i = 3
     k_tgt = 5
@@ -28,14 +28,14 @@ def main():
     ei = 0
 
     # Start CSV file
-    filename = ('kp=%2.2f_Ki=%2.2f_k_tgt=%2.2f_k_windup=%2.2f.csv' %
-                (k_p, k_i, k_tgt, k_windup))
+    filename = ('k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
+                (k_start, k_tgt, k_p, k_i, k_windup))
     csvfile = open(filename, 'w')
     csvfile.write('z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
-    env.set_altitude(3)
+    env.set_altitude(k_start)
 
     total_reward = 0
     steps = 0
