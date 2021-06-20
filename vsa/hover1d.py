@@ -66,26 +66,26 @@ class AltitudeHoldPidController:
         return u
 
 
-def heuristic(state, pidcontrollers):
+def main():
 
-    z, dz = state
+    env = gym.make('gym_copter:Hover1D-v0')
 
-    alt_pid = pidcontrollers[0]
-
-    return (alt_pid.getDemand(z, dz),)
-
-
-def _demo_heuristic(env, fun, pidcontrollers):
+    env.set_altitude(3)
 
     total_reward = 0
     steps = 0
     state = env.reset()
 
+    alt_pid = AltitudeHoldPidController()
+
     while steps < 500:
 
-        action = fun(state, pidcontrollers)
+        z, dz = state
 
-        state, reward, done, _ = env.step(action)
+        action = alt_pid.getDemand(z, dz)
+
+        state, reward, done, _ = env.step((action,))
+
         total_reward += reward
 
         env.render()
@@ -102,15 +102,6 @@ def _demo_heuristic(env, fun, pidcontrollers):
             break
 
     env.close()
-
-
-def main():
-
-    env = gym.make('gym_copter:Hover1D-v0')
-
-    env.set_altitude(3)
-
-    _demo_heuristic(env, heuristic, (AltitudeHoldPidController(),))
 
 
 main()
