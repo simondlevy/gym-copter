@@ -104,13 +104,11 @@ def _demo_heuristic(env, fun, pidcontrollers):
     env.close()
 
 
-def demo(envname, heuristic, pidcontrollers):
+def main():
 
-    env = gym.make(envname)
+    env = gym.make('gym_copter:Hover1D-v0')
 
-    _demo_heuristic(env, heuristic, pidcontrollers)
-
-    env.close()
+    _demo_heuristic(env, heuristic, (AltitudeHoldPidController(),))
 
 
-demo('gym_copter:Hover1D-v0', heuristic, (AltitudeHoldPidController(),))
+main()
