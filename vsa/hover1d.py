@@ -16,57 +16,22 @@ def _constrain(val, lim):
     return -lim if val < -lim else (+lim if val > +lim else val)
 
 
-class AltitudeHoldPidController:
-
-    def __init__(self, k_p=0.2, k_i=3, k_tgt=5, k_windup=0.2):
-
-        self.k_p = k_p
-        self.k_i = k_i
-
-        self.k_tgt = k_tgt
-
-        # Prevents integral windup
-        self.k_windup = k_windup
-
-        # Error integral
-        self.ei = 0
-
-        # Start CSV file
-        filename = ('kp=%2.2f_Ki=%2.2f_k_tgt=%2.2f_k_windup=%2.2f.csv' %
-                    (k_p, k_i, k_tgt, k_windup))
-        self.csvfile = open(filename, 'w')
-        self.csvfile.write('z,dz,e,ei,u\n')
-
-    def getDemand(self, z, dz):
-
-        # Negate for NED => ENU
-        z, dz = -z, -dz
-
-        # Compute error as scaled target minus actual
-        e = (self.k_tgt - z) - dz
-
-        # Compute I term
-        self.ei += e
-
-        # Avoid integral windup
-        self.ei = _constrain(self.ei, self.k_windup)
-
-        # Compute demand u
-        u = e * self.k_p + self.ei * self.k_i
-
-        # Constrain u to interval [0,1].  This is done automatically
-        # by our gym environment, but we do it here to avoid writing
-        # out-of-bound values to the CSV file.
-        u = np.clip(u, 0, 1)
-
-        # Write current values to CSV file
-        self.csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
-                           (z, dz, e, self.ei, u))
-
-        return u
-
-
 def main():
+
+    k_start = 10
+    k_p = 0.2
+    k_i = 3
+    k_tgt = 5
+    k_windup = 0.2
+
+    # Error integral
+    ei = 0
+
+    # Start CSV file
+    filename = ('kp=%2.2f_Ki=%2.2f_k_tgt=%2.2f_k_windup=%2.2f.csv' %
+                (k_p, k_i, k_tgt, k_windup))
+    csvfile = open(filename, 'w')
+    csvfile.write('z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
@@ -76,15 +41,34 @@ def main():
     steps = 0
     state = env.reset()
 
-    alt_pid = AltitudeHoldPidController()
-
     while steps < 500:
 
         z, dz = state
 
-        action = alt_pid.getDemand(z, dz)
+        # Negate for NED => ENU
+        z, dz = -z, -dz
 
-        state, reward, done, _ = env.step((action,))
+        # Compute error as scaled target minus actual
+        e = (k_tgt - z) - dz
+
+        # Compute I term
+        ei += e
+
+        # Avoid integral windup
+        ei = _constrain(ei, k_windup)
+
+        # Compute demand u
+        u = e * k_p + ei * k_i
+
+        # Constrain u to interval [0,1].  This is done automatically
+        # by our gym environment, but we do it here to avoid writing
+        # out-of-bound values to the CSV file.
+        u = np.clip(u, 0, 1)
+
+        # Write current values to CSV file
+        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' % (z, dz, e, ei, u))
+
+        state, reward, done, _ = env.step((u,))
 
         total_reward += reward
 
