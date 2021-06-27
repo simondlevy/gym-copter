@@ -74,7 +74,7 @@ class _Task(gym.Env, EzPickle):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def step(self, action):
+    def step(self, action, initializing=False):
 
         # Abbreviation
         d = self.dynamics
@@ -90,7 +90,8 @@ class _Task(gym.Env, EzPickle):
         else:
             motors = np.clip(action, 0, 1)    # stay in interval [0,1]
             self.spinning = sum(motors) > 0
-            d.update(self._get_motors(motors))
+            if not initializing:
+                d.update(self._get_motors(motors))
 
         # Get new state from dynamics
         state = np.array(d.getState())
@@ -190,7 +191,7 @@ class _Task(gym.Env, EzPickle):
         self.start = time()
 
         # Return initial state
-        return self.step(np.zeros(self.action_size))[0]
+        return self.step(np.zeros(self.action_size), initializing=True)[0]
 
     def _randforce(self):
 

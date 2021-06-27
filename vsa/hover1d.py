@@ -18,24 +18,24 @@ def _constrain(val, lim):
 
 def main():
 
-    k_start = 3
-    k_p = 0.2
-    k_i = 3
-    k_tgt = 5
-    k_windup = 0.2
+    K_START = 3
+    K_P = 0.2
+    K_I = 3
+    K_TGT = 5
+    K_WINDUP = 0.2
 
     # Error integral
     ei = 0
 
     # Start CSV file
     filename = ('k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
-                (k_start, k_tgt, k_p, k_i, k_windup))
+                (K_START, K_TGT, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
     csvfile.write('z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
-    env.set_altitude(k_start)
+    env.set_altitude(K_START)
 
     total_reward = 0
     steps = 0
@@ -49,21 +49,21 @@ def main():
         z, dz = -z, -dz
 
         # Compute error as scaled target minus actual
-        e = (k_tgt - z) - dz
+        e = (K_TGT - z) - dz
 
         # Compute I term
         ei += e
 
         # Avoid integral windup
-        ei = _constrain(ei, k_windup)
+        ei = _constrain(ei, K_WINDUP)
 
         # Compute demand u
-        u = e * k_p + ei * k_i
+        u = e * K_P + ei * K_I
 
         # Constrain u to interval [0,1].  This is done automatically
         # by our gym environment, but we do it here to avoid writing
         # out-of-bound values to the CSV file.
-        u = np.clip(u, 0, 1)
+        # u = np.clip(u, 0, 1)
 
         # Write current values to CSV file
         csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' % (z, dz, e, ei, u))
