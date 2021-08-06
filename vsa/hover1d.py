@@ -56,8 +56,11 @@ def main():
         # Negate for NED => ENU
         z, dz = -z, -dz
 
+        # Support changing targets periodically
+        target = ALTITUDE_TARGETS[target_index]
+
         # Compute error as scaled target minus actual
-        e = (ALTITUDE_TARGETS[target_index] - z) - dz
+        e = (target - z) - dz
 
         # Compute I term
         ei += e
