@@ -46,7 +46,7 @@ def main():
 
     total_steps = DURATION * env.FRAMES_PER_SECOND
 
-    while steps < total_steps
+    while steps < total_steps:
 
         t = steps / env.FRAMES_PER_SECOND
 
