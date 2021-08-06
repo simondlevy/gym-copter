@@ -18,11 +18,12 @@ def _constrain(val, lim):
 
 def main():
 
-    K_DURATION = 10
-    K_START = 3
+    TARGETS = 5
+    DURATION = 10
+    ALTITUDE_START = 3
+
     K_P = 0.2
     K_I = 3
-    K_TGT = 5
     K_WINDUP = 0.2
 
     # Error integral
@@ -31,19 +32,19 @@ def main():
     # Start CSV file
     filename = (
         'ud_k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
-            (K_START, K_TGT, K_P, K_I, K_WINDUP))
+            (ALTITUDE_START, TARGETS, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
     csvfile.write('t,z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
-    env.set_altitude(K_START)
+    env.set_altitude(ALTITUDE_START)
 
     total_reward = 0
     steps = 0
     state = env.reset()
 
-    while steps < K_DURATION * env.FRAMES_PER_SECOND:
+    while steps < DURATION * env.FRAMES_PER_SECOND:
 
         t = steps / env.FRAMES_PER_SECOND
 
@@ -53,7 +54,7 @@ def main():
         z, dz = -z, -dz
 
         # Compute error as scaled target minus actual
-        e = (K_TGT - z) - dz
+        e = (TARGETS - z) - dz
 
         # Compute I term
         ei += e
