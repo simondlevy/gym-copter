@@ -33,7 +33,7 @@ def main():
         'k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
             (K_START, K_TGT, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
-    csvfile.write('z,dz,e,ei,u\n')
+    csvfile.write('t,z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
@@ -44,6 +44,8 @@ def main():
     state = env.reset()
 
     while steps < K_DURATION * env.FRAMES_PER_SECOND:
+
+        t = steps / env.FRAMES_PER_SECOND
 
         z, dz = state
 
@@ -63,7 +65,8 @@ def main():
         u = e * K_P + ei * K_I
 
         # Write current values to CSV file
-        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' % (z, dz, e, ei, u))
+        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
+                      (t, z, dz, e, ei, u))
 
         state, reward, done, _ = env.step((u,))
 
