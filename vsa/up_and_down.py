@@ -17,7 +17,7 @@ def _constrain(val, lim):
 
 def main():
 
-    TARGETS = 5
+    ALTITUDE_TARGETS = 1,3,5
     DURATION = 10
     ALTITUDE_START = 3
 
@@ -39,6 +39,7 @@ def main():
 
     env.set_altitude(ALTITUDE_START)
 
+    target_index = 0
     total_reward = 0
     steps = 0
     state = env.reset()
@@ -53,7 +54,7 @@ def main():
         z, dz = -z, -dz
 
         # Compute error as scaled target minus actual
-        e = (TARGETS - z) - dz
+        e = (ALTITUDE_TARGETS[target_index] - z) - dz
 
         # Compute I term
         ei += e
