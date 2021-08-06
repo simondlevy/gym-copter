@@ -9,7 +9,6 @@ MIT License
 
 from time import sleep
 import gym
-import numpy as np
 
 
 def _constrain(val, lim):
@@ -31,8 +30,8 @@ def main():
 
     # Start CSV file
     filename = (
-        'ud_k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
-            (ALTITUDE_START, TARGETS, K_P, K_I, K_WINDUP))
+        'ud_k_start=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
+        (ALTITUDE_START, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
     csvfile.write('t,z,dz,e,ei,u\n')
 
