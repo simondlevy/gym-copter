@@ -44,7 +44,9 @@ def main():
     steps = 0
     state = env.reset()
 
-    while steps < DURATION * env.FRAMES_PER_SECOND:
+    total_steps = DURATION * env.FRAMES_PER_SECOND
+
+    while steps < total_steps
 
         t = steps / env.FRAMES_PER_SECOND
 
