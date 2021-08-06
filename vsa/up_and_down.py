@@ -17,7 +17,7 @@ def _constrain(val, lim):
 
 def main():
 
-    ALTITUDE_TARGETS = 1,3,5
+    ALTITUDE_TARGETS = 1, 3, 5
     DURATION = 10
     ALTITUDE_START = 3
 
@@ -41,14 +41,15 @@ def main():
 
     target_index = 0
     total_reward = 0
-    steps = 0
     state = env.reset()
 
     total_steps = DURATION * env.FRAMES_PER_SECOND
 
-    while steps < total_steps:
+    steps_per_altitude = int(total_steps / len(ALTITUDE_TARGETS))
 
-        t = steps / env.FRAMES_PER_SECOND
+    for step in range(total_steps):
+
+        t = step / env.FRAMES_PER_SECOND
 
         z, dz = state
 
@@ -79,11 +80,9 @@ def main():
 
         sleep(1./env.FRAMES_PER_SECOND)
 
-        steps += 1
-
-        if (steps % 20 == 0) or done:
+        if (step % 20 == 0) or done:
             print('steps =  %04d    total_reward = %+0.2f' %
-                  (steps, total_reward))
+                  (step, total_reward))
 
         if done:
             break
