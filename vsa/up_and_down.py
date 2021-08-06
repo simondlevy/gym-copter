@@ -18,6 +18,7 @@ def _constrain(val, lim):
 
 def main():
 
+    K_DURATION = 10
     K_START = 3
     K_P = 0.2
     K_I = 3
@@ -42,7 +43,7 @@ def main():
     steps = 0
     state = env.reset()
 
-    while steps < 500:
+    while steps < K_DURATION * env.FRAMES_PER_SECOND:
 
         z, dz = state
 
@@ -60,11 +61,6 @@ def main():
 
         # Compute demand u
         u = e * K_P + ei * K_I
-
-        # Constrain u to interval [0,1].  This is done automatically
-        # by our gym environment, but we do it here to avoid writing
-        # out-of-bound values to the CSV file.
-        # u = np.clip(u, 0, 1)
 
         # Write current values to CSV file
         csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' % (z, dz, e, ei, u))
