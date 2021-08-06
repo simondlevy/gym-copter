@@ -84,6 +84,9 @@ def main():
             print('steps =  %04d    total_reward = %+0.2f' %
                   (step, total_reward))
 
+        if (step > 0) and (step % steps_per_altitude == 0):
+            target_index += 1
+
         if done:
             break
 
