@@ -30,7 +30,7 @@ def main():
 
     # Start CSV file
     filename = (
-        'targets=%d-%d-%d_start=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
+        'targets=%d_%d_%d_start=%d_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
         (*ALTITUDE_TARGETS, ALTITUDE_START, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
     csvfile.write('time,target,z,dz,e,ei,u\n')
