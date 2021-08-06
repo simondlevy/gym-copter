@@ -17,10 +17,12 @@ def _constrain(val, lim):
 
 def main():
 
-    K_START = 3
+    ALTITUDE_TARGETS = 1, 3, 5
+    DURATION = 10
+    ALTITUDE_START = 3
+
     K_P = 0.2
     K_I = 3
-    K_TGT = 5
     K_WINDUP = 0.2
 
     # Error integral
@@ -28,20 +30,26 @@ def main():
 
     # Start CSV file
     filename = (
-        'hvr_k_start=%2.2f_k_tgt=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
-        (K_START, K_TGT, K_P, K_I, K_WINDUP))
+        'start=%2.2f_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
+        (ALTITUDE_START, K_P, K_I, K_WINDUP))
     csvfile = open(filename, 'w')
-    csvfile.write('z,dz,e,ei,u\n')
+    csvfile.write('t,z,dz,e,ei,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
-    env.set_altitude(K_START)
+    env.set_altitude(ALTITUDE_START)
 
+    target_index = 0
     total_reward = 0
-    steps = 0
     state = env.reset()
 
-    while steps < 500:
+    total_steps = DURATION * env.FRAMES_PER_SECOND
+
+    steps_per_altitude = int(total_steps / len(ALTITUDE_TARGETS))
+
+    for step in range(total_steps):
+
+        t = step / env.FRAMES_PER_SECOND
 
         z, dz = state
 
@@ -49,7 +57,7 @@ def main():
         z, dz = -z, -dz
 
         # Compute error as scaled target minus actual
-        e = (K_TGT - z) - dz
+        e = (ALTITUDE_TARGETS[target_index] - z) - dz
 
         # Compute I term
         ei += e
@@ -60,13 +68,9 @@ def main():
         # Compute demand u
         u = e * K_P + ei * K_I
 
-        # Constrain u to interval [0,1].  This is done automatically
-        # by our gym environment, but we do it here to avoid writing
-        # out-of-bound values to the CSV file.
-        # u = np.clip(u, 0, 1)
-
         # Write current values to CSV file
-        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' % (z, dz, e, ei, u))
+        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
+                      (t, z, dz, e, ei, u))
 
         state, reward, done, _ = env.step((u,))
 
@@ -76,11 +80,12 @@ def main():
 
         sleep(1./env.FRAMES_PER_SECOND)
 
-        steps += 1
-
-        if (steps % 20 == 0) or done:
+        if (step % 20 == 0) or done:
             print('steps =  %04d    total_reward = %+0.2f' %
-                  (steps, total_reward))
+                  (step, total_reward))
+
+        if (step > 0) and (step % steps_per_altitude == 0):
+            target_index += 1
 
         if done:
             break
