@@ -23,6 +23,7 @@ def main():
 
     K_P = 0.2
     K_I = 3
+    K_NEUTRAL = 0.524
     K_WINDUP = 0.2
 
     # Error integral
@@ -69,7 +70,7 @@ def main():
         ei = _constrain(ei, K_WINDUP)
 
         # Compute demand u
-        u = e * K_P + ei * K_I
+        u = e * K_P + ei * K_I + K_NEUTRAL
 
         # Write current values to CSV file
         csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
