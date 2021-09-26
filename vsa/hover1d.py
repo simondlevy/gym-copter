@@ -22,19 +22,15 @@ def main():
     ALTITUDE_START = 3
 
     K_P = 0.2
-    K_I = 3
     K_NEUTRAL = 0.524
     K_WINDUP = 0.2
 
-    # Error integral
-    ei = 0
-
     # Start CSV file
     filename = (
-        'targets=%d_%d_%d_start=%d_kp=%2.2f_Ki=%2.2f_k_windup=%2.2f.csv' %
-        (*ALTITUDE_TARGETS, ALTITUDE_START, K_P, K_I, K_WINDUP))
+        'targets=%d_%d_%d_start=%d_kp=%2.2f_Kneut=%2.2f_k_windup=%2.2f.csv' %
+        (*ALTITUDE_TARGETS, ALTITUDE_START, K_P, K_NEUTRAL, K_WINDUP))
     csvfile = open(filename, 'w')
-    csvfile.write('time,target,z,dz,e,ei,u\n')
+    csvfile.write('time,target,z,dz,e,u\n')
 
     env = gym.make('gym_copter:Hover1D-v0')
 
@@ -63,18 +59,12 @@ def main():
         # Compute error as scaled target minus actual
         e = (target - z) - dz
 
-        # Compute I term
-        ei += e
-
-        # Avoid integral windup
-        ei = _constrain(ei, K_WINDUP)
-
         # Compute demand u
-        u = e * K_P + ei * K_I + K_NEUTRAL
+        u = e * K_P + K_NEUTRAL
 
         # Write current values to CSV file
-        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
-                      (t, target, z, dz, e, ei, u))
+        csvfile.write('%3.3f,%3.3f,%3.3f,%3.3f,%3.3f,%3.3f\n' %
+                      (t, target, z, dz, e, u))
 
         state, reward, done, _ = env.step((u,))
 
