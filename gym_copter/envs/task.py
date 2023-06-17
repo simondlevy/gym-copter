@@ -25,8 +25,8 @@ class _Task(gym.Env, EzPickle):
     FRAMES_PER_SECOND = 100
 
     metadata = {
-        'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': FRAMES_PER_SECOND
+        'render_modes': ['human', 'rgb_array'],
+        'render_fps': FRAMES_PER_SECOND
     }
 
     def __init__(self, observation_size, action_size,
