@@ -13,10 +13,9 @@ from setuptools import setup
 setup(
     name='gym_copter',
     version='0.1',
-    install_requires=['gym', 'numpy', 'Box2D', 'opencv-python'],
+    install_requires=['gym', 'numpy', 'Box2D', 'multirotor_dynamics', 'opencv-python'],
     description='Gym environment for multicopters',
     packages=['gym_copter',
-              'gym_copter.dynamics',
               'gym_copter.envs',
               'gym_copter.rendering',
               'gym_copter.cmdline',
