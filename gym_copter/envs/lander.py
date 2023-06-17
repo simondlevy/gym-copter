@@ -34,9 +34,9 @@ class Lander(_Task):
 
         self.viewer = None
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
 
-        return _Task._reset(self)
+        return _Task._reset(self, seed, options)
 
     def _get_state(self, state):
 

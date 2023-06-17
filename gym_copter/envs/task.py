@@ -38,7 +38,6 @@ class _Task(gym.Env, EzPickle):
                  initial_altitude=10):
 
         EzPickle.__init__(self)
-        self.seed()
         self.viewer = None
         self.pose = None
         self.action_size = action_size
@@ -143,7 +142,9 @@ class _Task(gym.Env, EzPickle):
         if self.viewer is not None:
             self.viewer.close()
 
-    def _reset(self, pose=None, perturb=True):
+    def _reset(self, seed=None, options=None, pose=None, perturb=True):
+
+        self.seed(seed)
 
         if pose is None:
             pose = (0, 0, self.initial_altitude, 0, 0)
