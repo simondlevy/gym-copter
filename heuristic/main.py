@@ -10,7 +10,7 @@ MIT License
 from time import sleep
 import numpy as np
 
-import gym
+import gymnasium as gym
 
 from gym_copter.cmdline import (make_parser, make_parser_3d,
                                 wrap, parse_view_angles)
@@ -41,7 +41,8 @@ def _demo_heuristic(env, fun, pidcontrollers,
 
         action = np.zeros(actsize) if nopid else fun(state, pidcontrollers)
 
-        state, reward, done, _ = env.step(action)
+        state, reward, done, _, _ = env.step(action)
+
         total_reward += reward
 
         if csvfile is not None:

@@ -8,7 +8,7 @@ MIT License
 '''
 
 from time import sleep
-import gym
+import gymnasium as gym
 
 
 def _constrain(val, lim):

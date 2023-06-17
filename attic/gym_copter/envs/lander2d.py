@@ -42,7 +42,9 @@ class Lander2D(_Lander):
 
     def _get_state(self, state):
 
-        return state[2:8]
+        return (state['y'], state['dy'], state['z'], state['dz'], 
+                state['phi'], state['dphi'])
+     
 
     def _get_motors(self, motors):
 

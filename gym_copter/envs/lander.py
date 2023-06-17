@@ -27,11 +27,14 @@ class _Lander(_Task):
 
     def _get_reward(self, status, state, d, x, y):
 
-        # Get penalty based on state and motors
-        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(state[0:6]**2)) +
-                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(state[10:12]**2)))
+        statepos = np.array([state[v] for v in ('x', 'dx', 'y', 'dy', 'z', 'dz')])
+        statepsi = np.array([state[v] for v in ('psi', 'dpsi')])
 
-        if (abs(state[d.STATE_Z_DOT]) > self.DZ_MAX):
+        # Get penalty based on state and motors
+        shaping = -(self.XYZ_PENALTY_FACTOR*np.sqrt(np.sum(statepos**2)) +
+                    self.YAW_PENALTY_FACTOR*np.sqrt(np.sum(statepsi**2)))
+
+        if (abs(state['dz']) > self.DZ_MAX):
             shaping -= self.DZ_PENALTY
 
         reward = ((shaping - self.prev_shaping)

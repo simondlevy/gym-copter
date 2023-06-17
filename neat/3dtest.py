@@ -12,7 +12,7 @@ import pickle
 
 from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
-import gym
+import gymnasium as gym
 from gym_copter.rendering.threed import ThreeDLanderRenderer
 
 from neat_gym import eval_net

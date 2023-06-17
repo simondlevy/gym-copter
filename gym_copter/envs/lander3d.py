@@ -34,7 +34,10 @@ class Lander3D(_Lander, _ThreeD):
 
     def _get_state(self, state):
 
-        return state[:10]
+        keys = ('x', 'dx', 'y', 'dy', 'z', 'dz',
+                'phi', 'dphi', 'theta', 'dtheta')
+
+        return [val for val in [state[key] for key in keys]]
 
     def use_hud(self):
 

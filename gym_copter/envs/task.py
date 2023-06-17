@@ -12,11 +12,12 @@ import numpy as np
 from numpy import radians
 from time import time
 
-import gym
-from gym import spaces
-from gym.utils import EzPickle, seeding
+import gymnasium as gym
+from gymnasium import spaces
+from gymnasium.utils import EzPickle, seeding
 
-from multirotor_dynamics import Dynamics, djiphantom_params
+from multirotor_dynamics import Dynamics
+from multirotor_dynamics.vehicles.dji_phantom import vehicle_params
 
 
 class _Task(gym.Env, EzPickle):
@@ -91,16 +92,16 @@ class _Task(gym.Env, EzPickle):
             motors = np.clip(action, 0, 1)    # stay in interval [0,1]
             self.spinning = sum(motors) > 0
             if not initializing:
-                d.update(self._get_motors(motors))
+                d.setMotors(self._get_motors(motors))
 
         # Get new state from dynamics
-        state = np.array(d.getState())
+        state = d.getState()
 
-        # Extract components from state
-        x, dx, y, dy, z, dz, phi, dphi, theta, dtheta, psi, dpsi = state
+        x, y = state['x'], state['y']
 
         # Set pose for display
-        self.pose = x, y, z, phi, theta, psi
+        self.pose = (x, y, state['z'], 
+                     state['phi'], state['theta'], state['psi'])
 
         # Assume we're not done yet
         self.done = False
@@ -113,7 +114,7 @@ class _Task(gym.Env, EzPickle):
             reward -= self.out_of_bounds_penalty
 
         # Lose bigly for excess roll or pitch
-        elif abs(phi) >= self.max_angle or abs(theta) >= self.max_angle:
+        elif abs(state['phi']) >= self.max_angle or abs(state['theta']) >= self.max_angle:
             self.done = True
             reward = -self.out_of_bounds_penalty
 
@@ -133,6 +134,7 @@ class _Task(gym.Env, EzPickle):
         return (np.array(self._get_state(state), dtype=np.float32),
                 reward,
                 self.done,
+                False,
                 {})
 
     def close(self):
@@ -155,7 +157,7 @@ class _Task(gym.Env, EzPickle):
         self.prev_shaping = None
 
         # Create dynamics model
-        self.dynamics = Dynamics(djiphantom_params, self.FRAMES_PER_SECOND)
+        self.dynamics = Dynamics(vehicle_params, self.FRAMES_PER_SECOND)
 
         # Set up initial conditions
         state = np.zeros(12)

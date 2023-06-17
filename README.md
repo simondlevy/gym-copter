@@ -1,6 +1,4 @@
 <img src="media/lander3d.gif" height=250 align="left">
-<img src="media/lander2d.gif" height=180 align="top">
-<img src="media/hud2.gif" height=180 align="top">
 
 <br><br>
 
@@ -17,7 +15,7 @@ OpenAI Gym environment for reinforcement learning with multicopters, as describe
 
 * Supports rendering via a Heads-Up Display (HUD) similar to Mission Planner / QGroundControl.
 
-## Dependencies
+## Dependencies (other than numpy and matplotlib)
 
 * [gymnasium](https://pypi.org/project/gymnasium/)
 
@@ -27,7 +25,7 @@ OpenAI Gym environment for reinforcement learning with multicopters, as describe
 
 ```
 % pip3 install -e .
-% python3 heuristic/lander2d.py
+% python3 heuristic/lander3d.py
 ```
 (On Linux you will probably need to run pip3 with <tt>sudo</tt>.)
 

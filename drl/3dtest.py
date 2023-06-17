@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 import torch
-import gym
+import gymnasium as gym
 
 from gym_copter.cmdline import make_parser_3d, parse_view_angles
 

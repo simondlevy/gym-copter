@@ -4,7 +4,7 @@ Copyright (C) 2019 Simon D. Levy
 MIT License
 '''
 
-from gym.envs.registration import register
+from gymnasium.envs.registration import register
 
 # 1D lander
 register(

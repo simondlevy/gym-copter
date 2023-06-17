@@ -10,8 +10,8 @@ MIT License
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter
 
-import gym
-from gym import wrappers
+import gymnasium as gym
+from gymnasium import wrappers
 
 
 def make_parser():

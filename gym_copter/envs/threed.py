@@ -8,14 +8,8 @@ MIT License
 
 from time import sleep
 
-from gym_copter.rendering.hud import HUD
-
 
 class _ThreeD:
-
-    def use_hud(self):
-
-        self.viewer = HUD(self)
 
     def render(self, mode='human'):
 
