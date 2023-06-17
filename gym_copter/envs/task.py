@@ -192,8 +192,8 @@ class _Task(gym.Env, EzPickle):
         # Helps synchronize rendering to dynamics
         self.start = time()
 
-        # Return initial state
-        return self.step(np.zeros(self.action_size), initializing=True)[0]
+        # Return initial state along with empty dictionary
+        return self.step(np.zeros(self.action_size), initializing=True)[0], {}
 
     def _randforce(self):
 

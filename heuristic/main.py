@@ -24,7 +24,7 @@ def _demo_heuristic(env, fun, pidcontrollers,
 
     total_reward = 0
     steps = 0
-    state = env.reset()
+    state, _ = env.reset()
 
     dt = 1. / env.FRAMES_PER_SECOND
 
