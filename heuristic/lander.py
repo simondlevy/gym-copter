@@ -41,7 +41,7 @@ def main():
                       PositionHoldPidController(),
                       DescentPidController())
 
-    demo3d('gym_copter:Lander3D-v0', heuristic,
+    demo3d('gym_copter:Lander-v0', heuristic,
            pidcontrollers, ThreeDLanderRenderer)
 
 

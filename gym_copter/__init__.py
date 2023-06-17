@@ -36,8 +36,8 @@ register(
 
 # 3D lander
 register(
-    id='Lander3D-v0',
-    entry_point='gym_copter.envs:Lander3D',
+    id='Lander-v0',
+    entry_point='gym_copter.envs:Lander',
     max_episode_steps=400
 )
 

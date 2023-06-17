@@ -14,7 +14,7 @@ from gym_copter.sensors.vision.vs import VisionSensor
 from gym_copter.sensors.vision.dvs import DVS
 
 
-class Lander3D(_Task):
+class Lander(_Task):
 
     TARGET_RADIUS = 2
     YAW_PENALTY_FACTOR = 50
@@ -98,13 +98,13 @@ class Lander3D(_Task):
 
         return motors
 
-class LanderVisual(Lander3D):
+class LanderVisual(Lander):
 
     RES = 16
 
     def __init__(self, vs=VisionSensor(res=RES)):
 
-        Lander3D.__init__(self)
+        Lander.__init__(self)
 
         self.vs = vs
 
@@ -112,7 +112,7 @@ class LanderVisual(Lander3D):
 
     def step(self, action):
 
-        result = Lander3D.step(self, action)
+        result = Lander.step(self, action)
 
         x, y, z, phi, theta, psi = self.pose
 
