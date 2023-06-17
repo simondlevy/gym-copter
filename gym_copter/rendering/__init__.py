@@ -202,6 +202,7 @@ class ThreeDRenderer:
         anim = animation.FuncAnimation(self.fig,
                                        self._animate,
                                        interval=interval,
+                                       cache_frame_data=False,
                                        blit=False)
 
         # Support window close
