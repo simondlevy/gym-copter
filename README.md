@@ -15,11 +15,13 @@ OpenAI Gym environment for reinforcement learning with multicopters, as describe
 
 * Supports rendering via a Heads-Up Display (HUD) similar to Mission Planner / QGroundControl.
 
-## Dependencies (other than numpy and matplotlib)
+## Dependencies 
+
+* numpy
+
+* matplotlib
 
 * [gymnasium](https://pypi.org/project/gymnasium/)
-
-* [multirotor\_dynamics](https://github.com/simondlevy/MultirotorDynamics/tree/master/python)
 
 ## Quickstart
 

@@ -16,8 +16,8 @@ import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.utils import EzPickle, seeding
 
-from multirotor_dynamics import Dynamics
-from multirotor_dynamics.vehicles.dji_phantom import vehicle_params
+from gym_copter.dynamics import Dynamics
+from gym_copter.dynamics.vehicles.dji_phantom import vehicle_params
 
 
 class _Task(gym.Env, EzPickle):
