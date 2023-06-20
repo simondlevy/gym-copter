@@ -16,6 +16,7 @@ setup(
     install_requires=['gymnasium', 'numpy', 'matplotlib'],
     description='Gym environment for multicopters',
     packages=['gym_copter',
+              'gym_copter.dynamics',
               'gym_copter.envs',
               'gym_copter.cmdline',
               'gym_copter.sensors',

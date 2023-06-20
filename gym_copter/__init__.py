@@ -7,7 +7,7 @@ MIT License
 from gymnasium.envs.registration import register
 
 register(
-    id='Hover3D-v0',
-    entry_point='gym_copter.envs:Hover3D',
+    id='Lander-v0',
+    entry_point='gym_copter.envs:Lander',
     max_episode_steps=1000
 )
