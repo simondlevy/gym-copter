@@ -13,7 +13,7 @@ OpenAI Gym environment for reinforcement learning with multicopters, as describe
 * Uses realistic multirotor dynamics
 ([Bouabdallah et al. 2004](https://infoscience.epfl.ch/record/97532/files/325.pdf)) 
 
-* Supports rendering via a Heads-Up Display (HUD) similar to Mission Planner / QGroundControl.
+* Supports 3D rendering
 
 ## Dependencies 
 
@@ -38,18 +38,6 @@ You should see the copter land safely.
 The [NEAT](https://github.com/simondlevy/gym-copter/tree/master/neat)
 sub-folder of this repository shows how you can use the NEAT algorithm to
 evolve a neural controller for your copter.
-
-## Supported environments
-
-* **Lander2D-v0** 2D [LunarLander](https://gym.openai.com/envs/LunarLander-v2/)-style challenge
-
-* **Lander3D-v0** 3D lander with reward proportional on proximity of touchdown to center
-
-* **Hover2D-v0** reward for staying aloft inside window, 2D version
-
-* **Hover3D-v0** reward for staying aloft inside window, 3D version
-
-### Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
 
