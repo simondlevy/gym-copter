@@ -3,7 +3,7 @@
 <br><br>
 
 # gym-copter
-OpenAI Gym environment for reinforcement learning with multicopters, as described 
+Gymnasium environment for reinforcement learning with multicopters, as described 
 [here](https://simondlevy.academic.wlu.edu/files/publications/LM2020_011_final_v2.pdf).
 
 ## Features:
