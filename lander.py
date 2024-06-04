@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
-3D Copter-Lander heuristic demo
+Heuristic demo of a landing task
 
-Copyright (C) 2021 Simon D. Levy
+Copyright (C) 2024 Simon D. Levy
 
 MIT License
 '''
@@ -18,6 +18,8 @@ import gymnasium as gym
 
 from gym_copter.rendering import ThreeDLanderRenderer
 
+THRUST = 1.5e-2
+
 
 # Threaded
 def _demo_heuristic(env, pidcontrollers,
@@ -32,18 +34,16 @@ def _demo_heuristic(env, pidcontrollers,
 
     dt = 1. / env.unwrapped.FRAMES_PER_SECOND
 
-    actsize = env.action_space.shape[0]
-
     csvfile = None
     if csvfilename is not None:
         csvfile = open(csvfilename, 'w')
         csvfile.write('t,' + ','.join([('m%d' % k)
-                                      for k in range(1, actsize+1)]))
+                                      for k in range(1, 5)]))
         csvfile.write(',' + ','.join(env.STATE_NAMES) + '\n')
 
     while True:
 
-        action = 1.5e-2 * np.ones(actsize)
+        action = THRUST * np.ones(4)
 
         state, reward, done, _, _ = env.step(action)
 
@@ -53,7 +53,7 @@ def _demo_heuristic(env, pidcontrollers,
 
             csvfile.write('%f' % (dt * steps))
 
-            csvfile.write((',%f' * actsize) % tuple(action))
+            csvfile.write((',%f' * 4) % tuple(action))
 
             csvfile.write(((',%f' * len(state)) + '\n') % tuple(state))
 
@@ -63,9 +63,7 @@ def _demo_heuristic(env, pidcontrollers,
 
         steps += 1
 
-        if True: #(steps % 20 == 0) or done:
-            print('steps =  %04d    total_reward = %+0.2f' %
-                  (steps, total_reward))
+        print('steps =  %04d    total_reward = %+0.2f' % (steps, total_reward))
 
         if done:
             break
@@ -104,7 +102,7 @@ def main():
 
     args = parser.parse_args()
 
-    viewer = ThreeDLanderRenderer(env, 
+    viewer = ThreeDLanderRenderer(env,
                                   _demo_heuristic,  # threadfun
                                   (args.seed, args.csvfilename),
                                   viewangles=parse_view_angles(args),
