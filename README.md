@@ -31,9 +31,9 @@ Gymnasium environment for reinforcement learning with multicopters, as described
 ```
 (On Linux you will may need to run pip3 with <tt>sudo</tt>.)
 
-You should see the copter land safely, using a classic-control (PID) solutions
-to the landing environment provided by gym-copter.  This can to serve as a
-basis for comparison with learning algorithms.  
+You should see the copter land safely, using a simple solution (constant
+thrust on all motors) to the landing environment provided by gym-copter.  This
+can to serve as a basis for comparison with learning algorithms.  
 
 ## Similar projects
 
