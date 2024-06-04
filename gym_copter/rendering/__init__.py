@@ -236,8 +236,6 @@ class ThreeDRenderer:
 
         if self.env.done and not self.closed:
             exit(0)
-            print('Calling self.close()')
-            self.close()
 
         self.copter.update(self.env.pose)
 
