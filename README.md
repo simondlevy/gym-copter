@@ -33,11 +33,7 @@ Gymnasium environment for reinforcement learning with multicopters, as described
 
 You should see the copter land safely.
 
-## Evolving a neural controller
-
-The [NEAT](https://github.com/simondlevy/gym-copter/tree/master/neat)
-sub-folder of this repository shows how you can use the NEAT algorithm to
-evolve a neural controller for your copter.
+## Similar projects
 
 [gym\_rotor](https://github.com/inkyusa/gym_rotor)
 
