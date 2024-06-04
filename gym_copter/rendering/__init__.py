@@ -221,8 +221,9 @@ class ThreeDRenderer:
 
     def close(self):
 
-        if self.outfile is not None and notself.closed:
-                print('Saving %s ...' % self.outfile)
+        if self.outfile is not None:
+            print('Saving %s ...' % self.outfile)
+            exit(0)
 
         self.closed = True
 
@@ -233,7 +234,9 @@ class ThreeDRenderer:
 
     def display(self):
 
-        if self.env.done:
+        if self.env.done and not self.closed:
+            exit(0)
+            print('Calling self.close()')
             self.close()
 
         self.copter.update(self.env.pose)
