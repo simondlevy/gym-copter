@@ -27,11 +27,13 @@ Gymnasium environment for reinforcement learning with multicopters, as described
 
 ```
 % pip3 install -e .
-% python3 heuristic/lander.py
+% python3 lander.py
 ```
 (On Linux you will may need to run pip3 with <tt>sudo</tt>.)
 
-You should see the copter land safely.
+You should see the copter land safely, using a classic-control (PID) solutions
+to the landing environment provided by gym-copter.  This can to serve as a
+basis for comparison with learning algorithms.  
 
 ## Similar projects
 
