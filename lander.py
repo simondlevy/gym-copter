@@ -7,14 +7,18 @@ Copyright (C) 2021 Simon D. Levy
 MIT License
 '''
 
-from gym_copter.rendering import ThreeDLanderRenderer
-from gym_copter.cmdline import make_parser_3d, parse_view_angles
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter
 
 from time import sleep
 
 import numpy as np
 
 import gymnasium as gym
+from gymnasium import wrappers
+
+from gym_copter.rendering import ThreeDLanderRenderer
+# from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
 
 class AltitudeHoldPidController:
@@ -148,24 +152,6 @@ def _demo_heuristic(env, fun, pidcontrollers,
         csvfile.close()
 
 
-def demo3d(envname, heuristic, pidcontrollers, renderer):
-
-    env = gym.make(envname)
-
-    parser = make_parser_3d()
-
-    args = parser.parse_args()
-
-    viewer = renderer(env,
-                      _demo_heuristic,
-                      (heuristic, pidcontrollers,
-                       args.seed, args.csvfilename, args.nopid),
-                      viewangles=parse_view_angles(args),
-                      outfile='movie.mp4' if args.movie else None)
-
-    viewer.start()
-
-
 def heuristic(state, pidcontrollers):
     '''
     PID controller
@@ -187,14 +173,68 @@ def heuristic(state, pidcontrollers):
     return t-r-p, t+r+p, t+r-p, t-r+p
 
 
+def make_parser():
+
+    parser = argparse.ArgumentParser(
+            formatter_class=ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('--seed', type=int, required=False, default=None,
+                        help='Random seed for reproducibility')
+
+    parser.add_argument('--nopid', action='store_true',
+                        help='Turn off lateral PID control')
+
+    parser.add_argument('--save', dest='csvfilename',
+                        help='Save trajectory in CSV file')
+
+    parser.add_argument('--movie', action='store_true',
+                        help='Save movie in an MP4 file')
+
+    return parser
+
+def parse_view_angles(args):
+
+    return tuple((int(s) for s in args.view.split(',')))
+
+
+
+def wrap(args, env):
+
+    return (env if args.movie is None
+            else wrappers.Monitor(env, 'movie/', force=True))
+
+
+def make_parser_3d():
+
+    parser = make_parser()
+
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument('--view', required=False, default='30,120',
+                       help='Elevation, azimuth for view perspective')
+
+    return parser
+
 def main():
 
     pidcontrollers = (PositionHoldPidController(),
                       PositionHoldPidController(),
                       DescentPidController())
 
-    demo3d('gym_copter:Lander-v0', heuristic,
-           pidcontrollers, ThreeDLanderRenderer)
+    env = gym.make('gym_copter:Lander-v0')
+
+    parser = make_parser_3d()
+
+    args = parser.parse_args()
+
+    viewer = ThreeDLanderRenderer(env, _demo_heuristic,
+                      (heuristic, pidcontrollers,
+                       args.seed, args.csvfilename, args.nopid),
+                      viewangles=parse_view_angles(args),
+                      outfile='movie.mp4' if args.movie else None)
+
+    viewer.start()
+
 
 
 if __name__ == '__main__':
