@@ -8,17 +8,13 @@ MIT License
 '''
 
 from gym_copter.rendering import ThreeDLanderRenderer
+from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
 from time import sleep
 
 import numpy as np
 
 import gymnasium as gym
-
-from gym_copter.cmdline import (make_parser, make_parser_3d,
-                                wrap, parse_view_angles)
-def _constrain(val, lim):
-    return -lim if val < -lim else (+lim if val > +lim else val)
 
 
 class AltitudeHoldPidController:
@@ -48,9 +44,12 @@ class AltitudeHoldPidController:
         self.ei += e
 
         # avoid integral windup
-        self.ei = _constrain(self.ei, self.k_windup)
+        self.ei = self._constrain(self.ei, self.k_windup)
 
         return e * self.k_p + self.ei * self.k_i
+
+    def _constrain(self, val, lim):
+        return -lim if val < -lim else (+lim if val > +lim else val)
 
 
 class PositionHoldPidController:
@@ -90,6 +89,7 @@ class AngularVelocityPidController:
     def getDemand(self, angularVelocity):
 
         return -angularVelocity
+
 
 # Threaded
 def _demo_heuristic(env, fun, pidcontrollers,
@@ -132,7 +132,7 @@ def _demo_heuristic(env, fun, pidcontrollers,
         env.render()
 
         sleep(1./env.unwrapped.FRAMES_PER_SECOND)
- 
+
         steps += 1
 
         if (steps % 20 == 0) or done:
@@ -148,7 +148,6 @@ def _demo_heuristic(env, fun, pidcontrollers,
         csvfile.close()
 
 
-
 def demo3d(envname, heuristic, pidcontrollers, renderer):
 
     env = gym.make(envname)
@@ -160,11 +159,12 @@ def demo3d(envname, heuristic, pidcontrollers, renderer):
     viewer = renderer(env,
                       _demo_heuristic,
                       (heuristic, pidcontrollers,
-                      args.seed, args.csvfilename, args.nopid),
+                       args.seed, args.csvfilename, args.nopid),
                       viewangles=parse_view_angles(args),
                       outfile='movie.mp4' if args.movie else None)
 
     viewer.start()
+
 
 def heuristic(state, pidcontrollers):
     '''
