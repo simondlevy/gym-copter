@@ -22,7 +22,7 @@ MOTORVAL = 1.625e-2
 
 
 # Threaded
-def _demo_heuristic(env, pidcontrollers, csvfilename=None):
+def heuristic(env, csvfilename=None, random=False):
 
     total_reward = 0
     steps = 0
@@ -39,7 +39,7 @@ def _demo_heuristic(env, pidcontrollers, csvfilename=None):
 
     while True:
 
-        action = MOTORVAL * np.ones(4)
+        action = MOTORVAL  * (np.random.randn(4) if random else np.ones(4))
 
         state, reward, done, _, _ = env.step(action)
 
@@ -93,11 +93,14 @@ def main():
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
 
+    parser.add_argument('--random', action='store_true',
+                        help='Use random motor values for comparison')
+
     args = parser.parse_args()
 
     viewer = ThreeDLanderRenderer(env,
-                                  _demo_heuristic,  # threadfun
-                                  (args.csvfilename,), # threadargs
+                                  heuristic,  # threadfun
+                                  (args.csvfilename, args.random), # threadargs
                                   viewangles=parse_view_angles(args),
                                   outfile='movie.mp4' if args.movie else None)
 
