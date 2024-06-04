@@ -29,7 +29,7 @@ Gymnasium environment for reinforcement learning with multicopters, as described
 % pip3 install -e .
 % python3 heuristic/lander.py
 ```
-(On Linux you will probably need to run pip3 with <tt>sudo</tt>.)
+(On Linux you will may need to run pip3 with <tt>sudo</tt>.)
 
 You should see the copter land safely.
 

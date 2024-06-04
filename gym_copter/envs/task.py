@@ -144,7 +144,7 @@ class _Task(gym.Env, EzPickle):
 
     def _reset(self, seed=None, options=None, pose=None, perturb=True):
 
-        self.seed(seed)
+        self.unwrapped.seed = seed
 
         if pose is None:
             pose = (0, 0, self.initial_altitude, 0, 0)

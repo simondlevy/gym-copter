@@ -221,8 +221,11 @@ class ThreeDRenderer:
 
     def close(self):
 
+
         if self.outfile is None:
-            plt.close(self.fig)
+            if not self.closed:
+                print('closing figure' + str(self.fig))
+                # plt.close(self.fig)
         else:
             if not self.closed:
                 print('Saving %s ...' % self.outfile)
@@ -258,20 +261,26 @@ class ThreeDRenderer:
 
     def _handle_close(self, event):
 
+        print('closing')
+
         self.open = False
 
     def _animate(self, _):
 
-        try:
+        if not self.closed:
 
-            # Update the copter animation with vehicle pose
-            self.display()
+            print('animating: ' + str(self.closed))
 
-            # Draw everything
-            self.fig.canvas.draw()
+            try:
 
-        except Exception:
-            pass
+                # Update the copter animation with vehicle pose
+                self.display()
+
+                # Draw everything
+                self.fig.canvas.draw()
+
+            except Exception:
+                pass
 
 
 class ThreeDLanderRenderer(ThreeDRenderer):
@@ -294,9 +303,9 @@ class ThreeDLanderRenderer(ThreeDRenderer):
                                 outfile=outfile,
                                 view_width=view_width)
 
-        self.radius = env.TARGET_RADIUS
+        self.radius = env.unwrapped.TARGET_RADIUS
 
-        p = Circle((0, 0), env.TARGET_RADIUS, color='gray', alpha=0.5)
+        p = Circle((0, 0), self.radius, color='gray', alpha=0.5)
         self.axes.add_patch(p)
         art3d.pathpatch_2d_to_3d(p, zdir='z')
 
