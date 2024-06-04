@@ -15,10 +15,8 @@ from time import sleep
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import wrappers
 
 from gym_copter.rendering import ThreeDLanderRenderer
-# from gym_copter.cmdline import make_parser_3d, parse_view_angles
 
 
 class AltitudeHoldPidController:
@@ -173,7 +171,18 @@ def heuristic(state, pidcontrollers):
     return t-r-p, t+r+p, t+r-p, t-r+p
 
 
-def make_parser():
+def parse_view_angles(args):
+
+    return tuple((int(s) for s in args.view.split(',')))
+
+
+def main():
+
+    pidcontrollers = (PositionHoldPidController(),
+                      PositionHoldPidController(),
+                      DescentPidController())
+
+    env = gym.make('gym_copter:Lander-v0')
 
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -190,51 +199,20 @@ def make_parser():
     parser.add_argument('--movie', action='store_true',
                         help='Save movie in an MP4 file')
 
-    return parser
-
-def parse_view_angles(args):
-
-    return tuple((int(s) for s in args.view.split(',')))
-
-
-
-def wrap(args, env):
-
-    return (env if args.movie is None
-            else wrappers.Monitor(env, 'movie/', force=True))
-
-
-def make_parser_3d():
-
-    parser = make_parser()
-
     group = parser.add_mutually_exclusive_group()
 
     group.add_argument('--view', required=False, default='30,120',
                        help='Elevation, azimuth for view perspective')
 
-    return parser
-
-def main():
-
-    pidcontrollers = (PositionHoldPidController(),
-                      PositionHoldPidController(),
-                      DescentPidController())
-
-    env = gym.make('gym_copter:Lander-v0')
-
-    parser = make_parser_3d()
-
     args = parser.parse_args()
 
     viewer = ThreeDLanderRenderer(env, _demo_heuristic,
-                      (heuristic, pidcontrollers,
-                       args.seed, args.csvfilename, args.nopid),
-                      viewangles=parse_view_angles(args),
-                      outfile='movie.mp4' if args.movie else None)
+                                  (heuristic, pidcontrollers,
+                                   args.seed, args.csvfilename, args.nopid),
+                                  viewangles=parse_view_angles(args),
+                                  outfile='movie.mp4' if args.movie else None)
 
     viewer.start()
-
 
 
 if __name__ == '__main__':
