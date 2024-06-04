@@ -221,15 +221,8 @@ class ThreeDRenderer:
 
     def close(self):
 
-
-        if self.outfile is None:
-            if not self.closed:
-                print('closing figure' + str(self.fig))
-                # plt.close(self.fig)
-        else:
-            if not self.closed:
+        if self.outfile is not None and notself.closed:
                 print('Saving %s ...' % self.outfile)
-            self.closed = True
 
         self.closed = True
 
@@ -261,15 +254,11 @@ class ThreeDRenderer:
 
     def _handle_close(self, event):
 
-        print('closing')
-
         self.open = False
 
     def _animate(self, _):
 
         if not self.closed:
-
-            print('animating: ' + str(self.closed))
 
             try:
 
