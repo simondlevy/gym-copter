@@ -18,15 +18,11 @@ import gymnasium as gym
 
 from gym_copter.rendering import ThreeDLanderRenderer
 
-THRUST = 1.5e-2
+MOTORVAL = 1.625e-2
 
 
 # Threaded
-def _demo_heuristic(env, pidcontrollers,
-                    seed=None, csvfilename=None, nopid=False):
-
-    env.unwrapped.seed = seed
-    np.random.seed(seed)
+def _demo_heuristic(env, pidcontrollers, csvfilename=None):
 
     total_reward = 0
     steps = 0
@@ -43,7 +39,7 @@ def _demo_heuristic(env, pidcontrollers,
 
     while True:
 
-        action = THRUST * np.ones(4)
+        action = MOTORVAL * np.ones(4)
 
         state, reward, done, _, _ = env.step(action)
 
@@ -86,9 +82,6 @@ def main():
     parser = argparse.ArgumentParser(
             formatter_class=ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--seed', type=int, required=False, default=None,
-                        help='Random seed for reproducibility')
-
     parser.add_argument('--save', dest='csvfilename',
                         help='Save trajectory in CSV file')
 
@@ -104,7 +97,7 @@ def main():
 
     viewer = ThreeDLanderRenderer(env,
                                   _demo_heuristic,  # threadfun
-                                  (args.seed, args.csvfilename),
+                                  (args.csvfilename,), # threadargs
                                   viewangles=parse_view_angles(args),
                                   outfile='movie.mp4' if args.movie else None)
 
